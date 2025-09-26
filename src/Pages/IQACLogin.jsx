@@ -1,7 +1,7 @@
 import React,{useState} from "react";
 import { User, Lock,LogIn  ,KeyRound } from "lucide-react";
 
-export default function HODForm() {
+export default function IQACLogin() {
 
   const [formData, setFormData] = useState({
     username: "",
@@ -14,10 +14,22 @@ export default function HODForm() {
       ...prev,
       [id]: value,
     }));
+    document.getElementById("empty"+ id).innerHTML = "";
   };
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
+    
+    if(!formData.username){
+      document.getElementById("emptyusername").innerHTML = "<p class='text-red-600 text-sm'>Username is required</p>";
+      return;
+    }
+    if(!formData.password){
+      document.getElementById("emptypassword").innerHTML = "<p class='text-red-600 text-sm'>Password is required</p>";
+      return;
+    }
+
     console.log("Username:", formData.username);
     console.log("Password:", formData.password);
 
@@ -35,7 +47,7 @@ export default function HODForm() {
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900">HOD Login</h2>
+        <h2 className="text-2xl font-bold text-gray-900">IQAC Login</h2>
         <p className="text-gray-600 text-sm mt-1">
           Faculty Information System
         </p>
@@ -62,6 +74,7 @@ export default function HODForm() {
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 "
               />
             </div>
+            <div id="emptyusername"></div>
           </div>
 
           {/* Password */}
@@ -84,6 +97,7 @@ export default function HODForm() {
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1"
               />
             </div>
+            <div id="emptypassword"></div>
           </div>
 
           {/* Submit Button */}

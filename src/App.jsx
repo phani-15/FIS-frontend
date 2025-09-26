@@ -2,16 +2,23 @@ import React from 'react'
 import './index.css'
 import { BrowserRouter,Route,Routes} from 'react-router-dom'
 import Header from './components/Header'
-import HODForm from './components/HODForm'
+import HODLogin from './Pages/HODLogin'
+import IQACLogin from './Pages//IQACLogin'
+import Login from './Pages/Login'
+import Register from './Pages/Register'
+import User from './Pages/user'
 
 export default function App() {
   return (
-    <div className='bg-gradient-to-br from-white via-blue-50 to-purple-50  min-h-screen'>
+    <div className='min-h-screen'>
       <Header/>
       <BrowserRouter>
       <Routes>
-        <Route path='/HOD-login' element={<HODForm/>}/>
-        <Route path='/' element={<h1 className='text-3xl font-bold underline'>Hello JNTU-GV!</h1>}/>
+        <Route path='/HOD-login' element={<HODLogin/>}/>
+        <Route path='IQAC-login' element={<IQACLogin/>}/>
+        <Route path='/' element={<Login/>}/>
+        <Route path='/register' element={<Register/>}/>
+        <Route path='/user' element={<User/>}/>
       </Routes>
       </BrowserRouter>
     </div>
