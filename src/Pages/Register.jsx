@@ -13,6 +13,8 @@ export default function Register() {
     Cpassword: ""
   });
 
+  const [display_educationForm, setDisplay_educationForm] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -27,12 +29,17 @@ export default function Register() {
       document.getElementById("inPhone").innerHTML = "<p class='text-red-600 text-sm'>Phone number must be 10 digits</p>";
       return;
     }
+    if (formData.password !== formData.Cpassword) {
+      document.getElementById("inCpassword").innerHTML = "Passwords do not match";
+      return;
+    }
     console.log("Submitted Data:", formData);
+    setDisplay_educationForm(true);
     // 🚀 You can send formData to your backend API here
   };
 
   return (
-    <div className="m-5 flex justify-center items-center ">
+    <div className="m-5 flex flex-col justify-center items-center ">
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
         <h1 className="text-2xl font-semibold mb-4">Personal Details</h1>
 
@@ -112,8 +119,6 @@ export default function Register() {
             </div>
           </div>
 
-
-
           <div className="flex flex-col text-left space-y-2 mt-4">
             {/* marrital status */}
             <label htmlFor="marrital">Marital Status:</label>
@@ -148,9 +153,9 @@ export default function Register() {
 
           {/* Phone Number */}
           <div className="flex flex-col text-left space-y-2 mt-4">
-            <label htmlFor="phone">Phone Number:</label>
+            <label htmlFor="phone">Phone Number:  <span className="font-light">(must be 10 digits)</span></label>
             <input
-              type="number"
+              type="text"
               id="phone"
               name="phone"
               placeholder="Enter phone number"
@@ -170,7 +175,7 @@ export default function Register() {
             />
             <small id="inPhone" className="text-gray-500 text-sm"></small>
           </div>
-            
+
           <div className="flex flex-col text-left space-y-2 mt-4">
             {/* password */}
             <label htmlFor="password">Choose Password:</label>
@@ -185,7 +190,7 @@ export default function Register() {
               required
             />
           </div>
-  
+
           <div className="flex flex-col text-left space-y-2 mt-4">
             {/* confirm password */}
             <label htmlFor="password">Confirm Password:</label>
@@ -199,6 +204,7 @@ export default function Register() {
               className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
               required
             />
+            <small id="inCpassword" className="text-gray-500 text-sm"></small>
           </div>
 
           {/* Submit Button */}
@@ -210,6 +216,11 @@ export default function Register() {
           </button>
         </form>
       </div>
+      {display_educationForm &&
+        <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
+          <h1 className="text-2xl font-semibold mb-4">Education Details Form Coming Soon...</h1>
+        </div>
+      }
     </div>
   );
 }
