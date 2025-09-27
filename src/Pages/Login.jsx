@@ -31,6 +31,19 @@ export default function Login() {
 			document.getElementById("emptypassword").innerHTML = "<p class='text-red-600 text-sm'>Password is required</p>";
 			return;
 		}
+		//console the type of formData.username whether mail or a string of 10 digits
+		if (/^\d{10}$/.test(formData.username)) {
+			console.log("Phone number");
+		} else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.username)) {
+			console.log("Email");
+		}
+		else{
+			document.getElementById("emptyusername").innerHTML = "<p class='text-red-600 text-sm'>Enter a valid email or phone number</p>";
+			return;
+		}
+
+		console.log(formData);
+		// 🚀 You can send formData to your backend API here
 		navigate('/user')
 
 	};
@@ -60,7 +73,7 @@ export default function Login() {
 							htmlFor="username"
 							className="block mb-1 text-sm font-medium text-gray-700"
 						>
-							Username
+							email / Phone number
 						</label>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">

@@ -7,7 +7,10 @@ export default function Register() {
     gender: "",
     DOB: "",
     email: "",
-    phone: ""
+    phone: "",
+    marrital: "",
+    password: "",
+    Cpassword: ""
   });
 
   const handleChange = (e) => {
@@ -20,7 +23,7 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(formData.phone.length !== 10){
+    if (formData.phone.length !== 10) {
       document.getElementById("inPhone").innerHTML = "<p class='text-red-600 text-sm'>Phone number must be 10 digits</p>";
       return;
     }
@@ -29,8 +32,8 @@ export default function Register() {
   };
 
   return (
-    <div className="m-5 flex justify-center items-center p-6">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+    <div className="m-5 flex justify-center items-center ">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
         <h1 className="text-2xl font-semibold mb-4">Personal Details</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col">
@@ -65,46 +68,67 @@ export default function Register() {
             />
           </div>
 
-          {/* Gender */}
-          <div className="flex flex-col text-left space-y-2 mt-4">
-            <label htmlFor="gender">Gender:</label>
-            <div className="flex space-x-6 mt-1">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="Male"
-                  checked={formData.gender === "Male"}
-                  onChange={handleChange}
-                  required
-                />
-                <span>Male</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="Female"
-                  checked={formData.gender === "Female"}
-                  onChange={handleChange}
-                />
-                <span>Female</span>
-              </label>
+          <div className="md:flex justify-between ">
+            {/* Gender */}
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label htmlFor="gender">Gender:</label>
+              <div className="flex space-x-6 mt-1">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Male"
+                    checked={formData.gender === "Male"}
+                    onChange={handleChange}
+                    required
+                  />
+                  <span>Male</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Female"
+                    checked={formData.gender === "Female"}
+                    onChange={handleChange}
+                  />
+                  <span>Female</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Date of Birth */}
+            <div className="flex flex-col mr-20 text-left space-y-2 mt-4">
+              <label htmlFor="DOB">Date of Birth:</label>
+              <input
+                type="date"
+                id="DOB"
+                name="DOB"
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                value={formData.DOB}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
 
-          {/* Date of Birth */}
+
+
           <div className="flex flex-col text-left space-y-2 mt-4">
-            <label htmlFor="DOB">Date of Birth:</label>
-            <input
-              type="date"
-              id="DOB"
-              name="DOB"
+            {/* marrital status */}
+            <label htmlFor="marrital">Marital Status:</label>
+            <select
+              id="marrital"
+              name="marrital"
               className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={formData.DOB}
+              value={formData.marrital}
               onChange={handleChange}
               required
-            />
+            >
+              <option value="" disabled >Select your option</option>
+              <option value="unmarried">Unmarried</option>
+              <option value="married">Married</option>
+            </select>
           </div>
 
           {/* Email */}
@@ -146,11 +170,41 @@ export default function Register() {
             />
             <small id="inPhone" className="text-gray-500 text-sm"></small>
           </div>
+            
+          <div className="flex flex-col text-left space-y-2 mt-4">
+            {/* password */}
+            <label htmlFor="password">Choose Password:</label>
+            <input
+              type="password"
+              id="password"
+              onChange={handleChange}
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+            />
+          </div>
+  
+          <div className="flex flex-col text-left space-y-2 mt-4">
+            {/* confirm password */}
+            <label htmlFor="password">Confirm Password:</label>
+            <input
+              type="password"
+              id="Cpassword"
+              name="Cpassword"
+              placeholder="Confirm your password"
+              value={formData.Cpassword}
+              onChange={handleChange}
+              className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+            />
+          </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"
+            className="mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
           >
             Submit
           </button>
