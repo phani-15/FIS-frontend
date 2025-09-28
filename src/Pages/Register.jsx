@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ export default function Register() {
     Cpassword: ""
   });
 
-  const [display_educationForm, setDisplay_educationForm] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,17 +26,23 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (formData.phone.length !== 10) {
-      document.getElementById("inPhone").innerHTML = "<p class='text-red-600 text-sm'>Phone number must be 10 digits</p>";
+      document.getElementById("inPhone").innerHTML =
+        "<p class='text-red-600 text-sm'>Phone number must be 10 digits</p>";
       return;
     }
+
     if (formData.password !== formData.Cpassword) {
-      document.getElementById("inCpassword").innerHTML = "Passwords do not match";
+      document.getElementById("inCpassword").innerHTML =
+        "Passwords do not match";
       return;
     }
+
     console.log("Submitted Data:", formData);
-    setDisplay_educationForm(true);
-    // 🚀 You can send formData to your backend API here
+
+    // ✅ After successful validation → go to Education page
+    navigate("/education");
   };
 
   return (
@@ -44,7 +51,6 @@ export default function Register() {
         <h1 className="text-2xl font-semibold mb-4">Personal Details</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col">
-
           {/* Full Name */}
           <div className="flex flex-col text-left space-y-2 mt-4">
             <label htmlFor="name">Full Name:</label>
@@ -120,7 +126,7 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col text-left space-y-2 mt-4">
-            {/* marrital status */}
+            {/* Marital status */}
             <label htmlFor="marrital">Marital Status:</label>
             <select
               id="marrital"
@@ -130,7 +136,9 @@ export default function Register() {
               onChange={handleChange}
               required
             >
-              <option value="" disabled >Select your option</option>
+              <option value="" disabled>
+                Select your option
+              </option>
               <option value="unmarried">Unmarried</option>
               <option value="married">Married</option>
             </select>
@@ -153,7 +161,10 @@ export default function Register() {
 
           {/* Phone Number */}
           <div className="flex flex-col text-left space-y-2 mt-4">
-            <label htmlFor="phone">Phone Number:  <span className="font-light">(must be 10 digits)</span></label>
+            <label htmlFor="phone">
+              Phone Number:{" "}
+              <span className="font-light">(must be 10 digits)</span>
+            </label>
             <input
               type="text"
               id="phone"
@@ -163,21 +174,19 @@ export default function Register() {
               maxLength="10"
               pattern="[0-9]{10}"
               value={formData.phone}
-              onChange={
-                (e) => {
-                  if (e.target.value.length <= 10) {
-                    handleChange(e);
-                    document.getElementById("inPhone").innerHTML = "";
-                  }
+              onChange={(e) => {
+                if (e.target.value.length <= 10) {
+                  handleChange(e);
+                  document.getElementById("inPhone").innerHTML = "";
                 }
-              }
+              }}
               required
             />
             <small id="inPhone" className="text-gray-500 text-sm"></small>
           </div>
 
+          {/* Password */}
           <div className="flex flex-col text-left space-y-2 mt-4">
-            {/* password */}
             <label htmlFor="password">Choose Password:</label>
             <input
               type="password"
@@ -191,9 +200,9 @@ export default function Register() {
             />
           </div>
 
+          {/* Confirm Password */}
           <div className="flex flex-col text-left space-y-2 mt-4">
-            {/* confirm password */}
-            <label htmlFor="password">Confirm Password:</label>
+            <label htmlFor="Cpassword">Confirm Password:</label>
             <input
               type="password"
               id="Cpassword"
@@ -216,11 +225,6 @@ export default function Register() {
           </button>
         </form>
       </div>
-      {display_educationForm &&
-        <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-2xl font-semibold mb-4">Education Details Form Coming Soon...</h1>
-        </div>
-      }
     </div>
   );
 }
