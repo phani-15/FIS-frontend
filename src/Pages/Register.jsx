@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import {useNavigate} from "react-router-dom"
 
 export default function Register() {
+  const navigate=useNavigate()
   const [formData, setFormData] = useState({
     name: "",
     father: "",
@@ -215,6 +217,7 @@ export default function Register() {
             Submit
           </button>
         </form>
+        <p className="mt-3">Already have an Account ? <span onClick={()=>(navigate("/profile"))} className="text-blue-800 cursor-pointer">Back to home</span></p>
       </div>
       {display_educationForm &&
         <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
