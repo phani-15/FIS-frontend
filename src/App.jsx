@@ -7,7 +7,6 @@ import IQACLogin from './Pages/IQACLogin'; // fixed double slash
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 import User from './Pages/User';
-import EducationForm from './Pages/EducationForm'; 
 
 export default function App() {
   return (
@@ -17,9 +16,8 @@ export default function App() {
         <Routes>
           <Route path='/HOD-login' element={<HODLogin />} />
           <Route path='/IQAC-login' element={<IQACLogin />} /> 
-          <Route path='/' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/education' element={<EducationForm />} />
+          <Route path='/register' element={<Login />} />
+          <Route path='/' element={<Register />} />
           <Route path='/user' element={<User />} />
         </Routes>
       </BrowserRouter>
