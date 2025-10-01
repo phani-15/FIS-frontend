@@ -29,7 +29,6 @@ export default function Iqac() {
     "Researcher"
   ];
 
-  // Example faculty data
   const facultyList = [
     { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
     { name: "Dr. Jane Smith", department: "Electrical and Electronics Engineering", role: "Associate Professor" },
@@ -42,6 +41,21 @@ export default function Iqac() {
     { name: "Dr. Daniel Anderson", department: "Metallurgical Engineering", role: "Professor" },
     { name: "Dr. Grace Lee", department: "M.Tech", role: "Assistant Professor" },
     { name: "Dr. Benjamin Harris", department: "MBA", role: "Lecturer" },
+     { name: "Dr. Alice Parker", department: "Computer Science and Engineering", role: "Assistant Professor" },
+  { name: "Dr. Robert King", department: "Mechanical Engineering", role: "Professor" },
+  { name: "Dr. Laura Scott", department: "Civil Engineering", role: "Lecturer" },
+  { name: "Dr. Kevin White", department: "Electrical and Electronics Engineering", role: "Researcher" },
+  { name: "Dr. Megan Lewis", department: "Electronics and Communication Engineering", role: "Assistant Professor" },
+  { name: "Dr. Brian Hall", department: "Information Technology Engineering", role: "Professor" },
+  { name: "Dr. Rachel Allen", department: "M.Tech", role: "Lecturer" },
+  { name: "Dr. Steven Young", department: "MBA", role: "Assistant Professor" },
+  { name: "Dr. Laura Adams", department: "Metallurgical Engineering", role: "Researcher" },
+  { name: "Dr. Daniel Carter", department: "Computer Science and Engineering", role: "Lecturer" },
+  { name: "Dr. Nancy Mitchell", department: "Civil Engineering", role: "Associate Professor" },
+  { name: "Dr. Thomas Walker", department: "Electrical and Electronics Engineering", role: "Professor" },
+  { name: "Dr. Karen Harris", department: "Mechanical Engineering", role: "Researcher" },
+  { name: "Dr. Joshua Lewis", department: "Information Technology Engineering", role: "Assistant Professor" },
+  { name: "Dr. Patricia Clark", department: "MBA", role: "Professor" },
   ];
 
   // Filter faculty
@@ -58,7 +72,6 @@ export default function Iqac() {
 
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {/* Department */}
         <div>
           <label className="block mb-1 font-medium">Department:</label>
           <select
@@ -72,7 +85,6 @@ export default function Iqac() {
           </select>
         </div>
 
-        {/* Role */}
         <div>
           <label className="block mb-1 font-medium">Role:</label>
           <select
@@ -86,7 +98,6 @@ export default function Iqac() {
           </select>
         </div>
 
-        {/* Search */}
         <div>
           <label className="block mb-1 font-medium">Search:</label>
           <input
@@ -99,11 +110,17 @@ export default function Iqac() {
         </div>
       </div>
 
+      {/* Total members count */}
+      <div className="mb-4 font-medium text-gray-700">
+        Total Members: {filteredFaculty.length}
+      </div>
+
       {/* Faculty Table */}
       <div className="overflow-x-auto bg-white rounded-xl shadow-md">
         <table className="w-full table-auto border-collapse">
           <thead className="bg-purple-100 text-gray-800">
             <tr>
+              <th className="border px-4 py-2 text-left">S.No</th>
               <th className="border px-4 py-2 text-left">Name</th>
               <th className="border px-4 py-2 text-left">Department</th>
               <th className="border px-4 py-2 text-left">Role</th>
@@ -113,6 +130,7 @@ export default function Iqac() {
             {filteredFaculty.length > 0 ? (
               filteredFaculty.map((f, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
+                  <td className="border px-4 py-2">{idx + 1}</td>
                   <td className="border px-4 py-2">{f.name}</td>
                   <td className="border px-4 py-2">{f.department}</td>
                   <td className="border px-4 py-2">{f.role}</td>
@@ -120,7 +138,7 @@ export default function Iqac() {
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="border px-4 py-2 text-center text-gray-500">
+                <td colSpan="4" className="border px-4 py-2 text-center text-gray-500">
                   No faculty found
                 </td>
               </tr>
