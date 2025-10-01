@@ -24,6 +24,11 @@ export default function App() {
           <Route path='/profile' element={<Profile />} />
           <Route path='/iqac' element={<Iqac />} /> 
         </Routes>
+        <footer className='flex justify-center p-6'>
+          <p className="mt-8 text-xs text-gray-500">
+          © Faculty Information System
+        </p>
+        </footer>
       </div>
     </BrowserRouter>
   );

@@ -108,9 +108,7 @@ export default function HODLogin() {
         </form>
 
         {/* Footer */}
-        <p className="mt-8 text-xs text-gray-500">
-          © Faculty Information System  - Secure HOD Access
-        </p>
+        
       </div>
     </div>
   );
