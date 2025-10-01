@@ -8,7 +8,6 @@ import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from "./Pages/Profile";
 import User from './Pages/User';
-import EducationForm from './Pages/EducationForm'; 
 import Iqac from './Pages/Iqac'; 
 
 export default function App() {
@@ -23,7 +22,6 @@ export default function App() {
           <Route path='/register' element={<Register />} />
           <Route path='/user' element={<User />} />
           <Route path='/profile' element={<Profile />} />
-          <Route path='/education' element={<EducationForm />} />
           <Route path='/iqac' element={<Iqac />} /> 
         </Routes>
       </div>
