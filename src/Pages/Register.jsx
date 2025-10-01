@@ -192,17 +192,6 @@ export default function Register() {
               required
             />
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            // onClick={navigate("/profile")}
-            className="mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-          >
-            Submit
-          </button>
-        </form>
-        <p className="mt-3">Already have an Account ? <span onClick={()=>(navigate("/"))} className="text-blue-800 cursor-pointer">Back to home</span></p>
-      </div>
             {/* Submit Button */}
 
             <p className="mt-3">Already have an Account ? <span onClick={() => (navigate("/profile"))} className="text-blue-800 cursor-pointer">Back to home</span></p>
