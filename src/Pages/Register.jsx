@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "personal" | "education"
+  const [step, setStep] = useState("signUp"); // "personal" | "education"
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
@@ -12,18 +12,23 @@ export default function Register() {
     father: "",
     gender: "",
     DOB: "",
-    email: "",
-    phone: "",
     marrital: "",
-    password: "",
-    Cpassword: "",
+    designation: "",
   });
 
+  const [loginData, setLoginData] = useState({
+    password: "",
+    Cpassword: "",
+    department: "",
+    email: "",
+    phone: "",
+  })
+
   const [education, setEducation] = useState({
-    tenth: { title: "Tenth", school: "", marks: "", year: "", certificate: null },
-    inter: { title: "Intermediate/Diploma", college: "", marks: "", year: "", certificate: null },
-    degree: { title: "Under Graduation", college: "", degreeName: "", specialization: "", year: "", certificate: null },
-    pg: { title: "Post Graduation", course: "", specialization: "", year: "", certificate: null },
+    tenth: { title: "Tenth", school: "", marks: "", year: "", },
+    twelth: { title: "Intermediate/Diploma", type: "", college: "", marks: "", year: "", },
+    degree: { title: "Under Graduation", college: "", degreeName: "", specialization: "", year: "", },
+    pg: { title: "Post Graduation",college:"", course: "", specialization: "", year: "" },
   });
 
   // stable handler for generic personal fields
@@ -36,8 +41,14 @@ export default function Register() {
   // phone handler: keep only digits and limit to 10
   const handlePhoneChange = useCallback((e) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-    setFormData((prev) => ({ ...prev, phone: digits }));
+    setLoginData((prev) => ({ ...prev, phone: digits }));
     setErrors((prev) => ({ ...prev, phone: "" }));
+  }, []);
+
+  const handleLoginChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setLoginData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
   // single stable handler for education inputs using name="level.field"
@@ -51,32 +62,34 @@ export default function Register() {
   }, []);
 
   // file input handler (file inputs stay uncontrolled but we keep file ref in state)
-  const handleFileChange = useCallback((e) => {
-    const [level] = e.target.name.split(".");
-    const file = e.target.files?.[0] ?? null;
-    setEducation((prev) => ({
-      ...prev,
-      [level]: { ...prev[level], certificate: file },
-    }));
-  }, []);
 
-  const validatePersonal = useCallback(() => {
+
+  const validateSignUp = useCallback(() => {
     const newErrors = {};
-    if (formData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
-    if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-    if (formData.password !== formData.Cpassword) newErrors.Cpassword = "Passwords do not match";
+    if (loginData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
+    if (loginData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
+    if (loginData.password !== loginData.Cpassword) newErrors.Cpassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData]);
+  }, [loginData]);
 
   const handleSubmitPersonal = useCallback(
     (e) => {
       e.preventDefault();
-      if (!validatePersonal()) return;
       console.log("Personal Data:", formData);
       setStep("education");
+    }, [formData]
+  );
+
+
+  const handleSubmitSignUp = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!validateSignUp()) return;
+      console.log("Login Data:", loginData);
+      setStep("personal");
     },
-    [formData, validatePersonal]
+    [formData, validateSignUp]
   );
 
   const handleSubmitEducation = useCallback(
@@ -88,13 +101,33 @@ export default function Register() {
     [education]
   );
 
-  // helper to render non-certificate fields of education level
   const renderEduFields = (levelKey) => {
-    const fields = Object.keys(education[levelKey]).filter((f) => f !== "certificate" && f != "title");
+    const fields = Object.keys(education[levelKey]).filter((f) => f != "title");
     return fields.map((f) => {
       const label = f
         .replace(/([A-Z])/g, " $1")
         .replace(/^./, (s) => s.toUpperCase()); // "degreeName" -> "Degree Name"
+
+      // Special case: "type" field under "twelth" should be a dropdown
+      if (levelKey === "twelth" && f === "type") {
+        return (
+          <div key={`${levelKey}.${f}`} className="flex flex-col text-left space-y-2">
+            <label>{label}</label>
+            <select
+              name={`${levelKey}.${f}`}
+              value={education[levelKey][f] || ""}
+              onChange={handleEducationChange}
+              className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
+              required
+            >
+              <option value="">Select</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Diploma">Diploma</option>
+            </select>
+          </div>
+        );
+      }
+
       return (
         <InputField
           key={`${levelKey}.${f}`}
@@ -113,6 +146,76 @@ export default function Register() {
 
   return (
     <div className="m-5 flex flex-col justify-center items-center">
+      {step === 'signUp' && (
+        <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
+          <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Sign Up</h1>
+
+          <form onSubmit={handleSubmitSignUp} className="flex flex-col">
+
+            <InputField label="Email" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
+
+            {/* specific handler for phone to keep digits-only and stable string */}
+            <InputField
+              label="Phone Number (10 digits)"
+              name="phone"
+              value={loginData.phone}
+              onChange={handlePhoneChange}
+              inputMode="numeric"
+              placeholder="Enter phone number"
+              error={errors.phone}
+              required
+            />
+
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label>Department</label>
+              <select
+                name="department"
+                value={loginData.department}
+                onChange={handleLoginChange}
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
+                required
+              >
+                <option value="">Select your option</option>
+                <option value="bshss">BS & HSS</option>
+                <option value="cse">Computer Science & Engineering</option>
+                <option value="ece">Electronics & Communication Engineering</option>
+                <option value="eee">Electrical & Electronics Engineering</option>
+                <option value="civil">Civil Engineering</option>
+                <option value="it">Inforamtion Technology</option>
+                <option value="met">Metallurgical Engineering</option>
+                <option value="mech">Mechanical Engineering</option>
+              </select>
+            </div>
+
+            <InputField
+              label="Password"
+              name="password"
+              type="password"
+              value={loginData.password}
+              onChange={handleLoginChange}
+              error={errors.password}
+              required />
+            <InputField
+              label="Confirm Password"
+              name="Cpassword"
+              type="password"
+              value={loginData.Cpassword}
+              onChange={handleLoginChange}
+              error={errors.Cpassword}
+              required
+            />
+
+            <p className="mt-3">Already have an Account ? <span onClick={() => (navigate("/"))} className="text-blue-800 cursor-pointer">Back to home</span></p>
+
+            <button
+              type="submit"
+              className="mt-6 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+            >
+              Next
+            </button>
+          </form>
+        </div>
+      )}
       {step === "personal" && (
         <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
@@ -160,48 +263,25 @@ export default function Register() {
               </select>
             </div>
 
-            <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
-
-            {/* specific handler for phone to keep digits-only and stable string */}
-            <InputField
-              label="Phone Number (10 digits)"
-              name="phone"
-              value={formData.phone}
-              onChange={handlePhoneChange}
-              inputMode="numeric"
-              placeholder="Enter phone number"
-              error={errors.phone}
-              required
-            />
-
-            <InputField
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              error={errors.password}
-              required />
-            <InputField
-              label="Confirm Password"
-              name="Cpassword"
-              type="password"
-              value={formData.Cpassword}
-              onChange={handleChange}
-              error={errors.Cpassword}
-              required
-            />
 
             {/* Submit Button */}
 
-            <p className="mt-3">Already have an Account ? <span onClick={() => (navigate("/profile"))} className="text-blue-800 cursor-pointer">Back to home</span></p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => setStep("signUp")}
+                className="mt-6 py-2 px-4 cursor-pointer rounded-lg border"
+              >
+                Back
+              </button>
 
-            <button
-              type="submit"
-              className="mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-            >
-              Next
-            </button>
+              <button
+                type="submit"
+                className="mt-6 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+              >
+                Next
+              </button>
+            </div>
           </form>
         </div >
       )
@@ -217,34 +297,19 @@ export default function Register() {
                 <div key={level}>
                   <h2 className="text-lg font-semibold mt-4 capitalize">{education[level].title}</h2>
                   {renderEduFields(level)}
-
-                  <div className="flex flex-col text-left space-y-2 mt-4">
-                    <label>Upload Certificate:</label>
-                    <label className="w-full border border-gray-300 rounded-lg py-2 px-3 cursor-pointer flex justify-between items-center hover:border-blue-500 transition">
-                      <span>{education[level].certificate?.name || "Choose file"}</span>
-                      <span className="text-gray-500 text-sm">Browse</span>
-                      {/* name used to identify level in handler */}
-                      <input
-                        type="file"
-                        name={`${level}.certificate`}
-                        className="hidden"
-                        onChange={handleFileChange}
-                      />
-                    </label>
-                  </div>
                 </div>
               ))}
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
                   onClick={() => setStep("personal")}
-                  className="py-2 px-4 rounded-lg border"
+                  className="py-2 px-4 rounded-lg border cursor-pointer"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
-                  className="mt-0 bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
                   Submit
                 </button>
@@ -254,6 +319,5 @@ export default function Register() {
         )
       }
     </div>
-
   )
 }
