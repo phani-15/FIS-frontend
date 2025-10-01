@@ -73,7 +73,7 @@ export default function Login() {
 							htmlFor="username"
 							className="block mb-1 text-sm font-medium text-gray-700"
 						>
-							email / Phone number
+							Email / Phone number
 						</label>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">
