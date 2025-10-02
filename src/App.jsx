@@ -9,6 +9,7 @@ import Register from './Pages/Register';
 import Profile from "./Pages/Profile";
 import User from './Pages/User';
 import Iqac from './Pages/Iqac'; 
+import AddDetails from './Pages/AddDetails';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path='/user' element={<User />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/iqac' element={<Iqac />} /> 
+          <Route path='/add' element={<AddDetails/>} />
         </Routes>
         <footer className='flex justify-center p-6'>
           <p className="mt-8 text-xs text-gray-500">

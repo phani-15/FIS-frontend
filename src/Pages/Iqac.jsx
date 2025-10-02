@@ -89,118 +89,185 @@ const facultyList = [
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto bg-gray-50 rounded-xl shadow-lg">
-      <h1 className="text-3xl font-bold mb-4 text-center">IQAC Dashboard</h1>
-
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div>
-          <label className="block mb-1 font-medium">Department:</label>
-          <select
-            className="w-full border border-gray-300 rounded-lg p-2"
-            value={filters.department}
-            onChange={(e) => { setFilters({ ...filters, department: e.target.value }); setCurrentPage(1); }}
-          >
-            {departments.map((dept, idx) => (
-              <option key={idx} value={dept}>{dept}</option>
-            ))}
-          </select>
+    <div className="p-4 md:p-8">
+      <div className="max-w-6xl rounded-3xl bg-gray-50 p-6  mx-auto">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-800">IQAC Dashboard</h1>
+          <p className="text-gray-600 mt-2">Internal Quality Assurance Cell - Faculty Directory</p>
         </div>
 
-        <div>
-          <label className="block mb-1 font-medium">Role:</label>
-          <select
-            className="w-full border border-gray-300 rounded-lg p-2"
-            value={filters.role}
-            onChange={(e) => { setFilters({ ...filters, role: e.target.value }); setCurrentPage(1); }}
-          >
-            {roles.map((role, idx) => (
-              <option key={idx} value={role}>{role}</option>
-            ))}
-          </select>
+        {/* Filters Section */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Department Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+              <select
+                value={filters.department}
+                onChange={(e) => { 
+                  setFilters({ ...filters, department: e.target.value }); 
+                  setCurrentPage(1); 
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {departments.map((dept, idx) => (
+                  <option key={idx} value={dept}>{dept}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Role Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+              <select
+                value={filters.role}
+                onChange={(e) => { 
+                  setFilters({ ...filters, role: e.target.value }); 
+                  setCurrentPage(1); 
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {roles.map((role, idx) => (
+                  <option key={idx} value={role}>{role}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Search */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Search Faculty</label>
+              <input
+                type="text"
+                placeholder="Search by name..."
+                value={filters.searchTerm}
+                onChange={(e) => { 
+                  setFilters({ ...filters, searchTerm: e.target.value }); 
+                  setCurrentPage(1); 
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label className="block mb-1 font-medium">Search:</label>
-          <input
-            type="text"
-            placeholder="Search by name"
-            className="w-full border border-gray-300 rounded-lg p-2"
-            value={filters.searchTerm}
-            onChange={(e) => { setFilters({ ...filters, searchTerm: e.target.value }); setCurrentPage(1); }}
-          />
+        {/* Results Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+          <p className="text-gray-700 font-medium">
+            Total Faculty: <span className="font-bold text-blue-600">{filteredFaculty.length}</span>
+          </p>
+          
+          <div className="mt-2 md:mt-0">
+            <label className="text-sm font-medium text-gray-700 mr-2">Rows per page:</label>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => { 
+                setItemsPerPage(Number(e.target.value)); 
+                setCurrentPage(1); 
+              }}
+              className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {[10, 25, 50, 100].map((num) => (
+                <option key={num} value={num}>{num}</option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
 
-      {/* Rows per page selector */}
-      <div className="flex justify-between items-center mb-2">
-        <p className="font-medium">Total Faculty: {filteredFaculty.length}</p>
-        <div>
-          <label className="mr-2 font-medium">Rows per page:</label>
-          <select
-            className="border border-gray-300 rounded-lg p-1"
-            value={itemsPerPage}
-            onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-          >
-            {[10, 25, 50, 100].map((num) => (
-              <option key={num} value={num}>{num}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Faculty Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow-md">
-        <table className="w-full table-auto border-collapse">
-          <thead className="bg-purple-100 text-gray-800">
-            <tr>
-              <th className="border px-4 py-2 text-left">#</th>
-              <th className="border px-4 py-2 text-left">Name</th>
-              <th className="border px-4 py-2 text-left">Department</th>
-              <th className="border px-4 py-2 text-left">Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedFaculty.length > 0 ? (
-              paginatedFaculty.map((f, idx) => (
-                <tr key={idx} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
-                  <td className="border px-4 py-2">{highlightMatch(f.name)}</td>
-                  <td className="border px-4 py-2">{f.department}</td>
-                  <td className="border px-4 py-2">{f.role}</td>
+        {/* Faculty Table */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="border px-4 py-2 text-center text-gray-500">
-                  No faculty found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-4">
-          <button
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <button
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginatedFaculty.length > 0 ? (
+                  paginatedFaculty.map((f, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {(currentPage - 1) * itemsPerPage + idx + 1}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {highlightMatch(f.name)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 max-w-xs truncate">
+                        {f.department}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                          bg-blue-100 text-blue-800">
+                          {f.role}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="px-6 py-24 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="text-gray-400 mb-2">🔍</div>
+                        <p className="text-gray-500 font-medium">No faculty members found</p>
+                        <p className="text-gray-400 text-sm mt-1">Try adjusting your filters</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 space-y-4 sm:space-y-0">
+            <div className="text-sm text-gray-700">
+              Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{" "}
+              <span className="font-medium">
+                {Math.min(currentPage * itemsPerPage, filteredFaculty.length)}
+              </span>{" "}
+              of <span className="font-medium">{filteredFaculty.length}</span> results
+            </div>
+            
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg ${
+                  currentPage === 1 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                }`}
+              >
+                Previous
+              </button>
+              
+              <span className="px-4 py-2 text-gray-700 font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+              
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 rounded-lg ${
+                  currentPage === totalPages 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
