@@ -1,19 +1,19 @@
 import React, { useState, useCallback } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import {Trash2} from "lucide-react"
+import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("experience"); // "personal" | "education" | "experience"
+  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
 
-  const [formData, setFormData] = useState({
+  const [personalData, setpersonalData] = useState({
     name: "",
     father: "",
     gender: "",
     DOB: "",
-    marrital: "",
+    marital: "",
     designation: "",
   });
 
@@ -37,10 +37,19 @@ export default function Register() {
     { institute: "", designation: "", from: "", to: "" }
   ])
 
+  const [administrativeService, setAdministrativeService] = useState([
+    { designation: "", from: "", to: "" }
+  ])
+
+  const [otherAdministrativeService, setOtherAdministrativeService] = useState([
+    { institute: "", from: "", to: "", designation: "" }
+  ])
+
+
   // stable handler for generic personal fields
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setpersonalData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
@@ -90,7 +99,45 @@ export default function Register() {
     }));
   }, []);
 
-  // file input handler (file inputs stay uncontrolled but we keep file ref in state)
+  const handleASChange = useCallback((index, e) => {
+    const { name, value } = e.target;
+    setAdministrativeService(prev => {
+      const updated = [...prev];
+      updated[index][name] = value;
+      return updated;
+    });
+  }, []);
+
+  const handleOASChange = useCallback((index, e) => {
+    const { name, value } = e.target;
+    setOtherAdministrativeService(prev => {
+      const updated = [...prev];
+      updated[index][name] = value;
+      return updated;
+    });
+  }, []);
+
+  const addAS = useCallback(() => {
+    setAdministrativeService(prev => [
+      ...prev,
+      { designation: "", from: "", to: "" }
+    ]);
+  }, []);
+
+  const addOAS = useCallback(() => {
+    setOtherAdministrativeService(prev => [
+      ...prev,
+      { institute: "", designation: "", from: "", to: "" }
+    ]);
+  }, []);
+
+  const removeAS = useCallback((index) => {
+    setAdministrativeService(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const removeOAS = useCallback((index) => {
+    setOtherAdministrativeService(prev => prev.filter((_, i) => i !== index));
+  }, []);
 
 
   const validateSignUp = useCallback(() => {
@@ -105,11 +152,35 @@ export default function Register() {
   const handleSubmitPersonal = useCallback(
     (e) => {
       e.preventDefault();
-      console.log("Personal Data:", formData);
+      console.log("Personal Data:", personalData);
       setStep("education");
-    }, [formData]
+    }, [personalData]
   );
 
+  const validateExperience = useCallback(() => {
+    const newErrors = {};
+
+    experience.forEach((exp, index) => {
+      Object.entries(exp).forEach(([field, value]) => {
+        if (!value || value.toString().trim() === "") {
+          newErrors[`experience.${index}.${field}`] = `Experience ${index + 1}: ${field} is required`;
+        }
+      });
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [experience]);
+
+  const handleSubmitExperience = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!validateExperience()) return;
+      console.log("Experience Data:", experience);
+      setStep("as");
+    },
+    [experience, validateExperience]
+  );
 
   const handleSubmitSignUp = useCallback(
     (e) => {
@@ -118,20 +189,39 @@ export default function Register() {
       console.log("Login Data:", loginData);
       setStep("personal");
     },
-    [formData, validateSignUp]
+    [personalData, validateSignUp]
   );
+
+  const validateEducation = useCallback(() => {
+    const newErrors = {};
+
+    Object.entries(education).forEach(([level, fields]) => {
+      Object.entries(fields).forEach(([field, value]) => {
+        if (field === "title") return; // skip title
+        if (!value || value.toString().trim() === "") {
+          newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
+        }
+      });
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [education]);
+
 
   const handleSubmitEducation = useCallback(
     (e) => {
       e.preventDefault();
+      if (!validateEducation()) return;
       console.log("Education Data:", education);
-      setStep("experience")
+      setStep("experience");
     },
-    [education]
+    [education, validateEducation]
   );
 
+
   const renderEduFields = (levelKey) => {
-    const fields = Object.keys(education[levelKey]).filter((f) => f != "title");
+    const fields = Object.keys(education[levelKey]).filter((f) => f !== "title");
     return fields.map((f) => {
       const label = f
         .replace(/([A-Z])/g, " $1")
@@ -146,6 +236,7 @@ export default function Register() {
               name={`${levelKey}.${f}`}
               value={education[levelKey][f] || ""}
               onChange={handleEducationChange}
+              error={errors[`${levelKey}.${f}`]}
               className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
               required
             >
@@ -166,7 +257,8 @@ export default function Register() {
           onChange={handleEducationChange}
           // keep year as text + inputMode numeric to avoid number->string conversions
           type={f === "year" ? "text" : "text"}
-          inputMode={f === "year" ? "numeric" : undefined}
+          error={errors[`${levelKey}.${f}`]}
+          inputMode={f === "year" ? "numeric" : f==="marks" ? "numeric" : undefined}
           placeholder={f === "year" ? "Enter year" : `Enter ${label.toLowerCase()}`}
         />
       );
@@ -250,8 +342,8 @@ export default function Register() {
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            <InputField label="Full Name" name="name" value={formData.name} onChange={handleChange} required />
-            <InputField label="Father's Name" name="father" value={formData.father} onChange={handleChange} required />
+            <InputField label="Full Name" name="name" value={personalData.name} onChange={handleChange} required />
+            <InputField label="Father's Name" name="father" value={personalData.father} onChange={handleChange} required />
 
             <div className="md:flex justify-between">
               <div className="flex flex-col text-left space-y-2 mt-4">
@@ -259,7 +351,7 @@ export default function Register() {
                 <div className="flex space-x-6 mt-1">
                   {["Male", "Female"].map((g) => (
                     <label key={g} className="flex items-center space-x-2">
-                      <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={handleChange} required />
+                      <input type="radio" name="gender" value={g} checked={personalData.gender === g} onChange={handleChange} required />
                       <span>{g}</span>
                     </label>
                   ))}
@@ -270,7 +362,7 @@ export default function Register() {
                 label="Date of Birth"
                 name="DOB"
                 type="date"
-                value={formData.DOB}
+                value={personalData.DOB}
                 onChange={handleChange}
                 required
                 className="mr-18"
@@ -280,8 +372,8 @@ export default function Register() {
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label>Marital Status:</label>
               <select
-                name="marrital"
-                value={formData.marrital}
+                name="marital"
+                value={personalData.marital}
                 onChange={handleChange}
                 className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
                 required
@@ -292,6 +384,8 @@ export default function Register() {
               </select>
             </div>
 
+
+            <InputField label="Designation" name="designation" value={personalData.designation} onChange={handleChange} required />
 
             {/* Submit Button */}
 
@@ -355,11 +449,7 @@ export default function Register() {
           </h1>
 
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log("Experience Data:", experience);
-              alert("Registration Complete!");
-            }}
+            onSubmit={handleSubmitExperience}
             className="flex flex-col space-y-6"
           >
             {experience.map((exp, index) => (
@@ -371,6 +461,7 @@ export default function Register() {
                   name="institute"
                   value={exp.institute}
                   onChange={(e) => handleExperienceChange(index, e)}
+                  error={errors[`experience.${index}.institute`]}
                   required
                 />
 
@@ -379,6 +470,7 @@ export default function Register() {
                   name="designation"
                   value={exp.designation}
                   onChange={(e) => handleExperienceChange(index, e)}
+                  error={errors[`experience.${index}.designation`]}
                   required
                 />
 
@@ -387,16 +479,26 @@ export default function Register() {
                     label="From"
                     type="number"
                     name="from"
+                    min="1900"
+                    max={new Date().getFullYear()}
                     value={exp.from}
-                    onChange={(e) => handleExperienceChange(index, e)}
+                    onChange={(e) => handleExperienceChange(index, {
+                      target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
+                    })}
+                    error={errors[`experience.${index}.from`]}
                     required
                   />
                   <InputField
                     label="To"
                     type="number"
                     name="to"
+                    min="1900"
+                    max={new Date().getFullYear()}
                     value={exp.to}
-                    onChange={(e) => handleExperienceChange(index, e)}
+                    onChange={(e) => handleExperienceChange(index, {
+                      target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
+                    })}
+                    error={errors[`experience.${index}.to`]}
                     required
                   />
                 </div>
@@ -405,44 +507,246 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => removeExperience(index)}
-                    className="absolute top-2 cursor-pointer right-2 text-sm"
+                    className="absolute top-2 cursor-pointer right-2 text-red-500  text-sm"
                   >
-                    <Trash2 /> 
+                    <Trash2 />
                   </button>
                 )}
               </div>
             ))}
 
             <div className="flex justify-between">
-              
-            <button
-              type="button"
-              onClick={addExperience}
-              className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-            >
-              ➕ Add
-            </button>
-            <div className="flex gap-3 justify-end">
+
               <button
                 type="button"
-                onClick={() => setStep("education")}
-                className="py-2 px-4 rounded-lg border cursor-pointer"
+                onClick={addExperience}
+                className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
               >
-                Back
+                <span className="text-violet-700 font-bold text-2xl">+</span> Add
               </button>
-              <button
-                type="submit"
-                className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-              >
-               Finish Registration
-              </button>
-            </div>
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setStep("education")}
+                  className="py-2 px-4 rounded-lg border cursor-pointer"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                >
+                  Next
+                </button>
+              </div>
 
             </div>
-            
+
           </form>
         </div>
       )}
+
+      {
+        step == "as" && (
+          <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-2xl font-semibold mb-4">
+              Administrative Service in this Institute
+            </h1>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("Administrative Service :", administrativeService);
+                setStep("oas")
+              }}
+              className="flex flex-col space-y-6"
+            >
+              {administrativeService.map((as, index) => (
+                <div key={index} className="border mt-4 border-blue-300 p-2 py-4 rounded-lg shadow-sm relative">
+                  <h2 className="text-lg font-semibold mb-3">Service {index + 1}</h2>
+
+                  <InputField
+                    label="Designation"
+                    name="designation"
+                    value={as.designation}
+                    onChange={(e) => handleASChange(index, e)}
+                    required
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <InputField
+                      label="From"
+                      type="number"
+                      name="from"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      value={as.from}
+                      onChange={(e) => handleASChange(index, {
+                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
+                      })}
+                      required
+                    />
+                    <InputField
+                      label="To"
+                      type="number"
+                      name="to"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      value={as.to}
+                      onChange={(e) => handleASChange(index, {
+                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
+                      })}
+                      required
+                    />
+                  </div>
+
+                  {administrativeService.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeAS(index)}
+                      className="absolute top-2 cursor-pointer right-2 text-sm"
+                    >
+                      <Trash2 />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              <div className="flex justify-between">
+
+                <button
+                  type="button"
+                  onClick={addAS}
+                  className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
+                >
+                  ➕ Add
+                </button>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setStep("experience")}
+                    className="py-2 px-4 rounded-lg border cursor-pointer"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  >
+                    Next
+                  </button>
+                </div>
+
+              </div>
+
+            </form>
+          </div>
+        )
+      }
+      {
+        step == "oas" && (
+          <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-2xl font-semibold mb-4">
+              Administrative Service in other Institute
+            </h1>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("Other Administrative Services :", otherAdministrativeService);
+                navigate("/")
+              }}
+              className="flex flex-col space-y-6"
+            >
+              {otherAdministrativeService.map((oas, index) => (
+                <div key={index} className="border mt-4 border-blue-300 p-2 py-4 rounded-lg shadow-sm relative">
+                  <h2 className="text-lg font-semibold mb-3">Service {index + 1}</h2>
+
+                  <InputField
+                    label="Institute"
+                    name="institute"
+                    value={oas.institute}
+                    onChange={(e) => handleOASChange(index, e)}
+                  />
+
+                  <InputField
+                    label="Designation"
+                    name="designation"
+                    value={oas.designation}
+                    onChange={(e) => handleOASChange(index, e)}
+                    required
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <InputField
+                      label="From"
+                      type="number"
+                      name="from"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      value={oas.from} onChange={(e) => handleOASChange(index, {
+                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
+                      })}
+                      required
+                    />
+                    <InputField
+                      label="To"
+                      type="number"
+                      name="to"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      value={oas.to}
+                      onChange={(e) => handleOASChange(index, {
+                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
+                      })}
+                      required
+                    />
+                  </div>
+
+                  {otherAdministrativeService.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeOAS(index)}
+                      className="absolute top-2 cursor-pointer right-2 text-sm"
+                    >
+                      <Trash2 />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              <div className="flex justify-between">
+
+                <button
+                  type="button"
+                  onClick={addOAS}
+                  className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
+                >
+                  ➕ Add
+                </button>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setStep("as")}
+                    className="py-2 px-4 rounded-lg border cursor-pointer"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  >
+                    Finish Registration
+                  </button>
+                </div>
+
+              </div>
+
+            </form>
+          </div>
+        )
+      }
+
     </div>
   )
 }
