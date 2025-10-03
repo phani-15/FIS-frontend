@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
+import {Trash2} from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("signUp"); // "personal" | "education"
+  const [step, setStep] = useState("experience"); // "personal" | "education" | "experience"
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
@@ -28,14 +29,42 @@ export default function Register() {
     tenth: { title: "Tenth", school: "", marks: "", year: "", },
     twelth: { title: "Intermediate/Diploma", type: "", college: "", marks: "", year: "", },
     degree: { title: "Under Graduation", college: "", degreeName: "", specialization: "", year: "", },
-    pg: { title: "Post Graduation",college:"", course: "", specialization: "", year: "" },
+    pg: { title: "Post Graduation", college: "", course: "", specialization: "", year: "" },
   });
+
+
+  const [experience, setExperience] = useState([
+    { institute: "", designation: "", from: "", to: "" }
+  ])
 
   // stable handler for generic personal fields
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
+  }, []);
+
+  const handleExperienceChange = useCallback((index, e) => {
+    const { name, value } = e.target;
+    setExperience((prev) => {
+      const updated = [...prev];
+      updated[index][name] = value;
+      return updated;
+    });
+  }, []);
+
+
+  // Add new experience row
+  const addExperience = useCallback(() => {
+    setExperience((prev) => [
+      ...prev,
+      { institute: "", designation: "", from: "", to: "", certificate: null }
+    ]);
+  }, []);
+
+  // Remove experience row
+  const removeExperience = useCallback((index) => {
+    setExperience((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   // phone handler: keep only digits and limit to 10
@@ -96,7 +125,7 @@ export default function Register() {
     (e) => {
       e.preventDefault();
       console.log("Education Data:", education);
-      alert("Registration Complete!");
+      setStep("experience")
     },
     [education]
   );
@@ -318,6 +347,102 @@ export default function Register() {
           </div>
         )
       }
+
+      {step === "experience" && (
+        <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
+          <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-2xl font-semibold mb-4">
+            Proffessional/Research Experience
+          </h1>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log("Experience Data:", experience);
+              alert("Registration Complete!");
+            }}
+            className="flex flex-col space-y-6"
+          >
+            {experience.map((exp, index) => (
+              <div key={index} className="border mt-4 border-blue-300 p-2 py-4 rounded-lg shadow-sm relative">
+                <h2 className="text-lg font-semibold mb-3">Experience {index + 1}</h2>
+
+                <InputField
+                  label="Institute Name"
+                  name="institute"
+                  value={exp.institute}
+                  onChange={(e) => handleExperienceChange(index, e)}
+                  required
+                />
+
+                <InputField
+                  label="Designation"
+                  name="designation"
+                  value={exp.designation}
+                  onChange={(e) => handleExperienceChange(index, e)}
+                  required
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <InputField
+                    label="From"
+                    type="number"
+                    name="from"
+                    value={exp.from}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    required
+                  />
+                  <InputField
+                    label="To"
+                    type="number"
+                    name="to"
+                    value={exp.to}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    required
+                  />
+                </div>
+
+                {experience.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeExperience(index)}
+                    className="absolute top-2 cursor-pointer right-2 text-sm"
+                  >
+                    <Trash2 /> 
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <div className="flex justify-between">
+              
+            <button
+              type="button"
+              onClick={addExperience}
+              className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
+            >
+              ➕ Add
+            </button>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => setStep("education")}
+                className="py-2 px-4 rounded-lg border cursor-pointer"
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+              >
+               Finish Registration
+              </button>
+            </div>
+
+            </div>
+            
+          </form>
+        </div>
+      )}
     </div>
   )
 }

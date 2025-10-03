@@ -15,8 +15,8 @@ const InputField = memo(
           type={type}
           value={value}
           onChange={onChange}
-          className={`w-full pl-3 pr-3 py-2 border rounded-lg focus:ring-1 ${
-            error ? "border-red-500" : "border-gray-300 focus:ring-blue-500"
+          className={`w-full pl-3 pr-3 py-2 focus:outline-none border rounded-lg focus:ring-1  ${
+            error ? "border-red-500" : "border-gray-300 "
           }`}
           {...props}
         />
