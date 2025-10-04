@@ -12,12 +12,12 @@ import {
 import { useNavigate } from "react-router-dom";
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [profile, setProfile] = useState(null);
+  // const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate()
   // Dummy JSON data
-  const dummyData = {
+  const profile = {
     profile: {
       name: "Dr. P.Aruna Kumari",
       role: "Professor @ JNTUGV",
@@ -78,20 +78,20 @@ export default function ProfilePage() {
   };
 
   // Simulate API call
-  useEffect(() => {
-    setTimeout(() => {
-      setProfile(dummyData);
-      setLoading(false);
-    }, 500);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setProfile(dummyData);
+  //     setLoading(false);
+  //   }, 500);
+  // }, []);
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-200 to-purple-200">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-200 to-purple-200">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+  //     </div>
+  //   );
+  // }
 
   const Section = ({ title, children }) => (
     <div className="bg-white/70 backdrop-blur-md p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
