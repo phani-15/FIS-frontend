@@ -15,7 +15,6 @@ import Hod from './Pages/HODDashBoard'
 export default function App() {
   return (
     <BrowserRouter>
-      <div className='min-h-screen'>
         <Header />
         <Routes>
           <Route path='/HOD-login' element={<HODLogin />} />
@@ -33,7 +32,6 @@ export default function App() {
           © Faculty Information System
         </p>
         </footer>
-      </div>
     </BrowserRouter>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Search,X } from "lucide-react";
 
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
@@ -15,13 +16,6 @@ export default function HODDashBoard() {
     { name: "Dr. Daniel Anderson", role: "Professor" },
     { name: "Dr. Grace Lee", role: "Assistant Professor" },
     { name: "Dr. Benjamin Harris", role: "Lecturer" },
-    { name: "Dr. Alice Walker", role: "Professor" },
-    { name: "Dr. Mark Spencer", role: "Assistant Professor" },
-    { name: "Dr. Laura King", role: "Researcher" },
-    { name: "Dr. Richard Clark", role: "Professor" },
-    { name: "Dr. Nancy Roberts", role: "Associate Professor" },
-    { name: "Dr. Kevin Lewis", role: "Assistant Professor" },
-    { name: "Dr. Angela White", role: "Lecturer" },
     { name: "Dr. Patrick Hall", role: "Researcher" },
     { name: "Dr. Brenda Allen", role: "Assistant Professor" },
     { name: "Dr. Steven Young", role: "Lecturer" },
@@ -31,9 +25,6 @@ export default function HODDashBoard() {
     { name: "Dr. Jonathan Hall", role: "Researcher" },
     { name: "Dr. Samantha Allen", role: "Lecturer" },
     { name: "Dr. Brian Mitchell", role: "Associate Professor" },
-    { name: "Dr. Lauren Turner", role: "Researcher" },
-    { name: "Dr. Timothy Carter", role: "Lecturer" },
-    { name: "Dr. Rachel Evans", role: "Professor" }
   ];
 
   // ✅ Filter faculty list by search term
@@ -58,24 +49,38 @@ export default function HODDashBoard() {
 
   return (
     <div className="p-8 max-w-6xl mx-auto lg:text-sm bg-gray-50 rounded-3xl shadow-2xl space-y-6">
-      <h1 className="text-4xl font-extrabold mb-6 text-center text-purple-800 tracking-wide drop-shadow">
-        HOD Dashboard
+      <h1 className="text-4xl font-bold mb-6 text-center text-purple-800 tracking-wide drop-shadow">
+      HOD DashBoard
       </h1>
 
       {/* Search Filter */}
-      <div className="flex justify-end bg-white p-6 rounded-2xl shadow-lg">
-        <div>
-          <input
-            type="text"
-            placeholder="🔍 Search by name"
-            className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-400"
-            value={filters.searchTerm}
-            onChange={(e) =>
-              setFilters({ ...filters, searchTerm: e.target.value })
-            }
-          />
-        </div>
-      </div>
+<div className="flex justify-end p-6">
+  <div className="relative w-full max-w-sm">
+    <input
+      type="text"
+      placeholder="Search by name..."
+      className="w-full border border-gray-300 rounded-lg p-2 pl-10 pr-10 bg-gray-50 shadow-sm focus:ring-0 focus:ring-purple-400 focus:border-purple-400 focus:outline-none transition-all duration-200"
+      value={filters.searchTerm}
+      onChange={(e) =>
+        setFilters({ ...filters, searchTerm: e.target.value })
+      }
+      aria-label="Search by name"
+    />
+    <div className="absolute inset-y-0 left-3 flex items-center text-gray-500 pointer-events-none">
+      <Search size={18} aria-hidden="true" />
+    </div>
+    {filters.searchTerm && (
+      <button
+        type="button"
+        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+        onClick={() => setFilters({ ...filters, searchTerm: '' })}
+        aria-label="Clear search"
+      >
+        <X size={18} />
+      </button>
+    )}
+  </div>
+</div>
 
       {/* Total Count */}
       <div className="flex justify-between gap-2 items-center mb-2 px-2">
