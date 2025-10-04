@@ -16,17 +16,15 @@ import {
 } from "lucide-react";
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(null);
 
   // Dummy JSON data
-  const dummyData = {
+  const profile = {
     profile: {
       name: "Dr. P. Aruna Kumari",
       role: "Professor @ JNTUGV",
-      avatar: "https://i.pinimg.com/564x/51/90/10/519010d9ee8167bfe445e616f260f758.jpg"
+      avatar: "images/Aruna-profile-photo.jpg"
     },
     message: "I believe in empowering students through interactive learning and real-world problem solving.",
     personalInfo: {
@@ -82,15 +80,6 @@ export default function ProfilePage() {
     ],
   };
 
-  // Simulate API call
-  useEffect(() => {
-    setTimeout(() => {
-      setProfile(dummyData);
-      setEditedProfile(JSON.parse(JSON.stringify(dummyData)));
-      setLoading(false);
-    }, 1000);
-  }, []);
-
   const handleEditToggle = () => {
     setIsEditing(true);
     setEditedProfile(JSON.parse(JSON.stringify(profile)));
@@ -132,7 +121,7 @@ export default function ProfilePage() {
 
   const handleArrayItemChange = (section, index, field, value) => {
     setEditedProfile(prev => {
-      const updatedArray = prev[section].map((item, i) => 
+      const updatedArray = prev[section].map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       );
       return { ...prev, [section]: updatedArray };
@@ -153,17 +142,6 @@ export default function ProfilePage() {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600 text-lg">Loading your profile...</p>
-        </div>
-      </div>
-    );
-  }
-
   const Section = ({ title, icon, children, className = "" }) => (
     <div className={`bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 ${className}`}>
       <div className="flex items-center gap-3 mb-4">
@@ -177,7 +155,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 lg:p-8">
+    <div className=" p-4 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -202,7 +180,7 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
-                
+
                 {isEditing ? (
                   <div className="mt-4 space-y-3">
                     <input
@@ -228,7 +206,7 @@ export default function ProfilePage() {
                 {/* Action Buttons */}
                 <div className="mt-6 space-y-3">
                   {isEditing ? (
-                    <>
+                    <div className="flex">
                       <button
                         onClick={handleSave}
                         className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-500 text-white shadow-lg hover:bg-green-600 transition-all duration-200 transform hover:scale-105"
@@ -241,19 +219,19 @@ export default function ProfilePage() {
                       >
                         <XCircle size={20} /> Cancel
                       </button>
-                    </>
+                    </div>
                   ) : (
-                    <>
+                    <div className="flex gap-2">
                       <button
                         onClick={handleEditToggle}
                         className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-500 text-white shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105"
                       >
-                        <Edit size={20} /> Edit Profile
+                        <Edit size={20} /> Edit 
                       </button>
                       <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-500 text-white shadow-lg hover:bg-red-600 transition-all duration-200">
                         <LogOut size={20} /> Logout
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -289,21 +267,6 @@ export default function ProfilePage() {
 
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Message Section */}
-            <Section title="Personal Message" icon={<User size={20} className="text-blue-600" />}>
-              {isEditing ? (
-                <textarea
-                  value={editedProfile.message}
-                  onChange={(e) => setEditedProfile(prev => ({ ...prev, message: e.target.value }))}
-                  className="w-full p-4 border-2 border-gray-200 rounded-xl bg-white/50 resize-none focus:outline-none focus:border-blue-500 transition-all duration-200"
-                  rows={3}
-                  placeholder="Share your teaching philosophy or personal message..."
-                />
-              ) : (
-                <p className="text-gray-700 text-lg italic leading-relaxed">"{profile.message}"</p>
-              )}
-            </Section>
-
             {/* Education Section */}
             <Section title="Educational Qualifications" icon={<GraduationCap size={20} className="text-green-600" />}>
               <div className="space-y-4">
