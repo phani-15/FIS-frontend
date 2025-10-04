@@ -7,7 +7,7 @@ export default function Header() {
       <div className="w-24 flex-shrink-0 mb-4 md:mb-0 md:absolute md:left-6">
 
         <img
-          src="images/jntugv.png"
+          src="/images/jntugv.png"
           alt="JNTUGV Logo"
           className="w-full h-auto"
         />
