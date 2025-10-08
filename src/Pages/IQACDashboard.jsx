@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {X} from 'lucide-react'
 
 export default function Iqac() {
   const [filters, setFilters] = useState({
@@ -125,13 +126,25 @@ export default function Iqac() {
 
         <div>
           <label className="block mb-2 font-semibold text-gray-700">Search</label>
-          <input
+          <div className="relative">
+            <input
             type="text"
             placeholder="🔍 Search by name"
             className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-400"
             value={filters.searchTerm}
             onChange={(e) => { setFilters({ ...filters, searchTerm: e.target.value }); setCurrentPage(1); }}
           />
+          {filters.searchTerm && (
+            <button
+              type="button"
+              className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+              onClick={()=>setFilters({...filters,searchTerm:''})}
+              aria-label="Clear search"
+            >
+              <X size={18}/>
+            </button>
+          )}
+          </div>
         </div>
       </div>
 

@@ -118,7 +118,7 @@ export default function ProfilePage() {
                 />
                 <div className="mt-4">
                   <h1 className="text-2xl font-bold text-gray-800">
-                    {profile.profile.name};
+                    {profile.profile.name}
                   </h1>
                   <p className="text-gray-600">{profile.profile.role}</p>
                 </div>

@@ -11,11 +11,14 @@ import User from './Pages/User';
 import Iqac from './Pages/IQACDashboard'; 
 import AddDetails from './Pages/AddDetails';
 import Hod from './Pages/HODDashBoard'
+import Admin from './Pages/Admin';
 
 export default function App() {
   return (
+    <div className='flex flex-col min-h-screen'>
     <BrowserRouter>
         <Header />
+        <main className='flex-grow'>          
         <Routes>
           <Route path='/HOD-login' element={<HODLogin />} />
           <Route path='/IQAC-login' element={<IQACLogin />} /> 
@@ -26,12 +29,15 @@ export default function App() {
           <Route path='/iqac' element={<Iqac />} /> 
           <Route path='/add' element={<AddDetails/>} />
           <Route path='/hod' element={<Hod/>}/>
+          <Route path='admin' element={<Admin/>}/>
         </Routes>
+        </main>
         <footer className='flex justify-center p-6'>
           <p className="mt-8 text-xs text-gray-500">
           © Faculty Information System
         </p>
         </footer>
     </BrowserRouter>
+    </div>
   );
 }
