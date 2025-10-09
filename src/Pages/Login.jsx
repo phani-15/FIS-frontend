@@ -126,7 +126,7 @@ export default function Login() {
 
 				{/* Footer */}
 				<p className="mt-8 text-xs text-gray-500">
-					© Faculty Information System  - Secure HOD Access
+					 Secure HOD Access
 				</p>
 			</div>
 		</div>

@@ -12,6 +12,7 @@ import Iqac from './Pages/IQACDashboard';
 import AddDetails from './Pages/AddDetails';
 import Hod from './Pages/HODDashBoard'
 import Admin from './Pages/Admin';
+import AdminLogin from './Pages/AdminLogin';
 import ViewCertificaion from './Pages/ViewCertificaion';
 
 export default function App() {
@@ -30,6 +31,8 @@ export default function App() {
           <Route path='/iqac' element={<Iqac />} /> 
           <Route path='/add' element={<AddDetails/>} />
           <Route path='/hod' element={<Hod/>}/>
+          <Route path='adminPage' element={<Admin/>}/>
+          <Route path='admin' element={<AdminLogin/>}/>
           <Route path='/admin' element={<Admin/>}/>
           <Route path='/vc' element={<ViewCertificaion/>}/>
         </Routes>
