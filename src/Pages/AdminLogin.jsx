@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function IQACLogin() {
+export default function Admin() {
   const [passCode, setPassCode] = useState("");  // ✅ Correct destructuring
   const navigate = useNavigate();
   const [isEmpty, setEmpty] = useState(false);
@@ -24,10 +24,10 @@ export default function IQACLogin() {
       return;
     }
 
-    const validPassCode = "JntuIqac2025";
+    const validPassCode = "AdminFaculty";
 
     if (passCode === validPassCode) {
-      navigate("/iqac");
+      navigate("/adminPage");
     } else {
       setFalse(true);
     }
@@ -44,7 +44,7 @@ export default function IQACLogin() {
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900">IQAC Login</h2>
+        <h2 className="text-2xl font-bold text-gray-900">ADMIN</h2>
         <p className="text-gray-600 text-sm mt-1">Faculty Information System</p>
 
         {/* Form */}

@@ -9,6 +9,7 @@ export default function Header() {
         <img
           src="/images/jntugv.png"
           alt="JNTUGV Logo"
+          draggable = {false}
           className="w-full h-auto"
         />
       </div>
