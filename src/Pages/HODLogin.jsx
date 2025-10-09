@@ -1,8 +1,9 @@
 import React,{useState} from "react";
+import {useNavigate} from "react-router-dom"
 import { User, Lock,LogIn  ,KeyRound } from "lucide-react";
 
 export default function HODLogin() {
-
+  const navigate=useNavigate()
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -28,8 +29,8 @@ export default function HODLogin() {
       return;
     }
     console.log("Username:", formData.username);
-    console.log("Password:", formData.password);
-
+    console.log("Password:", formData.password)
+    navigate("/hod")
   };
 
   return (

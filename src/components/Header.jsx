@@ -9,19 +9,19 @@ export default function Header() {
         <img
           src="/images/jntugv.png"
           alt="JNTUGV Logo"
-          className="w-full h-auto"
+          className="w-full h-auto "
         />
       </div>
 
       {/* Centered Text */}
       <div className="text-center space-y-1 md:space-y-2 px-4">
-        <h1 className="text-lg sm:text-xl md:text-2xl font-bold">
+        <h1 className="text-lg  lg:text-2xl font-bold">
           JAWAHARLAL NEHRU TECHNOLOGICAL UNIVERSITY GURAJADA VIZIANAGARAM
         </h1>
-        <h2 className="text-sm sm:text-lg md:text-lg">
+        <h2 className="text-sm lg:text-lg">
           VIZIANAGARAM-535 003, A.P
         </h2>
-        <h2 className="text-sm sm:text-lg md:text-lg">
+        <h2 className="text-sm  md:text-lg">
           (Established by Andhra Pradesh Act No.22 of 2021)
         </h2>
       </div>

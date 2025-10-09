@@ -22,7 +22,7 @@ export default function ProfilePage() {
     profile: {
       name: "Dr. P. Aruna Kumari",
       role: "Professor @ JNTUGV",
-      avatar: "/images/Aruna-profile-photo.jpg",
+      avatar: "/images/profile.jpg",
     },
     message:
       "I believe in empowering students through interactive learning and real-world problem solving.",
@@ -96,14 +96,14 @@ export default function ProfilePage() {
     <div className="p-4 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        {/* <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             Academic Profile
           </h1>
           <p className="text-gray-600 text-lg">
             Manage your professional information
           </p>
-        </div>
+        </div> */}
 
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Profile Card */}
@@ -148,10 +148,13 @@ export default function ProfilePage() {
                       </span>
                     </button>
                   </div>
-                  <div >
+                  <div className="flex flex-col  gap-3">
                     <button
                     onClick={()=>navigate('/add')}
-                    className="bg-gradient-to-r  from-blue-800 to-green-700 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">Add Certifications</button>
+                    className="bg-gradient-to-r  from-[#00d2ff] to-[#3a7bd5] hover:to-[#00d2ff] px-6 py-2 rounded-full hover:from-[#3a7bd5] text-white">Add Certifications</button>
+                    <button
+                    onClick={()=>navigate('/vc')}
+                    className="bg-gradient-to-r  from-blue-800 to-green-700 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Certifications</button>
                   </div>
                 </div>
 

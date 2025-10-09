@@ -12,6 +12,7 @@ import Iqac from './Pages/IQACDashboard';
 import AddDetails from './Pages/AddDetails';
 import Hod from './Pages/HODDashBoard'
 import Admin from './Pages/Admin';
+import ViewCertificaion from './Pages/ViewCertificaion';
 
 export default function App() {
   return (
@@ -29,7 +30,8 @@ export default function App() {
           <Route path='/iqac' element={<Iqac />} /> 
           <Route path='/add' element={<AddDetails/>} />
           <Route path='/hod' element={<Hod/>}/>
-          <Route path='admin' element={<Admin/>}/>
+          <Route path='/admin' element={<Admin/>}/>
+          <Route path='/vc' element={<ViewCertificaion/>}/>
         </Routes>
         </main>
         <footer className='flex justify-center p-6'>

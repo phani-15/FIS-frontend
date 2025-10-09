@@ -259,7 +259,7 @@ export default function Register() {
           type={f === "year" ? "text" : "text"}
           error={errors[`${levelKey}.${f}`]}
           inputMode={f === "year" ? "numeric" : f==="marks" ? "numeric" : undefined}
-          placeholder={f === "year" ? "Enter year" : `Enter ${label.toLowerCase()}`}
+          placeholder={f === "year" ?"Enter year" : `Enter ${label.toLowerCase()} ${ f==="school" || f==="college"? "name":""}`}
         />
       );
     });
