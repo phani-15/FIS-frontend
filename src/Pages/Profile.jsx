@@ -24,8 +24,6 @@ export default function ProfilePage() {
       role: "Professor @ JNTUGV",
       avatar: "/images/profile.jpg",
     },
-    message:
-      "I believe in empowering students through interactive learning and real-world problem solving.",
     personalInfo: {
       email: "aruna.kumari@jntugv.edu",
       phone: "+91 9876543210",
