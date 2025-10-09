@@ -44,7 +44,7 @@ export default function Login() {
 
 		console.log(formData);
 		// 🚀 You can send formData to your backend API here
-		navigate('/user')
+		navigate('/profile')
 
 	};
 

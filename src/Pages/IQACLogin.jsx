@@ -27,7 +27,7 @@ export default function IQACLogin() {
     const validPassCode = "JntuIqac2025";
 
     if (passCode === validPassCode) {
-      navigate("/iqac");
+      navigate("/iqacDashboard");
     } else {
       setFalse(true);
     }

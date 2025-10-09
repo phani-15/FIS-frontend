@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Search,X } from "lucide-react";
+import { Search,X,Edit2 } from "lucide-react";
+import {useNavigate} from 'react-router-dom'
 
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
+
+  const navigate = useNavigate()
 
   const facultyList = [
     { name: "Dr. John Doe", role: "Professor" },
@@ -48,13 +51,13 @@ export default function HODDashBoard() {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto lg:text-sm bg-gray-50 rounded-3xl shadow-2xl space-y-6">
-      <h1 className="text-4xl font-bold mb-6 text-center text-purple-800 tracking-wide drop-shadow">
+    <div className="p-2 mx-auto max-w-6xl  lg:text-sm rounded-3xl space-y-6">
+      <h1 className="text-2xl lg:text-4xl font-serif font-semibold mb-2 text-center text-indigo-800 tracking-wide drop-shadow">
       HOD DashBoard
       </h1>
 
       {/* Search Filter */}
-<div className="flex justify-end p-6">
+<div className="flex justify-end p-2">
   <div className="relative w-full max-w-sm">
     <input
       type="text"
@@ -97,6 +100,8 @@ export default function HODDashBoard() {
               <th className="px-4 py-3 text-left font-semibold">S.No</th>
               <th className="px-4 py-3 text-left font-semibold">Name</th>
               <th className="px-4 py-3 text-left font-semibold">Role</th>
+              <th className="px-4 py-3 text-left font-semibold"></th>
+              <th className="px-4 py-3 text-left font-semibold"></th>
             </tr>
           </thead>
           <tbody>
@@ -109,6 +114,16 @@ export default function HODDashBoard() {
                   <td className="px-4 py-2">{idx + 1}</td>
                   <td className="px-4 py-2">{highlightMatch(faculty.name)}</td>
                   <td className="px-4 py-2">{faculty.role}</td>
+                  <td>
+                    <button
+                    onClick={()=>navigate('/profile')}
+                    className=" bg-green-500 rounded-lg p-1 m-1 text-sm px-2 ">View</button>
+                    </td>
+                    <td>
+                    <button 
+                    onClick={()=>navigate('/edit')}
+                    className=" bg-yellow-300 rounded-lg p-1 m-1 text-sm px-2 flex gap-1"> <span><Edit2 size={16}/></span> Edit</button>
+                  </td>
                 </tr>
               ))
             ) : (

@@ -7,13 +7,13 @@ import IQACLogin from './Pages/IQACLogin';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from "./Pages/Profile";
-import User from './Pages/User';
-import Iqac from './Pages/IQACDashboard'; 
+import IqacDashboard from './Pages/IQACDashboard'; 
 import AddDetails from './Pages/AddDetails';
-import Hod from './Pages/HODDashBoard'
+import HodDashboard from './Pages/HODDashBoard'
 import Admin from './Pages/Admin';
 import AdminLogin from './Pages/AdminLogin';
 import ViewCertificaion from './Pages/ViewCertificaion';
+import EditPage from './Pages/EditPage';
 
 export default function App() {
   return (
@@ -22,15 +22,15 @@ export default function App() {
         <Header />
         <main className='flex-grow'>          
         <Routes>
-          <Route path='/HOD-login' element={<HODLogin />} />
-          <Route path='/IQAC-login' element={<IQACLogin />} /> 
+          <Route path='/hod' element={<HODLogin />} />
+          <Route path='/iqac' element={<IQACLogin />} /> 
+          <Route path='/edit' element={<EditPage/>}/>
           <Route path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/user' element={<User />} />
           <Route path='/profile' element={<Profile />} />
-          <Route path='/iqac' element={<Iqac />} /> 
+          <Route path='/iqacDashboard' element={<IqacDashboard />} /> 
           <Route path='/add' element={<AddDetails/>} />
-          <Route path='/hod' element={<Hod/>}/>
+          <Route path='/hodDashboard' element={<HodDashboard/>}/>
           <Route path='adminPage' element={<Admin/>}/>
           <Route path='admin' element={<AdminLogin/>}/>
           <Route path='/admin' element={<Admin/>}/>

@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function user() {
+export default function EditPage() {
   return (
     <div>
-      Login Successfull!
+      This is Editing Page
     </div>
   )
 }
