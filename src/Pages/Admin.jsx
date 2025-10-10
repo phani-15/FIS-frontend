@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import {X,Edit2} from 'lucide-react'
+import {X,User,Edit2} from 'lucide-react'
 import { useNavigate } from "react-router-dom";
 
-export default function Iqac() {
+export default function Admin() {
   const [filters, setFilters] = useState({
     department: "All",
     role: "All",
@@ -10,7 +10,7 @@ export default function Iqac() {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // default 10 rows
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const departments = [
     "All",
@@ -24,8 +24,6 @@ export default function Iqac() {
     "M.Tech",
     "MBA"
   ];
-
-  const navigate = useNavigate()
 
   const facultyList = [
     { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
@@ -60,7 +58,6 @@ export default function Iqac() {
     { name: "Dr. Rachel Evans", department: "M.Tech", role: "Professor" }
   ];
 
-  // Filter faculty
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
     const matchesRole = filters.role === "All" || f.role === filters.role;
@@ -68,148 +65,193 @@ export default function Iqac() {
     return matchesDept && matchesRole && matchesSearch;
   });
 
-  // Pagination
   const totalPages = Math.ceil(filteredFaculty.length / itemsPerPage);
   const paginatedFaculty = filteredFaculty.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Highlight search term
   const highlightMatch = (name) => {
     if (!filters.searchTerm) return name;
     const regex = new RegExp(`(${filters.searchTerm})`, "gi");
     return name.split(regex).map((part, idx) =>
-      regex.test(part) ? <span key={idx} className="bg-yellow-300 text-black rounded px-1">{part}</span> : part
+      regex.test(part) ? <span key={idx} className="bg-yellow-200 font-semibold">{part}</span> : part
     );
   };
 
+  const navigate = useNavigate()
+  const handleViewClick = () => {
+    navigate('/profile')
+  };
+
+  const handleEditClick = () => {
+    navigate('/edit')
+  };
+
   return (
-    <div className="p-2 max-w-6xl mx-auto rounded-3xl space-y-6">
-      <h1 className="lg:text-4xl text-2xl font-semibold font-serif mb-6 text-center text-purple-800 tracking-wide drop-shadow">
+    <div className="  p-6">
+      <div className="max-w-7xl mx-auto"><h1 className="lg:text-4xl text-2xl font-semibold font-serif mb-6 text-center text-purple-800 tracking-wide drop-shadow">
       ADMIN
       </h1>
 
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 bg-white rounded-2xl shadow-lg">
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">Department</label>
-          <select
-            className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-400"
-            value={filters.department}
-            onChange={(e) => { setFilters({ ...filters, department: e.target.value }); setCurrentPage(1); }}
-          >
-            {departments.map((dept, idx) => (
-              <option key={idx} value={dept}>{dept}</option>
-            ))}
-          </select>
-        </div>
+        {/* Filters */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6 border border-purple-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Department</label>
+              <select
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400  outline-none transition"
+                value={filters.department}
+                onChange={(e) => { setFilters({ ...filters, department: e.target.value }); setCurrentPage(1); }}
+              >
+                {departments.map((dept, idx) => (
+                  <option key={idx} value={dept}>{dept}</option>
+                ))}
+              </select>
+            </div>
 
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">Search</label>
-          <div className="relative">
-            <input
-            type="text"
-            placeholder="🔍 Search by name"
-            className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-400"
-            value={filters.searchTerm}
-            onChange={(e) => { setFilters({ ...filters, searchTerm: e.target.value }); setCurrentPage(1); }}
-          />
-          {filters.searchTerm && (
-            <button
-              type="button"
-              className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-              onClick={()=>setFilters({...filters,searchTerm:''})}
-              aria-label="Clear search"
-            >
-              <X size={18}/>
-            </button>
-          )}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by name"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition"
+                  value={filters.searchTerm}
+                  onChange={(e) => { setFilters({ ...filters, searchTerm: e.target.value }); setCurrentPage(1); }}
+                />
+                {filters.searchTerm && (
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                    onClick={() => setFilters({ ...filters, searchTerm: '' })}
+                    aria-label="Clear search"
+                  >
+                    <X size={18} />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Rows per page selector */}
-      <div className="flex justify-between items-center mb-2 px-2">
-        <p className="font-medium">Total Faculty: {filteredFaculty.length}</p>
-        <div>
-          <label className="mr-2 font-medium">Rows per page:</label>
-          <select
-            className="border border-gray-300 rounded-lg p-1 shadow-sm focus:ring-2 focus:ring-purple-400"
-            value={itemsPerPage}
-            onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-          >
-            {[10, 25, 50, 100].map((num) => (
-              <option key={num} value={num}>{num}</option>
-            ))}
-          </select>
+        {/* Stats and Rows per page */}
+        <div className=" p-4 flex flex-wrap justify-between items-center gap-4">
+          <p className="text-sm font-medium text-gray-700">
+            Total Faculty: <span className="text-purple-600 font-bold">{filteredFaculty.length}</span>
+          </p>
+          <div className="flex items-center  gap-2">
+            <label className="text-sm font-medium text-gray-700">Rows per page:</label>
+            <select
+              className="border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm outline-none transition text-sm"
+              value={itemsPerPage}
+              onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+            >
+              {[10, 25, 50, 100].map((num) => (
+                <option key={num} value={num}>{num}</option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
 
-      {/* Faculty Table */}
-      <div className="overflow-x-auto bg-white rounded-2xl shadow-xl">
-        <table className="w-full table-auto border-collapse">
-          <thead className="bg-purple-200 text-gray-900 sticky top-0">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold">S.No</th>
-              <th className="px-4 py-3 text-left font-semibold">Name</th>
-              <th className="px-4 py-3 text-left font-semibold">Department</th>
-              <th className="px-4 py-3 text-left font-semibold">Role</th>
-              <th className="px-4 py-3 text-left font-semibold"></th>
-              <th className="px-4 py-3 text-left font-semibold"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedFaculty.length > 0 ? (
-              paginatedFaculty.map((f, idx) => (
-                <tr key={idx} className="odd:bg-white even:bg-gray-50 hover:bg-purple-50 transition">
-                  <td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
-                  <td className="px-4 py-2">{highlightMatch(f.name)}</td>
-                  <td className="px-4 py-2">{f.department}</td>
-                  <td className="px-4 py-2">{f.role}</td> 
-                  <td>
-                    <button
-                    onClick={()=>navigate('/profile')}
-                    className=" bg-green-500 rounded-lg p-1 m-1 text-sm px-2 ">View</button>
-                    </td>
-                    <td>
-                    <button
-                    onClick={()=>navigate('/Edit')}
-                    className=" bg-yellow-300 rounded-lg m-1 text-sm px-2 flex gap-1 p-1"><span><Edit2 size={16}/></span>Edit</button>
-                  </td>
+        {/* Faculty Table */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-purple-100">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-purple-400 to-purple-700">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">S.No</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Department</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Role</th>
+                  <th className="px-6 py-4 text-center text-xs font-bold text-white uppercase tracking-wider">Actions</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="px-4 py-6 text-center text-gray-500">
-                  ❌ No faculty found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-6">
-          <button
-            className="px-5 py-2 bg-purple-500 text-white rounded-full shadow hover:bg-purple-600 transition disabled:opacity-50"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            ⬅️ Previous
-          </button>
-          <span className="font-medium">Page {currentPage} of {totalPages}</span>
-          <button
-            className="px-5 py-2 bg-purple-500 text-white rounded-full shadow hover:bg-purple-600 transition disabled:opacity-50"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Next ➡️
-          </button>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {paginatedFaculty.length > 0 ? (
+                  paginatedFaculty.map((f, idx) => (
+                    <tr key={idx} className="hover:bg-purple-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                        {(currentPage - 1) * itemsPerPage + idx + 1}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
+                        {highlightMatch(f.name)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {f.department}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
+                          {f.role}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={handleViewClick}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition shadow-sm"
+                          >
+                            <User size={14} />
+                            View
+                          </button>
+                          <button
+                            onClick={handleEditClick}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition"
+                          >
+                            <Edit2 size={14} />
+                            Edit
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-12 text-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <p className="text-lg font-semibold text-gray-500">No faculty found</p>
+                        <p className="text-sm text-gray-400">Try adjusting your filters</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="bg-white rounded-xl shadow-md p-5 mt-6 border border-purple-100">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <p className="text-sm text-gray-600 font-medium">
+                Showing <span className="text-purple-600 font-bold">{(currentPage - 1) * itemsPerPage + 1}</span>–
+                <span className="text-purple-600 font-bold">{Math.min(currentPage * itemsPerPage, filteredFaculty.length)}</span> of{' '}
+                <span className="text-purple-600 font-bold">{filteredFaculty.length}</span> results
+              </p>
+              <div className="flex items-center gap-3">
+                <button
+                  className="px-5 py-2 text-sm font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <span className="px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className="px-5 py-2 text-sm font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

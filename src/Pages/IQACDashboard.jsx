@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {X} from 'lucide-react'
 
-export default function Admin() {
+export default function IQACDashboard() {
   const [filters, setFilters] = useState({
     department: "All",
     role: "All",
