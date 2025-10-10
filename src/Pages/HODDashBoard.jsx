@@ -101,7 +101,6 @@ export default function HODDashBoard() {
               <th className="px-4 py-3 text-left font-semibold">Name</th>
               <th className="px-4 py-3 text-left font-semibold">Role</th>
               <th className="px-4 py-3 text-left font-semibold"></th>
-              <th className="px-4 py-3 text-left font-semibold"></th>
             </tr>
           </thead>
           <tbody>
@@ -117,13 +116,8 @@ export default function HODDashBoard() {
                   <td>
                     <button
                     onClick={()=>navigate('/profile')}
-                    className=" bg-green-500 rounded-lg p-1 m-1 text-sm px-2 ">View</button>
+                    className=" bg-gray-200 hover:bg-gray-300 rounded-lg p-1 m-1 text-sm px-2 "> <span></span> View</button>
                     </td>
-                    <td>
-                    <button 
-                    onClick={()=>navigate('/edit')}
-                    className=" bg-yellow-300 rounded-lg p-1 m-1 text-sm px-2 flex gap-1"> <span><Edit2 size={16}/></span> Edit</button>
-                  </td>
                 </tr>
               ))
             ) : (
