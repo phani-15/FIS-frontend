@@ -278,10 +278,10 @@ const ViewCertificaion = () => {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div className=" lg:py-8 py-4 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           <h1 className="text-2xl  font-normal lg:font-semibold lg:text-4xl  text-gray-800 mb-4 font-serif">
             Professional Certifications & Achievement
           </h1>
@@ -300,7 +300,7 @@ const ViewCertificaion = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     {getSectionDisplayName(section)}
-                    <span className="ml-auto bg-white bg-opacity-20 rounded-full px-3 py-1 text-black text-xs font-semibold min-w-16">
+                    <span className="ml-auto bg-white bg-opacity-20 text-center rounded-full px-3 py-1 text-black text-xs font-semibold min-w-16">
                       {items.length} {items.length === 1 ? 'item' : 'items'}
                     </span>
                   </h2>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function Admin() {
+export default function AdminLogin() {
   const [passCode, setPassCode] = useState("");  // ✅ Correct destructuring
   const navigate = useNavigate();
   const [isEmpty, setEmpty] = useState(false);

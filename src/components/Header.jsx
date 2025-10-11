@@ -19,10 +19,10 @@ export default function Header() {
         <h1 className="text-lg  lg:text-2xl font-bold">
           JAWAHARLAL NEHRU TECHNOLOGICAL UNIVERSITY GURAJADA VIZIANAGARAM
         </h1>
-        <h2 className="text-sm lg:text-lg">
+        <h2 className="text-xs lg:text-lg">
           VIZIANAGARAM-535 003, A.P
         </h2>
-        <h2 className="text-sm  md:text-lg">
+        <h2 className="text-xs lg:text-lg">
           (Established by Andhra Pradesh Act No.22 of 2021)
         </h2>
       </div>

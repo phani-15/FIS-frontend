@@ -30,7 +30,7 @@ export default function HODLogin() {
     }
     console.log("Username:", formData.username);
     console.log("Password:", formData.password)
-    navigate("/hod")
+    navigate("/hodDashboard")
   };
 
   return (

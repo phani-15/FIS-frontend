@@ -44,7 +44,7 @@ export default function Login() {
 
 		console.log(formData);
 		// 🚀 You can send formData to your backend API here
-		navigate('/user')
+		navigate('/profile')
 
 	};
 
@@ -123,11 +123,6 @@ export default function Login() {
 					</button>
 					<p className="text-center">New user ? <span className="text-blue-800 cursor-pointer" onClick={() => navigate('/register')}>Register</span></p>
 				</form>
-
-				{/* Footer */}
-				<p className="mt-8 text-xs text-gray-500">
-					 Secure HOD Access
-				</p>
 			</div>
 		</div>
 	);

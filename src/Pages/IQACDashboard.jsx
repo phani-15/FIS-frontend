@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import {X} from 'lucide-react'
+import { X, Search,User2 } from "lucide-react";
 
-export default function Iqac() {
+export default function IQACDashboard() {
   const [filters, setFilters] = useState({
     department: "All",
-    role: "All",
     searchTerm: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // default 10 rows
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const departments = [
     "All",
@@ -21,16 +20,7 @@ export default function Iqac() {
     "Metallurgical Engineering",
     "Information Technology Engineering",
     "M.Tech",
-    "MBA"
-  ];
-
-  const roles = [
-    "All",
-    "Professor",
-    "Associate Professor",
-    "Assistant Professor",
-    "Lecturer",
-    "Researcher"
+    "MBA",
   ];
 
   const facultyList = [
@@ -46,42 +36,41 @@ export default function Iqac() {
     { name: "Dr. Grace Lee", department: "M.Tech", role: "Assistant Professor" },
     { name: "Dr. Benjamin Harris", department: "MBA", role: "Lecturer" },
     { name: "Dr. Alice Walker", department: "Civil Engineering", role: "Professor" },
-    { name: "Dr. Mark Spencer", department: "Computer Science and Engineering", role: "Assistant Professor" },
-    { name: "Dr. Laura King", department: "Electrical and Electronics Engineering", role: "Researcher" },
-    { name: "Dr. Richard Clark", department: "Mechanical Engineering", role: "Professor" },
-    { name: "Dr. Nancy Roberts", department: "Information Technology Engineering", role: "Associate Professor" },
-    { name: "Dr. Kevin Lewis", department: "Metallurgical Engineering", role: "Assistant Professor" },
-    { name: "Dr. Angela White", department: "Computer Science and Engineering", role: "Lecturer" },
-    { name: "Dr. Patrick Hall", department: "MBA", role: "Researcher" },
-    { name: "Dr. Brenda Allen", department: "Civil Engineering", role: "Assistant Professor" },
-    { name: "Dr. Steven Young", department: "Mechanical Engineering", role: "Lecturer" },
-    { name: "Dr. Kimberly Scott", department: "Electronics and Communication Engineering", role: "Professor" },
-    { name: "Dr. Charles Adams", department: "Information Technology Engineering", role: "Professor" },
-    { name: "Dr. Victoria Perez", department: "MBA", role: "Assistant Professor" },
-    { name: "Dr. Jonathan Hall", department: "Computer Science and Engineering", role: "Researcher" },
-    { name: "Dr. Samantha Allen", department: "Civil Engineering", role: "Lecturer" },
-    { name: "Dr. Brian Mitchell", department: "Mechanical Engineering", role: "Associate Professor" },
-    { name: "Dr. Lauren Turner", department: "Electronics and Communication Engineering", role: "Researcher" },
-    { name: "Dr. Timothy Carter", department: "Metallurgical Engineering", role: "Lecturer" },
-    { name: "Dr. Rachel Evans", department: "M.Tech", role: "Professor" }
+    // Additional faculty 13-30
+    { name: "Dr. Christopher Young", department: "Computer Science and Engineering", role: "Assistant Professor" },
+    { name: "Dr. Rachel Green", department: "Electrical and Electronics Engineering", role: "Professor" },
+    { name: "Dr. Steven Hall", department: "Mechanical Engineering", role: "Associate Professor" },
+    { name: "Dr. Monica Clark", department: "MBA", role: "Assistant Professor" },
+    { name: "Dr. Kevin Lewis", department: "Information Technology Engineering", role: "Professor" },
+    { name: "Dr. Laura Robinson", department: "Civil Engineering", role: "Lecturer" },
+    { name: "Dr. Patrick Walker", department: "Metallurgical Engineering", role: "Assistant Professor" },
+    { name: "Dr. Kimberly Scott", department: "M.Tech", role: "Researcher" },
+    { name: "Dr. Anthony King", department: "Computer Science and Engineering", role: "Lecturer" },
+    { name: "Dr. Stephanie Adams", department: "Electrical and Electronics Engineering", role: "Assistant Professor" },
+    { name: "Dr. Brian Mitchell", department: "Mechanical Engineering", role: "Professor" },
+    { name: "Dr. Jennifer Phillips", department: "MBA", role: "Professor" },
+    { name: "Dr. Eric Campbell", department: "Information Technology Engineering", role: "Lecturer" },
+    { name: "Dr. Melissa Parker", department: "Civil Engineering", role: "Associate Professor" },
+    { name: "Dr. Joshua Rivera", department: "Computer Science and Engineering", role: "Researcher" },
+    { name: "Dr. Angela Brooks", department: "Electrical and Electronics Engineering", role: "Lecturer" },
+    { name: "Dr. Ryan Morris", department: "Mechanical Engineering", role: "Assistant Professor" },
+    { name: "Dr. Samantha Price", department: "MBA", role: "Assistant Professor" },
+    { name: "Dr. Nicholas Cox", department: "Information Technology Engineering", role: "Associate Professor" },
+    { name: "Dr. Olivia Foster", department: "Civil Engineering", role: "Lecturer" },
   ];
 
-  // Filter faculty
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
-    const matchesRole = filters.role === "All" || f.role === filters.role;
     const matchesSearch = f.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
-    return matchesDept && matchesRole && matchesSearch;
+    return matchesDept && matchesSearch;
   });
 
-  // Pagination
   const totalPages = Math.ceil(filteredFaculty.length / itemsPerPage);
   const paginatedFaculty = filteredFaculty.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Highlight search term
   const highlightMatch = (name) => {
     if (!filters.searchTerm) return name;
     const regex = new RegExp(`(${filters.searchTerm})`, "gi");
@@ -91,83 +80,94 @@ export default function Iqac() {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto bg-gray-50 rounded-3xl shadow-2xl space-y-6">
-      <h1 className="text-4xl font-extrabold mb-6 text-center text-purple-800 tracking-wide drop-shadow">
-        🌟 IQAC Dashboard
+    <div className="p-4 sm:p-8 mx-2 lg:mx-auto max-w-7xl bg-gray-50 rounded-3xl shadow-xl space-y-6 font-[Inter]">
+      {/* Title */}
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-center bg-purple-800 text-transparent bg-clip-text tracking-wide">
+        IQAC DASHBOARD
       </h1>
 
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white p-6 rounded-2xl shadow-lg">
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">Department</label>
+      {/* Filter Section */}
+      <div className="flex flex-col sm:flex-row justify-between gap-2 lg:gap-6 p-4 sm:p-6 rounded-2xl bg-gray-50">
+        {/* Department Filter */}
+        <div className="w-full max-w-full sm:w-96 relative">
+          <label className="block mb-2 text-base sm:text-lg font-semibold text-gray-700">
+            Department
+          </label>
           <select
-            className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-400"
+            className="w-full border border-gray-300 p-2 bg-white shadow-sm focus:outline-none transition-all duration-200 rounded-md pr-6"
             value={filters.department}
-            onChange={(e) => { setFilters({ ...filters, department: e.target.value }); setCurrentPage(1); }}
+            onChange={(e) => {
+              setFilters({ ...filters, department: e.target.value });
+              setCurrentPage(1);
+            }}
           >
             {departments.map((dept, idx) => (
-              <option key={idx} value={dept}>{dept}</option>
+              <option key={idx} value={dept}>
+                {dept}
+              </option>
             ))}
           </select>
         </div>
 
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">Role</label>
-          <select
-            className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-400"
-            value={filters.role}
-            onChange={(e) => { setFilters({ ...filters, role: e.target.value }); setCurrentPage(1); }}
-          >
-            {roles.map((role, idx) => (
-              <option key={idx} value={role}>{role}</option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">Search</label>
+        {/* Search Bar */}
+        <div className="relative w-full max-w-full sm:w-80 mt-4 sm:mt-0">
+          <label className="block mb-2 text-base sm:text-lg font-semibold text-gray-700 text-left">
+            Search
+          </label>
+          
           <div className="relative">
+            {/* Search Icon */}
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 " size={20} />
             <input
-            type="text"
-            placeholder="🔍 Search by name"
-            className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-400"
-            value={filters.searchTerm}
-            onChange={(e) => { setFilters({ ...filters, searchTerm: e.target.value }); setCurrentPage(1); }}
-          />
-          {filters.searchTerm && (
+              type="text"
+              placeholder="Search by name"
+              className="w-full border border-gray-300 rounded-full p-2 pl-10 pr-10 bg-white shadow-sm focus:outline-none transition-all duration-200 placeholder-gray-400"
+              value={filters.searchTerm}
+              onChange={(e) => {
+                setFilters({ ...filters, searchTerm: e.target.value });
+                setCurrentPage(1);
+              }}
+            />
+            {/* X Button */}
             <button
               type="button"
-              className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-              onClick={()=>setFilters({...filters,searchTerm:''})}
+              className={`absolute top-1/2 right-3 transform -translate-y-1/2 flex items-center text-gray-500 hover:text-gray-700 transition-opacity duration-300 ${
+                filters.searchTerm ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+              onClick={() => setFilters({ ...filters, searchTerm: "" })}
               aria-label="Clear search"
             >
-              <X size={18}/>
+              <X size={20} />
             </button>
-          )}
           </div>
         </div>
       </div>
 
-      {/* Rows per page selector */}
-      <div className="flex justify-between items-center mb-2 px-2">
-        <p className="font-medium">Total Faculty: {filteredFaculty.length}</p>
+      {/* Info + Rows Selector */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-2">
+        <p className="font-medium text-gray-700">Total Faculty: {filteredFaculty.length}</p>
         <div>
           <label className="mr-2 font-medium">Rows per page:</label>
           <select
-            className="border border-gray-300 rounded-lg p-1 shadow-sm focus:ring-2 focus:ring-purple-400"
+            className="border border-gray-300 rounded-lg p-1 bg-gray-50 focus:ring-2 focus:ring-purple-400"
             value={itemsPerPage}
-            onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
           >
             {[10, 25, 50, 100].map((num) => (
-              <option key={num} value={num}>{num}</option>
+              <option key={num} value={num}>
+                {num}
+              </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* Faculty Table */}
-      <div className="overflow-x-auto bg-white rounded-2xl shadow-xl">
-        <table className="w-full table-auto border-collapse">
+      {/* Table */}
+      <div className="overflow-x-auto bg-white rounded-2xl border border-gray-200">
+        <table className="w-full min-w-[600px] table-auto border-collapse text-sm sm:text-base">
           <thead className="bg-purple-200 text-gray-900 sticky top-0">
             <tr>
               <th className="px-4 py-3 text-left font-semibold">#</th>
@@ -197,26 +197,29 @@ export default function Iqac() {
         </table>
       </div>
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-6">
-          <button
-            className="px-5 py-2 bg-purple-500 text-white rounded-full shadow hover:bg-purple-600 transition disabled:opacity-50"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            ⬅️ Previous
-          </button>
-          <span className="font-medium">Page {currentPage} of {totalPages}</span>
-          <button
-            className="px-5 py-2 bg-purple-500 text-white rounded-full shadow hover:bg-purple-600 transition disabled:opacity-50"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Next ➡️
-          </button>
-        </div>
-      )}
+      {/* Pagination */}
+     {/* Pagination */}
+{totalPages > 1 && (
+  <div className="flex flex-wrap justify-center items-center gap-4 mt-6">
+    <button
+      className="px-5 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition disabled:opacity-50 cursor-pointer"
+      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+      disabled={currentPage === 1}
+    >
+      ⬅️ Previous
+    </button>
+    <span className="font-medium">
+      Page {currentPage} of {totalPages}
+    </span>
+    <button
+      className="px-5 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition disabled:opacity-50 cursor-pointer"
+      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+      disabled={currentPage === totalPages}
+    >
+      Next ➡️
+    </button>
+  </div>
+)}
     </div>
   );
 }

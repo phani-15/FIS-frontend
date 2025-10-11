@@ -24,8 +24,6 @@ export default function ProfilePage() {
       role: "Professor @ JNTUGV",
       avatar: "/images/profile.jpg",
     },
-    message:
-      "I believe in empowering students through interactive learning and real-world problem solving.",
     personalInfo: {
       email: "aruna.kumari@jntugv.edu",
       phone: "+91 9876543210",
@@ -151,10 +149,10 @@ export default function ProfilePage() {
                   <div className="flex flex-col  gap-3">
                     <button
                     onClick={()=>navigate('/add')}
-                    className="bg-gradient-to-r  from-[#00d2ff] to-[#3a7bd5] hover:to-[#00d2ff] px-6 py-2 rounded-full hover:from-[#3a7bd5] text-white">Add Certifications</button>
+                    className="bg-gradient-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Certifications</button>
                     <button
                     onClick={()=>navigate('/vc')}
-                    className="bg-gradient-to-r  from-blue-800 to-green-700 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Certifications</button>
+                    className="bg-gradient-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Certifications</button>
                   </div>
                 </div>
 
