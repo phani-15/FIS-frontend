@@ -499,6 +499,7 @@ const EditProfilePage = () => {
         </nav>
       </div>
 
+      
       {/* Main Content */}
       <div className="flex-1 flex-col items-center ">
         {/* Header */}
