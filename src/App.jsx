@@ -14,6 +14,7 @@ import Admin from './Pages/Admin';
 import AdminLogin from './Pages/AdminLogin';
 import ViewCertificaion from './Pages/ViewCertificaion';
 import EditPage from './Pages/EditPage';
+import EditAdmin from "./Pages/EditAdmin"
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
           <Route path='/adminPage' element={<Admin/>}/>
           <Route path='/admin' element={<AdminLogin/>}/>
           <Route path='/vc' element={<ViewCertificaion/>}/>
+          <Route path='/ea' element={<EditAdmin/>}/>
         </Routes>
         </main>
         <footer className='flex justify-center p-6'>
