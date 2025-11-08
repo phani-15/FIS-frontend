@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
 
   const [personalData, setpersonalData] = useState({
@@ -197,7 +197,7 @@ export default function Register() {
 
     Object.entries(education).forEach(([level, fields]) => {
       Object.entries(fields).forEach(([field, value]) => {
-        if (field === "title") return; // skip title
+        if (field === "title" || field==="marks") return; // skip title
         if (!value || value.toString().trim() === "") {
           newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
         }
@@ -432,10 +432,10 @@ export default function Register() {
                   type="submit"
                   className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
-                  Submit
+                  next
                 </button>
               </div>
-            </form>
+              </form>
           </div>
         )
       }
@@ -451,7 +451,7 @@ export default function Register() {
             className="flex flex-col space-y-6"
           >
             {experience.map((exp, index) => (
-              <div key={index} className="border mt-4 border-blue-300 p-2 py-4 rounded-lg shadow-sm relative">
+              <div key={index} className=" mt-4 p-2 py-4 rounded-lg bg-white shadow-lg relative">
                 <h2 className="text-lg font-semibold mb-3">Experience {index + 1}</h2>
 
                 <InputField
@@ -505,7 +505,7 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => removeExperience(index)}
-                    className="absolute top-2 cursor-pointer right-2 text-red-500  text-sm"
+                    className="absolute top-2 cursor-pointer right-2 text-slate-600  text-sm"
                   >
                     <Trash2 />
                   </button>
@@ -521,6 +521,13 @@ export default function Register() {
                 className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
               >
                 <span className="text-violet-700 font-bold text-2xl">+</span> Add
+              </button>
+              <button
+                type="button"
+                onClick={ ()=>setStep("as")}
+                className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
+              >
+                skip
               </button>
               <div className="flex gap-3 justify-end">
                 <button

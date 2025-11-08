@@ -5,11 +5,13 @@ import { PDFDocument } from "pdf-lib";
 export default function AddDetails() {
    const Structure = {
       journals: {
-         name: "journals", title_of_the_paper: "", name_of_the_journal: "", page_number: "", year: "", ISSN_Number: "", Impact_Factor: "", national_or_International: "", document: null
+         name: "journals", title_of_the_paper: "", name_of_the_journal: "",
+          page_number: "", year: "", ISSN_Number: "", 
+          Impact_Factor: "", national_or_international: "", document: null
       },
       conferences: {
          name: "conferences", title_of_the_paper: "", title_of_conference: "", year: "", organized_by: "", national_or_international: "", document: null
-      },
+      }, 
       seminars: {
          name: "seminars", title_of_the_paper: "", title_of_seminar: "", year: "", organized_by: "", national_international: "", document: null
       },
