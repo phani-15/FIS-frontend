@@ -15,12 +15,12 @@ export default function Register() {
     DOB: "",
     marital: "",
     designation: "",
+    department: "",
   });
 
   const [loginData, setLoginData] = useState({
     password: "",
     Cpassword: "",
-    department: "",
     email: "",
     phone: "",
   })
@@ -287,27 +287,6 @@ export default function Register() {
               required
             />
 
-            <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>Department</label>
-              <select
-                name="department"
-                value={loginData.department}
-                onChange={handleLoginChange}
-                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
-                required
-              >
-                <option value="">Select your option</option>
-                <option value="bshss">BS & HSS</option>
-                <option value="cse">Computer Science & Engineering</option>
-                <option value="ece">Electronics & Communication Engineering</option>
-                <option value="eee">Electrical & Electronics Engineering</option>
-                <option value="civil">Civil Engineering</option>
-                <option value="it">Inforamtion Technology</option>
-                <option value="met">Metallurgical Engineering</option>
-                <option value="mech">Mechanical Engineering</option>
-              </select>
-            </div>
-
             <InputField
               label="Password"
               name="password"
@@ -386,7 +365,26 @@ export default function Register() {
 
 
             <InputField label="Designation" name="designation" value={personalData.designation} onChange={handleChange} required />
-
+            {/* <div className="flex flex-col text-left space-y-2 mt-4">
+              <label>Department</label>
+              <select
+                name="department"
+                value={personalData.department}
+                onChange={handleLoginChange}
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
+                required
+              >
+                <option value="">Select your option</option>
+                <option value="bshss">BS & HSS</option>
+                <option value="cse">Computer Science & Engineering</option>
+                <option value="ece">Electronics & Communication Engineering</option>
+                <option value="eee">Electrical & Electronics Engineering</option>
+                <option value="civil">Civil Engineering</option>
+                <option value="it">Inforamtion Technology</option>
+                <option value="met">Metallurgical Engineering</option>
+                <option value="mech">Mechanical Engineering</option>
+              </select>
+            </div> */}
             {/* Submit Button */}
 
             <div className="flex gap-3 justify-end">
