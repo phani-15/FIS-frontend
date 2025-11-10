@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2 } from "lucide-react"
+import { Trash2, University } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
+  const [phdCount, setPhdCount] = useState(0);
+  const [havePhD, setHavePhD] = useState(false);
 
   const [personalData, setpersonalData] = useState({
     name: "",
@@ -26,15 +28,19 @@ export default function Register() {
   })
 
   const [education, setEducation] = useState({
-    tenth: { title: "Tenth", school: "", marks: "", year: "", },
-    twelth: { title: "Intermediate/Diploma", type: "", college: "", marks: "", year: "", },
-    degree: { title: "Under Graduation", college: "", degreeName: "", specialization: "", year: "", },
-    pg: { title: "Post Graduation", college: "", course: "", specialization: "", year: "" },
+    tenth: { title: "Tenth", school: "", percentage: "", year: "", },
+    twelth: { title: "Intermediate/Diploma", type: "", college: "", percentage: "", year: "", },
+    degree: { title: "Under Graduation", degreeName: "", specialization: "", percentage: "", college: "", university: "", year: "", },
+    pg: { title: "Post Graduation", course: "", specialization: "", percentage: "", college: "", university: "", year: "" },
   });
 
 
   const [experience, setExperience] = useState([
     { institute: "", designation: "", from: "", to: "" }
+  ])
+
+  const [PhDs, setPhDs] = useState([
+    { specialization: "", under_the_proffessor: "", department: "", University: "", year: "", }
   ])
 
   const [administrativeService, setAdministrativeService] = useState([
@@ -182,6 +188,28 @@ export default function Register() {
     [experience, validateExperience]
   );
 
+  const handlePhDChange = useCallback((index, e) => {
+    const { name, value } = e.target;
+    setPhDs(prev => {
+      const updated = [...prev];
+      updated[index][name] = value;
+      return updated;
+    });
+  }, []);
+
+  const removePhD = useCallback((index) => {
+    setPhDs(prev => prev.filter((_, i) => i !== index));
+    setPhdCount(prev => Math.max(0, prev - 1));
+  }, []);
+
+  const addPhD = useCallback(() => {
+    setPhDs(prev => [
+      ...prev,
+      { specialization: "", under_the_proffessor: "", department: "", University: "", year: "" }
+    ]);
+    setPhdCount(prev => prev + 1);
+  }, []);
+
   const handleSubmitSignUp = useCallback(
     (e) => {
       e.preventDefault();
@@ -197,28 +225,51 @@ export default function Register() {
 
     Object.entries(education).forEach(([level, fields]) => {
       Object.entries(fields).forEach(([field, value]) => {
-        if (field === "title" || field==="marks") return; // skip title
+        if (field === "title" || field === "percentage") return; // skip title
         if (!value || value.toString().trim() === "") {
           newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
         }
       });
     });
 
+    // Validate PhDs if user has PhDs
+    if (havePhD) {
+      PhDs.forEach((phd, index) => {
+        Object.entries(phd).forEach(([field, value]) => {
+          if (!value || value.toString().trim() === "") {
+            newErrors[`phd.${index}.${field}`] = `PhD ${index + 1} - ${field} is required`;
+          }
+          if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+            newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+          }
+        });
+      });
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [education]);
-
+  }, [education, havePhD, PhDs]);
 
   const handleSubmitEducation = useCallback(
     (e) => {
       e.preventDefault();
       if (!validateEducation()) return;
+
+      // If user doesn't have PhDs, reset the state
+      if (!havePhD) {
+        setPhDs([{ specialization: "", under_the_proffessor: "", department: "", University: "", year: "" }]);
+        setPhdCount(0);
+      }
+
       console.log("Education Data:", education);
+      console.log("Have PhD:", havePhD);
+      if (havePhD) {
+        console.log("PhD Data:", PhDs);
+      }
       setStep("experience");
     },
-    [education, validateEducation]
+    [education, havePhD, PhDs, validateEducation]
   );
-
 
   const renderEduFields = (levelKey) => {
     const fields = Object.keys(education[levelKey]).filter((f) => f !== "title");
@@ -251,15 +302,15 @@ export default function Register() {
       return (
         <InputField
           key={`${levelKey}.${f}`}
-          label={f==="marks"? label+ " (optional)" :label}
+          label={f === "percentage" ? label + " (optional)" : label}
           name={`${levelKey}.${f}`}
           value={String(education[levelKey][f] ?? "")}
           onChange={handleEducationChange}
           // keep year as text + inputMode numeric to avoid number->string conversions
           type={f === "year" ? "text" : "text"}
           error={errors[`${levelKey}.${f}`]}
-          inputMode={f === "year" ? "numeric" : f==="marks" ? "numeric" : undefined}
-          placeholder={f === "year" ?"Enter year" : `Enter ${label.toLowerCase()} ${ f==="school" || f==="college"? "name":""}`}
+          inputMode={f === "year" ? "numeric" : f === "percentage" ? "numeric" : undefined}
+          placeholder={f === "year" ? "Enter year" : `Enter ${label.toLowerCase()} ${f === "school" || f === "college" ? "name" : ""}`}
         />
       );
     });
@@ -384,7 +435,7 @@ export default function Register() {
                 <option value="met">Metallurgical Engineering</option>
                 <option value="mech">Mechanical Engineering</option>
               </select>
-            </div> 
+            </div>
             {/* Submit Button */}
 
             <div className="flex gap-3 justify-end">
@@ -420,6 +471,112 @@ export default function Register() {
                   {renderEduFields(level)}
                 </div>
               ))}
+
+              {/* PhD Section */}
+              <div className="mt-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePhD"
+                      checked={havePhD === true}
+                      onChange={() => setHavePhD(true)}
+                    />
+                    <span>Yes, I have PhD(s)</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePhD"
+                      checked={havePhD === false}
+                      onChange={() => setHavePhD(false)}
+                    />
+                    <span>No, I don't have PhD</span>
+                  </label>
+                </div>
+
+                {havePhD && (
+                  <div className="mt-4 space-y-6">
+                    <h2 className="text-lg font-semibold">PhD Details</h2>
+                    {PhDs.map((phd, index) => (
+                      <div key={index} className="border border-gray-300 p-4 rounded-lg relative">
+                        <h3 className="font-medium mb-3">PhD {index + 1}</h3>
+
+                        <InputField
+                          label="Specialization"
+                          name="specialization"
+                          value={phd.specialization}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.specialization`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Under the Professor"
+                          name="under_the_proffessor"
+                          value={phd.under_the_proffessor}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.under_the_proffessor`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Department"
+                          name="department"
+                          value={phd.department}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.department`]}
+                          required
+                        />
+
+                        <InputField
+                          label="University"
+                          name="University"
+                          value={phd.University}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.University`]}
+                          required
+                        />
+
+                        <InputField
+                          label="year"
+                          name="year"
+                          value={phd.year}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.year`]}
+                          type="number"
+                          inputMode="numeric"
+                          required
+                        />
+
+                        {PhDs.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removePhD(index)}
+                            className="absolute group top-2 right-2 text-slate-600"
+                          >
+                            <Trash2 size={18} />
+                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                              Remove
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={addPhD}
+                      className="flex items-center gap-2 mt-2 text-indigo-600 hover:text-indigo-800"
+                    >
+                      <span className="text-xl">+</span> Add Another PhD
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
@@ -432,10 +589,10 @@ export default function Register() {
                   type="submit"
                   className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
-                  next
+                  Next
                 </button>
               </div>
-              </form>
+            </form>
           </div>
         )
       }
@@ -505,9 +662,14 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => removeExperience(index)}
-                    className="absolute top-2 cursor-pointer right-2 text-slate-600  text-sm"
+                    className="absolute group top-2 cursor-pointer right-2 text-slate-600  text-sm"
                   >
-                    <Trash2 />
+                    <Trash2 size={18} />
+                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                      Remove
+                    </span>
                   </button>
                 )}
               </div>
@@ -515,20 +677,24 @@ export default function Register() {
 
             <div className="flex justify-between">
 
-              <button
-                type="button"
-                onClick={addExperience}
-                className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-              >
-                <span className="text-violet-700 font-bold text-2xl">+</span> Add
-              </button>
-              <button
-                type="button"
-                onClick={ ()=>setStep("as")}
-                className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-              >
-                skip
-              </button>
+              <div className="flex">
+                <button
+                  type="button"
+                  onClick={addExperience}
+                  className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
+                >
+                  Add More
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep('as')}
+                  className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
+                >
+                  skip
+                </button>
+
+
+              </div>
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
@@ -609,9 +775,14 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => removeAS(index)}
-                      className="absolute top-2 cursor-pointer right-2 text-sm"
+                      className="absolute group top-2 cursor-pointer right-2 text-slate-600 text-sm"
                     >
-                      <Trash2 />
+                      <Trash2 size={18} />
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                        Remove
+                      </span>
                     </button>
                   )}
                 </div>
@@ -619,13 +790,22 @@ export default function Register() {
 
               <div className="flex justify-between">
 
-                <button
-                  type="button"
-                  onClick={addAS}
-                  className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-                >
-                  ➕ Add
-                </button>
+                <div className="flex">
+                  <button
+                    type="button"
+                    onClick={addAS}
+                    className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
+                  >
+                    Add More
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStep('oas')}
+                    className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
+                  >
+                    skip
+                  </button>
+                </div>
                 <div className="flex gap-3 justify-end">
                   <button
                     type="button"
@@ -712,9 +892,14 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => removeOAS(index)}
-                      className="absolute top-2 cursor-pointer right-2 text-sm"
+                      className="absolute top-2 group text-slate-600 cursor-pointer right-2 text-sm"
                     >
-                      <Trash2 />
+                      <Trash2 size={18}/>
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                              Remove
+                            </span>
                     </button>
                   )}
                 </div>
@@ -722,13 +907,15 @@ export default function Register() {
 
               <div className="flex justify-between">
 
-                <button
-                  type="button"
-                  onClick={addOAS}
-                  className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-                >
-                  ➕ Add
-                </button>
+                <div className="flex">
+                  <button
+                    type="button"
+                    onClick={addOAS}
+                    className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
+                  >
+                    Add More
+                  </button>
+                </div>
                 <div className="flex gap-3 justify-end">
                   <button
                     type="button"
