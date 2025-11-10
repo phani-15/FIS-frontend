@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
 
   const [personalData, setpersonalData] = useState({
@@ -251,7 +251,7 @@ export default function Register() {
       return (
         <InputField
           key={`${levelKey}.${f}`}
-          label={label}
+          label={f==="marks"? label+ " (optional)" :label}
           name={`${levelKey}.${f}`}
           value={String(education[levelKey][f] ?? "")}
           onChange={handleEducationChange}
@@ -365,12 +365,12 @@ export default function Register() {
 
 
             <InputField label="Designation" name="designation" value={personalData.designation} onChange={handleChange} required />
-            {/* <div className="flex flex-col text-left space-y-2 mt-4">
+            <div className="flex flex-col text-left space-y-2 mt-4">
               <label>Department</label>
               <select
                 name="department"
                 value={personalData.department}
-                onChange={handleLoginChange}
+                onChange={handleChange}
                 className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
                 required
               >
@@ -384,7 +384,7 @@ export default function Register() {
                 <option value="met">Metallurgical Engineering</option>
                 <option value="mech">Mechanical Engineering</option>
               </select>
-            </div> */}
+            </div> 
             {/* Submit Button */}
 
             <div className="flex gap-3 justify-end">
