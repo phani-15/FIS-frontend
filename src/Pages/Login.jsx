@@ -92,12 +92,15 @@ export default function Login() {
 
 					{/* Password */}
 					<div>
-						<label
+						<div className="flex justify-between">
+							<label
 							htmlFor="password"
 							className="block mb-1 text-sm font-medium text-gray-700"
 						>
 							Password
 						</label>
+						<p onClick={()=>navigate('/pc')} className="cursor-pointer hover:underline text-violet-800 font-normal">Forgot password?</p>
+						</div>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">
 								<KeyRound className="w-5 h-5" />
@@ -122,6 +125,7 @@ export default function Login() {
 						<LogIn className="w-5 h-5" />
 					</button>
 					<p className="text-center">New user ? <span className="text-blue-800 cursor-pointer" onClick={() => navigate('/register')}>Register</span></p>
+					<p className="mt-2 text-center text-violet-700">Reset Password</p>
 				</form>
 			</div>
 		</div>
