@@ -1,14 +1,15 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2, University } from "lucide-react"
+import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
-  const [phdCount, setPhdCount] = useState(0);
+  const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
+  const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [personalData, setpersonalData] = useState({
     name: "",
@@ -18,14 +19,16 @@ export default function Register() {
     marital: "",
     designation: "",
     department: "",
+    college: "",
   });
 
   const [loginData, setLoginData] = useState({
     password: "",
-    Cpassword: "",
     email: "",
     phone: "",
   })
+
+  const [Cpassword, setCpassword] = useState("");
 
   const [education, setEducation] = useState({
     tenth: { title: "Tenth", school: "", percentage: "", year: "", },
@@ -39,9 +42,7 @@ export default function Register() {
     { institute: "", designation: "", from: "", to: "" }
   ])
 
-  const [PhDs, setPhDs] = useState([
-    { specialization: "", under_the_proffessor: "", department: "", University: "", year: "", }
-  ])
+  const [PhDs, setPhDs] = useState([])
 
   const [administrativeService, setAdministrativeService] = useState([
     { designation: "", from: "", to: "" }
@@ -51,6 +52,17 @@ export default function Register() {
     { institute: "", from: "", to: "", designation: "" }
   ])
 
+  useEffect(() => {
+    if (personalData.college === "College of PharmaCeutical Sciences") {
+      setpersonalData(prev => ({ ...prev, department: "Department of Pharmacy" }));
+    }
+  }, [personalData.college]);
+
+  useEffect(() => {
+    if (!haveOAS) {
+      setOtherAdministrativeService([]);
+    }
+  }, [haveOAS]);
 
   // stable handler for generic personal fields
   const handleChange = useCallback((e) => {
@@ -150,7 +162,7 @@ export default function Register() {
     const newErrors = {};
     if (loginData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
     if (loginData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-    if (loginData.password !== loginData.Cpassword) newErrors.Cpassword = "Passwords do not match";
+    if (loginData.password !== Cpassword) newErrors.Cpassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [loginData]);
@@ -257,15 +269,12 @@ export default function Register() {
 
       // If user doesn't have PhDs, reset the state
       if (!havePhD) {
-        setPhDs([{ specialization: "", under_the_proffessor: "", department: "", University: "", year: "" }]);
+        setPhDs([]);
         setPhdCount(0);
       }
 
       console.log("Education Data:", education);
-      console.log("Have PhD:", havePhD);
-      if (havePhD) {
-        console.log("PhD Data:", PhDs);
-      }
+      console.log("PhD Data:", PhDs);
       setStep("experience");
     },
     [education, havePhD, PhDs, validateEducation]
@@ -324,7 +333,7 @@ export default function Register() {
 
           <form onSubmit={handleSubmitSignUp} className="flex flex-col">
 
-            <InputField label="Email" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
+            <InputField label="Email" placeholder="enter mail addresss" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
 
             {/* specific handler for phone to keep digits-only and stable string */}
             <InputField
@@ -345,13 +354,15 @@ export default function Register() {
               value={loginData.password}
               onChange={handleLoginChange}
               error={errors.password}
+              placeholder="choose password"
               required />
             <InputField
               label="Confirm Password"
               name="Cpassword"
               type="password"
-              value={loginData.Cpassword}
-              onChange={handleLoginChange}
+              placeholder="re-enter password"
+              value={Cpassword}
+              onChange={(e) => { setCpassword(e.target.value); setErrors((prev) => ({ ...prev, Cpassword: "" })); }}
               error={errors.Cpassword}
               required
             />
@@ -372,8 +383,8 @@ export default function Register() {
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            <InputField label="Full Name" name="name" value={personalData.name} onChange={handleChange} required />
-            <InputField label="Father's Name" name="father" value={personalData.father} onChange={handleChange} required />
+            <InputField label="Full Name" name="name" placeholder="enter your name" value={personalData.name} onChange={handleChange} required />
+            <InputField label="Father's Name" name="father" placeholder="enter your father name" value={personalData.father} onChange={handleChange} required />
 
             <div className="md:flex justify-between">
               <div className="flex flex-col text-left space-y-2 mt-4">
@@ -405,7 +416,7 @@ export default function Register() {
                 name="marital"
                 value={personalData.marital}
                 onChange={handleChange}
-                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
                 required
               >
                 <option value="">Select your option</option>
@@ -414,28 +425,64 @@ export default function Register() {
               </select>
             </div>
 
-
-            <InputField label="Designation" name="designation" value={personalData.designation} onChange={handleChange} required />
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>Department</label>
+              <label>College</label>
               <select
-                name="department"
-                value={personalData.department}
+                name="college"
+                value={personalData.college}
                 onChange={handleChange}
-                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
                 required
               >
                 <option value="">Select your option</option>
-                <option value="bshss">BS & HSS</option>
-                <option value="cse">Computer Science & Engineering</option>
-                <option value="ece">Electronics & Communication Engineering</option>
-                <option value="eee">Electrical & Electronics Engineering</option>
-                <option value="civil">Civil Engineering</option>
-                <option value="it">Inforamtion Technology</option>
-                <option value="met">Metallurgical Engineering</option>
-                <option value="mech">Mechanical Engineering</option>
+                <option value="University College of Engineering">University College of Engineering</option>
+                <option value="College of PharmaCeutical Sciences">College of PharmaCeutical Sciences</option>
               </select>
             </div>
+
+            {
+              /* Department Dropdown */
+              personalData.college === "University College of Engineering" &&
+              <div className="flex flex-col text-left space-y-2 mt-4">
+                <label>Department</label>
+                <select
+                  name="department"
+                  value={personalData.department}
+                  onChange={handleChange}
+                  className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
+                  required
+                >
+                  <option value="">Select your option</option>
+                  <option value="bshss">BS & HSS</option>
+                  <option value="cse">Computer Science & Engineering</option>
+                  <option value="ece">Electronics & Communication Engineering</option>
+                  <option value="eee">Electrical & Electronics Engineering</option>
+                  <option value="civil">Civil Engineering</option>
+                  <option value="it">Inforamtion Technology</option>
+                  <option value="met">Metallurgical Engineering</option>
+                  <option value="mech">Mechanical Engineering</option>
+                  <option value="mech">Master's in Business Administration</option>
+                </select>
+              </div>
+            }
+
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label>Designation</label>
+              <select
+                name="designation"
+                value={personalData.designation}
+                onChange={handleChange}
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
+                required
+              >
+                <option value="">Select your option</option>
+                <option value="Professor">Professor</option>
+                <option value="Assistant Professor">Assistant Professor</option>
+                <option value="Associate Professor">Associate Professor</option>
+                <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
+              </select>
+            </div>
+
             {/* Submit Button */}
 
             <div className="flex gap-3 justify-end">
@@ -479,8 +526,12 @@ export default function Register() {
                     <input
                       type="radio"
                       name="havePhD"
-                      checked={havePhD === true}
-                      onChange={() => setHavePhD(true)}
+                      checked={havePhD}
+                      onChange={() => {
+                        setHavePhD(true)
+                        addPhD()
+                      }
+                      }
                     />
                     <span>Yes, I have PhD(s)</span>
                   </label>
@@ -488,8 +539,11 @@ export default function Register() {
                     <input
                       type="radio"
                       name="havePhD"
-                      checked={havePhD === false}
-                      onChange={() => setHavePhD(false)}
+                      checked={!havePhD}
+                      onChange={() => {
+                        setHavePhD(false)
+                        setPhDs([]); setPhdCount(0);
+                      }}
                     />
                     <span>No, I don't have PhD</span>
                   </label>
@@ -575,6 +629,36 @@ export default function Register() {
                     </button>
                   </div>
                 )}
+              </div>
+
+              <div className="mt-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePostDoc"
+                      checked={havePostDoc}
+                      onChange={() => setHavePostDoc(true)}
+                    />
+                    <span>Yes, I have Post Doctoral(s)</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePostDoc"
+                      checked={!havePostDoc}
+                      onChange={() => setHavePostDoc(false)}
+                    />
+                    <span>No, I don't have any PostDoc</span>
+                  </label>
+                </div>
+                {
+                  havePostDoc && (
+                    <div className="text-left italic text-gray-600">
+                      Please provide Post Doctorate details in the Experience section.
+                    </div>
+                  )
+                }
               </div>
 
               <div className="flex gap-3 justify-end">
@@ -687,12 +771,14 @@ export default function Register() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep('as')}
+                  onClick={() => {
+                    setExperience([])
+                    setStep('as')
+                  }}
                   className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
                 >
                   skip
                 </button>
-
 
               </div>
               <div className="flex gap-3 justify-end">
@@ -800,7 +886,10 @@ export default function Register() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setStep('oas')}
+                    onClick={() => {
+                      setAdministrativeService([])
+                      setStep('oas')
+                    }}
                     className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
                   >
                     skip
@@ -894,27 +983,43 @@ export default function Register() {
                       onClick={() => removeOAS(index)}
                       className="absolute top-2 group text-slate-600 cursor-pointer right-2 text-sm"
                     >
-                      <Trash2 size={18}/>
+                      <Trash2 size={18} />
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
                      bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
                      group-hover:opacity-100 transition">
-                              Remove
-                            </span>
+                        Remove
+                      </span>
                     </button>
                   )}
                 </div>
               ))}
 
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={!haveOAS}
+                  onChange={() => {
+                    if(!haveOAS){
+                      addOAS();
+                    }
+                    setHaveOAS(prev => !prev);
+                  }}
+                />
+                <label>No Other Administrative Service</label>
+
+              </div>
+
               <div className="flex justify-between">
 
                 <div className="flex">
-                  <button
-                    type="button"
-                    onClick={addOAS}
-                    className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
-                  >
-                    Add More
-                  </button>
+                  {haveOAS &&
+                    <button
+                      type="button"
+                      onClick={addOAS}
+                      className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
+                    >
+                      Add More
+                    </button>}
                 </div>
                 <div className="flex gap-3 justify-end">
                   <button
