@@ -22,7 +22,7 @@ export default function App() {
     <div className='flex flex-col min-h-screen'>
     <BrowserRouter>
         <Header />
-        <main className='flex-grow'>          
+        <main className='grow'>          
         <Routes>
           <Route path='/hod' element={<HODLogin />} />
           <Route path='/iqac' element={<IQACLogin />} /> 
