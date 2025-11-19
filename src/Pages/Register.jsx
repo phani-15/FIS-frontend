@@ -43,6 +43,7 @@ export default function Register() {
   ])
 
   const [PhDs, setPhDs] = useState([])
+  const [PostDocs, setPostDocs] = useState([])
 
   const [administrativeService, setAdministrativeService] = useState([
     { designation: "", from: "", to: "" }
@@ -209,9 +210,21 @@ export default function Register() {
     });
   }, []);
 
+  const handlePostDocChange = useCallback((index, e) => {
+    const { name, value } = e.target;
+    setPostDocs(prev => {
+      const updated = [...prev];
+      updated[index][name] = value;
+      return updated;
+    });
+  }, [])
+
   const removePhD = useCallback((index) => {
     setPhDs(prev => prev.filter((_, i) => i !== index));
-    setPhdCount(prev => Math.max(0, prev - 1));
+  }, []);
+
+  const removePostDoc = useCallback((index) => {
+    setPostDocs(prev => prev.filter((_, i) => i !== index));
   }, []);
 
   const addPhD = useCallback(() => {
@@ -219,7 +232,13 @@ export default function Register() {
       ...prev,
       { specialization: "", under_the_proffessor: "", department: "", University: "", year: "" }
     ]);
-    setPhdCount(prev => prev + 1);
+  }, []);
+
+  const addPostDoc = useCallback(() => {
+    setPostDocs(prev => [
+      ...prev,
+      { specialization: "", under_the_proffessor: "", University: "", year : "" }
+    ]);
   }, []);
 
   const handleSubmitSignUp = useCallback(
@@ -270,7 +289,6 @@ export default function Register() {
       // If user doesn't have PhDs, reset the state
       if (!havePhD) {
         setPhDs([]);
-        setPhdCount(0);
       }
 
       console.log("Education Data:", education);
@@ -371,7 +389,7 @@ export default function Register() {
 
             <button
               type="submit"
-              className="mt-6 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+              className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
             >
               Next
             </button>
@@ -496,7 +514,7 @@ export default function Register() {
 
               <button
                 type="submit"
-                className="mt-6 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
               >
                 Next
               </button>
@@ -542,7 +560,7 @@ export default function Register() {
                       checked={!havePhD}
                       onChange={() => {
                         setHavePhD(false)
-                        setPhDs([]); setPhdCount(0);
+                        setPhDs([]);
                       }}
                     />
                     <span>No, I don't have PhD</span>
@@ -610,9 +628,8 @@ export default function Register() {
                             className="absolute group top-2 right-2 text-slate-600"
                           >
                             <Trash2 size={18} />
-                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
-                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
-                     group-hover:opacity-100 transition">
+                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 
+                            text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
                               Remove
                             </span>
                           </button>
@@ -638,7 +655,10 @@ export default function Register() {
                       type="radio"
                       name="havePostDoc"
                       checked={havePostDoc}
-                      onChange={() => setHavePostDoc(true)}
+                      onChange={() => {
+                        setHavePostDoc(true)
+                        addPostDoc()
+                      }}
                     />
                     <span>Yes, I have Post Doctoral(s)</span>
                   </label>
@@ -647,18 +667,84 @@ export default function Register() {
                       type="radio"
                       name="havePostDoc"
                       checked={!havePostDoc}
-                      onChange={() => setHavePostDoc(false)}
+                      onChange={() => {
+                        setHavePostDoc(false)
+                        setPostDocs([]);
+                      }}
                     />
                     <span>No, I don't have any PostDoc</span>
                   </label>
                 </div>
-                {
-                  havePostDoc && (
-                    <div className="text-left italic text-gray-600">
-                      Please provide Post Doctorate details in the Experience section.
-                    </div>
-                  )
-                }
+                {havePostDoc && (
+                  <div className="mt-4 space-y-6">
+                    <h2 className="text-lg font-semibold">PostDoctoral Details</h2>
+                    {PostDocs.map((postdoc, index) => (
+                      <div key={index} className="border border-gray-300 p-4 rounded-lg relative">
+                        <h3 className="font-medium mb-3">PostDoc {index + 1}</h3>
+
+                        <InputField
+                          label="Specialization"
+                          name="specialization"
+                          value={postdoc.specialization}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.specialization`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Under the Professor(optional)"
+                          name="under_the_proffessor"
+                          value={postdoc.under_the_proffessor}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.under_the_proffessor`]}
+                          required
+                        />
+
+                        <InputField
+                          label="University"
+                          name="University"
+                          value={postdoc.University}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.University`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Year of Completion"
+                          name="year"
+                          value={postdoc.year}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.year`]}
+                          type="number"
+                          inputMode="numeric"
+                          required
+                        />
+
+                        {PostDocs.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removePostDoc(index)}
+                            className="absolute group top-2 right-2 text-slate-600"
+                          >
+                            <Trash2 size={18} />
+                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 
+                            text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                              Remove
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={addPostDoc}
+                      className="flex items-center gap-2 mt-2 text-indigo-600 hover:text-indigo-800"
+                    >
+                      <span className="text-xl">+</span> Add Another PostDoc
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 justify-end">
@@ -671,7 +757,7 @@ export default function Register() {
                 </button>
                 <button
                   type="submit"
-                  className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
                   Next
                 </button>
@@ -791,7 +877,7 @@ export default function Register() {
                 </button>
                 <button
                   type="submit"
-                  className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
                   Next
                 </button>
@@ -905,7 +991,7 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
-                    className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                    className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Next
                   </button>
@@ -999,7 +1085,7 @@ export default function Register() {
                   type="checkbox"
                   checked={!haveOAS}
                   onChange={() => {
-                    if(!haveOAS){
+                    if (!haveOAS) {
                       addOAS();
                     }
                     setHaveOAS(prev => !prev);
@@ -1031,7 +1117,7 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
-                    className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                    className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Finish Registration
                   </button>

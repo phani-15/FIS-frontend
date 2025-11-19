@@ -5,7 +5,7 @@ import {
   MapPin,
   Calendar,
   LogOut,
-  User,
+  SquarePen ,
   GraduationCap,
   Briefcase,
   Award,
@@ -22,7 +22,7 @@ export default function ProfilePage() {
     profile: {
       name: "Dr. P. Aruna Kumari",
       role: "Professor @ JNTUGV",
-      avatar: "/images/profile.jpg",
+      avatar: "/images/Profile.jpg",
     },
     personalInfo: {
       email: "aruna.kumari@jntugv.edu",
@@ -93,15 +93,6 @@ export default function ProfilePage() {
   return (
     <div className="p-4 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        {/* <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Academic Profile
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Manage your professional information
-          </p>
-        </div> */}
 
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Profile Card */}
@@ -124,6 +115,17 @@ export default function ProfilePage() {
                 {/* Action Button */}
                 <div className="flex flex-col gap-4">
                   <div className="mt-6 flex justify-center text-gray-600 gap-6">
+
+                    {/* Edit Button */}
+                    <button className="relative group cursor-pointer">
+                      <SquarePen  />
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                        Print
+                      </span>
+                    </button>
+
                     {/* Print Button */}
                     <button className="relative group cursor-pointer">
                       <Printer />
@@ -148,11 +150,11 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex flex-col  gap-3">
                     <button
-                    onClick={()=>navigate('/add')}
-                    className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Certifications</button>
+                      onClick={() => navigate('/add')}
+                      className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Certifications</button>
                     <button
-                    onClick={()=>navigate('/vc')}
-                    className="bg-linear-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Certifications</button>
+                      onClick={() => navigate('/vc')}
+                      className="bg-linear-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Certifications</button>
                   </div>
                 </div>
 
@@ -188,51 +190,51 @@ export default function ProfilePage() {
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
             <div className="grid gap-6 lg:grid-cols-2">
-            {/* Education Section */}
-            <Section
-              title="Educational Qualifications"
-              icon={<GraduationCap size={20} className="text-green-600" />}
-            >
-              <div className="space-y-4">
-                {profile.education.map((edu, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-800">
-                        {edu.degree}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {edu.institution} • {edu.year}
-                      </p>
+              {/* Education Section */}
+              <Section
+                title="Educational Qualifications"
+                icon={<GraduationCap size={20} className="text-green-600" />}
+              >
+                <div className="space-y-4">
+                  {profile.education.map((edu, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">
+                          {edu.degree}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {edu.institution} • {edu.year}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </Section>
+                  ))}
+                </div>
+              </Section>
 
-            {/* Professional Experience */}
-            <Section
-              title="Professional Experience"
-              icon={<Briefcase size={20} className="text-orange-600" />}
-            >
-              <div className="space-y-4">
-                {profile.professionalExperience.map((exp, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-800">{exp.role}</p>
-                      <p className="text-sm text-gray-600">
-                        {exp.institution} • {exp.years}
-                      </p>
+              {/* Professional Experience */}
+              <Section
+                title="Professional Experience"
+                icon={<Briefcase size={20} className="text-orange-600" />}
+              >
+                <div className="space-y-4">
+                  {profile.professionalExperience.map((exp, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">{exp.role}</p>
+                        <p className="text-sm text-gray-600">
+                          {exp.institution} • {exp.years}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </Section>
+                  ))}
+                </div>
+              </Section>
             </div>
 
             {/* Two Column Sections */}

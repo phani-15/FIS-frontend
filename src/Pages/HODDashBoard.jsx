@@ -93,11 +93,11 @@ export default function HODDashBoard() {
         HOD DashBoard
       </h1>
       <div className="flex flex-col">
-        <div className="mb-8 mt-10 border border-gray-200 rounded-2xl overflow-hidden shadow-md bg-gradient-to-br from-slate-50 via-white to-slate-100">
+        <div className="mb-8 mt-10 border border-gray-200 rounded-2xl overflow-hidden shadow-md bg-linear-to-br from-slate-50 via-white to-slate-100">
           {/* Header */}
           <button
             onClick={() => setExpand(!expand)}
-            className="w-full flex justify-between items-center px-6 py-4 text-left font-semibold text-slate-700 bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-100 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300"
+            className="w-full flex justify-between items-center px-6 py-4 text-left font-semibold text-slate-700 bg-linear-to-r from-blue-50 via-indigo-50 to-blue-100 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300"
           >
             <div className="flex items-center gap-3">
               <div className="w-1.5 h-8 rounded bg-blue-500 shadow-sm" />
