@@ -230,7 +230,7 @@ export default function Register() {
   const addPhD = useCallback(() => {
     setPhDs(prev => [
       ...prev,
-      { specialization: "", under_the_proffessor: "", department: "", University: "", year: "" }
+      { specialization: "", under_the_proffessor: "", department: "", University: "", year : "" }
     ]);
   }, []);
 
@@ -267,11 +267,25 @@ export default function Register() {
     if (havePhD) {
       PhDs.forEach((phd, index) => {
         Object.entries(phd).forEach(([field, value]) => {
-          if (!value || value.toString().trim() === "") {
+          if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "" )) {
             newErrors[`phd.${index}.${field}`] = `PhD ${index + 1} - ${field} is required`;
           }
           if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
             newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+          }
+        });
+      });
+    }
+
+    //validate PostDocs
+    if (havePostDoc) {
+      PostDocs.forEach((postdoc, index) => {
+        Object.entries(postdoc).forEach(([field, value]) => {
+          if(field != 'under_the_proffessor' && (!value || value.toString().trim() === "" )){
+            newErrors[`postdoc.${index}.${field}`] = `PostDoc ${index + 1} - ${field} is required`;
+          }
+          if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+            newErrors[`postdoc.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
           }
         });
       });
@@ -611,7 +625,7 @@ export default function Register() {
                         />
 
                         <InputField
-                          label="year"
+                          label="Year of Completion"
                           name="year"
                           value={phd.year}
                           onChange={(e) => handlePhDChange(index, e)}
