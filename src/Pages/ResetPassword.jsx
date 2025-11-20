@@ -1,14 +1,35 @@
 import React from 'react'
 import { User, Lock, RotateCcwKey, LogIn, KeyRound } from "lucide-react";
+import InputField from "../components/inputField";
+import { useNavigate } from 'react-router-dom';
 
 export default function ResetPassword() {
 
+    const [data,setData] = React.useState({
+        email: "",
+        pass: "",
+        newPass: "",
+        Cpass: ""
+    });
+
+    const [errors, setErrors] = React.useState({});
+    const navigate = useNavigate();
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Password is reset successfully")
+        const newErrors = {};
+        if(data.newPass.length < 8) newErrors.newPass = "Password must be at least 8 characters";
+        if(data.newPass !== data.Cpass) newErrors.Cpass = "Passwords do not match";
+        setErrors(newErrors);
+        if(Object.keys(newErrors).length > 0) return;
+        console.log(data)
+        navigate('/');
     }
     const handleChange = (e) => {
-        console.log("this function handles the change")
+        const { id, value } = e.target;
+        setData((prevData) => ({
+            ...prevData,
+            [id]: value,
+        }));
     }
     return (
         <div className="flex justify-center items-center p-4">
@@ -28,94 +49,63 @@ export default function ResetPassword() {
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
                     {/* Username */}
                     <div>
-                        <label
-                            htmlFor="username"
-                            className="block mb-1 text-sm font-medium text-gray-700"
-                        >
-                            Email
-                        </label>
-                        <div className="relative">
-                            <span className="absolute left-3 top-2.5 text-gray-400">
-                                <User className="w-5 h-5" />
-                            </span>
-                            <input
-                                type="text"
-                                id="username"
-                                onChange={handleChange}
-                                placeholder="Enter registered email address"
-                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 "
-                            />
-                        </div>
+                        <InputField
+                            label="Email"
+                            type="text"
+                            value={data.email}
+                            id="email"
+                            placeholder="Enter registered email address"
+                            onChange={handleChange}
+                            error={errors.email}
+                        />
                     </div>
 
                     {/* Password */}
                     <div>
-                        <div className="flex justify-between">
-                            <label
-                                htmlFor="password"
-                                className="block mb-1 text-sm font-medium text-gray-700"
-                            >
-                                Current	Password
-                            </label>
-                        </div>
-                        <div className="relative">
-                            <span className="absolute left-3 top-2.5 text-gray-400">
-                                <KeyRound className="w-5 h-5" />
-                            </span>
-                            <input
-                                type="password"
-                                onChange={handleChange}
-                                placeholder="Enter your password"
-                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1"
-                            />
-                        </div>
+                        <InputField
+                            label="Current Password"
+                            type="password"
+                            id="pass"
+                            value={data.pass}
+                            error={errors.pass}
+                            placeholder="Enter your password"
+                            onChange={handleChange}
+                        />
                     </div>
                     
                     <div>
-                        <div className="flex justify-between">
-                            <label
-                                htmlFor="newPassword"
-                                className="block mb-1 text-sm font-medium text-gray-700"
-                            >
-                                New	Password
-                            </label>
-                        </div>
-                        <div className="relative"> 
-                            <input
-                                type="password"
-                                onChange={handleChange}
-                                placeholder="Choose a new password"
-                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1"
-                            />
-                        </div>
+                       
+                        <InputField
+                            label="New Password"
+                            type="password"
+                            id="newPass"
+                            value={data.newPass}
+                            placeholder="Choose a new password"
+                            onChange={handleChange}
+                            error={errors.newPass}
+                        />
                     </div>
 
                     <div>
-                        <div className="flex justify-between">
-                            <label
-                                htmlFor="password"
-                                className="block mb-1 text-sm font-medium text-gray-700"
-                            >
-                                Confirm	Password
-                            </label>
-                        </div>
-                        <div className="relative">
-                            <input
-                                type="password"
-                                onChange={handleChange}
-                                placeholder="Re-Enter the new password"
-                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1"
-                            />
-                        </div>
+                        
+                        <InputField
+                            label="Confirm Password"
+                            type="password"
+                            value={data.Cpass}
+                            id="Cpass"
+                            error={errors.Cpass}
+                            placeholder="Re-Enter the new password"
+                            onChange={handleChange}
+                        />
                     </div>
                     {/* Submit Button */}
                     <button
                         type="submit"
                         className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
                     >
-                        Login
-                        <LogIn className="w-5 h-5" />
+                        Reset
                     </button>
+                    <p onClick={()=>navigate('/pc')} className='text-end text-blue-700 hover:underline'>forgot Password</p>
                 </form>
             </div>
         </div>
