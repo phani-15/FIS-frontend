@@ -30,6 +30,7 @@ export default function PasswordChange() {
 		if (data.password.length < 8) newErrors.password = "Password must be at least 8 characters";
 		if (data.password !== data.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
 		setError(newErrors);
+		if(Object.keys(newErrors).length > 0) return;
 		alert("Password changed successfully!")
 	}
 

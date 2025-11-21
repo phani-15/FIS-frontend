@@ -1,11 +1,11 @@
-import React,{useState} from "react";
-import {useNavigate} from "react-router-dom"
-import { User, Lock,LogIn  ,KeyRound } from "lucide-react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"
+import { User, Lock, LogIn, KeyRound } from "lucide-react";
 
 export default function HODLogin() {
-  const navigate=useNavigate()
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    username: "",
+    department: "",
     password: "",
   });
 
@@ -15,28 +15,27 @@ export default function HODLogin() {
       ...prev,
       [id]: value,
     }));
-    document.getElementById("empty"+id).innerHTML = "";
+    document.getElementById("empty" + id).innerHTML = "";
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(!formData.username){
+    if (!formData.department) {
       document.getElementById("emptyusername").innerHTML = "<p class='text-red-600 text-sm'>Username is required</p>";
       return;
     }
-    if(!formData.password){
+    if (!formData.password) {
       document.getElementById("emptypassword").innerHTML = "<p class='text-red-600 text-sm'>Password is required</p>";
       return;
     }
-    console.log("Username:", formData.username);
-    console.log("Password:", formData.password)
+    console.log(formData);
     navigate("/hodDashboard")
   };
 
   return (
     <div className="flex justify-center items-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
-        
+
         {/* Top Icon */}
         <div className="flex justify-center mb-6">
           <div className="p-4 bg-purple-100 rounded-xl shadow-sm">
@@ -54,25 +53,29 @@ export default function HODLogin() {
         <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
           {/* Username */}
           <div>
-            <label
-              htmlFor="username"
-              className="block mb-1 text-sm font-medium text-gray-700"
-            >
-              Username
-            </label>
             <div className="relative">
-              <span className="absolute left-3 top-2.5 text-gray-400">
-                <User className="w-5 h-5" />
-              </span>
-              <input
-                type="text"
-                id="username"
+              <label className="block mb-1 text-sm font-medium text-gray-700">Department</label>
+              <select
+                name="department"
+                id="department"
+                value={formData.department}
                 onChange={handleChange}
-                placeholder="Enter your username"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 "
-              />
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
+                required
+              >
+                <option value="">Select Department</option>
+                <option value="bshss">BS & HSS</option>
+                <option value="cse">Computer Science & Engineering</option>
+                <option value="ece">Electronics & Communication Engineering</option>
+                <option value="eee">Electrical & Electronics Engineering</option>
+                <option value="civil">Civil Engineering</option>
+                <option value="it">Inforamtion Technology</option>
+                <option value="met">Metallurgical Engineering</option>
+                <option value="mech">Mechanical Engineering</option>
+                <option value="mech">Master's in Business Administration</option>
+              </select>
             </div>
-            <div id="emptyusername"></div>
+            <div id="emptydepartment"></div>
           </div>
 
           {/* Password */}
@@ -81,11 +84,11 @@ export default function HODLogin() {
               htmlFor="password"
               className="block mb-1 text-sm font-medium text-gray-700"
             >
-              Password
+              PassKey
             </label>
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-gray-400">
-                <KeyRound  className="w-5 h-5" />
+                <KeyRound className="w-5 h-5" />
               </span>
               <input
                 type="password"
@@ -101,7 +104,7 @@ export default function HODLogin() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+            className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
           >
             Login
             <LogIn className="w-5 h-5" />
@@ -109,7 +112,7 @@ export default function HODLogin() {
         </form>
 
         {/* Footer */}
-        
+
       </div>
     </div>
   );

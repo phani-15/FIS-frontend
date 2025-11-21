@@ -117,12 +117,14 @@ export default function ProfilePage() {
                   <div className="mt-6 flex justify-center text-gray-600 gap-6">
 
                     {/* Edit Button */}
-                    <button className="relative group cursor-pointer">
+                    <button
+                    onClick={()=>navigate('/edit')}
+                    className="relative group cursor-pointer">
                       <SquarePen  />
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
                      bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
                      group-hover:opacity-100 transition">
-                        Print
+                        Edit
                       </span>
                     </button>
 

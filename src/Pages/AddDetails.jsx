@@ -301,7 +301,7 @@ export default function AddDetails() {
                   <div className="flex justify-center mt-6">
                      <button
                         type="submit"
-                        className="py-2 px-6 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                        className="py-2 px-6 bg-linear-to-r from-purple-500 to-indigo-600 text-white rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                      >
                         Submit
                      </button>

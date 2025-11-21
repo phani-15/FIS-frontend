@@ -30,7 +30,7 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
             <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl transform scale-100 transition-transform duration-300">
                 
                 {/* 2. Modal Header: Added Gradient and updated text colors */}
-                <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-700 border-b p-5 flex justify-between items-center z-10">
+                <div className="sticky top-0 bg-linear-to-r from-blue-600 to-purple-700 border-b p-5 flex justify-between items-center z-10">
                     <h3 className="text-xl font-bold text-white">Edit {formatFieldLabel(sectionKey)}: {titleField.substring(0, 40)}...</h3>
                     <button onClick={onClose} className="text-white hover:text-gray-300 transition cursor-pointer">
                         <X size={24} />
@@ -335,7 +335,7 @@ const ViewCertificaion = () => {
             items.length > 0 && (
               <section key={section} className="bg-white rounded-xl shadow-lg overflow-hidden">
                 {/* Section Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-700 px-6 py-4">
+                <div className="bg-linear-to-r from-blue-600 to-purple-700 px-6 py-4">
                   <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
