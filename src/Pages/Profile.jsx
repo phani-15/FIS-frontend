@@ -93,15 +93,7 @@ export default function ProfilePage() {
   return (
     <div className="p-4 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        {/* <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Academic Profile
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Manage your professional information
-          </p>
-        </div> */}
+        
 
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Profile Card */}
