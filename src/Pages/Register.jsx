@@ -1,12 +1,15 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
+  const [haveOAS, setHaveOAS] = useState(true);
+  const [havePhD, setHavePhD] = useState(false);
+  const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [personalData, setpersonalData] = useState({
     name: "",
@@ -16,26 +19,31 @@ export default function Register() {
     marital: "",
     designation: "",
     department: "",
+    college: "",
   });
 
   const [loginData, setLoginData] = useState({
     password: "",
-    Cpassword: "",
     email: "",
     phone: "",
   })
 
+  const [Cpassword, setCpassword] = useState("");
+
   const [education, setEducation] = useState({
-    tenth: { title: "Tenth", school: "", marks: "", year: "", },
-    twelth: { title: "Intermediate/Diploma", type: "", college: "", marks: "", year: "", },
-    degree: { title: "Under Graduation", college: "", degreeName: "", specialization: "", year: "", },
-    pg: { title: "Post Graduation", college: "", course: "", specialization: "", year: "" },
+    tenth: { title: "Tenth", school: "", percentage: "", year: "", },
+    twelth: { title: "Intermediate/Diploma", type: "", college: "", percentage: "", year: "", },
+    degree: { title: "Under Graduation", degreeName: "", specialization: "", percentage: "", college: "", university: "", year: "", },
+    pg: { title: "Post Graduation", course: "", specialization: "", percentage: "", college: "", university: "", year: "" },
   });
 
 
   const [experience, setExperience] = useState([
     { institute: "", designation: "", from: "", to: "" }
   ])
+
+  const [PhDs, setPhDs] = useState([])
+  const [PostDocs, setPostDocs] = useState([])
 
   const [administrativeService, setAdministrativeService] = useState([
     { designation: "", from: "", to: "" }
@@ -45,6 +53,17 @@ export default function Register() {
     { institute: "", from: "", to: "", designation: "" }
   ])
 
+  useEffect(() => {
+    if (personalData.college === "College of PharmaCeutical Sciences") {
+      setpersonalData(prev => ({ ...prev, department: "Department of Pharmacy" }));
+    }
+  }, [personalData.college]);
+
+  useEffect(() => {
+    if (!haveOAS) {
+      setOtherAdministrativeService([]);
+    }
+  }, [haveOAS]);
 
   // stable handler for generic personal fields
   const handleChange = useCallback((e) => {
@@ -144,7 +163,7 @@ export default function Register() {
     const newErrors = {};
     if (loginData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
     if (loginData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-    if (loginData.password !== loginData.Cpassword) newErrors.Cpassword = "Passwords do not match";
+    if (loginData.password !== Cpassword) newErrors.Cpassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [loginData]);
@@ -182,6 +201,46 @@ export default function Register() {
     [experience, validateExperience]
   );
 
+  const handlePhDChange = useCallback((index, e) => {
+    const { name, value } = e.target;
+    setPhDs(prev => {
+      const updated = [...prev];
+      updated[index][name] = value;
+      return updated;
+    });
+  }, []);
+
+  const handlePostDocChange = useCallback((index, e) => {
+    const { name, value } = e.target;
+    setPostDocs(prev => {
+      const updated = [...prev];
+      updated[index][name] = value;
+      return updated;
+    });
+  }, [])
+
+  const removePhD = useCallback((index) => {
+    setPhDs(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const removePostDoc = useCallback((index) => {
+    setPostDocs(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const addPhD = useCallback(() => {
+    setPhDs(prev => [
+      ...prev,
+      { specialization: "", under_the_proffessor: "", department: "", University: "", year : "" }
+    ]);
+  }, []);
+
+  const addPostDoc = useCallback(() => {
+    setPostDocs(prev => [
+      ...prev,
+      { specialization: "", under_the_proffessor: "", University: "", year : "" }
+    ]);
+  }, []);
+
   const handleSubmitSignUp = useCallback(
     (e) => {
       e.preventDefault();
@@ -197,28 +256,61 @@ export default function Register() {
 
     Object.entries(education).forEach(([level, fields]) => {
       Object.entries(fields).forEach(([field, value]) => {
-        if (field === "title" || field==="marks") return; // skip title
+        if (field === "title" || field === "percentage") return; // skip title
         if (!value || value.toString().trim() === "") {
           newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
         }
       });
     });
 
+    // Validate PhDs if user has PhDs
+    if (havePhD) {
+      PhDs.forEach((phd, index) => {
+        Object.entries(phd).forEach(([field, value]) => {
+          if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "" )) {
+            newErrors[`phd.${index}.${field}`] = `PhD ${index + 1} - ${field} is required`;
+          }
+          if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+            newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+          }
+        });
+      });
+    }
+
+    //validate PostDocs
+    if (havePostDoc) {
+      PostDocs.forEach((postdoc, index) => {
+        Object.entries(postdoc).forEach(([field, value]) => {
+          if(field != 'under_the_proffessor' && (!value || value.toString().trim() === "" )){
+            newErrors[`postdoc.${index}.${field}`] = `PostDoc ${index + 1} - ${field} is required`;
+          }
+          if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+            newErrors[`postdoc.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+          }
+        });
+      });
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [education]);
-
+  }, [education, havePhD, PhDs]);
 
   const handleSubmitEducation = useCallback(
     (e) => {
       e.preventDefault();
       if (!validateEducation()) return;
+
+      // If user doesn't have PhDs, reset the state
+      if (!havePhD) {
+        setPhDs([]);
+      }
+
       console.log("Education Data:", education);
+      console.log("PhD Data:", PhDs);
       setStep("experience");
     },
-    [education, validateEducation]
+    [education, havePhD, PhDs, validateEducation]
   );
-
 
   const renderEduFields = (levelKey) => {
     const fields = Object.keys(education[levelKey]).filter((f) => f !== "title");
@@ -251,15 +343,15 @@ export default function Register() {
       return (
         <InputField
           key={`${levelKey}.${f}`}
-          label={f==="marks"? label+ " (optional)" :label}
+          label={f === "percentage" ? label + " (optional)" : label}
           name={`${levelKey}.${f}`}
           value={String(education[levelKey][f] ?? "")}
           onChange={handleEducationChange}
           // keep year as text + inputMode numeric to avoid number->string conversions
           type={f === "year" ? "text" : "text"}
           error={errors[`${levelKey}.${f}`]}
-          inputMode={f === "year" ? "numeric" : f==="marks" ? "numeric" : undefined}
-          placeholder={f === "year" ?"Enter year" : `Enter ${label.toLowerCase()} ${ f==="school" || f==="college"? "name":""}`}
+          inputMode={f === "year" ? "numeric" : f === "percentage" ? "numeric" : undefined}
+          placeholder={f === "year" ? "Enter year" : `Enter ${label.toLowerCase()} ${f === "school" || f === "college" ? "name" : ""}`}
         />
       );
     });
@@ -273,7 +365,7 @@ export default function Register() {
 
           <form onSubmit={handleSubmitSignUp} className="flex flex-col">
 
-            <InputField label="Email" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
+            <InputField label="Email" placeholder="enter mail addresss" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
 
             {/* specific handler for phone to keep digits-only and stable string */}
             <InputField
@@ -294,13 +386,15 @@ export default function Register() {
               value={loginData.password}
               onChange={handleLoginChange}
               error={errors.password}
+              placeholder="choose password"
               required />
             <InputField
               label="Confirm Password"
               name="Cpassword"
               type="password"
-              value={loginData.Cpassword}
-              onChange={handleLoginChange}
+              placeholder="re-enter password"
+              value={Cpassword}
+              onChange={(e) => { setCpassword(e.target.value); setErrors((prev) => ({ ...prev, Cpassword: "" })); }}
               error={errors.Cpassword}
               required
             />
@@ -309,7 +403,7 @@ export default function Register() {
 
             <button
               type="submit"
-              className="mt-6 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+              className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
             >
               Next
             </button>
@@ -321,8 +415,8 @@ export default function Register() {
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            <InputField label="Full Name" name="name" value={personalData.name} onChange={handleChange} required />
-            <InputField label="Father's Name" name="father" value={personalData.father} onChange={handleChange} required />
+            <InputField label="Full Name" name="name" placeholder="enter your name" value={personalData.name} onChange={handleChange} required />
+            <InputField label="Father's Name" name="father" placeholder="enter your father name" value={personalData.father} onChange={handleChange} required />
 
             <div className="md:flex justify-between">
               <div className="flex flex-col text-left space-y-2 mt-4">
@@ -354,7 +448,7 @@ export default function Register() {
                 name="marital"
                 value={personalData.marital}
                 onChange={handleChange}
-                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
                 required
               >
                 <option value="">Select your option</option>
@@ -363,28 +457,64 @@ export default function Register() {
               </select>
             </div>
 
-
-            <InputField label="Designation" name="designation" value={personalData.designation} onChange={handleChange} required />
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>Department</label>
+              <label>College</label>
               <select
-                name="department"
-                value={personalData.department}
+                name="college"
+                value={personalData.college}
                 onChange={handleChange}
-                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500"
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
                 required
               >
                 <option value="">Select your option</option>
-                <option value="bshss">BS & HSS</option>
-                <option value="cse">Computer Science & Engineering</option>
-                <option value="ece">Electronics & Communication Engineering</option>
-                <option value="eee">Electrical & Electronics Engineering</option>
-                <option value="civil">Civil Engineering</option>
-                <option value="it">Inforamtion Technology</option>
-                <option value="met">Metallurgical Engineering</option>
-                <option value="mech">Mechanical Engineering</option>
+                <option value="University College of Engineering">University College of Engineering</option>
+                <option value="College of PharmaCeutical Sciences">College of PharmaCeutical Sciences</option>
               </select>
-            </div> 
+            </div>
+
+            {
+              /* Department Dropdown */
+              personalData.college === "University College of Engineering" &&
+              <div className="flex flex-col text-left space-y-2 mt-4">
+                <label>Department</label>
+                <select
+                  name="department"
+                  value={personalData.department}
+                  onChange={handleChange}
+                  className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
+                  required
+                >
+                  <option value="">Select your option</option>
+                  <option value="bshss">BS & HSS</option>
+                  <option value="cse">Computer Science & Engineering</option>
+                  <option value="ece">Electronics & Communication Engineering</option>
+                  <option value="eee">Electrical & Electronics Engineering</option>
+                  <option value="civil">Civil Engineering</option>
+                  <option value="it">Inforamtion Technology</option>
+                  <option value="met">Metallurgical Engineering</option>
+                  <option value="mech">Mechanical Engineering</option>
+                  <option value="mech">Master's in Business Administration</option>
+                </select>
+              </div>
+            }
+
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label>Designation</label>
+              <select
+                name="designation"
+                value={personalData.designation}
+                onChange={handleChange}
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
+                required
+              >
+                <option value="">Select your option</option>
+                <option value="Professor">Professor</option>
+                <option value="Assistant Professor">Assistant Professor</option>
+                <option value="Associate Professor">Associate Professor</option>
+                <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
+              </select>
+            </div>
+
             {/* Submit Button */}
 
             <div className="flex gap-3 justify-end">
@@ -398,7 +528,7 @@ export default function Register() {
 
               <button
                 type="submit"
-                className="mt-6 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
               >
                 Next
               </button>
@@ -420,6 +550,217 @@ export default function Register() {
                   {renderEduFields(level)}
                 </div>
               ))}
+
+              {/* PhD Section */}
+              <div className="mt-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePhD"
+                      checked={havePhD}
+                      onChange={() => {
+                        setHavePhD(true)
+                        addPhD()
+                      }
+                      }
+                    />
+                    <span>Yes, I have PhD(s)</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePhD"
+                      checked={!havePhD}
+                      onChange={() => {
+                        setHavePhD(false)
+                        setPhDs([]);
+                      }}
+                    />
+                    <span>No, I don't have PhD</span>
+                  </label>
+                </div>
+
+                {havePhD && (
+                  <div className="mt-4 space-y-6">
+                    <h2 className="text-lg font-semibold">PhD Details</h2>
+                    {PhDs.map((phd, index) => (
+                      <div key={index} className="border border-gray-300 p-4 rounded-lg relative">
+                        <h3 className="font-medium mb-3">PhD {index + 1}</h3>
+
+                        <InputField
+                          label="Specialization"
+                          name="specialization"
+                          value={phd.specialization}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.specialization`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Under the Professor"
+                          name="under_the_proffessor"
+                          value={phd.under_the_proffessor}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.under_the_proffessor`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Department"
+                          name="department"
+                          value={phd.department}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.department`]}
+                          required
+                        />
+
+                        <InputField
+                          label="University"
+                          name="University"
+                          value={phd.University}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.University`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Year of Completion"
+                          name="year"
+                          value={phd.year}
+                          onChange={(e) => handlePhDChange(index, e)}
+                          error={errors[`phd.${index}.year`]}
+                          type="number"
+                          inputMode="numeric"
+                          required
+                        />
+
+                        {PhDs.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removePhD(index)}
+                            className="absolute group top-2 right-2 text-slate-600"
+                          >
+                            <Trash2 size={18} />
+                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 
+                            text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                              Remove
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={addPhD}
+                      className="flex items-center gap-2 mt-2 text-indigo-600 hover:text-indigo-800"
+                    >
+                      <span className="text-xl">+</span> Add Another PhD
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePostDoc"
+                      checked={havePostDoc}
+                      onChange={() => {
+                        setHavePostDoc(true)
+                        addPostDoc()
+                      }}
+                    />
+                    <span>Yes, I have Post Doctoral(s)</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="havePostDoc"
+                      checked={!havePostDoc}
+                      onChange={() => {
+                        setHavePostDoc(false)
+                        setPostDocs([]);
+                      }}
+                    />
+                    <span>No, I don't have any PostDoc</span>
+                  </label>
+                </div>
+                {havePostDoc && (
+                  <div className="mt-4 space-y-6">
+                    <h2 className="text-lg font-semibold">PostDoctoral Details</h2>
+                    {PostDocs.map((postdoc, index) => (
+                      <div key={index} className="border border-gray-300 p-4 rounded-lg relative">
+                        <h3 className="font-medium mb-3">PostDoc {index + 1}</h3>
+
+                        <InputField
+                          label="Specialization"
+                          name="specialization"
+                          value={postdoc.specialization}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.specialization`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Under the Professor(optional)"
+                          name="under_the_proffessor"
+                          value={postdoc.under_the_proffessor}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.under_the_proffessor`]}
+                          required
+                        />
+
+                        <InputField
+                          label="University"
+                          name="University"
+                          value={postdoc.University}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.University`]}
+                          required
+                        />
+
+                        <InputField
+                          label="Year of Completion"
+                          name="year"
+                          value={postdoc.year}
+                          onChange={(e) => handlePostDocChange(index, e)}
+                          error={errors[`postdoc.${index}.year`]}
+                          type="number"
+                          inputMode="numeric"
+                          required
+                        />
+
+                        {PostDocs.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removePostDoc(index)}
+                            className="absolute group top-2 right-2 text-slate-600"
+                          >
+                            <Trash2 size={18} />
+                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 
+                            text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                              Remove
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={addPostDoc}
+                      className="flex items-center gap-2 mt-2 text-indigo-600 hover:text-indigo-800"
+                    >
+                      <span className="text-xl">+</span> Add Another PostDoc
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
@@ -430,12 +771,12 @@ export default function Register() {
                 </button>
                 <button
                   type="submit"
-                  className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
-                  next
+                  Next
                 </button>
               </div>
-              </form>
+            </form>
           </div>
         )
       }
@@ -505,9 +846,14 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => removeExperience(index)}
-                    className="absolute top-2 cursor-pointer right-2 text-slate-600  text-sm"
+                    className="absolute group top-2 cursor-pointer right-2 text-slate-600  text-sm"
                   >
-                    <Trash2 />
+                    <Trash2 size={18} />
+                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                      Remove
+                    </span>
                   </button>
                 )}
               </div>
@@ -515,20 +861,26 @@ export default function Register() {
 
             <div className="flex justify-between">
 
-              <button
-                type="button"
-                onClick={addExperience}
-                className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-              >
-                <span className="text-violet-700 font-bold text-2xl">+</span> Add
-              </button>
-              <button
-                type="button"
-                onClick={ ()=>setStep("as")}
-                className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-              >
-                skip
-              </button>
+              <div className="flex">
+                <button
+                  type="button"
+                  onClick={addExperience}
+                  className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
+                >
+                  Add More
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setExperience([])
+                    setStep('as')
+                  }}
+                  className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
+                >
+                  skip
+                </button>
+
+              </div>
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
@@ -539,7 +891,7 @@ export default function Register() {
                 </button>
                 <button
                   type="submit"
-                  className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
                   Next
                 </button>
@@ -609,9 +961,14 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => removeAS(index)}
-                      className="absolute top-2 cursor-pointer right-2 text-sm"
+                      className="absolute group top-2 cursor-pointer right-2 text-slate-600 text-sm"
                     >
-                      <Trash2 />
+                      <Trash2 size={18} />
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                        Remove
+                      </span>
                     </button>
                   )}
                 </div>
@@ -619,13 +976,25 @@ export default function Register() {
 
               <div className="flex justify-between">
 
-                <button
-                  type="button"
-                  onClick={addAS}
-                  className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-                >
-                  ➕ Add
-                </button>
+                <div className="flex">
+                  <button
+                    type="button"
+                    onClick={addAS}
+                    className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
+                  >
+                    Add More
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAdministrativeService([])
+                      setStep('oas')
+                    }}
+                    className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
+                  >
+                    skip
+                  </button>
+                </div>
                 <div className="flex gap-3 justify-end">
                   <button
                     type="button"
@@ -636,7 +1005,7 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
-                    className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                    className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Next
                   </button>
@@ -712,23 +1081,46 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => removeOAS(index)}
-                      className="absolute top-2 cursor-pointer right-2 text-sm"
+                      className="absolute top-2 group text-slate-600 cursor-pointer right-2 text-sm"
                     >
-                      <Trash2 />
+                      <Trash2 size={18} />
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
+                     group-hover:opacity-100 transition">
+                        Remove
+                      </span>
                     </button>
                   )}
                 </div>
               ))}
 
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={!haveOAS}
+                  onChange={() => {
+                    if (!haveOAS) {
+                      addOAS();
+                    }
+                    setHaveOAS(prev => !prev);
+                  }}
+                />
+                <label>No Other Administrative Service</label>
+
+              </div>
+
               <div className="flex justify-between">
 
-                <button
-                  type="button"
-                  onClick={addOAS}
-                  className="border py-2 px-4 mr-4 rounded-lg cursor-pointer transition"
-                >
-                  ➕ Add
-                </button>
+                <div className="flex">
+                  {haveOAS &&
+                    <button
+                      type="button"
+                      onClick={addOAS}
+                      className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
+                    >
+                      Add More
+                    </button>}
+                </div>
                 <div className="flex gap-3 justify-end">
                   <button
                     type="button"
@@ -739,7 +1131,7 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
-                    className="mt-0 cursor-pointer bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                    className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Finish Registration
                   </button>

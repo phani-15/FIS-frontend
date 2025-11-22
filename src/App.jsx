@@ -15,13 +15,15 @@ import AdminLogin from './Pages/AdminLogin';
 import ViewCertificaion from './Pages/ViewCertificaion';
 import EditPage from './Pages/EditPage';
 import EditAdmin from "./Pages/EditAdmin"
+import PasswordChange from './Pages/PasswordChange';
+import ResetPassword from './Pages/ResetPassword';
 
 export default function App() {
   return (
     <div className='flex flex-col min-h-screen'>
     <BrowserRouter>
         <Header />
-        <main className='flex-grow'>          
+        <main className='grow'>          
         <Routes>
           <Route path='/hod' element={<HODLogin />} />
           <Route path='/iqac' element={<IQACLogin />} /> 
@@ -36,6 +38,8 @@ export default function App() {
           <Route path='/admin' element={<AdminLogin/>}/>
           <Route path='/vc' element={<ViewCertificaion/>}/>
           <Route path='/ea' element={<EditAdmin/>}/>
+          <Route path='/pc' element={<PasswordChange/>}/>
+          <Route path='/rp' element={<ResetPassword/>}/>
         </Routes>
         </main>
         <footer className='flex justify-center p-6'>
