@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -13,6 +13,7 @@ export default function Register() {
 
   const [personalData, setpersonalData] = useState({
     name: "",
+    profile: null,
     father: "",
     gender: "",
     DOB: "",
@@ -86,7 +87,7 @@ export default function Register() {
   const addExperience = useCallback(() => {
     setExperience((prev) => [
       ...prev,
-      { institute: "", designation: "", from: "", to: "", certificate: null }
+      { institute: "", designation: "", from: "", to: ""}
     ]);
   }, []);
 
@@ -158,6 +159,7 @@ export default function Register() {
     setOtherAdministrativeService(prev => prev.filter((_, i) => i !== index));
   }, []);
 
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const validateSignUp = useCallback(() => {
     const newErrors = {};
@@ -230,14 +232,14 @@ export default function Register() {
   const addPhD = useCallback(() => {
     setPhDs(prev => [
       ...prev,
-      { specialization: "", under_the_proffessor: "", department: "", University: "", year : "" }
+      { specialization: "", under_the_proffessor: "", department: "", University: "", year: "" }
     ]);
   }, []);
 
   const addPostDoc = useCallback(() => {
     setPostDocs(prev => [
       ...prev,
-      { specialization: "", under_the_proffessor: "", University: "", year : "" }
+      { specialization: "", under_the_proffessor: "", University: "", year: "" }
     ]);
   }, []);
 
@@ -267,7 +269,7 @@ export default function Register() {
     if (havePhD) {
       PhDs.forEach((phd, index) => {
         Object.entries(phd).forEach(([field, value]) => {
-          if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "" )) {
+          if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "")) {
             newErrors[`phd.${index}.${field}`] = `PhD ${index + 1} - ${field} is required`;
           }
           if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
@@ -281,7 +283,7 @@ export default function Register() {
     if (havePostDoc) {
       PostDocs.forEach((postdoc, index) => {
         Object.entries(postdoc).forEach(([field, value]) => {
-          if(field != 'under_the_proffessor' && (!value || value.toString().trim() === "" )){
+          if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "")) {
             newErrors[`postdoc.${index}.${field}`] = `PostDoc ${index + 1} - ${field} is required`;
           }
           if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
@@ -415,6 +417,44 @@ export default function Register() {
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
+            <div className="flex flex-col">
+              <label className="text-left my-2">Profile Picture</label>
+              <div className="flex gap-4 ">
+                <input
+                  className="p-2 border rounded-md border-gray-300"
+                  name="profile"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    setpersonalData((prev) => ({ ...prev, profile: file }));
+
+                    if (file) {
+                      // Generate preview URL
+                      const url = URL.createObjectURL(file);
+                      setPreviewUrl(url);
+                    } else {
+                      setPreviewUrl(null);
+                    }
+                  }}
+                />
+
+                {previewUrl && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                      onClick={() => {
+                        // Open in new tab or show modal — here we just log; you can enhance
+                        window.open(previewUrl, '_blank');
+                      }}>
+                      View
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <InputField label="Full Name" name="name" placeholder="enter your name" value={personalData.name} onChange={handleChange} required />
             <InputField label="Father's Name" name="father" placeholder="enter your father name" value={personalData.father} onChange={handleChange} required />
 
