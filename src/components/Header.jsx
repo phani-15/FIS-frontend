@@ -4,7 +4,7 @@ export default function Header() {
   return (
     <div className="relative flex flex-col items-center justify-center md:flex-row md:h-36 p-4 md:p-0">
       {/* Logo pinned left */}
-      <div className="w-24 flex-shrink-0 mb-4 md:mb-0 md:absolute md:left-6">
+      <div className="w-24 shrink-0 mb-4 md:mb-0 md:absolute md:left-6">
 
         <img
           src="/images/jntugv.png"

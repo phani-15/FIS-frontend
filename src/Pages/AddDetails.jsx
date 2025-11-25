@@ -11,12 +11,14 @@ export default function AddDetails() {
       },
       conferences: {
          name: "conferences", title_of_the_paper: "", title_of_conference: "", year: "", organized_by: "", national_or_international: "", document: null
-      }, 
+      },  
       seminars: {
          name: "seminars", title_of_the_paper: "", title_of_seminar: "", year: "", organized_by: "", national_international: "", document: null
       },
       research: {
-         name: "research", year: "", name_of_the_principal_investigator: "", duration_of_project: "", name_of_research_project: "", fund_recieved: "", name_of_funding_agency: "", year_of_sanction: "", Department_of_recipient: "", document: null,
+         name: "research", year: "", name_of_the_principal_investigator: "",
+          duration_of_project: "", name_of_research_project: "",
+           fund_recieved: "", name_of_funding_agency: "", year_of_sanction: "", Department_of_recipient: "", document: null,
       },
       certifications: {
          name: "certifications", name_of_certification_course: "", organized_by: "", duration: "", certificate: null
