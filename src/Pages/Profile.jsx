@@ -93,6 +93,10 @@ export default function ProfilePage() {
   return (
     <div className="p-4 lg:p-8">
       <div className="max-w-7xl mx-auto">
+<<<<<<< HEAD
+        
+=======
+>>>>>>> 94532f130c1656607d0e5e914f8ac7100d5bba02
 
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Profile Card */}
