@@ -117,12 +117,14 @@ export default function ProfilePage() {
                   <div className="mt-6 flex justify-center text-gray-600 gap-6">
 
                     {/* Edit Button */}
-                    <button className="relative group cursor-pointer">
+                    <button
+                    onClick={()=>navigate('/edit')}
+                    className="relative group cursor-pointer">
                       <SquarePen  />
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
                      bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
                      group-hover:opacity-100 transition">
-                        Print
+                        Edit
                       </span>
                     </button>
 
@@ -151,10 +153,10 @@ export default function ProfilePage() {
                   <div className="flex flex-col  gap-3">
                     <button
                       onClick={() => navigate('/add')}
-                      className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Certifications</button>
+                      className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
                     <button
                       onClick={() => navigate('/vc')}
-                      className="bg-linear-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Certifications</button>
+                      className="bg-linear-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Credentials</button>
                   </div>
                 </div>
 

@@ -469,7 +469,7 @@ const EditProfilePage = () => {
   return (
     <div className="flex bg-gray-50 mx-32 mt-10 rounded-xl ">
       {/* Sidebar */}
-      <div className="w-64 bg-gradient-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col rounded-xl">
+      <div className="w-64 bg-linear-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col rounded-xl">
         {/* Logo */}
         <div className="p-6 border-b border-gray-200">
           <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">

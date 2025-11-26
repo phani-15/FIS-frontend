@@ -9,7 +9,7 @@ export default function HODDashBoard() {
 
   const navigate = useNavigate()
 
-  const [facultyList,setFacultyList] = useState([
+  const [facultyList, setFacultyList] = useState([
     { name: "Dr. John Doe", role: "Professor" },
     { name: "Dr. Jane Smith", role: "Associate Professor" },
     { name: "Dr. Mike Johnson", role: "Assistant Professor" },
@@ -62,27 +62,30 @@ export default function HODDashBoard() {
     );
   };
 
-  const verifyFac = (idx)=>{
+  const verifyFac = (idx) => {
     // verify faculty
     const facultyToVerify = registeredList[idx]
 
-    // remove from the registered faculty
-    setRegisteredList(prevList => 
-    prevList.filter((_, i) => i !== idx))
-    alert(facultyToVerify.name + "is verified")
-    
-    //added to the facultyList
-    setFacultyList(prevList => 
-    [...prevList, facultyToVerify]
-  );
+    if (confirm("Verify " + facultyToVerify.name)) {
+      // remove from the registered faculty
+      setRegisteredList(prevList =>
+        prevList.filter((_, i) => i !== idx))
+
+
+      //added to the facultyList
+      setFacultyList(prevList =>
+        [...prevList, facultyToVerify]
+      );
+    }
   }
 
   const removeFac = (idx) => {
     // remove faculty from the list
     const fac = registeredList[idx].name
-    setRegisteredList(prevList =>
-      prevList.filter((_, i) => i !== idx))
-    alert(fac.name + " is denied")
+    if (confirm("Are you sure to deny " + fac + "?")) {
+      setRegisteredList(prevList =>
+        prevList.filter((_, i) => i !== idx))
+    }
   }
 
   const [expand, setExpand] = useState(false)
@@ -145,12 +148,12 @@ export default function HODDashBoard() {
                               <button
                                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 shadow-sm transition-all duration-200"
                                 aria-label="Verify faculty"
-                                onClick={()=>verifyFac(idx)}
+                                onClick={() => verifyFac(idx)}
                               >
-                                <ShieldCheck className="w-3.5 h-3.5" /> Allow
+                                <ShieldCheck className="w-3.5 h-3.5" /> Verify
                               </button>
                               <button
-                                onClick={()=>removeFac(idx)}
+                                onClick={() => removeFac(idx)}
                                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-all duration-200"
                                 aria-label="Decline faculty"
                               >

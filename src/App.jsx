@@ -17,6 +17,7 @@ import EditPage from './Pages/EditPage';
 import EditAdmin from "./Pages/EditAdmin"
 import PasswordChange from './Pages/PasswordChange';
 import ResetPassword from './Pages/ResetPassword';
+import AddCredentials from './Pages/AddCredentials';
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
           <Route path='/vc' element={<ViewCertificaion/>}/>
           <Route path='/ea' element={<EditAdmin/>}/>
           <Route path='/pc' element={<PasswordChange/>}/>
+          <Route path='/ac' element={<AddCredentials/>}/>
           <Route path='/rp' element={<ResetPassword/>}/>
         </Routes>
         </main>

@@ -85,7 +85,7 @@ export default function Admin() {
   };
 
   const handleEditClick = () => {
-    navigate('/edit')
+    navigate('/ea')
   };
 
   return (
@@ -158,7 +158,7 @@ export default function Admin() {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-purple-100">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-purple-400 to-purple-700">
+              <thead className="bg-linear-to-r from-purple-400 to-purple-700">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">S.No</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Name</th>
@@ -196,7 +196,7 @@ export default function Admin() {
                           </button>
                           <button
                             onClick={handleEditClick}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition"
                           >
                             <Edit2 size={14} />
                             Edit
@@ -237,7 +237,7 @@ export default function Admin() {
                 >
                   Previous
                 </button>
-                <span className="px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm">
+                <span className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm">
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
