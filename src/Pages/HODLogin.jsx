@@ -100,6 +100,8 @@ export default function HODLogin() {
             </div>
             <div id="emptypassword"></div>
           </div>
+                    <p onClick={() => navigate('/rp')} className="cursor-pointer hover:underline text-violet-800 font-normal ">Reset Password?</p>
+
 
           {/* Submit Button */}
           <button

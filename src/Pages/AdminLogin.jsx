@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+
 export default function AdminLogin() {
   const [passCode, setPassCode] = useState("");  // ✅ Correct destructuring
   const navigate = useNavigate();
@@ -81,7 +82,7 @@ export default function AdminLogin() {
               </div>
             )}
           </div>
-
+          <p onClick={() => navigate('/pc/admin')} className="cursor-pointer hover:underline text-violet-800 font-normal ">Reset Password?</p>
           <button
             type="submit"
             className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
@@ -92,7 +93,7 @@ export default function AdminLogin() {
         </form>
 
         <p className="mt-8 text-xs text-gray-500">
-           Secure IQAC Access
+          Secure IQAC Access
         </p>
       </div>
     </div>

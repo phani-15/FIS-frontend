@@ -1,7 +1,8 @@
 import React from 'react'
-import { User, Lock, RotateCcwKey, LogIn, KeyRound } from "lucide-react";
+import { User, Lock, RotateCcwKey, LogIn, KeyRound, CircleHelpIcon } from "lucide-react";
 import InputField from "../components/inputField";
 import { useNavigate } from 'react-router-dom';
+import { div } from 'framer-motion/client';
 
 export default function ResetPassword() {
 
@@ -11,7 +12,20 @@ export default function ResetPassword() {
         newPass: "",
         Cpass: ""
     });
-
+    const [admin,setadmin] = React.useState({
+        currentpassKey: "",
+        newPassKey: "",
+        CpassKey: ""
+    });
+    const [hod,sethod] = React.useState({
+        department: "",
+        passKey: "",
+        newPassKey: "",
+        CpassKey: ""
+    });
+    const userdetails=["Email","Old Password","New Password ","confirm new  password"]
+    const admindetails=["Present pass Code","new Passcode","Confirm new passCode"]
+    const hoddetails=["department","present passKey ","newPasskey ","Confirm new passKey"]
     const [errors, setErrors] = React.useState({});
     const navigate = useNavigate();
     const handleSubmit = (e) => {
@@ -47,57 +61,21 @@ export default function ResetPassword() {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
-                    {/* Username */}
-                    <div>
-                        <InputField
-                            label="Email"
+                    {userdetails.map(child=>
+                        <div>
+                            <InputField
+                            label={child}
                             type="text"
                             value={data.email}
-                            id="email"
-                            placeholder="Enter registered email address"
+                            id={child}
+                            placeholder={`Enter  ${child}`}
                             onChange={handleChange}
-                            error={errors.email}
-                        />
-                    </div>
-
-                    {/* Password */}
-                    <div>
-                        <InputField
-                            label="Current Password"
-                            type="password"
-                            id="pass"
-                            value={data.pass}
-                            error={errors.pass}
-                            placeholder="Enter your password"
-                            onChange={handleChange}
-                        />
-                    </div>
+                            error={errors.email}>
+                            </InputField>
+                        </div>
+                    )}
+                    {/* Username */}
                     
-                    <div>
-                       
-                        <InputField
-                            label="New Password"
-                            type="password"
-                            id="newPass"
-                            value={data.newPass}
-                            placeholder="Choose a new password"
-                            onChange={handleChange}
-                            error={errors.newPass}
-                        />
-                    </div>
-
-                    <div>
-                        
-                        <InputField
-                            label="Confirm Password"
-                            type="password"
-                            value={data.Cpass}
-                            id="Cpass"
-                            error={errors.Cpass}
-                            placeholder="Re-Enter the new password"
-                            onChange={handleChange}
-                        />
-                    </div>
                     {/* Submit Button */}
                     <button
                         type="submit"

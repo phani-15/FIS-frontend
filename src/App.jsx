@@ -39,7 +39,7 @@ export default function App() {
           <Route path='/admin' element={<AdminLogin/>}/>
           <Route path='/vc' element={<ViewCertificaion/>}/>
           <Route path='/ea' element={<EditAdmin/>}/>
-          <Route path='/pc' element={<PasswordChange/>}/>
+          <Route path='/pc/' element={<PasswordChange/>}/>
           <Route path='/ac' element={<AddCredentials/>}/>
           <Route path='/rp' element={<ResetPassword/>}/>
         </Routes>
