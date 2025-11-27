@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("as"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -165,7 +165,7 @@ export default function Register() {
     const newErrors = {};
     if (loginData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
     if (loginData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-    if (loginData.password !== Cpassword) newErrors.Cpassword = "Passwords do not match";
+    if (loginData.password != Cpassword) newErrors.Cpassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [loginData]);
@@ -173,7 +173,6 @@ export default function Register() {
   const handleSubmitPersonal = useCallback(
     (e) => {
       e.preventDefault();
-      console.log("Personal Data:", personalData);
       setStep("education");
     }, [personalData]
   );
@@ -197,7 +196,6 @@ export default function Register() {
     (e) => {
       e.preventDefault();
       if (!validateExperience()) return;
-      console.log("Experience Data:", experience);
       setStep("as");
     },
     [experience, validateExperience]
@@ -247,7 +245,6 @@ export default function Register() {
     (e) => {
       e.preventDefault();
       if (!validateSignUp()) return;
-      console.log("Login Data:", loginData);
       setStep("personal");
     },
     [personalData, validateSignUp]
@@ -306,9 +303,9 @@ export default function Register() {
       if (!havePhD) {
         setPhDs([]);
       }
-
-      console.log("Education Data:", education);
-      console.log("PhD Data:", PhDs);
+      education.phd = PhDs
+      console.log("postdocs is ",PostDocs);
+      education.postdoc = PostDocs
       setStep("experience");
     },
     [education, havePhD, PhDs, validateEducation]
@@ -957,7 +954,6 @@ export default function Register() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  console.log("Administrative Service :", administrativeService);
                   setStep("oas");
                 }}
                 className="flex flex-col space-y-6"
@@ -1128,7 +1124,15 @@ export default function Register() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  console.log("Other Administrative Services :", otherAdministrativeService);
+                  const obj = {
+                    personalData : personalData,
+                    loginData : loginData,
+                    education : education,
+                    experience : experience,
+                    administrativeService : administrativeService,
+                    otherAdministrativeService : otherAdministrativeService
+                  }
+                  console.log("final object is : ",obj)
                   navigate("/");
                 }}
                 className="flex flex-col space-y-6"

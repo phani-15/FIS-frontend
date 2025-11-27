@@ -7,7 +7,7 @@ import IQACLogin from './Pages/IQACLogin';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from "./Pages/Profile";
-import IqacDashboard from './Pages/IQACDashboard'; 
+import IqacDashboard from './Pages/IQACDashboard';
 import AddDetails from './Pages/AddDetails';
 import HodDashboard from './Pages/HODDashBoard'
 import Admin from './Pages/Admin';
@@ -23,35 +23,35 @@ import ResetHODPassword from './Pages/ResetHODPassword';
 export default function App() {
   return (
     <div className='flex flex-col min-h-screen'>
-    <BrowserRouter>
+      <BrowserRouter>
         <Header />
-        <main className='grow'>          
-        <Routes>
-          <Route path='/hod' element={<HODLogin />} />
-          <Route path='/iqac' element={<IQACLogin />} /> 
-          <Route path='/edit' element={<EditPage/>}/>
-          <Route path='/' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/iqacDashboard' element={<IqacDashboard />} /> 
-          <Route path='/add' element={<AddDetails/>} />
-          <Route path='/hodDashboard' element={<HodDashboard/>}/>
-          <Route path='/adminPage' element={<Admin/>}/>
-          <Route path='/admin' element={<AdminLogin/>}/>
-          <Route path='/vc' element={<ViewCertificaion/>}/>
-          <Route path='/ea' element={<EditAdmin/>}/>
-          <Route path='/pc/' element={<PasswordChange/>}/>
-          <Route path='/ac' element={<AddCredentials/>}/>
-          <Route path='/rp' element={<ResetPassword/>}/>
-          <Route path='/resetHODpassword' element={<ResetHODPassword/>}/>
-        </Routes>
+        <main className='grow'>
+          <Routes>
+            <Route path='/hod' element={<HODLogin />} />
+            <Route path='/iqac' element={<IQACLogin />} />
+            <Route path='/edit' element={<EditPage />} />
+            <Route path='/' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/profile' element={<Profile />} />
+            <Route path='/iqacDashboard' element={<IqacDashboard />} />
+            <Route path='/add' element={<AddDetails />} />
+            <Route path='/hodDashboard' element={<HodDashboard />} />
+            <Route path='/adminPage' element={<Admin />} />
+            <Route path='/admin' element={<AdminLogin />} />
+            <Route path='/vc' element={<ViewCertificaion />} />
+            <Route path='/ea' element={<EditAdmin />} />
+            <Route path='/pc/' element={<PasswordChange />} />
+            <Route path='/ac' element={<AddCredentials />} />
+            <Route path='/rp' element={<ResetPassword />} />
+            <Route path='/resetHODpassword' element={<ResetHODPassword />} />
+          </Routes>
         </main>
         <footer className='flex justify-center p-6'>
           <p className="mt-8 text-xs text-gray-500">
-          © Faculty Information System
-        </p>
+            © Faculty Information System
+          </p>
         </footer>
-    </BrowserRouter>
+      </BrowserRouter>
     </div>
   );
 }
