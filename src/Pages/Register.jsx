@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2 } from "lucide-react"
+import { Trash2 ,TriangleAlert} from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -27,7 +27,7 @@ export default function Register() {
     password: "",
     email: "",
     phone: "",
-    cPassword : ""
+    cPassword: ""
   })
 
   const [education, setEducation] = useState({
@@ -210,14 +210,14 @@ export default function Register() {
   }, []);
 
   const handlePostDocChange = useCallback((index, e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  setPostDocs(prev => {
-    const updated = [...prev];
-    updated[index] = { ...updated[index], [name]: value };
-    return updated;
-  });
-}, [setPostDocs]);
+    setPostDocs(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [name]: value };
+      return updated;
+    });
+  }, [setPostDocs]);
 
 
   const removePhD = useCallback((index) => {

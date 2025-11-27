@@ -99,7 +99,7 @@ export default function Login() {
 						>
 							Password
 						</label>
-						<p onClick={()=>navigate('/pc')} className="cursor-pointer hover:underline text-violet-800 font-normal">Forgot Password?</p>
+						<p onClick={()=>navigate('/fp')} className="cursor-pointer hover:underline text-violet-800 font-normal">Forgot Password?</p>
 						</div>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">
