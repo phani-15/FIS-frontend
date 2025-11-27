@@ -100,11 +100,12 @@ export default function HODLogin() {
             </div>
             <div id="emptypassword"></div>
           </div>
+          <p onClick={()=>navigate('/resetHODpassword')} className="text-end text-blue-800 hover:underline cursor-pointer">Reset Password</p>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+            className="w-full cursor-pointer flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
           >
             Login
             <LogIn className="w-5 h-5" />
