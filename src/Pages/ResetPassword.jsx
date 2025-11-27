@@ -2,7 +2,6 @@ import React from 'react'
 import { User, Lock, RotateCcwKey, LogIn, KeyRound, CircleHelpIcon } from "lucide-react";
 import InputField from "../components/inputField";
 import { useNavigate } from 'react-router-dom';
-import { div } from 'framer-motion/client';
 
 export default function ResetPassword() {
 

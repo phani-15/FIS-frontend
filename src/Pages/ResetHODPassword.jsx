@@ -1,5 +1,5 @@
 import React from 'react'
-import { User, Lock, RotateCcwKey, LogIn, KeyRound } from "lucide-react";
+import { RotateCcwKey } from "lucide-react";
 import InputField from "../components/inputField";
 import { useNavigate } from 'react-router-dom';
 
@@ -106,7 +106,7 @@ export default function ResetHODPassword() {
                         <InputField
                             label="Confirm Password"
                             type="password"
-                            value={data.Cpass}
+                            value={cPass}
                             id="Cpass"
                             error={errors.Cpass}
                             placeholder="Re-Enter the new password"
