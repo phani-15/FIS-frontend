@@ -42,6 +42,10 @@ export default function App() {
           <Route path='/adminPage' element={<Admin/>}/>
           <Route path='/admin' element={<AdminLogin/>}/>
           <Route path='/vc' element={<ViewCertificaion/>}/>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
         </Routes>
         </main>
         <footer className='flex justify-center p-6'>
