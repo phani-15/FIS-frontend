@@ -43,7 +43,7 @@ const fields = {
   committee: ['Event Title','Organizing Institution','Date','Topic / Title of Talk',' Mode','venue','Document'],
   resource_person: ['Event Title','Organizing Institution','Date','Topic / Title of Talk',' Mode','venue','Document'],
   mooc_content: ['Content Title','Platform / Repository Name','Associated Course/Subject','Date / Year','Link'],
-  'e-content': ['Content Title','Platform / Repository Name','Associated Course/Subject','Date / Year','Link'],
+  eContent: ['Content Title','Platform / Repository Name','Associated Course/Subject','Date / Year','Link'],
   course_content: ['Content Title','Platform / Repository Name','Associated Course/Subject','Date / Year','Link'],
   lab_manual: ['Content Title','Platform / Repository Name','Associated Course/Subject','Date / Year','Link'],
   repository: ['Content Title','Platform / Repository Name','Associated Course/Subject','Date / Year','Link'],

@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("as"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -87,7 +87,7 @@ export default function Register() {
   const addExperience = useCallback(() => {
     setExperience((prev) => [
       ...prev,
-      { institute: "", designation: "", from: "", to: ""}
+      { institute: "", designation: "", from: "", to: "" }
     ]);
   }, []);
 
@@ -945,241 +945,330 @@ export default function Register() {
 
       {
         step == "as" && (
-          <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
-            <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-2xl font-semibold mb-4">
-              Administrative Service in this Institute
-            </h1>
+          <div className=" flex flex-col justify-center items-center">
+            <div className="w-full lg:min-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center">
+              <h1
+                className="text-2xl font-semibold mb-6"
+                style={{ fontFamily: "Times New Roman, serif" }}
+              >
+                Administrative Service in this Institute
+              </h1>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log("Administrative Service :", administrativeService);
-                setStep("oas")
-              }}
-              className="flex flex-col space-y-6"
-            >
-              {administrativeService.map((as, index) => (
-                <div key={index} className="border mt-4 border-blue-300 p-2 py-4 rounded-lg shadow-sm relative">
-                  <h2 className="text-lg font-semibold mb-3">Service {index + 1}</h2>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log("Administrative Service :", administrativeService);
+                  setStep("oas");
+                }}
+                className="flex flex-col space-y-6"
+              >
+                {administrativeService.map((as, index) => (
+                  <div
+                    key={index}
+                    className="p-4 border border-gray-200 rounded-lg relative space-y-4 text-left"
+                  >
+                    <h2 className="text-lg text-center font-medium mb-3 pb-2">
+                      Service {index + 1}
+                    </h2>
 
-                  <InputField
-                    label="Designation"
-                    name="designation"
-                    value={as.designation}
-                    onChange={(e) => handleASChange(index, e)}
-                    required
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
+                    {/* InputField is assumed to be a custom component that handles its own label and input styling */}
                     <InputField
-                      label="From"
-                      type="number"
-                      name="from"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                      value={as.from}
-                      onChange={(e) => handleASChange(index, {
-                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
-                      })}
+                      label="Designation"
+                      name="designation"
+                      value={as.designation}
+                      onChange={(e) => handleASChange(index, e)}
                       required
                     />
-                    <InputField
-                      label="To"
-                      type="number"
-                      name="to"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                      value={as.to}
-                      onChange={(e) => handleASChange(index, {
-                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
-                      })}
-                      required
-                    />
+
+                    {/* Group for From and To years */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* FROM Field - Corrected to use a mapped array for year generation */}
+                      <div className="flex flex-col space-y-2">
+                        <label htmlFor={`as-from-${index}`} className="text-sm font-medium text-gray-700">
+                          From
+                        </label>
+                        <select
+                          name="from"
+                          id={`as-from-${index}`}
+                          value={String(as.from)} // Ensure value is a string for select element
+                          onChange={(e) =>
+                            // Pass the change event to the handler
+                            handleASChange(index, {
+                              target: {
+                                name: e.target.name,
+                                // Parse the value back to a number, or keep it empty/0
+                                value: parseInt(e.target.value, 10) || 0
+                              }
+                            })
+                          }
+                          className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                          required
+                        >
+                          <option value="0">Select Year</option>
+                          {/* Generates years from current year down to 2007 */}
+                          {Array.from({ length: new Date().getFullYear() - 2007 + 1 }, (_, i) => {
+                            const year = new Date().getFullYear() - i;
+                            return (
+                              <option key={year} value={String(year)}>
+                                {year}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      {/* TO Field - Added for completeness and matching the previous component's grid layout */}
+                      <div className="flex flex-col space-y-2">
+                        <label htmlFor={`as-to-${index}`} className="text-sm font-medium text-gray-700">
+                          To
+                        </label>
+                        <select
+                          name="to"
+                          id={`as-to-${index}`}
+                          value={String(as.to)}
+                          onChange={(e) =>
+                            handleASChange(index, {
+                              target: {
+                                name: e.target.name,
+                                  value: e.target.value === "" ? "" : e.target.value==="Present" ? "Present" : parseInt(e.target.value, 10),
+                              },
+                            })
+                          }
+                          className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                          required
+                        >
+                          <option value="">Select Year</option>
+                          <option value="Present">Present</option>
+                          {Array.from({ length: new Date().getFullYear() - 2008 }, (_, i) => {
+                            const year = new Date().getFullYear() - i - 1;
+                            return (
+                              <option key={year} value={String(year)}>
+                                {year}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    </div>
+                    {administrativeService.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeAS(index)}
+                        className="absolute top-2 right-2 text-slate-600 group p-1 rounded hover:bg-red-50"
+                        aria-label={`Remove Service ${index + 1}`}
+                      >
+                        <Trash2 size={18} />
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                          Remove
+                        </span>
+                      </button>
+                    )}
                   </div>
+                ))}
 
-                  {administrativeService.length > 1 && (
+                {/* Action Buttons Section */}
+                <div className="pt-4 space-y-4">
+                  {/* Add More and Skip buttons */}
+                  <div className="flex justify-between items-center">
                     <button
                       type="button"
-                      onClick={() => removeAS(index)}
-                      className="absolute group top-2 cursor-pointer right-2 text-slate-600 text-sm"
+                      onClick={addAS}
+                      className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium"
                     >
-                      <Trash2 size={18} />
-                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
-                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
-                     group-hover:opacity-100 transition">
-                        Remove
-                      </span>
+                      <span className="text-xl">+</span> Add More
                     </button>
-                  )}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAdministrativeService([]);
+                        setStep("oas");
+                      }}
+                      className="text-sm font-medium text-gray-500 hover:text-gray-700 p-2"
+                    >
+                      Skip
+                    </button>
+                  </div>
+
+                  {/* Back and Next buttons */}
+                  <div className="flex gap-3 justify-end border-t pt-6">
+                    <button
+                      type="button"
+                      onClick={() => setStep("experience")}
+                      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition"
+                    >
+                      Back
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
-              ))}
-
-              <div className="flex justify-between">
-
-                <div className="flex">
-                  <button
-                    type="button"
-                    onClick={addAS}
-                    className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
-                  >
-                    Add More
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAdministrativeService([])
-                      setStep('oas')
-                    }}
-                    className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
-                  >
-                    skip
-                  </button>
-                </div>
-                <div className="flex gap-3 justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setStep("experience")}
-                    className="py-2 px-4 rounded-lg border cursor-pointer"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-                  >
-                    Next
-                  </button>
-                </div>
-
-              </div>
-
-            </form>
+              </form>
+            </div>
           </div>
         )
       }
       {
         step == "oas" && (
-          <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
-            <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-2xl font-semibold mb-4">
-              Administrative Service in other Institute
-            </h1>
+          <div className=" flex flex-col justify-center items-center">
+            <div className="w-full lg:min-w-2xl max-w-xl bg-white rounded-2xl shadow-xl lg:p-8 p-4 text-center">
+              <h1
+                style={{ fontFamily: "Times New Roman, serif" }}
+                className="text-2xl font-semibold mb-6"
+              >
+                Administrative Service in other Institute
+              </h1>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log("Other Administrative Services :", otherAdministrativeService);
-                navigate("/")
-              }}
-              className="flex flex-col space-y-6"
-            >
-              {otherAdministrativeService.map((oas, index) => (
-                <div key={index} className="border mt-4 border-blue-300 p-2 py-4 rounded-lg shadow-sm relative">
-                  <h2 className="text-lg font-semibold mb-3">Service {index + 1}</h2>
+              {/* The form container maintains the vertical spacing and centering */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log("Other Administrative Services :", otherAdministrativeService);
+                  navigate("/");
+                }}
+                className="flex flex-col space-y-6"
+              >
 
-                  <InputField
-                    label="Institute"
-                    name="institute"
-                    value={oas.institute}
-                    onChange={(e) => handleOASChange(index, e)}
-                  />
+                {haveOAS && (
+                  <div className="space-y-6">
+                    {otherAdministrativeService.map((oas, index) => (
+                      <div
+                        key={index}
+                        className="p-4 border border-gray-200 rounded-lg relative space-y-4 text-left shadow-sm bg-gray-50"
+                      >
+                        <h2 className="text-lg font-medium text-center mb-3 pb-2 text-gray-800">
+                          Service {index + 1}
+                        </h2>
 
-                  <InputField
-                    label="Designation"
-                    name="designation"
-                    value={oas.designation}
-                    onChange={(e) => handleOASChange(index, e)}
-                    required
-                  />
+                        <InputField
+                          label="Institute"
+                          name="institute"
+                          value={oas.institute}
+                          onChange={(e) => handleOASChange(index, e)}
+                          required
+                        />
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <InputField
-                      label="From"
-                      type="number"
-                      name="from"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                      value={oas.from} onChange={(e) => handleOASChange(index, {
-                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
-                      })}
-                      required
-                    />
-                    <InputField
-                      label="To"
-                      type="number"
-                      name="to"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                      value={oas.to}
-                      onChange={(e) => handleOASChange(index, {
-                        target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
-                      })}
-                      required
-                    />
+                        <InputField
+                          label="Designation"
+                          name="designation"
+                          value={oas.designation}
+                          onChange={(e) => handleOASChange(index, e)}
+                          required
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <InputField
+                            label="From"
+                            type="number"
+                            name="from"
+                            min="1900"
+                            max={new Date().getFullYear()}
+                            value={oas.from}
+                            onChange={(e) =>
+                              handleOASChange(index, {
+                                target: {
+                                  name: e.target.name,
+                                  value: parseInt(e.target.value, 10) || "",
+                                },
+                              })
+                            }
+                            required
+                          />
+                          <InputField
+                            label="To"
+                            type="number"
+                            name="to"
+                            min="1900"
+                            max={new Date().getFullYear()}
+                            value={oas.to}
+                            onChange={(e) =>
+                              handleOASChange(index, {
+                                target: {
+                                  name: e.target.name,
+                                  value: e.target.value === "" ? "" : e.target.value === "Present" ? "Present" : parseInt(e.target.value, 10),
+                                },
+                              })
+                            }
+                            required
+                          />
+                        </div>
+
+                        {otherAdministrativeService.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeOAS(index)}
+                            className="absolute top-2 right-2 text-slate-600 group p-1 rounded hover:bg-red-50"
+                            aria-label={`Remove Service ${index + 1}`}
+                          >
+                            <Trash2 size={18} />
+                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                              Remove
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    {/* Add More Button */}
+                    <div className="flex justify-start">
+                      <button
+                        type="button"
+                        onClick={addOAS}
+                        className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium"
+                      >
+                        <span className="text-xl">+</span> Add More
+                      </button>
+                    </div>
                   </div>
-
-                  {otherAdministrativeService.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeOAS(index)}
-                      className="absolute top-2 group text-slate-600 cursor-pointer right-2 text-sm"
-                    >
-                      <Trash2 size={18} />
-                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
-                     bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
-                     group-hover:opacity-100 transition">
-                        Remove
-                      </span>
-                    </button>
-                  )}
+                )}
+                {/* Checkbox for No Service */}
+                <div className="flex items-center space-x-2 text-left text-sm font-medium">
+                  <input
+                    type="checkbox"
+                    checked={!haveOAS}
+                    onChange={() => {
+                      if (!haveOAS) {
+                        // If checking 'No Service', clear data and set flag
+                        setOtherAdministrativeService([{ institute: "", from: "", to: "", designation: "" }]);
+                      } else {
+                        // If unchecking 'No Service', add a blank row if list is empty
+                        if (otherAdministrativeService.length === 0) {
+                          addOAS();
+                        }
+                      }
+                      setHaveOAS((prev) => !prev);
+                    }}
+                    className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  />
+                  <label className="text-gray-700">
+                    I do not have any Administrative Service in other Institutes
+                  </label>
                 </div>
-              ))}
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={!haveOAS}
-                  onChange={() => {
-                    if (!haveOAS) {
-                      addOAS();
-                    }
-                    setHaveOAS(prev => !prev);
-                  }}
-                />
-                <label>No Other Administrative Service</label>
 
-              </div>
-
-              <div className="flex justify-between">
-
-                <div className="flex">
-                  {haveOAS &&
-                    <button
-                      type="button"
-                      onClick={addOAS}
-                      className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
-                    >
-                      Add More
-                    </button>}
-                </div>
-                <div className="flex gap-3 justify-end">
+                {/* Navigation Buttons */}
+                <div className="flex gap-3 justify-end border-t pt-6">
                   <button
                     type="button"
                     onClick={() => setStep("as")}
-                    className="py-2 px-4 rounded-lg border cursor-pointer"
+                    className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                    className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Finish Registration
                   </button>
                 </div>
-
-              </div>
-
-            </form>
+              </form>
+            </div>
           </div>
         )
       }

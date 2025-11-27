@@ -18,6 +18,7 @@ import EditAdmin from "./Pages/EditAdmin"
 import PasswordChange from './Pages/PasswordChange';
 import ResetPassword from './Pages/ResetPassword';
 import AddCredentials from './Pages/AddCredentials';
+import ResetHODPassword from './Pages/ResetHODPassword';
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
           <Route path='/pc/' element={<PasswordChange/>}/>
           <Route path='/ac' element={<AddCredentials/>}/>
           <Route path='/rp' element={<ResetPassword/>}/>
+          <Route path='/resetHODpassword' element={<ResetHODPassword/>}/>
         </Routes>
         </main>
         <footer className='flex justify-center p-6'>
