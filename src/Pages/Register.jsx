@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -400,13 +400,13 @@ export default function Register() {
               required
             />
 
-            <p className="mt-3">Already have an Account ? <span onClick={() => (navigate("/"))} className="text-blue-800 cursor-pointer">Back to home</span></p>
+            <p className="mt-3 text-sm">Have an Account ? <span onClick={() => (navigate("/"))} className="text-blue-800 cursor-pointer mt-2">Login</span></p>
 
             <button
               type="submit"
               className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
             >
-              Next
+              Next  
             </button>
           </form>
         </div>
@@ -416,11 +416,11 @@ export default function Register() {
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            <div className="flex flex-col">
-              <label className="text-left my-2">Profile Picture</label>
-              <div className="flex gap-4 ">
+            <div className="flex flex-col ">
+              <label className="text-left my-2  ">Profile Picture</label>
+              <div className="flex gap-4 flex-col md:flex-row">
                 <input
-                  className="p-2 border rounded-md border-gray-300"
+                  className="p-2 text-sm border rounded-md border-gray-300"
                   name="profile"
                   type="file"
                   accept="image/*"
@@ -442,7 +442,7 @@ export default function Register() {
                   <div className="mt-3">
                     <button
                       type="button"
-                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 sm:relative"
                       onClick={() => {
                         // Open in new tab or show modal — here we just log; you can enhance
                         window.open(previewUrl, '_blank');
@@ -823,7 +823,7 @@ export default function Register() {
       {step === "experience" && (
         <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
           <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-2xl font-semibold mb-4">
-            Proffessional/Research Experience
+            Professional/Research Experience
           </h1>
 
           <form
@@ -898,45 +898,52 @@ export default function Register() {
               </div>
             ))}
 
-            <div className="flex justify-between">
+            <div className="w-full">
 
-              <div className="flex">
-                <button
-                  type="button"
-                  onClick={addExperience}
-                  className="flex items-center gap-2 mt-2 mx-5 text-indigo-600 hover:text-indigo-800"
-                >
-                  Add More
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setExperience([])
-                    setStep('as')
-                  }}
-                  className="flex items-center gap-2 mt-2 cursor-pointer text-indigo-600 hover:text-indigo-800"
-                >
-                  skip
-                </button>
+  {/* Top Row */}
+  <div className="flex justify-between items-center">
+    <button
+      type="button"
+      onClick={addExperience}
+      className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800"
+    >
+    <span className="text-xl ">+</span> Add More
+    </button>
 
-              </div>
-              <div className="flex gap-3 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setStep("education")}
-                  className="py-2 px-4 rounded-lg border cursor-pointer"
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-                >
-                  Next
-                </button>
-              </div>
+    <button
+      type="button"
+      onClick={() => {
+        setExperience([]);
+        setStep("as");
+      }}
+      className="text-sm font-medium text-gray-500 hover:text-gray-700 pl-15 -ml-[6]"
+    >
+      Skip
+    </button>
+  </div>
 
-            </div>
+  {/* Divider Line */}
+  
+
+  {/* Bottom Row */}
+  <div className="flex gap-4 justify-end border-t pt-6">
+    <button
+      type="button"
+      onClick={() => setStep("education")}
+      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition" 
+    >
+      Back
+    </button>
+
+    <button
+      type="submit"
+      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+    >
+      Next
+    </button>
+  </div>
+
+</div>
 
           </form>
         </div>
@@ -1073,7 +1080,7 @@ export default function Register() {
                       onClick={addAS}
                       className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium"
                     >
-                      <span className="text-xl">+</span> Add More
+                      <span className="text-xl ">+</span> Add More
                     </button>
 
                     <button
@@ -1082,14 +1089,14 @@ export default function Register() {
                         setAdministrativeService([]);
                         setStep("oas");
                       }}
-                      className="text-sm font-medium text-gray-500 hover:text-gray-700 p-2"
+                      className="text-sm font-medium text-gray-500 hover:text-gray-700 pl-15 -ml-[6]"
                     >
                       Skip
                     </button>
                   </div>
 
                   {/* Back and Next buttons */}
-                  <div className="flex gap-3 justify-end border-t pt-6">
+                  <div className="flex gap-4 justify-end border-t pt-6">
                     <button
                       type="button"
                       onClick={() => setStep("experience")}
@@ -1099,7 +1106,7 @@ export default function Register() {
                     </button>
 
                     <button
-                      type="submit"
+                      type="submit" 
                       className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                     >
                       Next
