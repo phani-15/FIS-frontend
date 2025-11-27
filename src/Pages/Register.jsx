@@ -27,9 +27,8 @@ export default function Register() {
     password: "",
     email: "",
     phone: "",
+    cPassword : ""
   })
-
-  const [Cpassword, setCpassword] = useState("");
 
   const [education, setEducation] = useState({
     tenth: { title: "Tenth", school: "", percentage: "", year: "", },
@@ -165,7 +164,7 @@ export default function Register() {
     const newErrors = {};
     if (loginData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
     if (loginData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-    if (loginData.password != Cpassword) newErrors.Cpassword = "Passwords do not match";
+    if (loginData.password != loginData.cPassword) newErrors.Cpassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [loginData]);
@@ -211,13 +210,15 @@ export default function Register() {
   }, []);
 
   const handlePostDocChange = useCallback((index, e) => {
-    const { name, value } = e.target;
-    setPostDocs(prev => {
-      const updated = [...prev];
-      updated[index][name] = value;
-      return updated;
-    });
-  }, [])
+  const { name, value } = e.target;
+
+  setPostDocs(prev => {
+    const updated = [...prev];
+    updated[index] = { ...updated[index], [name]: value };
+    return updated;
+  });
+}, [setPostDocs]);
+
 
   const removePhD = useCallback((index) => {
     setPhDs(prev => prev.filter((_, i) => i !== index));
@@ -244,6 +245,7 @@ export default function Register() {
   const handleSubmitSignUp = useCallback(
     (e) => {
       e.preventDefault();
+      console.log(loginData)
       if (!validateSignUp()) return;
       setStep("personal");
     },
@@ -304,7 +306,6 @@ export default function Register() {
         setPhDs([]);
       }
       education.phd = PhDs
-      console.log("postdocs is ",PostDocs);
       education.postdoc = PostDocs
       setStep("experience");
     },
@@ -387,13 +388,14 @@ export default function Register() {
               error={errors.password}
               placeholder="choose password"
               required />
+
             <InputField
               label="Confirm Password"
-              name="Cpassword"
+              name="cPassword"
               type="password"
               placeholder="re-enter password"
-              value={Cpassword}
-              onChange={(e) => { setCpassword(e.target.value); setErrors((prev) => ({ ...prev, Cpassword: "" })); }}
+              value={loginData.cPassword}
+              onChange={handleLoginChange}
               error={errors.Cpassword}
               required
             />
@@ -1026,7 +1028,7 @@ export default function Register() {
                             handleASChange(index, {
                               target: {
                                 name: e.target.name,
-                                  value: e.target.value === "" ? "" : e.target.value==="Present" ? "Present" : parseInt(e.target.value, 10),
+                                value: e.target.value === "" ? "" : e.target.value === "Present" ? "Present" : parseInt(e.target.value, 10),
                               },
                             })
                           }
@@ -1125,14 +1127,14 @@ export default function Register() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   const obj = {
-                    personalData : personalData,
-                    loginData : loginData,
-                    education : education,
-                    experience : experience,
-                    administrativeService : administrativeService,
-                    otherAdministrativeService : otherAdministrativeService
+                    personalData: personalData,
+                    loginData: loginData,
+                    education: education,
+                    experience: experience,
+                    administrativeService: administrativeService,
+                    otherAdministrativeService: otherAdministrativeService,
                   }
-                  console.log("final object is : ",obj)
+                  console.log("final object is : ", obj)
                   navigate("/");
                 }}
                 className="flex flex-col space-y-6"
