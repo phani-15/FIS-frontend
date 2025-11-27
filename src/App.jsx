@@ -14,7 +14,9 @@ import Admin from './Pages/Admin';
 import AdminLogin from './Pages/AdminLogin';
 import ViewCertificaion from './Pages/ViewCertificaion';
 import EditPage from './Pages/EditPage';
-
+import ForgotPassword from "./Pages/ForgotPassword";
+import VerifyOTP from "./Pages/VerifyOTP";
+import ResetPassword from "./Pages/ResetPassword";
 export default function App() {
   return (
     <div className='flex flex-col min-h-screen'>
@@ -34,6 +36,10 @@ export default function App() {
           <Route path='/adminPage' element={<Admin/>}/>
           <Route path='/admin' element={<AdminLogin/>}/>
           <Route path='/vc' element={<ViewCertificaion/>}/>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
         </Routes>
         </main>
         <footer className='flex justify-center p-6'>

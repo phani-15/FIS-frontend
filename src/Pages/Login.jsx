@@ -112,6 +112,12 @@ export default function Login() {
 							<div id="emptypassword"></div>
 						</div>
 					</div>
+					<p
+  className="text-sm text-blue-600 cursor-pointer text-right"
+  onClick={() => navigate("/forgot-password")}
+>
+  Forgot Password?
+</p>
 
 					{/* Submit Button */}
 					<button
