@@ -7,20 +7,26 @@ import IQACLogin from './Pages/IQACLogin';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from "./Pages/Profile";
-import IqacDashboard from './Pages/IQACDashboard'; 
+import IqacDashboard from './Pages/IQACDashboard';
 import AddDetails from './Pages/AddDetails';
 import HodDashboard from './Pages/HODDashBoard'
 import Admin from './Pages/Admin';
 import AdminLogin from './Pages/AdminLogin';
 import ViewCertificaion from './Pages/ViewCertificaion';
 import EditPage from './Pages/EditPage';
+import EditAdmin from "./Pages/EditAdmin"
+import PasswordChange from './Pages/PasswordChange';
+import ResetPassword from './Pages/ResetPassword';
+import AddCredentials from './Pages/AddCredentials';
+import ResetHODPassword from './Pages/ResetHODPassword';
+
 import ForgotPassword from "./Pages/ForgotPassword";
 import VerifyOTP from "./Pages/VerifyOTP";
 import ResetPassword from "./Pages/ResetPassword";
 export default function App() {
   return (
     <div className='flex flex-col min-h-screen'>
-    <BrowserRouter>
+      <BrowserRouter>
         <Header />
         <main className='flex-grow'>          
         <Routes>
@@ -36,18 +42,14 @@ export default function App() {
           <Route path='/adminPage' element={<Admin/>}/>
           <Route path='/admin' element={<AdminLogin/>}/>
           <Route path='/vc' element={<ViewCertificaion/>}/>
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-otp" element={<VerifyOTP />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-
         </Routes>
         </main>
         <footer className='flex justify-center p-6'>
           <p className="mt-8 text-xs text-gray-500">
-          © Faculty Information System
-        </p>
+            © Faculty Information System
+          </p>
         </footer>
-    </BrowserRouter>
+      </BrowserRouter>
     </div>
   );
 }

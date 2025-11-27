@@ -308,7 +308,7 @@ export default function AdminEditProfile() {
         {/* PROFILE */}
         <Section title="Profile" name="profile" expanded={expanded} toggleExpand={toggleExpand}>
           <div className="md:flex gap-6">
-            <div className="w-40 flex-shrink-0">
+            <div className="w-40 shrink-0">
               <div className="w-40 h-40 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
                 <img
                   src={profileData.profile.avatar}
