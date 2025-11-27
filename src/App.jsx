@@ -19,6 +19,7 @@ import ForgotPassword from './Pages/ForgotPassword';
 import ResetPassword from './Pages/ResetPassword';
 import AddCredentials from './Pages/AddCredentials';
 import ResetHODPassword from './Pages/ResetHODPassword';
+import ForgotHODPassword from "./Pages/ForgotHODpassword"
 
 export default function App() {
   return (
@@ -40,10 +41,11 @@ export default function App() {
             <Route path='/admin' element={<AdminLogin />} />
             <Route path='/vc' element={<ViewCertificaion />} />
             <Route path='/ea' element={<EditAdmin />} />
-            <Route path='/pc/' element={<ForgotPassword />} />
+            <Route path='/fp/' element={<ForgotPassword />} />
             <Route path='/ac' element={<AddCredentials />} />
             <Route path='/rp' element={<ResetPassword />} />
             <Route path='/resetHODpassword' element={<ResetHODPassword />} />
+            <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />
           </Routes>
         </main>
         <footer className='flex justify-center p-6'>

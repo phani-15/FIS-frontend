@@ -11,7 +11,7 @@ export default function ResetHODPassword() {
         newPass: "",
     });
 
-    const [cPass,setCPass] = React.useState("");
+    const [cPass, setCPass] = React.useState("");
     const [errors, setErrors] = React.useState({});
     const navigate = useNavigate();
     const handleSubmit = (e) => {
@@ -43,7 +43,7 @@ export default function ResetHODPassword() {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-2xl font-bold text-gray-900"> Reset Password</h2>
+                <h2 className="text-2xl font-bold text-gray-900"> Update Password</h2>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
@@ -110,7 +110,7 @@ export default function ResetHODPassword() {
                             id="Cpass"
                             error={errors.Cpass}
                             placeholder="Re-Enter the new password"
-                            onChange={(e)=>setCPass(e.target.value)}
+                            onChange={(e) => setCPass(e.target.value)}
                         />
                     </div>
                     {/* Submit Button */}
@@ -118,8 +118,10 @@ export default function ResetHODPassword() {
                         type="submit"
                         className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
                     >
-                        Reset
+                        Update
                     </button>
+                    <p onClick={() => navigate('/forgotHODpassword')} className="text-end text-blue-800 hover:underline cursor-pointer ">Forgot Password </p>
+
                 </form>
             </div>
         </div>
