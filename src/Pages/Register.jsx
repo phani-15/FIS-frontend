@@ -121,6 +121,7 @@ export default function Register() {
 
   const handleASChange = useCallback((index, e) => {
     const { name, value } = e.target;
+    setErrors({})
     setAdministrativeService(prev => {
       const updated = [...prev];
       updated[index][name] = value;
@@ -135,6 +136,7 @@ export default function Register() {
       updated[index][name] = value;
       return updated;
     });
+    setErrors({})
   }, []);
 
   const addAS = useCallback(() => {
@@ -186,6 +188,10 @@ export default function Register() {
           newErrors[`experience.${index}.${field}`] = `Experience ${index + 1}: ${field} is required`;
         }
       });
+      if (parseInt(exp.from) > parseInt(exp.to)) {
+        console.log("to-date should be less than or equal to from-date")
+        newErrors[`experience.${index}.to`] = "to-date should be less than or equal to from-date"
+      }
     });
 
     setErrors(newErrors);
@@ -854,32 +860,79 @@ export default function Register() {
                 />
 
                 <div className="grid grid-cols-2 gap-4">
-                  <InputField
-                    label="From"
-                    type="number"
-                    name="from"
-                    min="1900"
-                    max={new Date().getFullYear()}
-                    value={exp.from}
-                    onChange={(e) => handleExperienceChange(index, {
-                      target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
-                    })}
-                    error={errors[`experience.${index}.from`]}
-                    required
-                  />
-                  <InputField
-                    label="To"
-                    type="number"
-                    name="to"
-                    min="1900"
-                    max={new Date().getFullYear()}
-                    value={exp.to}
-                    onChange={(e) => handleExperienceChange(index, {
-                      target: { name: e.target.name, value: parseInt(e.target.value, 10) || "" }
-                    })}
-                    error={errors[`experience.${index}.to`]}
-                    required
-                  />
+                  {/* FROM Field - Corrected to use a mapped array for year generation */}
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor={`experience-from-${index}`} className="text-left m-2">
+                      From
+                    </label>
+                    <select
+                      name="from"
+                      id={`experience-from-${index}`}
+                      value={String(exp.from)} // Ensure value is a string for select element
+                      onChange={(e) =>
+                        // Pass the change event to the handler
+                        handleExperienceChange(index, {
+                          target: {
+                            name: e.target.name,
+                            // Parse the value back to a number, or keep it empty/0
+                            value: parseInt(e.target.value, 10) || 0
+                          }
+                        })
+                      }
+                      className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                      required
+                    >
+                      <option value="">Select Year</option>
+                      {/* Generates years from current year down to 2007 */}
+                      {Array.from({ length: 50 }, (_, i) => {
+                        const year = new Date().getFullYear() - i;
+                        return (
+                          <option key={year} value={String(year)}>
+                            {year}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
+                  {/* TO Field - Added for completeness and matching the previous component's grid layout */}
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor={`experience-to-${index}`} className=" m-2 text-left">
+                      To
+                    </label>
+                    <select
+                      name="to"
+                      id={`experience-to-${index}`}
+                      value={String(exp.to)}
+                      error={errors[`experience.${index}.to`]}
+                      onChange={(e) =>
+                        handleExperienceChange(index, {
+                          target: {
+                            name: e.target.name,
+                            // Parse the value back to a number, or keep it empty/0
+                            value: parseInt(e.target.value, 10) || 0
+                          }
+                        })
+                      }
+                      className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                      required
+                    >
+                      <option value="2004">Select Year</option>
+                      {Array.from({ length: 50 }, (_, i) => {
+                        const year = new Date().getFullYear() - i;
+                        return (
+                          <option key={year} value={String(year)}>
+                            {year}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  {errors[`experience.${index}.to`] && (
+                    <div className="text-red-500 text-sm col-span-2 text-left">
+                      {errors[`experience.${index}.to`]}
+                    </div>
+                  )}
                 </div>
 
                 {experience.length > 1 && (
@@ -964,7 +1017,19 @@ export default function Register() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  setStep("oas");
+                  administrativeService.forEach((as, index) => {
+                    if (as.to !== "Present" && as.from > as.to) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        [`administrativeService.${index}.to`]:
+                          "'To' year must be greater than or equal to 'From' year",
+                      }));
+
+                    }
+                  });
+                  if (errors.length === 0) {
+                    setStep("oas");
+                  }
                 }}
                 className="flex flex-col space-y-6"
               >
@@ -1055,6 +1120,11 @@ export default function Register() {
                           })}
                         </select>
                       </div>
+                      {errors[`administrativeService.${index}.to`] && (
+                        <div className="text-red-500 text-sm col-span-2 text-left">
+                          {errors[`administrativeService.${index}.to`]}
+                        </div>
+                      )}
                     </div>
                     {administrativeService.length > 1 && (
                       <button
@@ -1134,16 +1204,31 @@ export default function Register() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  const obj = {
-                    personalData: personalData,
-                    loginData: loginData,
-                    education: education,
-                    experience: experience,
-                    administrativeService: administrativeService,
-                    otherAdministrativeService: otherAdministrativeService,
+                  otherAdministrativeService.forEach((oas, index) => {
+                    if (oas.to < oas.from) {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        [`otherAdministrativeService.${index}.to`]: "'To' year cannot be earlier than 'From' year.",
+                      }));
+                      return;
+                    }
+
+                  });
+                  if (errors.length > 0) {
+                    console.log("errors exist : ", errors)
                   }
-                  console.log("final object is : ", obj)
-                  navigate("/");
+                  else {
+                    const obj = {
+                      personalData: personalData,
+                      loginData: loginData,
+                      education: education,
+                      experience: experience,
+                      administrativeService: administrativeService,
+                      otherAdministrativeService: otherAdministrativeService,
+                    }
+                    console.log("final object is : ", obj)
+                    navigate("/");
+                  }
                 }}
                 className="flex flex-col space-y-6"
               >
@@ -1176,40 +1261,77 @@ export default function Register() {
                         />
 
                         <div className="grid grid-cols-2 gap-4">
-                          <InputField
-                            label="From"
-                            type="number"
-                            name="from"
-                            min="1900"
-                            max={new Date().getFullYear()}
-                            value={oas.from}
-                            onChange={(e) =>
-                              handleOASChange(index, {
-                                target: {
-                                  name: e.target.name,
-                                  value: parseInt(e.target.value, 10) || "",
-                                },
-                              })
-                            }
-                            required
-                          />
-                          <InputField
-                            label="To"
-                            type="number"
-                            name="to"
-                            min="1900"
-                            max={new Date().getFullYear()}
-                            value={oas.to}
-                            onChange={(e) =>
-                              handleOASChange(index, {
-                                target: {
-                                  name: e.target.name,
-                                  value: e.target.value === "" ? "" : e.target.value === "Present" ? "Present" : parseInt(e.target.value, 10),
-                                },
-                              })
-                            }
-                            required
-                          />
+                          {/* FROM Field - Corrected to use a mapped array for year generation */}
+                          <div className="flex flex-col space-y-2">
+                            <label htmlFor={`oas-from-${index}`} className="text-sm font-medium text-gray-700">
+                              From
+                            </label>
+                            <select
+                              name="from"
+                              id={`oas-from-${index}`}
+                              value={String(oas.from)} // Ensure value is a string for select element
+                              onChange={(e) =>
+                                // Pass the change event to the handler
+                                handleOASChange(index, {
+                                  target: {
+                                    name: e.target.name,
+                                    // Parse the value back to a number, or keep it empty/0
+                                    value: parseInt(e.target.value, 10) || 0
+                                  }
+                                })
+                              }
+                              className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                              required
+                            >
+                              <option value="0">Select Year</option>
+                              {/* Generates years from current year down to 2007 */}
+                              {Array.from({ length: new Date().getFullYear() - 2007 + 1 }, (_, i) => {
+                                const year = new Date().getFullYear() - i;
+                                return (
+                                  <option key={year} value={String(year)}>
+                                    {year}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </div>
+
+                          {/* TO Field - Added for completeness and matching the previous component's grid layout */}
+                          <div className="flex flex-col space-y-2">
+                            <label htmlFor={`oas-to-${index}`} className="text-sm font-medium text-gray-700">
+                              To
+                            </label>
+                            <select
+                              name="to"
+                              id={`as-to-${index}`}
+                              value={String(oas.to)}
+                              onChange={(e) =>
+                                handleOASChange(index, {
+                                  target: {
+                                    name: e.target.name,
+                                    value: e.target.value === "" ? "" : parseInt(e.target.value, 10),
+                                  },
+                                })
+                              }
+                              className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                              required
+                            >
+                              <option value="">Select Year</option>
+                              {Array.from({ length: new Date().getFullYear() - 2008 }, (_, i) => {
+                                const year = new Date().getFullYear() - i - 1;
+                                return (
+                                  <option key={year} value={String(year)}>
+                                    {year}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </div>
+                          {errors[`otherAdministrativeService.${index}.to`] && (
+                            <div className="text-red-500 text-sm col-span-2 text-left">
+                              {errors[`otherAdministrativeService.${index}.to`]}
+                            </div>
+                          )}
                         </div>
 
                         {otherAdministrativeService.length > 1 && (
