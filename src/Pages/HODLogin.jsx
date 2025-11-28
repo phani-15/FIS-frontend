@@ -72,7 +72,8 @@ export default function HODLogin() {
                 <option value="it">Inforamtion Technology</option>
                 <option value="met">Metallurgical Engineering</option>
                 <option value="mech">Mechanical Engineering</option>
-                <option value="mech">Master's in Business Administration</option>
+                <option value="mba">Master's in Business Administration</option>
+                <option value="pharma">Pharmaceutical Sciences</option>
               </select>
             </div>
             <div id="emptydepartment"></div>
@@ -100,7 +101,7 @@ export default function HODLogin() {
             </div>
             <div id="emptypassword"></div>
           </div>
-          <p onClick={()=>navigate('/resetHODpassword')} className="text-end text-blue-800 hover:underline cursor-pointer">Reset Password</p>
+          
 
           {/* Submit Button */}
           <button
@@ -110,6 +111,8 @@ export default function HODLogin() {
             Login
             <LogIn className="w-5 h-5" />
           </button>
+            <p onClick={() => navigate('/resetHODpassword')} className="text-end text-blue-800 hover:underline cursor-pointer ">Reset/Forgot Password</p>
+          
         </form>
 
         {/* Footer */}

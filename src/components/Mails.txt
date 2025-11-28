@@ -1,0 +1,10 @@
+cse : hod.cse@jntugvcev.edu.in
+ece : hod.ece@jntugvcev.edu.in
+mech : hod.me@jntugvcev.edu.in
+eee : hod.eee@jntukucev.ac.in
+it : hod.it@jntugvcev.edu.in
+civil : hod.ce@jntukucev.ac.in
+bshss : hobshss@jntugvcev.edu.in
+mba :hod.mba@jntugvcev.edu.in
+met :
+phrmacy :
