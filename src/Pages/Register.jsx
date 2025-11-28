@@ -2,10 +2,11 @@ import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2 ,TriangleAlert} from "lucide-react"
+import { ArrowLeft,ArrowRight } from "lucide-react";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -404,9 +405,9 @@ export default function Register() {
 
             <button
               type="submit"
-              className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+              className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5 align-center justify-center"
             >
-              Next  
+              Next  <ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600 " />
             </button>
           </form>
         </div>
@@ -416,11 +417,11 @@ export default function Register() {
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            <div className="flex flex-col ">
+            <div className="flex flex-col mb-0 ">
               <label className="text-left my-2  ">Profile Picture</label>
               <div className="flex gap-4 flex-col md:flex-row">
                 <input
-                  className="p-2 text-sm border rounded-md border-gray-300"
+                  className="p-2 text-sm border rounded-md mb-0 border-gray-300"
                   name="profile"
                   type="file"
                   accept="image/*"
@@ -439,10 +440,10 @@ export default function Register() {
                 />
 
                 {previewUrl && (
-                  <div className="mt-3">
+                  <div>
                     <button
                       type="button"
-                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 sm:relative"
+                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 relative xl:ml-0 ml-55 "
                       onClick={() => {
                         // Open in new tab or show modal — here we just log; you can enhance
                         window.open(previewUrl, '_blank');
@@ -560,16 +561,16 @@ export default function Register() {
               <button
                 type="button"
                 onClick={() => setStep("signUp")}
-                className="mt-6 py-2 px-4 cursor-pointer rounded-lg border"
+                className="mt-6  p-2 cursor-pointer rounded-lg border flex items-center gap-0.5"
               >
-                Back
+              <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
               </button>
 
               <button
                 type="submit"
-                className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                className="mt-6  cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white p-2 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
               >
-                Next
+                 Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
               </button>
             </div>
           </form>
@@ -804,15 +805,15 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setStep("personal")}
-                  className="py-2 px-4 rounded-lg border cursor-pointer"
+                  className="py-2 px-4 rounded-lg border cursor-pointer flex items-center gap-0.5"
                 >
-                  Back
+                                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
                 </button>
                 <button
                   type="submit"
-                  className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
                 >
-                  Next
+                  Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
                 </button>
               </div>
             </form>
@@ -930,16 +931,16 @@ export default function Register() {
     <button
       type="button"
       onClick={() => setStep("education")}
-      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition" 
+      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5" 
     >
-      Back
+                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
     </button>
 
     <button
       type="submit"
-      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
     >
-      Next
+      Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
     </button>
   </div>
 
@@ -1100,16 +1101,16 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => setStep("experience")}
-                      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition"
+                      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
                     >
-                      Back
+                                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
                     </button>
 
                     <button
                       type="submit" 
-                      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
                     >
-                      Next
+                      Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
                     </button>
                   </div>
                 </div>
@@ -1269,9 +1270,9 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => setStep("as")}
-                    className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition"
+                    className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
                   >
-                    Back
+                                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
                   </button>
                   <button
                     type="submit"
