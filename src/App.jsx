@@ -20,6 +20,8 @@ import ResetPassword from './Pages/ResetPassword';
 import AddCredentials from './Pages/AddCredentials';
 import ResetHODPassword from './Pages/ResetHODPassword';
 import ForgotHODPassword from "./Pages/ForgotHODpassword"
+import ChangeIQACPassword from './Pages/ChangeIQACPassword';
+import Forgotiqac from './Pages/Forgotiqac';
 
 export default function App() {
   return (
@@ -47,7 +49,9 @@ export default function App() {
             <Route path='/resetHODpassword' element={<ResetHODPassword />} />
             <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />
             <Route path='/pc/' element={<ForgotPassword />} />
+            <Route path='/iqacChange' element={<ChangeIQACPassword />} />
             <Route path='/ac' element={<AddCredentials />} />
+            <Route path='/forgotpass' element={<Forgotiqac/>} />
           </Routes>
         </main>
         <footer className='flex justify-center p-6'>

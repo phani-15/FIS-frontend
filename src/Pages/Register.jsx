@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2 ,TriangleAlert} from "lucide-react"
-import { ArrowLeft,ArrowRight } from "lucide-react";
+import { Trash2, TriangleAlert,Info } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -14,7 +14,7 @@ export default function Register() {
 
   const [personalData, setpersonalData] = useState({
     name: "",
-    profile: null,
+    avatar: null,
     father: "",
     gender: "",
     DOB: "",
@@ -22,7 +22,7 @@ export default function Register() {
     designation: "",
     department: "",
     college: "",
-    date_of_join : ""
+    date_of_join: ""
   });
 
   const [loginData, setLoginData] = useState({
@@ -422,7 +422,7 @@ export default function Register() {
               type="submit"
               className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5 align-center justify-center"
             >
-              Next  
+              Next
             </button>
           </form>
         </div>
@@ -437,13 +437,13 @@ export default function Register() {
               <div className="flex gap-4 flex-col md:flex-row">
                 <input
                   className="p-2 text-sm border rounded-md mb-0 border-gray-300"
-                  name="profile"
+                  name="avatar"
                   type="file"
                   accept="image/*"
                   required
                   onChange={(e) => {
                     const file = e.target.files[0];
-                    setpersonalData((prev) => ({ ...prev, profile: file }));
+                    setpersonalData((prev) => ({ ...prev, avatar: file }));
 
                     if (file) {
                       // Generate preview URL
@@ -571,14 +571,14 @@ export default function Register() {
               </select>
             </div>
             <InputField
-                label="Date of Birth"
-                name="date_of_join"
-                type="month"
-                value={personalData.date_of_join}
-                onChange={handleChange}
-                required
-                className="mr-18"
-              />
+              label="Date of Birth"
+              name="date_of_join"
+              type="month"
+              value={personalData.date_of_join}
+              onChange={handleChange}
+              required
+              className="mr-18"
+            />
 
             {/* Submit Button */}
 
@@ -588,17 +588,25 @@ export default function Register() {
                 onClick={() => setStep("signUp")}
                 className="mt-6  p-2 cursor-pointer rounded-lg border flex items-center gap-0.5"
               >
-              <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
               </button>
 
               <button
                 type="submit"
                 className="mt-6  cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white p-2 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
               >
-                 Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
+                Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
               </button>
             </div>
           </form>
+           {/* we have to design a note for : "You can edit the details within 7 days" */}
+            {/* Edit Window Notice */}
+            <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
+              <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-blue-800">
+                <strong>Note:</strong> You may edit your education details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
+              </p>
+            </div>
         </div >
       )
       }
@@ -840,7 +848,7 @@ export default function Register() {
                   onClick={() => setStep("personal")}
                   className="py-2 px-4 rounded-lg border cursor-pointer flex items-center gap-0.5"
                 >
-                                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
                 </button>
                 <button
                   type="submit"
@@ -850,6 +858,7 @@ export default function Register() {
                 </button>
               </div>
             </form>
+            
           </div>
         )
       }
@@ -1006,23 +1015,23 @@ export default function Register() {
               {/* Divider Line */}
 
 
-  {/* Bottom Row */}
-  <div className="flex gap-4 justify-end border-t pt-6">
-    <button
-      type="button"
-      onClick={() => setStep("education")}
-      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition" 
-    >
-      Back
-    </button>
+              {/* Bottom Row */}
+              <div className="flex gap-4 justify-end border-t pt-6">
+                <button
+                  type="button"
+                  onClick={() => setStep("education")}
+                  className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition"
+                >
+                  Back
+                </button>
 
-    <button
-      type="submit"
-      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-    >
-      Next
-    </button>
-  </div>
+                <button
+                  type="submit"
+                  className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                >
+                  Next
+                </button>
+              </div>
 
             </div>
 
@@ -1057,7 +1066,7 @@ export default function Register() {
                   if (Object.entries(errors).length === 0) {
                     setStep("oas");
                   }
-                  else{
+                  else {
                     console.log(errors);
                   }
                 }}
@@ -1203,11 +1212,11 @@ export default function Register() {
                       onClick={() => setStep("experience")}
                       className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
                     >
-                                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                      <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
                     </button>
 
                     <button
-                      type="submit" 
+                      type="submit"
                       className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                     >
                       Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
@@ -1424,7 +1433,7 @@ export default function Register() {
                     onClick={() => setStep("as")}
                     className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
                   >
-                                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
                   </button>
                   <button
                     type="submit"

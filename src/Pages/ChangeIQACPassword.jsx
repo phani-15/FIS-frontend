@@ -3,34 +3,15 @@ import { RotateCcwKey } from "lucide-react";
 import InputField from "../components/inputField";
 import { useNavigate } from 'react-router-dom';
 
-export default function ResetHODPassword() {
+export default function ChangeIQACPassword() {
 
     const [data, setData] = React.useState({
-        department: "",
         pass: "",
         newPass: "",
     });
 
     const [cPass, setCPass] = React.useState("");
     const [errors, setErrors] = React.useState({});
-    const [college, setCollege] = React.useState("");
-
-    const departments = {
-    ucev : [
-      { name: "Civil Engineering", code: "civil" },
-      { name: "Computer Science & Engineering", code: "cse" },
-      { name: "Electronics & Communication Engineering", code: "ece" },
-      { name: "Electrical & Electronics Engineering", code: "eee" },
-      { name: "Information Technology", code: "it" },
-      { name: "Mechanical Engineering", code: "mech" },
-      { name: "Metallurgical Engineering", code: "met" },
-      {name: "BS & HSS", code: "bshss" },
-      { name: "Master's in Business Administration", code: "mba" },
-    ],
-    pharma  : [
-      { name: "Pharmaceutical Sciences", code: "pharma" },
-    ],
-  }
 
     const navigate = useNavigate();
     const handleSubmit = (e) => {
@@ -66,60 +47,21 @@ export default function ResetHODPassword() {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
-                    <div>
-                        <div className="relative">
-                            <label className="block mb-1 text-sm font-medium text-gray-700">College</label>
-                            <select
-                                name="college"
-                                id="college"
-                                value={college}
-                                onChange={(e) => setCollege(e.target.value)}
-                                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
-                                required
-                            >
-                                <option value="">Select College</option>
-                                <option value="ucev">University College of Engineering</option>
-                                <option value="pharma">College of Pharmaceutical Sciences</option>
-                            </select>
-                        </div>
-                        <div id="emptyCollege"></div>
-                    </div>
-                    {/* Username */}
-                    <div>
-                        <div className="relative">
-                            <label className="block mb-1 text-sm font-medium text-gray-700">Department</label>
-                            <select
-                                name="department"
-                                id="department"
-                                value={data.department}
-                                onChange={handleChange}
-                                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
-                                required
-                            >
-                                <option value="">Select Department</option>
-                                {college && departments[college].map((dept) => (
-                                    <option key={dept.code} value={dept.code}>{dept.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div id="emptydepartment"></div>
-                    </div>
-
+                   
                     {/* Password */}
                     <div>
                         <InputField
-                            label="Current Password"
+                            label="Current Passcode"
                             type="password"
                             id="pass"
                             value={data.pass}
                             error={errors.pass}
-                            placeholder="Enter your password"
+                            placeholder="Enter your Passcode"
                             onChange={handleChange}
                         />
                     </div>
 
                     <div>
-
                         <InputField
                             label="New Password"
                             type="password"
@@ -132,7 +74,6 @@ export default function ResetHODPassword() {
                     </div>
 
                     <div>
-
                         <InputField
                             label="Confirm Password"
                             type="password"
@@ -143,6 +84,8 @@ export default function ResetHODPassword() {
                             onChange={(e) => setCPass(e.target.value)}
                         />
                     </div>
+                    <p onClick={() => navigate('/forgotpass')} className="text-end mb-3 text-blue-800 hover:underline cursor-pointer ">Forgot Password </p>
+
                     {/* Submit Button */}
                     <button
                         type="submit"
@@ -150,8 +93,6 @@ export default function ResetHODPassword() {
                     >
                         Update
                     </button>
-                    <p onClick={() => navigate('/forgotHODpassword')} className="text-end text-blue-800 hover:underline cursor-pointer ">Forgot Password </p>
-
                 </form>
             </div>
         </div>
