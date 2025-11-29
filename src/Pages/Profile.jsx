@@ -85,6 +85,24 @@ export default function ProfilePage() {
             "designation": "Asst.Professor",
             "from": 2021,
             "to": 2023
+        },
+        {
+            "institute": "JNTUGV",
+            "designation": "Asst.Professor",
+            "from": 2021,
+            "to": 2023
+        },
+        {
+            "institute": "JNTUGV",
+            "designation": "Asst.Professor",
+            "from": 2021,
+            "to": 2023
+        },
+        {
+            "institute": "JNTUGV",
+            "designation": "Asst.Professor",
+            "from": 2021,
+            "to": 2023
         }
     ],
     "administrativeService": [
@@ -112,58 +130,6 @@ export default function ProfilePage() {
   const viewer = "user"
   const navigate = useNavigate()
   // Static Profile Data
-  const profile = {
-    profile: {
-      name: "Dr. P. Aruna Kumari",
-      role: "Professor @ JNTUGV",
-      avatar: "/images/profile.jpg",
-    },
-    personalInfo: {
-      email: "aruna.kumari@jntugv.edu",
-      phone: "+91 9876543210",
-      location: "Vizianagaram, Andhra Pradesh",
-      joinedDate: "Aug 2015",
-    },
-    education: [
-      {
-        degree: "Ph.D. in Computer Science",
-        institution: "IIT Delhi",
-        year: "2014",
-      },
-      {
-        degree: "M.Tech in Computer Engineering",
-        institution: "NIT Trichy",
-        year: "2009",
-      },
-      {
-        degree: "B.Tech in Information Technology",
-        institution: "Andhra University",
-        year: "2007",
-      },
-    ],
-    professionalExperience: [
-      {
-        role: "Professor",
-        institution: "JNTU-GV",
-        years: "2018 - Present",
-      },
-      {
-        role: "Associate Professor",
-        institution: "JNTU-GV",
-        years: "2014 - 2018",
-      },
-    ],
-    adminServiceThis: [
-      "Head of Department, Computer Science (2021 - Present)",
-      "Member, Academic Senate",
-      "Coordinator, NBA Accreditation",
-    ],
-    adminServiceOther: [
-      "Reviewer, IEEE Transactions on Education",
-      "Board Member, AICTE Curriculum Committee",
-      "Expert Committee, State Educational Policy",
-    ],
-  };
 
   // Section Component
   const Section = ({ title, icon, children, className = "" }) => (
@@ -267,10 +233,7 @@ export default function ProfilePage() {
                     <Phone size={16} className="text-green-500" />
                     {newObj.loginData.phone}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-700">
-                    <MapPin size={16} className="text-red-500" />
-                    {profile.personalInfo.location}
-                  </div>
+                  
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
                     Joined: {newObj.personalData.date_of_join}
