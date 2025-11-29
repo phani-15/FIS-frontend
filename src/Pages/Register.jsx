@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2, TriangleAlert,Info } from "lucide-react"
+import { Trash2, AlertTriangle,Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Register() {
@@ -581,7 +581,10 @@ export default function Register() {
             />
 
             {/* Submit Button */}
-
+            <div className="flex items-start gap-8 p-3 mt-6 bg-blue-50 border border-blue-300  text-blue-800 rounded-md text-sm">
+              <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 ml-3" />
+              <p className="">You can have access to change your details within 7 days </p>
+            </div>
             <div className="flex gap-3 justify-end">
               <button
                 type="button"
