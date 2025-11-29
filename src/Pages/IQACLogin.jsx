@@ -65,7 +65,7 @@ export default function IQACLogin() {
                 id="password"
                 value={passCode}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                placeholder="Enter your Passcode"
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500"
               />
             </div>
@@ -81,10 +81,10 @@ export default function IQACLogin() {
               </div>
             )}
           </div>
-
+          <p onClick={()=>navigate('/iqacChange')} className="text-blue-700 text-end mr-1 hover:underline mb-2 cursor-pointer">Change Password</p>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+            className="w-full flex cursor-pointer items-center justify-center gap-2 bg-linear-to-r from-indigo-500 to-purple-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-700 transition"
           >
             Login
             <LogIn className="w-5 h-5" />
