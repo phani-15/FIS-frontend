@@ -12,13 +12,14 @@ import {
   Printer,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { object } from "framer-motion/client";
 
 export default function ProfilePage() {
 
   const newObj = {
     "personalData": {
         "name": "Phani Durga Mani Srinivasa Rao",
-        "profile": {},
+        "avatar": "images/profile.jpg",
         "father": "Surya Nageswara Rao",
         "gender": "Male",
         "DOB": "2004-09-15",
@@ -48,7 +49,8 @@ export default function ProfilePage() {
             "percentage": "",
             "year": "2013"
         },
-        "degree": {
+        "degree":
+        [ {
             "title": "Under Graduation",
             "degreeName": "B.Tech",
             "specialization": "Computer Science",
@@ -56,7 +58,7 @@ export default function ProfilePage() {
             "college": "JNTUGV,CEV",
             "university": "JNTUGV",
             "year": "2017"
-        },
+        }],
         "pg": {
             "title": "Post Graduation",
             "course": "M.Tech",
@@ -187,15 +189,15 @@ export default function ProfilePage() {
               <div className="text-center">
                 <img
                   draggable="false"
-                  src={profile.profile.avatar}
+                  src={newObj.personalData.avatar}
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover mx-auto"
                 />
                 <div className="my-4">
                   <h1 className="text-2xl font-bold text-gray-800">
-                    {profile.profile.name}
+                    {newObj.personalData.name}
                   </h1>
-                  <p className="text-gray-600">{profile.profile.role}</p>
+                  <p className="text-gray-600">{newObj.personalData.designation}</p>
                 </div>
 
                 {/* Action Button */}
@@ -259,11 +261,11 @@ export default function ProfilePage() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Mail size={16} className="text-blue-500" />
-                    {profile.personalInfo.email}
+                    {newObj.loginData.email}
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Phone size={16} className="text-green-500" />
-                    {profile.personalInfo.phone}
+                    {newObj.loginData.phone}
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <MapPin size={16} className="text-red-500" />
@@ -271,7 +273,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
-                    Joined: {profile.personalInfo.joinedDate}
+                    Joined: {newObj.personalData.date_of_join}
                   </div>
                 </div>
               </div>
@@ -286,18 +288,72 @@ export default function ProfilePage() {
                 title="Educational Qualifications"
                 icon={<GraduationCap size={20} className="text-green-600" />}
               >
+
                 <div className="space-y-4">
-                  {profile.education.map((edu, index) => (
+                  { viewer === "user" &&
+                    newObj.education.postdoc.map((postdoc, index) => (
+                      <div
+                        key={index}
+                        className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
+                      >
+                        <div className="flex-1 ">
+                          <p className="font-semibold text-gray-800">
+                            Postdoc in {postdoc.specialization}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {postdoc.University} • {postdoc.year}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  }
+                  
+                  {
+                  newObj.education.phd.map((phd, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-2 p-4 bg-white/50 rounded-lg border border-white/50"
+                      className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
                     >
                       <div className="flex-1">
                         <p className="font-semibold text-gray-800">
-                          {edu.degree}
+                          Ph.D. in {phd.specialization}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {edu.institution} • {edu.year}
+                          {phd.University} • {phd.year}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+
+
+                  {((viewer === "user") || (Object.keys(newObj.education.phd).length === 0) )&&
+                    newObj.education.pg &&
+                    <div
+                      className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">
+                          {newObj.education.pg.course} in {newObj.education.pg.specialization}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {newObj.education.pg.college} • {newObj.education.pg.year}
+                        </p>
+                      </div>
+                    </div>
+                  }
+                  {
+                    viewer === "user" &&
+                  newObj.education.degree.map((edu, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">
+                          {edu.degreeName} in {edu.specialization}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {edu.college} • {edu.year}
                         </p>
                       </div>
                     </div>
@@ -306,21 +362,21 @@ export default function ProfilePage() {
               </Section>
 
               {/* Professional Experience */}
-              {profile.professionalExperience.length > 0 &&
+              {newObj.experience.length > 0 &&
                 <Section
                   title="Professional Experience"
                   icon={<Briefcase size={20} className="text-orange-600" />}
                 >
                   <div className="space-y-4">
-                    {profile.professionalExperience.map((exp, index) => (
+                    {newObj.experience.map((exp, index) => (
                       <div
                         key={index}
-                        className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
+                        className="flex items-start gap-4 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
                       >
                         <div className="flex-1">
-                          <p className="font-semibold text-gray-800">{exp.role}</p>
+                          <p className="font-semibold text-gray-800">{exp.designation}</p>
                           <p className="text-sm text-gray-600">
-                            {exp.institution} • {exp.years}
+                            {exp.institute} • {exp.from}-{exp.to}
                           </p>
                         </div>
                       </div>
@@ -333,15 +389,15 @@ export default function ProfilePage() {
             {/* Two Column Sections */}
             <div className="grid lg:grid-cols-2 gap-6">
               {/* Administrative Service - This Institution */}
-              {profile.adminServiceThis.length > 0 &&
+              {newObj.administrativeService.length > 0 &&
                 <Section
                   title="Administrative Service (Current)"
                   icon={<Award size={20} className="text-purple-600" />}
                 >
                   <div className="space-y-2">
-                    {profile.adminServiceThis.map((service, index) => (
+                    {newObj.administrativeService.map((service, index) => (
                       <p key={index} className="text-sm text-gray-700">
-                        • {service}
+                        • {service.designation} ({service.from} - {service.to})
                       </p>
                     ))}
                   </div>
@@ -349,15 +405,15 @@ export default function ProfilePage() {
               }
 
               {/* Administrative Service - Other Institutions */}
-              {profile.adminServiceOther.length > 0 &&
+              {newObj.otherAdministrativeService.length > 0 &&
                 <Section
                   title="Administrative Service (Other)"
                   icon={<Award size={20} className="text-indigo-600" />}
                 >
                   <div className="space-y-2">
-                    {profile.adminServiceOther.map((service, index) => (
+                    {newObj.otherAdministrativeService.map((service, index) => (
                       <p key={index} className="text-sm text-gray-700">
-                        • {service}
+                        • {service.designation} at {service.institute} ({service.from} - {service.to})
                       </p>
                     ))}
                   </div>
