@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2 ,TriangleAlert} from "lucide-react"
+import { Trash2, TriangleAlert } from "lucide-react"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -21,6 +21,7 @@ export default function Register() {
     designation: "",
     department: "",
     college: "",
+    date_of_join : ""
   });
 
   const [loginData, setLoginData] = useState({
@@ -120,10 +121,10 @@ export default function Register() {
 
   const handleASChange = useCallback((index, e) => {
     const { name, value } = e.target;
-    setErrors({})
     setAdministrativeService(prev => {
       const updated = [...prev];
       updated[index][name] = value;
+      setErrors({})
       return updated;
     });
   }, []);
@@ -213,6 +214,7 @@ export default function Register() {
       updated[index][name] = value;
       return updated;
     });
+    setErrors({})
   }, []);
 
   const handlePostDocChange = useCallback((index, e) => {
@@ -223,6 +225,7 @@ export default function Register() {
       updated[index] = { ...updated[index], [name]: value };
       return updated;
     });
+    setErrors({})
   }, [setPostDocs]);
 
 
@@ -266,6 +269,9 @@ export default function Register() {
         if (field === "title" || field === "percentage") return; // skip title
         if (!value || value.toString().trim() === "") {
           newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
+        }
+        if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+          newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
         }
       });
     });
@@ -311,6 +317,7 @@ export default function Register() {
       if (!havePhD) {
         setPhDs([]);
       }
+      console.log(education)
       education.phd = PhDs
       education.postdoc = PostDocs
       setStep("experience");
@@ -354,10 +361,12 @@ export default function Register() {
           value={String(education[levelKey][f] ?? "")}
           onChange={handleEducationChange}
           // keep year as text + inputMode numeric to avoid number->string conversions
-          type={f === "year" ? "text" : "text"}
+          type={f === "year" ? "number" : "text"}
+          min={f === " year" ? 1900 : undefined}
+          max={f === " year" ? new Date().getFullYear() : undefined}
           error={errors[`${levelKey}.${f}`]}
           inputMode={f === "year" ? "numeric" : f === "percentage" ? "numeric" : undefined}
-          placeholder={f === "year" ? "Enter year" : `Enter ${label.toLowerCase()} ${f === "school" || f === "college" ? "name" : ""}`}
+          placeholder={f === "year" ? "Enter year of Completion" : `Enter ${label.toLowerCase()} ${f === "school" || f === "college" ? "name" : ""}`}
         />
       );
     });
@@ -412,7 +421,7 @@ export default function Register() {
               type="submit"
               className="mt-6 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
             >
-              Next  
+              Next
             </button>
           </form>
         </div>
@@ -430,6 +439,7 @@ export default function Register() {
                   name="profile"
                   type="file"
                   accept="image/*"
+                  required
                   onChange={(e) => {
                     const file = e.target.files[0];
                     setpersonalData((prev) => ({ ...prev, profile: file }));
@@ -559,6 +569,15 @@ export default function Register() {
                 <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
               </select>
             </div>
+            <InputField
+                label="Date of Birth"
+                name="date_of_join"
+                type="month"
+                value={personalData.date_of_join}
+                onChange={handleChange}
+                required
+                className="mr-18"
+              />
 
             {/* Submit Button */}
 
@@ -636,6 +655,7 @@ export default function Register() {
                         <InputField
                           label="Specialization"
                           name="specialization"
+                          placeholder="enter the specialization"
                           value={phd.specialization}
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.specialization`]}
@@ -645,14 +665,15 @@ export default function Register() {
                         <InputField
                           label="Under the Professor"
                           name="under_the_proffessor"
+                          placeholder="enter your professor name"
                           value={phd.under_the_proffessor}
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.under_the_proffessor`]}
-                          required
                         />
 
                         <InputField
                           label="Department"
+                          placeholder="enter the department"
                           name="department"
                           value={phd.department}
                           onChange={(e) => handlePhDChange(index, e)}
@@ -662,6 +683,7 @@ export default function Register() {
 
                         <InputField
                           label="University"
+                          placeholder="enter the University"
                           name="University"
                           value={phd.University}
                           onChange={(e) => handlePhDChange(index, e)}
@@ -672,6 +694,7 @@ export default function Register() {
                         <InputField
                           label="Year of Completion"
                           name="year"
+                          placeholder="enter the year of completion"
                           value={phd.year}
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.year`]}
@@ -744,6 +767,7 @@ export default function Register() {
                         <InputField
                           label="Specialization"
                           name="specialization"
+                          placeholder="enter the specialization"
                           value={postdoc.specialization}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.specialization`]}
@@ -753,6 +777,7 @@ export default function Register() {
                         <InputField
                           label="Under the Professor(optional)"
                           name="under_the_proffessor"
+                          placeholder="enter your professor name"
                           value={postdoc.under_the_proffessor}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.under_the_proffessor`]}
@@ -762,6 +787,7 @@ export default function Register() {
                         <InputField
                           label="University"
                           name="University"
+                          placeholder="enter the University"
                           value={postdoc.University}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.University`]}
@@ -771,6 +797,7 @@ export default function Register() {
                         <InputField
                           label="Year of Completion"
                           name="year"
+                          placeholder="enter the year of completion"
                           value={postdoc.year}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.year`]}
@@ -953,50 +980,50 @@ export default function Register() {
 
             <div className="w-full">
 
-  {/* Top Row */}
-  <div className="flex justify-between items-center">
-    <button
-      type="button"
-      onClick={addExperience}
-      className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800"
-    >
-    <span className="text-xl ">+</span> Add More
-    </button>
+              {/* Top Row */}
+              <div className="flex justify-between items-center">
+                <button
+                  type="button"
+                  onClick={addExperience}
+                  className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800"
+                >
+                  <span className="text-xl ">+</span> Add More
+                </button>
 
-    <button
-      type="button"
-      onClick={() => {
-        setExperience([]);
-        setStep("as");
-      }}
-      className="text-sm font-medium text-gray-500 hover:text-gray-700 pl-15 -ml-[6]"
-    >
-      Skip
-    </button>
-  </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setExperience([]);
+                    setStep("as");
+                  }}
+                  className="text-sm font-medium text-gray-500 hover:text-gray-700 pl-15 -ml-[6]"
+                >
+                  Skip
+                </button>
+              </div>
 
-  {/* Divider Line */}
-  
+              {/* Divider Line */}
 
-  {/* Bottom Row */}
-  <div className="flex gap-4 justify-end border-t pt-6">
-    <button
-      type="button"
-      onClick={() => setStep("education")}
-      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition" 
-    >
-      Back
-    </button>
 
-    <button
-      type="submit"
-      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-    >
-      Next
-    </button>
-  </div>
+              {/* Bottom Row */}
+              <div className="flex gap-4 justify-end border-t pt-6">
+                <button
+                  type="button"
+                  onClick={() => setStep("education")}
+                  className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition"
+                >
+                  Back
+                </button>
 
-</div>
+                <button
+                  type="submit"
+                  className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                >
+                  Next
+                </button>
+              </div>
+
+            </div>
 
           </form>
         </div>
@@ -1017,7 +1044,7 @@ export default function Register() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   administrativeService.forEach((as, index) => {
-                    if (as.to !== "Present" && as.from > as.to) {
+                    if (as.to != "Present" && as.from > as.to) {
                       setErrors((prev) => ({
                         ...prev,
                         [`administrativeService.${index}.to`]:
@@ -1026,8 +1053,11 @@ export default function Register() {
 
                     }
                   });
-                  if (errors.length === 0) {
+                  if (Object.entries(errors).length === 0) {
                     setStep("oas");
+                  }
+                  else{
+                    console.log(errors);
                   }
                 }}
                 className="flex flex-col space-y-6"
@@ -1176,7 +1206,7 @@ export default function Register() {
                     </button>
 
                     <button
-                      type="submit" 
+                      type="submit"
                       className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                     >
                       Next

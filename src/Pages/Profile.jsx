@@ -5,24 +5,116 @@ import {
   MapPin,
   Calendar,
   LogOut,
-  SquarePen ,
+  SquarePen,
   GraduationCap,
   Briefcase,
   Award,
   Printer,
-  BookOpen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function ProfilePage() {
 
+  const newObj = {
+    "personalData": {
+        "name": "Phani Durga Mani Srinivasa Rao",
+        "profile": {},
+        "father": "Surya Nageswara Rao",
+        "gender": "Male",
+        "DOB": "2004-09-15",
+        "marital": "unmarried",
+        "designation": "Assistant Professor",
+        "department": "cse",
+        "college": "University College of Engineering",
+        "date_of_join": "2023-09"
+    },
+    "loginData": {
+        "password": "Phani@123",
+        "email": "phanipolavarapu15@gmail.com",
+        "phone": "8328186996",
+        "cPassword": "Phani@123"
+    },
+    "education": {
+        "tenth": {
+            "title": "Tenth",
+            "school": "ZPHS Mummidivaram",
+            "percentage": "",
+            "year": "2009"
+        },
+        "twelth": {
+            "title": "Intermediate/Diploma",
+            "type": "Intermediate",
+            "college": "Sri Ravi Junior College",
+            "percentage": "",
+            "year": "2013"
+        },
+        "degree": {
+            "title": "Under Graduation",
+            "degreeName": "B.Tech",
+            "specialization": "Computer Science",
+            "percentage": "",
+            "college": "JNTUGV,CEV",
+            "university": "JNTUGV",
+            "year": "2017"
+        },
+        "pg": {
+            "title": "Post Graduation",
+            "course": "M.Tech",
+            "specialization": "Computer Applications",
+            "percentage": "",
+            "college": "JNTUK,CEV",
+            "university": "JNTUK",
+            "year": "2021"
+        },
+        "phd": [
+            {
+                "specialization": "Biometrics",
+                "under_the_proffessor": "Dr.P.Aruna Kumari",
+                "department": "Computer Science",
+                "University": "JNTUGV",
+                "year": "2021"
+            }
+        ],
+        "postdoc": []
+    },
+    "experience": [
+        {
+            "institute": "JNTUGV",
+            "designation": "Asst.Professor",
+            "from": 2021,
+            "to": 2023
+        }
+    ],
+    "administrativeService": [
+        {
+            "designation": "Head of the Administrative service",
+            "from": 2024,
+            "to": "Present"
+        },
+        {
+            "designation": "Head of the Department, CSE",
+            "from": 2023,
+            "to": 2024
+        }
+    ],
+    "otherAdministrativeService": [
+        {
+            "institute": "JNTUK",
+            "from": 2022,
+            "to": 2023,
+            "designation": "head of the department"
+        }
+    ]
+}
+  
+  const viewer = "user"
   const navigate = useNavigate()
   // Static Profile Data
   const profile = {
     profile: {
       name: "Dr. P. Aruna Kumari",
       role: "Professor @ JNTUGV",
-      avatar: "/images/Profile.jpg",
+      avatar: "/images/profile.jpg",
     },
     personalInfo: {
       email: "aruna.kumari@jntugv.edu",
@@ -69,12 +161,6 @@ export default function ProfilePage() {
       "Board Member, AICTE Curriculum Committee",
       "Expert Committee, State Educational Policy",
     ],
-    researchInterests: [
-      "Artificial Intelligence & Machine Learning",
-      "Natural Language Processing",
-      "Educational Technology",
-      "Data Mining & Big Data Analytics",
-    ],
   };
 
   // Section Component
@@ -93,7 +179,7 @@ export default function ProfilePage() {
   return (
     <div className="p-4 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        
+
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Profile Card */}
           <div className="lg:col-span-1">
@@ -105,7 +191,7 @@ export default function ProfilePage() {
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover mx-auto"
                 />
-                <div className="mt-4">
+                <div className="my-4">
                   <h1 className="text-2xl font-bold text-gray-800">
                     {profile.profile.name}
                   </h1>
@@ -114,13 +200,14 @@ export default function ProfilePage() {
 
                 {/* Action Button */}
                 <div className="flex flex-col gap-4">
-                  <div className="mt-6 flex justify-center text-gray-600 gap-6">
+                  {viewer == "user" && 
+                  <div className="mt-2 flex justify-center text-gray-600 gap-6">
 
                     {/* Edit Button */}
                     <button
-                    onClick={()=>navigate('/edit')}
-                    className="relative group cursor-pointer">
-                      <SquarePen  />
+                      onClick={() => navigate('/edit')}
+                      className="relative group cursor-pointer">
+                      <SquarePen />
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
                      bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
                      group-hover:opacity-100 transition">
@@ -149,11 +236,13 @@ export default function ProfilePage() {
                         Logout
                       </span>
                     </button>
-                  </div>
+                  </div>}
                   <div className="flex flex-col  gap-3">
+                    {viewer == "user" && 
                     <button
                       onClick={() => navigate('/add')}
                       className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
+                    }
                     <button
                       onClick={() => navigate('/vc')}
                       className="bg-linear-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Credentials</button>
@@ -201,7 +290,7 @@ export default function ProfilePage() {
                   {profile.education.map((edu, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
+                      className="flex items-start gap-2 p-4 bg-white/50 rounded-lg border border-white/50"
                     >
                       <div className="flex-1">
                         <p className="font-semibold text-gray-800">
@@ -217,72 +306,64 @@ export default function ProfilePage() {
               </Section>
 
               {/* Professional Experience */}
-              <Section
-                title="Professional Experience"
-                icon={<Briefcase size={20} className="text-orange-600" />}
-              >
-                <div className="space-y-4">
-                  {profile.professionalExperience.map((exp, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
-                    >
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-800">{exp.role}</p>
-                        <p className="text-sm text-gray-600">
-                          {exp.institution} • {exp.years}
-                        </p>
+              {profile.professionalExperience.length > 0 &&
+                <Section
+                  title="Professional Experience"
+                  icon={<Briefcase size={20} className="text-orange-600" />}
+                >
+                  <div className="space-y-4">
+                    {profile.professionalExperience.map((exp, index) => (
+                      <div
+                        key={index}
+                        className="flex items-start gap-4 p-4 bg-white/50 rounded-lg border border-white/50"
+                      >
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-800">{exp.role}</p>
+                          <p className="text-sm text-gray-600">
+                            {exp.institution} • {exp.years}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </Section>
+                    ))}
+                  </div>
+                </Section>
+              }
             </div>
 
             {/* Two Column Sections */}
             <div className="grid lg:grid-cols-2 gap-6">
               {/* Administrative Service - This Institution */}
-              <Section
-                title="Administrative Service (Current)"
-                icon={<Award size={20} className="text-purple-600" />}
-              >
-                <div className="space-y-2">
-                  {profile.adminServiceThis.map((service, index) => (
-                    <p key={index} className="text-sm text-gray-700">
-                      • {service}
-                    </p>
-                  ))}
-                </div>
-              </Section>
+              {profile.adminServiceThis.length > 0 &&
+                <Section
+                  title="Administrative Service (Current)"
+                  icon={<Award size={20} className="text-purple-600" />}
+                >
+                  <div className="space-y-2">
+                    {profile.adminServiceThis.map((service, index) => (
+                      <p key={index} className="text-sm text-gray-700">
+                        • {service}
+                      </p>
+                    ))}
+                  </div>
+                </Section>
+              }
 
               {/* Administrative Service - Other Institutions */}
-              <Section
-                title="Administrative Service (Other)"
-                icon={<Award size={20} className="text-indigo-600" />}
-              >
-                <div className="space-y-2">
-                  {profile.adminServiceOther.map((service, index) => (
-                    <p key={index} className="text-sm text-gray-700">
-                      • {service}
-                    </p>
-                  ))}
-                </div>
-              </Section>
+              {profile.adminServiceOther.length > 0 &&
+                <Section
+                  title="Administrative Service (Other)"
+                  icon={<Award size={20} className="text-indigo-600" />}
+                >
+                  <div className="space-y-2">
+                    {profile.adminServiceOther.map((service, index) => (
+                      <p key={index} className="text-sm text-gray-700">
+                        • {service}
+                      </p>
+                    ))}
+                  </div>
+                </Section>
+              }
             </div>
-
-            {/* Research Interests */}
-            <Section
-              title="Research Interests"
-              icon={<BookOpen size={20} className="text-teal-600" />}
-            >
-              <div className="space-y-2">
-                {profile.researchInterests.map((interest, index) => (
-                  <p key={index} className="text-sm text-gray-700">
-                    • {interest}
-                  </p>
-                ))}
-              </div>
-            </Section>
           </div>
         </div>
       </div>
