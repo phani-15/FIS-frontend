@@ -18,8 +18,8 @@ export default function ProfilePage() {
 
   const newObj = {
     "personalData": {
-        "name": "Phani Durga Mani Srinivasa Rao",
-        "avatar": "images/profile.jpg",
+        "name": "Phani Polavarapu",
+        "avatar": "images/Profile2.avif",
         "father": "Surya Nageswara Rao",
         "gender": "Male",
         "DOB": "2004-09-15",
