@@ -1,16 +1,72 @@
 import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2, AlertTriangle,Info } from "lucide-react"
+import { Trash2, AlertTriangle, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
-  const [havePhD, setHavePhD] = useState(false);
-  const [havePostDoc, setHavePostDoc] = useState(false);
+
+  const obj = {
+    "tenth": {
+      "title": "Tenth",
+      "school": "dkvnsd",
+      "percentage": "",
+      "year": "2009"
+    },
+    "twelth": {
+      "title": "Intermediate/Diploma",
+      "type": "Intermediate",
+      "college": "hl.,h",
+      "percentage": "",
+      "year": "2011"
+    },
+    "degree": {
+      "title": "Under Graduation",
+      "degreeName": "vbnmvf",
+      "specialization": "gjftrj",
+      "percentage": "",
+      "college": "klfgfdjnzs",
+      "university": "mghcf",
+      "year": "2013"
+    },
+    "pg": {
+      "title": "Post Graduation",
+      "course": "fbmrfxd",
+      "specialization": "mgh,g",
+      "percentage": "",
+      "college": "gfjmxf",
+      "university": "fgkmcd",
+      "year": "2009"
+    },
+    "phd": [
+      {
+        "specialization": "cv nfgnfs",
+        "under_the_proffessor": "",
+        "department": "dsdfbga",
+        "University": "dfbarb",
+        "year": "2020"
+      },
+      {
+        "specialization": "gmmx",
+        "under_the_proffessor": "",
+        "department": "sdgfsdh",
+        "University": "fmsfghmsf",
+        "year": "2023"
+      },
+      {
+        "specialization": "fddns",
+        "under_the_proffessor": "sfrnmfgns",
+        "department": "fdhsdhfd",
+        "University": "radhafdbz",
+        "year": "2000"
+      }
+    ],
+    "postdoc": []
+  }
 
   const [personalData, setpersonalData] = useState({
     name: "",
@@ -32,20 +88,18 @@ export default function Register() {
     cPassword: ""
   })
 
-  const [education, setEducation] = useState({
-    tenth: { title: "Tenth", school: "", percentage: "", year: "", },
-    twelth: { title: "Intermediate/Diploma", type: "", college: "", percentage: "", year: "", },
-    degree: { title: "Under Graduation", degreeName: "", specialization: "", percentage: "", college: "", university: "", year: "", },
-    pg: { title: "Post Graduation", course: "", specialization: "", percentage: "", college: "", university: "", year: "" },
-  });
+  const [education, setEducation] = useState(obj);
 
+  
+  const [havePhD, setHavePhD] = useState(obj.phd?.length > 0);
+const [havePostDoc, setHavePostDoc] = useState(obj.postdoc?.length > 0);
 
   const [experience, setExperience] = useState([
     { institute: "", designation: "", from: "", to: "" }
   ])
 
-  const [PhDs, setPhDs] = useState([])
-  const [PostDocs, setPostDocs] = useState([])
+  const [PhDs, setPhDs] = useState(obj.phd || []);
+const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
   const [administrativeService, setAdministrativeService] = useState([
     { designation: "", from: "", to: "" }
@@ -314,16 +368,22 @@ export default function Register() {
       e.preventDefault();
       if (!validateEducation()) return;
 
-      // If user doesn't have PhDs, reset the state
-      if (!havePhD) {
-        setPhDs([]);
-      }
-      console.log(education)
-      education.phd = PhDs
-      education.postdoc = PostDocs
+      // Prepare clean updated education object
+      const updatedEducation = {
+        ...education,
+        phd: havePhD ? [...PhDs] : [],
+        postdoc: havePostDoc ? [...PostDocs] : []
+      };
+
+      // Log to verify
+      console.log("Updated education:", updatedEducation);
+
+      // Save it back to state so it can be used later
+      setEducation(updatedEducation);
+
       setStep("experience");
     },
-    [education, havePhD, PhDs, validateEducation]
+    [education, havePhD, havePostDoc, PhDs, PostDocs, validateEducation]
   );
 
   const renderEduFields = (levelKey) => {
@@ -602,14 +662,14 @@ export default function Register() {
               </button>
             </div>
           </form>
-           {/* we have to design a note for : "You can edit the details within 7 days" */}
-            {/* Edit Window Notice */}
-            <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
-              <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
-              <p className="text-sm text-blue-800">
-                <strong>Note:</strong> You may edit your education details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
-              </p>
-            </div>
+          {/* we have to design a note for : "You can edit the details within 7 days" */}
+          {/* Edit Window Notice */}
+          <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
+            <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
+            <p className="text-sm text-blue-800">
+              <strong>Note:</strong> You may edit your education details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
+            </p>
+          </div>
         </div >
       )
       }
@@ -626,7 +686,7 @@ export default function Register() {
                   {renderEduFields(level)}
                 </div>
               ))}
-
+              <h1>This testing Phrase</h1>
               {/* PhD Section */}
               <div className="mt-6">
                 <div className="flex items-center space-x-4 mb-4">
@@ -690,7 +750,6 @@ export default function Register() {
                           value={phd.department}
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.department`]}
-                          required
                         />
 
                         <InputField
@@ -793,7 +852,6 @@ export default function Register() {
                           value={postdoc.under_the_proffessor}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.under_the_proffessor`]}
-                          required
                         />
 
                         <InputField
@@ -861,7 +919,7 @@ export default function Register() {
                 </button>
               </div>
             </form>
-            
+
           </div>
         )
       }
