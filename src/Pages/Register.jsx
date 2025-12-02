@@ -6,68 +6,80 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
 
   const obj = {
     "tenth": {
-      "title": "Tenth",
-      "school": "dkvnsd",
-      "percentage": "",
-      "year": "2009"
+        "title": "Tenth",
+        "school": "dkvnsd",
+        "percentage": "",
+        "year": "2009"
     },
     "twelth": {
-      "title": "Intermediate/Diploma",
-      "type": "Intermediate",
-      "college": "hl.,h",
-      "percentage": "",
-      "year": "2011"
+        "title": "Intermediate/Diploma",
+        "type": "Intermediate",
+        "college": "hl.,h",
+        "percentage": "",
+        "year": "2011"
     },
     "degree": {
-      "title": "Under Graduation",
-      "degreeName": "vbnmvf",
-      "specialization": "gjftrj",
-      "percentage": "",
-      "college": "klfgfdjnzs",
-      "university": "mghcf",
-      "year": "2013"
+        "title": "Under Graduation",
+        "degreeName": "vbnmvf",
+        "specialization": "gjftrj",
+        "percentage": "",
+        "college": "klfgfdjnzs",
+        "university": "mghcf",
+        "year": "2013"
     },
     "pg": {
-      "title": "Post Graduation",
-      "course": "fbmrfxd",
-      "specialization": "mgh,g",
-      "percentage": "",
-      "college": "gfjmxf",
-      "university": "fgkmcd",
-      "year": "2009"
+        "title": "Post Graduation",
+        "course": "fbmrfxd",
+        "specialization": "mgh,g",
+        "percentage": "",
+        "college": "gfjmxf",
+        "university": "fgkmcd",
+        "year": "2009"
     },
     "phd": [
-      {
-        "specialization": "cv nfgnfs",
-        "under_the_proffessor": "",
-        "department": "dsdfbga",
-        "University": "dfbarb",
-        "year": "2020"
-      },
-      {
-        "specialization": "gmmx",
-        "under_the_proffessor": "",
-        "department": "sdgfsdh",
-        "University": "fmsfghmsf",
-        "year": "2023"
-      },
-      {
-        "specialization": "fddns",
-        "under_the_proffessor": "sfrnmfgns",
-        "department": "fdhsdhfd",
-        "University": "radhafdbz",
-        "year": "2000"
-      }
+        {
+            "specialization": "cv nfgnfs",
+            "under_the_proffessor": "",
+            "department": "dsdfbga",
+            "University": "dfbarb",
+            "year": "2023"
+        },
+        {
+            "specialization": "gmmx",
+            "under_the_proffessor": "",
+            "department": "sdgfsdh",
+            "University": "fmsfghmsf",
+            "year": "2023"
+        },
+        {
+            "specialization": "fddns",
+            "under_the_proffessor": "sfrnmfgns",
+            "department": "fdhsdhfd",
+            "University": "radhafdbz",
+            "year": "2000"
+        }
     ],
-    "postdoc": []
-  }
-
+    "postdoc": [
+        {
+            "specialization": "AI/ML",
+            "under_the_proffessor": "Sukumar",
+            "University": "KL University",
+            "year": "2020"
+        },
+        {
+            "specialization": "Deep Learning",
+            "under_the_proffessor": "Surya",
+            "University": "AKNU",
+            "year": "2022"
+        }
+    ]
+}
   const [personalData, setpersonalData] = useState({
     name: "",
     avatar: null,
@@ -78,7 +90,7 @@ export default function Register() {
     designation: "",
     department: "",
     college: "",
-    date_of_join: ""
+    date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   });
 
   const [loginData, setLoginData] = useState({
@@ -88,18 +100,26 @@ export default function Register() {
     cPassword: ""
   })
 
-  const [education, setEducation] = useState(obj);
+  // const [education, setEducation] = useState(obj);
+  const [education, setEducation] = useState({
+    tenth: { title: "Tenth", school: "", percentage: "", year: "", },
+    twelth: { title: "Intermediate/Diploma", type: "", college: "", percentage: "", year: "", },
+    degree: { title: "Under Graduation", degreeName: "", specialization: "", percentage: "", college: "", university: "", year: "", },
+    pg: { title: "Post Graduation", course: "", specialization: "", percentage: "", college: "", university: "", year: "" },
+  });
 
   
-  const [havePhD, setHavePhD] = useState(obj.phd?.length > 0);
-const [havePostDoc, setHavePostDoc] = useState(obj.postdoc?.length > 0);
+  const [havePhD, setHavePhD] = useState(false);
+const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [experience, setExperience] = useState([
     { institute: "", designation: "", from: "", to: "" }
   ])
 
-  const [PhDs, setPhDs] = useState(obj.phd || []);
-const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
+  const [PhDs, setPhDs] = useState([]);
+  // const [PhDs, setPhDs] = useState(obj.phd || []);
+const [PostDocs, setPostDocs] = useState( []);
+// const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
   const [administrativeService, setAdministrativeService] = useState([
     { designation: "", from: "", to: "" }
@@ -350,11 +370,11 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
     if (havePostDoc) {
       PostDocs.forEach((postdoc, index) => {
         Object.entries(postdoc).forEach(([field, value]) => {
-          if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "")) {
-            newErrors[`postdoc.${index}.${field}`] = `PostDoc ${index + 1} - ${field} is required`;
-          }
           if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
             newErrors[`postdoc.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+          }
+          if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "")) {
+            newErrors[`postdoc.${index}.${field}`] = `PostDoc ${index + 1} - ${field} is required`;
           }
         });
       });
@@ -632,7 +652,7 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
               </select>
             </div>
             <InputField
-              label="Date of Birth"
+              label="Date of Join"
               name="date_of_join"
               type="month"
               value={personalData.date_of_join}
@@ -642,35 +662,35 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
             />
 
             {/* Submit Button */}
-            <div className="flex items-start gap-8 p-3 mt-6 bg-blue-50 border border-blue-300  text-blue-800 rounded-md text-sm">
-              <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 ml-3" />
+            {/* <div className="flex items-start gap-8 p-3 mt-6 bg-blue-50 border border-blue-300  text-blue-800 rounded-md text-sm">
+              <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 ml-3" />
               <p className="">You can have access to change your details within 7 days </p>
-            </div>
+            </div> */}
+            
+          {/* Edit Window Notice */}
+          <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
+            <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
+            <p className="text-sm text-blue-800">
+              <strong className="mr-2">Note: </strong> You may edit your details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
+            </p>
+          </div>
             <div className="flex gap-3 justify-end">
               <button
                 type="button"
                 onClick={() => setStep("signUp")}
-                className="mt-6  p-2 cursor-pointer rounded-lg border flex items-center gap-0.5"
+                className="mt-6 hover:bg-slate-200 bg-slate-100  p-2 cursor-pointer rounded-lg border flex items-center gap-0.5"
               >
-                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
               </button>
 
               <button
                 type="submit"
                 className="mt-6  cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white p-2 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
               >
-                Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
+                Next<ArrowRight size={22} strokeWidth={3} className="text-white-600" />
               </button>
             </div>
           </form>
-          {/* we have to design a note for : "You can edit the details within 7 days" */}
-          {/* Edit Window Notice */}
-          <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
-            <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
-            <p className="text-sm text-blue-800">
-              <strong>Note:</strong> You may edit your education details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
-            </p>
-          </div>
         </div >
       )
       }
@@ -912,15 +932,15 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
                 <button
                   type="button"
                   onClick={() => setStep("personal")}
-                  className="py-2 px-4 rounded-lg border cursor-pointer flex items-center gap-0.5"
+                  className="py-2 px-4  hover:bg-slate-200 bg-slate-100 rounded-lg border cursor-pointer flex items-center gap-0.5"
                 >
-                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                 </button>
                 <button
                   type="submit"
                   className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
                 >
-                  Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
+                  Next<ArrowRight size={22} strokeWidth={3} className="text-white-600" />
                 </button>
               </div>
             </form>
@@ -1063,7 +1083,7 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
                   onClick={addExperience}
                   className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800"
                 >
-                  <span className="text-xl ">+</span> Add More
+                  <span className="text-xl ">+</span> Add {Object.keys(experience).length > 0 ? "More" : ""}
                 </button>
 
                 <button
@@ -1276,16 +1296,16 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
                     <button
                       type="button"
                       onClick={() => setStep("experience")}
-                      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
+                      className="py-2 px-4 rounded-lg border cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
                     >
-                      <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                      <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                     </button>
 
                     <button
                       type="submit"
                       className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                     >
-                      Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
+                      Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 " />
                     </button>
                   </div>
                 </div>
@@ -1323,7 +1343,7 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
                     console.log("errors exist : ", errors)
                   }
                   else {
-                    const obj = {
+                    const obj1 = {
                       personalData: personalData,
                       loginData: loginData,
                       education: education,
@@ -1331,7 +1351,7 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
                       administrativeService: administrativeService,
                       otherAdministrativeService: otherAdministrativeService,
                     }
-                    console.log("final object is : ", obj)
+                    console.log("final object is : ", obj1)
                     navigate("/");
                   }
                 }}
@@ -1497,9 +1517,9 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
                   <button
                     type="button"
                     onClick={() => setStep("as")}
-                    className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
+                    className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
                   >
-                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 " />Back
                   </button>
                   <button
                     type="submit"
