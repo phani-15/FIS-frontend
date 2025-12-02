@@ -274,14 +274,13 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
   const handlePostDocChange = useCallback((index, e) => {
     const { name, value } = e.target;
-
+    setErrors({})
     setPostDocs(prev => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [name]: value };
       return updated;
     });
-    setErrors({})
-  }, [setPostDocs]);
+  }, [setPostDocs,setErrors]);
 
 
   const removePhD = useCallback((index) => {
@@ -289,6 +288,8 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
   }, []);
 
   const removePostDoc = useCallback((index) => {
+
+    setErrors({})
     setPostDocs(prev => prev.filter((_, i) => i !== index));
   }, []);
 
@@ -326,7 +327,7 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
           newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
         }
         if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
-          newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+          newErrors[`${level}.${field}`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
         }
       });
     });
@@ -361,7 +362,7 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [education, havePhD, PhDs]);
+  }, [education, havePhD, PhDs,setErrors,havePostDoc,PostDocs]);
 
   const handleSubmitEducation = useCallback(
     (e) => {
@@ -902,7 +903,11 @@ const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
                   </div>
                 )}
               </div>
-
+              {Object.keys(errors).length > 0 && (
+                <div className="text-red-500 text-sm text-left">
+                  Please fix the above errors before proceeding.
+                </div>
+              )}
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
