@@ -6,80 +6,80 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
 
   const obj = {
     "tenth": {
-        "title": "Tenth",
-        "school": "dkvnsd",
-        "percentage": "",
-        "year": "2009"
+      "title": "Tenth",
+      "school": "dkvnsd",
+      "percentage": "",
+      "year": "2009"
     },
     "twelth": {
-        "title": "Intermediate/Diploma",
-        "type": "Intermediate",
-        "college": "hl.,h",
-        "percentage": "",
-        "year": "2011"
+      "title": "Intermediate/Diploma",
+      "type": "Intermediate",
+      "college": "hl.,h",
+      "percentage": "",
+      "year": "2011"
     },
     "degree": {
-        "title": "Under Graduation",
-        "degreeName": "vbnmvf",
-        "specialization": "gjftrj",
-        "percentage": "",
-        "college": "klfgfdjnzs",
-        "university": "mghcf",
-        "year": "2013"
+      "title": "Under Graduation",
+      "degreeName": "vbnmvf",
+      "specialization": "gjftrj",
+      "percentage": "",
+      "college": "klfgfdjnzs",
+      "university": "mghcf",
+      "year": "2013"
     },
     "pg": {
-        "title": "Post Graduation",
-        "course": "fbmrfxd",
-        "specialization": "mgh,g",
-        "percentage": "",
-        "college": "gfjmxf",
-        "university": "fgkmcd",
-        "year": "2009"
+      "title": "Post Graduation",
+      "course": "fbmrfxd",
+      "specialization": "mgh,g",
+      "percentage": "",
+      "college": "gfjmxf",
+      "university": "fgkmcd",
+      "year": "2009"
     },
     "phd": [
-        {
-            "specialization": "cv nfgnfs",
-            "under_the_proffessor": "",
-            "department": "dsdfbga",
-            "University": "dfbarb",
-            "year": "2023"
-        },
-        {
-            "specialization": "gmmx",
-            "under_the_proffessor": "",
-            "department": "sdgfsdh",
-            "University": "fmsfghmsf",
-            "year": "2023"
-        },
-        {
-            "specialization": "fddns",
-            "under_the_proffessor": "sfrnmfgns",
-            "department": "fdhsdhfd",
-            "University": "radhafdbz",
-            "year": "2000"
-        }
+      {
+        "specialization": "cv nfgnfs",
+        "under_the_proffessor": "",
+        "department": "dsdfbga",
+        "University": "dfbarb",
+        "year": "2023"
+      },
+      {
+        "specialization": "gmmx",
+        "under_the_proffessor": "",
+        "department": "sdgfsdh",
+        "University": "fmsfghmsf",
+        "year": "2023"
+      },
+      {
+        "specialization": "fddns",
+        "under_the_proffessor": "sfrnmfgns",
+        "department": "fdhsdhfd",
+        "University": "radhafdbz",
+        "year": "2000"
+      }
     ],
     "postdoc": [
-        {
-            "specialization": "AI/ML",
-            "under_the_proffessor": "Sukumar",
-            "University": "KL University",
-            "year": "2020"
-        },
-        {
-            "specialization": "Deep Learning",
-            "under_the_proffessor": "Surya",
-            "University": "AKNU",
-            "year": "2022"
-        }
+      {
+        "specialization": "AI/ML",
+        "under_the_proffessor": "Sukumar",
+        "University": "KL University",
+        "year": "2020"
+      },
+      {
+        "specialization": "Deep Learning",
+        "under_the_proffessor": "Surya",
+        "University": "AKNU",
+        "year": "2022"
+      }
     ]
-}
+  }
   const [personalData, setpersonalData] = useState({
     name: "",
     avatar: null,
@@ -108,9 +108,9 @@ export default function Register() {
     pg: { title: "Post Graduation", course: "", specialization: "", percentage: "", college: "", university: "", year: "" },
   });
 
-  
+
   const [havePhD, setHavePhD] = useState(false);
-const [havePostDoc, setHavePostDoc] = useState(false);
+  const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [experience, setExperience] = useState([
     { institute: "", designation: "", from: "", to: "" }
@@ -118,8 +118,8 @@ const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [PhDs, setPhDs] = useState([]);
   // const [PhDs, setPhDs] = useState(obj.phd || []);
-const [PostDocs, setPostDocs] = useState( []);
-// const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
+  const [PostDocs, setPostDocs] = useState([]);
+  // const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
   const [administrativeService, setAdministrativeService] = useState([
     { designation: "", from: "", to: "" }
@@ -300,7 +300,7 @@ const [PostDocs, setPostDocs] = useState( []);
       updated[index] = { ...updated[index], [name]: value };
       return updated;
     });
-  }, [setPostDocs,setErrors]);
+  }, [setPostDocs, setErrors]);
 
 
   const removePhD = useCallback((index) => {
@@ -382,7 +382,7 @@ const [PostDocs, setPostDocs] = useState( []);
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [education, havePhD, PhDs,setErrors,havePostDoc,PostDocs]);
+  }, [education, havePhD, PhDs, setErrors, havePostDoc, PostDocs]);
 
   const handleSubmitEducation = useCallback(
     (e) => {
@@ -568,7 +568,21 @@ const [PostDocs, setPostDocs] = useState( []);
                 </div>
               </div>
 
-              <InputField
+              <div className="flex flex-col text-left space-y-2 mr-18 mt-4">
+                <label htmlFor="DOB">Date of Birth:</label>
+                <input type="date"
+                  name="DOB"
+                  id="DOB"
+                  value={personalData.DOB}
+                  onChange={handleChange}
+                  className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.DOB ? "border-red-500" : "border-gray-300 "
+                    }`}
+                  required
+                />
+                {errors.DOB && <small className="text-red-600 text-sm">{errors.DOB}</small>}
+
+              </div>
+              {/* <InputField
                 label="Date of Birth"
                 name="DOB"
                 type="date"
@@ -576,7 +590,7 @@ const [PostDocs, setPostDocs] = useState( []);
                 onChange={handleChange}
                 required
                 className="mr-18"
-              />
+              /> */}
             </div>
 
             <div className="flex flex-col text-left space-y-2 mt-4">
@@ -651,34 +665,42 @@ const [PostDocs, setPostDocs] = useState( []);
                 <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
               </select>
             </div>
-            <InputField
-              label="Date of Join"
-              name="date_of_join"
-              type="month"
-              value={personalData.date_of_join}
-              onChange={handleChange}
-              required
-              className="mr-18"
-            />
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label htmlFor="date_of_join">Date of Join</label>
+              <input
+                type="month"
+                id="date_of_join"
+                name="date_of_join"
+                value={personalData.date_of_join}
+                onChange={handleChange}
+                className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.date_of_join ? "border-red-500" : "border-gray-300 "
+                  }`}
+                required
+              />
+
+              {errors.date_of_join && <small className="text-red-600 text-sm">{errors.date_of_join}</small>}
+            </div>
+
+
 
             {/* Submit Button */}
             {/* <div className="flex items-start gap-8 p-3 mt-6 bg-blue-50 border border-blue-300  text-blue-800 rounded-md text-sm">
               <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 ml-3" />
               <p className="">You can have access to change your details within 7 days </p>
             </div> */}
-            
-          {/* Edit Window Notice */}
-          <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
-            <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
-            <p className="text-sm text-blue-800">
-              <strong className="mr-2">Note: </strong> You may edit your details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
-            </p>
-          </div>
+
+            {/* Edit Window Notice */}
+            <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
+              <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-blue-800">
+                <strong className="mr-2">Note: </strong> You may edit your details within <strong>7 days</strong> of submission. <br /> After this period, changes will require admin approval.
+              </p>
+            </div>
             <div className="flex gap-3 justify-end">
               <button
                 type="button"
                 onClick={() => setStep("signUp")}
-                className="mt-6 hover:bg-slate-200 bg-slate-100  p-2 cursor-pointer rounded-lg border flex items-center gap-0.5"
+                className="mt-6 hover:bg-slate-200 bg-slate-100  px-4 py-2 cursor-pointer rounded-lg border border-gray-400 flex items-center gap-0.5"
               >
                 <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
               </button>
@@ -932,7 +954,7 @@ const [PostDocs, setPostDocs] = useState( []);
                 <button
                   type="button"
                   onClick={() => setStep("personal")}
-                  className="py-2 px-4  hover:bg-slate-200 bg-slate-100 rounded-lg border cursor-pointer flex items-center gap-0.5"
+                  className="py-2 px-4  hover:bg-slate-200 bg-slate-100 rounded-lg border border-gray-400 cursor-pointer flex items-center gap-0.5"
                 >
                   <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                 </button>
@@ -1106,16 +1128,16 @@ const [PostDocs, setPostDocs] = useState( []);
                 <button
                   type="button"
                   onClick={() => setStep("education")}
-                  className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition"
+                  className="py-2 px-4 flex items-center gap-0.5 rounded-lg border border-gray-400 cursor-pointer hover:bg-gray-50 transition"
                 >
-                  Back
+                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                 </button>
 
                 <button
                   type="submit"
-                  className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="cursor-pointer flex items-center gap-0.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
-                  Next
+                  Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 " />
                 </button>
               </div>
 
@@ -1296,14 +1318,14 @@ const [PostDocs, setPostDocs] = useState( []);
                     <button
                       type="button"
                       onClick={() => setStep("experience")}
-                      className="py-2 px-4 rounded-lg border cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
+                      className="py-2 px-4 rounded-lg border border-gray-400 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
                     >
                       <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                     </button>
 
                     <button
                       type="submit"
-                      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                      className="cursor-pointer flex items-center gap-0.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                     >
                       Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 " />
                     </button>
@@ -1517,7 +1539,7 @@ const [PostDocs, setPostDocs] = useState( []);
                   <button
                     type="button"
                     onClick={() => setStep("as")}
-                    className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
+                    className="py-2 px-4 rounded-lg border border-gray-400 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
                   >
                     <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 " />Back
                   </button>
