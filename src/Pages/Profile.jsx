@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Mail,
   Phone,
@@ -11,13 +11,13 @@ import {
   Award,
   Printer,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { object } from "framer-motion/client";
-
+import { useNavigate ,useParams} from "react-router-dom";
 export default function ProfilePage() {
-
-  const newObj = {
-    "personalData": {
+   const {profileId}=useParams()
+   const navigate = useNavigate()
+  const [newObj, setnewobj] = useState(
+    {
+      "personalData": {
         "name": "Phani Polavarapu",
         "avatar": "images/Profile2.avif",
         "father": "Surya Nageswara Rao",
@@ -28,29 +28,29 @@ export default function ProfilePage() {
         "department": "cse",
         "college": "University College of Engineering",
         "date_of_join": "2023-09"
-    },
-    "loginData": {
+      },
+      "loginData": {
         "password": "Phani@123",
         "email": "phanipolavarapu15@gmail.com",
         "phone": "8328186996",
         "cPassword": "Phani@123"
-    },
-    "education": {
+      },
+      "education": {
         "tenth": {
-            "title": "Tenth",
-            "school": "ZPHS Mummidivaram",
-            "percentage": "",
-            "year": "2009"
+          "title": "Tenth",
+          "school": "ZPHS Mummidivaram",
+          "percentage": "",
+          "year": "2009"
         },
         "twelth": {
-            "title": "Intermediate/Diploma",
-            "type": "Intermediate",
-            "college": "Sri Ravi Junior College",
-            "percentage": "",
-            "year": "2013"
+          "title": "Intermediate/Diploma",
+          "type": "Intermediate",
+          "college": "Sri Ravi Junior College",
+          "percentage": "",
+          "year": "2013"
         },
         "degree":
-        [ {
+          [{
             "title": "Under Graduation",
             "degreeName": "B.Tech",
             "specialization": "Computer Science",
@@ -58,77 +58,82 @@ export default function ProfilePage() {
             "college": "JNTUGV,CEV",
             "university": "JNTUGV",
             "year": "2017"
-        }],
+          }],
         "pg": {
-            "title": "Post Graduation",
-            "course": "M.Tech",
-            "specialization": "Computer Applications",
-            "percentage": "",
-            "college": "JNTUK,CEV",
-            "university": "JNTUK",
-            "year": "2021"
+          "title": "Post Graduation",
+          "course": "M.Tech",
+          "specialization": "Computer Applications",
+          "percentage": "",
+          "college": "JNTUK,CEV",
+          "university": "JNTUK",
+          "year": "2021"
         },
         "phd": [
-            {
-                "specialization": "Biometrics",
-                "under_the_proffessor": "Dr.P.Aruna Kumari",
-                "department": "Computer Science",
-                "University": "JNTUGV",
-                "year": "2021"
-            }
+          {
+            "specialization": "Biometrics",
+            "under_the_proffessor": "Dr.P.Aruna Kumari",
+            "department": "Computer Science",
+            "University": "JNTUGV",
+            "year": "2021"
+          }
         ],
         "postdoc": []
-    },
-    "experience": [
+      },
+      "experience": [
         {
-            "institute": "JNTUGV",
-            "designation": "Asst.Professor",
-            "from": 2021,
-            "to": 2023
+          "institute": "JNTUGV",
+          "designation": "Asst.Professor",
+          "from": 2021,
+          "to": 2023
         },
         {
-            "institute": "JNTUGV",
-            "designation": "Asst.Professor",
-            "from": 2021,
-            "to": 2023
+          "institute": "JNTUGV",
+          "designation": "Asst.Professor",
+          "from": 2021,
+          "to": 2023
         },
         {
-            "institute": "JNTUGV",
-            "designation": "Asst.Professor",
-            "from": 2021,
-            "to": 2023
+          "institute": "JNTUGV",
+          "designation": "Asst.Professor",
+          "from": 2021,
+          "to": 2023
         },
         {
-            "institute": "JNTUGV",
-            "designation": "Asst.Professor",
-            "from": 2021,
-            "to": 2023
+          "institute": "JNTUGV",
+          "designation": "Asst.Professor",
+          "from": 2021,
+          "to": 2023
         }
-    ],
-    "administrativeService": [
+      ],
+      "administrativeService": [
         {
-            "designation": "Head of the Administrative service",
-            "from": 2024,
-            "to": "Present"
+          "designation": "Head of the Administrative service",
+          "from": 2024,
+          "to": "Present"
         },
         {
-            "designation": "Head of the Department, CSE",
-            "from": 2023,
-            "to": 2024
+          "designation": "Head of the Department, CSE",
+          "from": 2023,
+          "to": 2024
         }
-    ],
-    "otherAdministrativeService": [
+      ],
+      "otherAdministrativeService": [
         {
-            "institute": "JNTUK",
-            "from": 2022,
-            "to": 2023,
-            "designation": "head of the department"
+          "institute": "JNTUK",
+          "from": 2022,
+          "to": 2023,
+          "designation": "head of the department"
         }
-    ]
-}
+      ]
+    }
+  )
   
+  useEffect(()=>{
+   
+  },[])
+
   const viewer = "user"
-  const navigate = useNavigate()
+  
   // Static Profile Data
 
   // Section Component
@@ -168,48 +173,48 @@ export default function ProfilePage() {
 
                 {/* Action Button */}
                 <div className="flex flex-col gap-4">
-                  {viewer == "user" && 
-                  <div className="mt-2 flex justify-center text-gray-600 gap-6">
+                  {viewer == "user" &&
+                    <div className="mt-2 flex justify-center text-gray-600 gap-6">
 
-                    {/* Edit Button */}
-                    <button
-                      onClick={() => navigate('/edit')}
-                      className="relative group cursor-pointer">
-                      <SquarePen />
-                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                      {/* Edit Button */}
+                      <button
+                        onClick={() => navigate('/edit')}
+                        className="relative group cursor-pointer">
+                        <SquarePen />
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
                      bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
                      group-hover:opacity-100 transition">
-                        Edit
-                      </span>
-                    </button>
+                          Edit
+                        </span>
+                      </button>
 
-                    {/* Print Button */}
-                    <button className="relative group cursor-pointer">
-                      <Printer />
-                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                      {/* Print Button */}
+                      <button className="relative group cursor-pointer">
+                        <Printer />
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
                      bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
                      group-hover:opacity-100 transition">
-                        Print
-                      </span>
-                    </button>
+                          Print
+                        </span>
+                      </button>
 
-                    {/* Logout Button */}
-                    <button
-                      className="relative group cursor-pointer"
-                      onClick={() => navigate("/")}
-                    >
-                      <LogOut />
-                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-sm text-white bg-gray-800 px-2 py-1 rounded opacity-0 
+                      {/* Logout Button */}
+                      <button
+                        className="relative group cursor-pointer"
+                        onClick={() => navigate("/")}
+                      >
+                        <LogOut />
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-sm text-white bg-gray-800 px-2 py-1 rounded opacity-0 
                      group-hover:opacity-100 transition">
-                        Logout
-                      </span>
-                    </button>
-                  </div>}
+                          Logout
+                        </span>
+                      </button>
+                    </div>}
                   <div className="flex flex-col  gap-3">
-                    {viewer == "user" && 
-                    <button
-                      onClick={() => navigate('/add')}
-                      className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
+                    {viewer == "user" &&
+                      <button
+                        onClick={() => navigate('/add')}
+                        className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
                     }
                     <button
                       onClick={() => navigate('/vc')}
@@ -233,7 +238,7 @@ export default function ProfilePage() {
                     <Phone size={16} className="text-green-500" />
                     {newObj.loginData.phone}
                   </div>
-                  
+
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
                     Joined: {newObj.personalData.date_of_join}
@@ -253,7 +258,7 @@ export default function ProfilePage() {
               >
 
                 <div className="space-y-4">
-                  { viewer === "user" &&
+                  {viewer === "user" &&
                     newObj.education.postdoc.map((postdoc, index) => (
                       <div
                         key={index}
@@ -270,26 +275,26 @@ export default function ProfilePage() {
                       </div>
                     ))
                   }
-                  
+
                   {
-                  newObj.education.phd.map((phd, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
-                    >
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-800">
-                          Ph.D. in {phd.specialization}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {phd.University} • {phd.year}
-                        </p>
+                    newObj.education.phd.map((phd, index) => (
+                      <div
+                        key={index}
+                        className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
+                      >
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-800">
+                            Ph.D. in {phd.specialization}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {phd.University} • {phd.year}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
 
 
-                  {((viewer === "user") || (Object.keys(newObj.education.phd).length === 0) )&&
+                  {((viewer === "user") || (Object.keys(newObj.education.phd).length === 0)) &&
                     newObj.education.pg &&
                     <div
                       className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
@@ -306,21 +311,21 @@ export default function ProfilePage() {
                   }
                   {
                     viewer === "user" &&
-                  newObj.education.degree.map((edu, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
-                    >
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-800">
-                          {edu.degreeName} in {edu.specialization}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {edu.college} • {edu.year}
-                        </p>
+                    newObj.education.degree.map((edu, index) => (
+                      <div
+                        key={index}
+                        className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
+                      >
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-800">
+                            {edu.degreeName} in {edu.specialization}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {edu.college} • {edu.year}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </Section>
 

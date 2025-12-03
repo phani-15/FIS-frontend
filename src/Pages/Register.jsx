@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useEffect, use } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2, AlertTriangle,Info } from "lucide-react"
+import { Trash2, AlertTriangle, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { register } from "../core/auth"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("oas"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const [havePhD, setHavePhD] = useState(false);
@@ -82,6 +83,138 @@ export default function Register() {
       return updated;
     });
   }, []);
+
+  const test=async ()=>{
+    const obj1 = {
+                      "loginData": {
+                        "email": "vi2@gmail.com",
+                        "password": "1234567890",
+                        "phone": "1234567999"
+                      },
+                      "personalData": {
+                        "DOB": "1985-06-15",
+                        "college": "University College of Engineering",
+                        "department": "Computer Science",
+                        "designation": "Associate Professor",
+                        "father": "Ramesh Kumar",
+                        "gender": "Male",
+                        "marital": "Married",
+                        "name": "Dr. Harish Kumar",
+                        "profile": "A dedicated educator with 15 years of teaching and research experience."
+                      },
+                      "education": {
+                        "tenth": {
+                          "percentage": "88%",
+                          "school": "St. John's High School",
+                          "year": "2001"
+                        },
+                        "twelth": {
+                          "college": "Narayana Junior College",
+                          "percentage": "92%",
+                          "type": "Intermediate",
+                          "year": "2003"
+                        },
+                        "degree": {
+                          "college": "ABC Degree College",
+                          "degreeName": "B.Tech",
+                          "percentage": "75%",
+                          "specialization": "Computer Science",
+                          "title": "Graduate in Computer Science",
+                          "university": "JNTU Hyderabad",
+                          "year": "2007"
+                        },
+                        "pg": {
+                          "college": "XYZ College of Engineering",
+                          "course": "M.Tech",
+                          "percentage": "82%",
+                          "specialization": "Software Engineering",
+                          "university": "Osmania University",
+                          "year": "2009"
+                        },
+                        "phd": [
+                          {
+                            "University": "IIT Bombay",
+                            "department": "Computer Science",
+                            "specialization": "Machine Learning",
+                            "under_the_proffessor": "Dr. S. Raman",
+                            "year": 2015
+                          },
+                          {
+                            "University": "IISC Bangalore",
+                            "department": "Artificial Intelligence",
+                            "specialization": "Deep Learning",
+                            "under_the_proffessor": "Dr. Anita Verma",
+                            "year": 2018
+                          }
+                        ],
+                        "postdoc": [
+                          {
+                            "University": "MIT",
+                            "specialization": "Neural Networks",
+                            "under_the_proffessor": "Dr. John Doe",
+                            "year": 2020
+                          }
+                        ]
+                      },
+                      "experience": [
+                        {
+                          "designation": "Assistant Professor",
+                          "institute": "XYZ Engineering College",
+                          "from": 2010,
+                          "to": 2015
+                        },
+                        {
+                          "designation": "Senior Assistant Professor",
+                          "institute": "ABC Institute of Technology",
+                          "from": 2015,
+                          "to": 2019
+                        },
+                        {
+                          "designation": "Associate Professor",
+                          "institute": "University College of Engineering",
+                          "from": 2019,
+                          "to": 2024
+                        }
+                      ],
+                      "administrativeService": [
+                        {
+                          "designation": "Department Coordinator",
+                          "from": 2016,
+                          "to": 2018
+                        },
+                        {
+                          "designation": "Training & Placement Officer",
+                          "from": 2018,
+                          "to": 2020
+                        }
+                      ],
+                      "otheradministrativeervice": [
+                        {
+                          "designation": "Research Committee Member",
+                          "institute": "ABC Institute",
+                          "from": 2015,
+                          "to": "2017"
+                        },
+                        {
+                          "designation": "Library Committee Chair",
+                          "institute": "XYZ Engineering College",
+                          "from": 2017,
+                          "to": "2019"
+                        },
+                        {
+                          "designation": "Cultural Event Coordinator",
+                          "institute": "University College of Engineering",
+                          "from": 2020,
+                          "to": "2023"
+                        }
+                      ]
+                    }
+                    console.log("final object is : ", obj1);
+                    await register(obj1)
+                      .then(console.log("user saved succesfully !")
+                      )
+                    navigate("/");
+  }
 
 
   // Add new experience row
@@ -271,7 +404,7 @@ export default function Register() {
         if (!value || value.toString().trim() === "") {
           newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
         }
-        if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+        if (field === "year" && (value < 1900 || value > new Date().getFullYear())) {
           newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
         }
       });
@@ -284,7 +417,7 @@ export default function Register() {
           if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "")) {
             newErrors[`phd.${index}.${field}`] = `PhD ${index + 1} - ${field} is required`;
           }
-          if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+          if (field === "year" && (value < 1900 || value > new Date().getFullYear())) {
             newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
           }
         });
@@ -298,7 +431,7 @@ export default function Register() {
           if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "")) {
             newErrors[`postdoc.${index}.${field}`] = `PostDoc ${index + 1} - ${field} is required`;
           }
-          if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+          if (field === "year" && (value < 1900 || value > new Date().getFullYear())) {
             newErrors[`postdoc.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
           }
         });
@@ -581,10 +714,14 @@ export default function Register() {
             />
 
             {/* Submit Button */}
-            <div className="flex items-start gap-8 p-3 mt-6 bg-blue-50 border border-blue-300  text-blue-800 rounded-md text-sm">
-              <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 ml-3" />
-              <p className="">You can have access to change your details within 7 days </p>
+            {/* Edit Window Notice */}
+            <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
+              <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-blue-800">
+                <strong>Note:</strong> You may edit your education details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
+              </p>
             </div>
+
             <div className="flex gap-3 justify-end">
               <button
                 type="button"
@@ -602,14 +739,6 @@ export default function Register() {
               </button>
             </div>
           </form>
-           {/* we have to design a note for : "You can edit the details within 7 days" */}
-            {/* Edit Window Notice */}
-            <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
-              <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
-              <p className="text-sm text-blue-800">
-                <strong>Note:</strong> You may edit your education details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
-              </p>
-            </div>
         </div >
       )
       }
@@ -861,7 +990,6 @@ export default function Register() {
                 </button>
               </div>
             </form>
-            
           </div>
         )
       }
@@ -1244,7 +1372,7 @@ export default function Register() {
 
               {/* The form container maintains the vertical spacing and centering */}
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
                   otherAdministrativeService.forEach((oas, index) => {
                     if (oas.to < oas.from) {
@@ -1268,8 +1396,6 @@ export default function Register() {
                       administrativeService: administrativeService,
                       otherAdministrativeService: otherAdministrativeService,
                     }
-                    console.log("final object is : ", obj)
-                    navigate("/");
                   }
                 }}
                 className="flex flex-col space-y-6"
@@ -1440,6 +1566,9 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
+                    onClick={()=>(
+                      test()
+                    )}
                     className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Finish Registration
