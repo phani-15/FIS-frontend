@@ -10,9 +10,77 @@ export default function Register() {
   const [step, setStep] = useState("oas"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
-  const [havePhD, setHavePhD] = useState(false);
-  const [havePostDoc, setHavePostDoc] = useState(false);
 
+  const obj = {
+    "tenth": {
+      "title": "Tenth",
+      "school": "dkvnsd",
+      "percentage": "",
+      "year": "2009"
+    },
+    "twelth": {
+      "title": "Intermediate/Diploma",
+      "type": "Intermediate",
+      "college": "hl.,h",
+      "percentage": "",
+      "year": "2011"
+    },
+    "degree": {
+      "title": "Under Graduation",
+      "degreeName": "vbnmvf",
+      "specialization": "gjftrj",
+      "percentage": "",
+      "college": "klfgfdjnzs",
+      "university": "mghcf",
+      "year": "2013"
+    },
+    "pg": {
+      "title": "Post Graduation",
+      "course": "fbmrfxd",
+      "specialization": "mgh,g",
+      "percentage": "",
+      "college": "gfjmxf",
+      "university": "fgkmcd",
+      "year": "2009"
+    },
+    "phd": [
+      {
+        "specialization": "cv nfgnfs",
+        "under_the_proffessor": "",
+        "department": "dsdfbga",
+        "University": "dfbarb",
+        "year": "2023"
+      },
+      {
+        "specialization": "gmmx",
+        "under_the_proffessor": "",
+        "department": "sdgfsdh",
+        "University": "fmsfghmsf",
+        "year": "2023"
+      },
+      {
+        "specialization": "fddns",
+        "under_the_proffessor": "sfrnmfgns",
+        "department": "fdhsdhfd",
+        "University": "radhafdbz",
+        "year": "2000"
+      }
+    ],
+    "postdoc": [
+      {
+        "specialization": "AI/ML",
+        "under_the_proffessor": "Sukumar",
+        "University": "KL University",
+        "year": "2020"
+      },
+      {
+        "specialization": "Deep Learning",
+        "under_the_proffessor": "Surya",
+        "University": "AKNU",
+        "year": "2022"
+      }
+    ]
+  }
   const [personalData, setpersonalData] = useState({
     name: "",
     avatar: null,
@@ -23,7 +91,7 @@ export default function Register() {
     designation: "",
     department: "",
     college: "",
-    date_of_join: ""
+    date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   });
 
   const [loginData, setLoginData] = useState({
@@ -33,6 +101,7 @@ export default function Register() {
     cPassword: ""
   })
 
+  // const [education, setEducation] = useState(obj);
   const [education, setEducation] = useState({
     tenth: { title: "Tenth", school: "", percentage: "", year: "", },
     twelth: { title: "Intermediate/Diploma", type: "", college: "", percentage: "", year: "", },
@@ -41,12 +110,17 @@ export default function Register() {
   });
 
 
+  const [havePhD, setHavePhD] = useState(false);
+  const [havePostDoc, setHavePostDoc] = useState(false);
+
   const [experience, setExperience] = useState([
     { institute: "", designation: "", from: "", to: "" }
   ])
 
-  const [PhDs, setPhDs] = useState([])
-  const [PostDocs, setPostDocs] = useState([])
+  const [PhDs, setPhDs] = useState([]);
+  // const [PhDs, setPhDs] = useState(obj.phd || []);
+  const [PostDocs, setPostDocs] = useState([]);
+  // const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
   const [administrativeService, setAdministrativeService] = useState([
     { designation: "", from: "", to: "" }
@@ -353,14 +427,13 @@ export default function Register() {
 
   const handlePostDocChange = useCallback((index, e) => {
     const { name, value } = e.target;
-
+    setErrors({})
     setPostDocs(prev => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [name]: value };
       return updated;
     });
-    setErrors({})
-  }, [setPostDocs]);
+  }, [setPostDocs, setErrors]);
 
 
   const removePhD = useCallback((index) => {
@@ -368,6 +441,8 @@ export default function Register() {
   }, []);
 
   const removePostDoc = useCallback((index) => {
+
+    setErrors({})
     setPostDocs(prev => prev.filter((_, i) => i !== index));
   }, []);
 
@@ -404,8 +479,8 @@ export default function Register() {
         if (!value || value.toString().trim() === "") {
           newErrors[`${level}.${field}`] = `${fields.title} - ${field} is required`;
         }
-        if (field === "year" && (value < 1900 || value > new Date().getFullYear())) {
-          newErrors[`phd.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+        if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+          newErrors[`${level}.${field}`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
         }
       });
     });
@@ -428,11 +503,11 @@ export default function Register() {
     if (havePostDoc) {
       PostDocs.forEach((postdoc, index) => {
         Object.entries(postdoc).forEach(([field, value]) => {
+          if (field === "year" && (isNaN(value) || value < 1900 || value > new Date().getFullYear())) {
+            newErrors[`postdoc.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
+          }
           if (field != 'under_the_proffessor' && (!value || value.toString().trim() === "")) {
             newErrors[`postdoc.${index}.${field}`] = `PostDoc ${index + 1} - ${field} is required`;
-          }
-          if (field === "year" && (value < 1900 || value > new Date().getFullYear())) {
-            newErrors[`postdoc.${index}.year`] = `year must be less than or equal to ${new Date().getFullYear()} and greater than 1900`;
           }
         });
       });
@@ -440,23 +515,29 @@ export default function Register() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [education, havePhD, PhDs]);
+  }, [education, havePhD, PhDs, setErrors, havePostDoc, PostDocs]);
 
   const handleSubmitEducation = useCallback(
     (e) => {
       e.preventDefault();
       if (!validateEducation()) return;
 
-      // If user doesn't have PhDs, reset the state
-      if (!havePhD) {
-        setPhDs([]);
-      }
-      console.log(education)
-      education.phd = PhDs
-      education.postdoc = PostDocs
+      // Prepare clean updated education object
+      const updatedEducation = {
+        ...education,
+        phd: havePhD ? [...PhDs] : [],
+        postdoc: havePostDoc ? [...PostDocs] : []
+      };
+
+      // Log to verify
+      console.log("Updated education:", updatedEducation);
+
+      // Save it back to state so it can be used later
+      setEducation(updatedEducation);
+
       setStep("experience");
     },
-    [education, havePhD, PhDs, validateEducation]
+    [education, havePhD, havePostDoc, PhDs, PostDocs, validateEducation]
   );
 
   const renderEduFields = (levelKey) => {
@@ -620,7 +701,21 @@ export default function Register() {
                 </div>
               </div>
 
-              <InputField
+              <div className="flex flex-col text-left space-y-2 mr-18 mt-4">
+                <label htmlFor="DOB">Date of Birth:</label>
+                <input type="date"
+                  name="DOB"
+                  id="DOB"
+                  value={personalData.DOB}
+                  onChange={handleChange}
+                  className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.DOB ? "border-red-500" : "border-gray-300 "
+                    }`}
+                  required
+                />
+                {errors.DOB && <small className="text-red-600 text-sm">{errors.DOB}</small>}
+
+              </div>
+              {/* <InputField
                 label="Date of Birth"
                 name="DOB"
                 type="date"
@@ -628,7 +723,7 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 className="mr-18"
-              />
+              /> */}
             </div>
 
             <div className="flex flex-col text-left space-y-2 mt-4">
@@ -703,22 +798,35 @@ export default function Register() {
                 <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
               </select>
             </div>
-            <InputField
-              label="Date of Birth"
-              name="date_of_join"
-              type="month"
-              value={personalData.date_of_join}
-              onChange={handleChange}
-              required
-              className="mr-18"
-            />
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label htmlFor="date_of_join">Date of Join</label>
+              <input
+                type="month"
+                id="date_of_join"
+                name="date_of_join"
+                value={personalData.date_of_join}
+                onChange={handleChange}
+                className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.date_of_join ? "border-red-500" : "border-gray-300 "
+                  }`}
+                required
+              />
+
+              {errors.date_of_join && <small className="text-red-600 text-sm">{errors.date_of_join}</small>}
+            </div>
+
+
 
             {/* Submit Button */}
+            {/* <div className="flex items-start gap-8 p-3 mt-6 bg-blue-50 border border-blue-300  text-blue-800 rounded-md text-sm">
+              <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 ml-3" />
+              <p className="">You can have access to change your details within 7 days </p>
+            </div> */}
+
             {/* Edit Window Notice */}
             <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
               <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
               <p className="text-sm text-blue-800">
-                <strong>Note:</strong> You may edit your education details within <strong>7 days</strong> of submission. After this period, changes will require admin approval.
+                <strong className="mr-2">Note: </strong> You may edit your details within <strong>7 days</strong> of submission. <br /> After this period, changes will require admin approval.
               </p>
             </div>
 
@@ -726,16 +834,16 @@ export default function Register() {
               <button
                 type="button"
                 onClick={() => setStep("signUp")}
-                className="mt-6  p-2 cursor-pointer rounded-lg border flex items-center gap-0.5"
+                className="mt-6 hover:bg-slate-200 bg-slate-100  px-4 py-2 cursor-pointer rounded-lg border border-gray-400 flex items-center gap-0.5"
               >
-                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
               </button>
 
               <button
                 type="submit"
                 className="mt-6  cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white p-2 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
               >
-                Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
+                Next<ArrowRight size={22} strokeWidth={3} className="text-white-600" />
               </button>
             </div>
           </form>
@@ -755,7 +863,7 @@ export default function Register() {
                   {renderEduFields(level)}
                 </div>
               ))}
-
+              <h1>This testing Phrase</h1>
               {/* PhD Section */}
               <div className="mt-6">
                 <div className="flex items-center space-x-4 mb-4">
@@ -819,7 +927,6 @@ export default function Register() {
                           value={phd.department}
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.department`]}
-                          required
                         />
 
                         <InputField
@@ -922,7 +1029,6 @@ export default function Register() {
                           value={postdoc.under_the_proffessor}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.under_the_proffessor`]}
-                          required
                         />
 
                         <InputField
@@ -973,23 +1079,28 @@ export default function Register() {
                   </div>
                 )}
               </div>
-
+              {Object.keys(errors).length > 0 && (
+                <div className="text-red-500 text-sm text-left">
+                  Please fix the above errors before proceeding.
+                </div>
+              )}
               <div className="flex gap-3 justify-end">
                 <button
                   type="button"
                   onClick={() => setStep("personal")}
-                  className="py-2 px-4 rounded-lg border cursor-pointer flex items-center gap-0.5"
+                  className="py-2 px-4  hover:bg-slate-200 bg-slate-100 rounded-lg border border-gray-400 cursor-pointer flex items-center gap-0.5"
                 >
-                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                 </button>
                 <button
                   type="submit"
                   className="mt-0 cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
                 >
-                  Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
+                  Next<ArrowRight size={22} strokeWidth={3} className="text-white-600" />
                 </button>
               </div>
             </form>
+
           </div>
         )
       }
@@ -1128,7 +1239,7 @@ export default function Register() {
                   onClick={addExperience}
                   className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800"
                 >
-                  <span className="text-xl ">+</span> Add More
+                  <span className="text-xl ">+</span> Add {Object.keys(experience).length > 0 ? "More" : ""}
                 </button>
 
                 <button
@@ -1151,16 +1262,16 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setStep("education")}
-                  className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition"
+                  className="py-2 px-4 flex items-center gap-0.5 rounded-lg border border-gray-400 cursor-pointer hover:bg-gray-50 transition"
                 >
-                  Back
+                  <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                 </button>
 
                 <button
                   type="submit"
-                  className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  className="cursor-pointer flex items-center gap-0.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                 >
-                  Next
+                  Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 " />
                 </button>
               </div>
 
@@ -1341,16 +1452,16 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => setStep("experience")}
-                      className="py-2 px-4 rounded-lg border cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
+                      className="py-2 px-4 rounded-lg border border-gray-400 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
                     >
-                      <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                      <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
                     </button>
 
                     <button
                       type="submit"
-                      className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                      className="cursor-pointer flex items-center gap-0.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                     >
-                      Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 hover:text-red-600" />
+                      Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 " />
                     </button>
                   </div>
                 </div>
@@ -1388,7 +1499,7 @@ export default function Register() {
                     console.log("errors exist : ", errors)
                   }
                   else {
-                    const obj = {
+                    const obj1 = {
                       personalData: personalData,
                       loginData: loginData,
                       education: education,
@@ -1396,6 +1507,8 @@ export default function Register() {
                       administrativeService: administrativeService,
                       otherAdministrativeService: otherAdministrativeService,
                     }
+                    console.log("final object is : ", obj1)
+                    navigate("/");
                   }
                 }}
                 className="flex flex-col space-y-6"
@@ -1560,9 +1673,9 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => setStep("as")}
-                    className="py-2 px-4 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition flex items-center gap-0.5"
+                    className="py-2 px-4 rounded-lg border border-gray-400 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
                   >
-                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 hover:text-red-600" />Back
+                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600 " />Back
                   </button>
                   <button
                     type="submit"
