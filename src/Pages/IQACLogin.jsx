@@ -27,7 +27,7 @@ export default function IQACLogin() {
     const validPassCode = "JntuIqac2025";
 
     if (passCode === validPassCode) {
-      navigate("/iqacDashboard");
+      navigate("/ofcDashboard");
     } else {
       setFalse(true);
     }
@@ -44,7 +44,7 @@ export default function IQACLogin() {
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900">IQAC Login</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Officials Login</h2>
         <p className="text-gray-600 text-sm mt-1">Faculty Information System</p>
 
         {/* Form */}
@@ -81,7 +81,7 @@ export default function IQACLogin() {
               </div>
             )}
           </div>
-          <p onClick={()=>navigate('/iqacChange')} className="text-blue-700 text-end mr-1 hover:underline mb-2 cursor-pointer">Change Password</p>
+          <p onClick={()=>navigate('/ofcChange')} className="text-blue-700 text-end mr-1 hover:underline mb-2 cursor-pointer">Change Password</p>
           <button
             type="submit"
             className="w-full flex cursor-pointer items-center justify-center gap-2 bg-linear-to-r from-indigo-500 to-purple-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-700 transition"
@@ -92,7 +92,7 @@ export default function IQACLogin() {
         </form>
 
         <p className="mt-8 text-xs text-gray-500">
-           Secure IQAC Access
+           Secure Officials Access
         </p>
       </div>
     </div>

@@ -35,7 +35,7 @@ export default function Forgotiqac() {
         if (data.npassword !== data.cpassword) newErrors.cpassword = "passwords do not match";
         setError(newErrors);
         if (Object.keys(newErrors).length > 0) return;
-        navigate("/iqac");
+        navigate("/ofc");
     }
 
     return (
