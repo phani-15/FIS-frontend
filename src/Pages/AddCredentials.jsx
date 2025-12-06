@@ -11,9 +11,15 @@ const isRadioField = (label) => {
   return clean === 'national/international' ||
     clean === 'mode (online/offline)' ||
     clean === 'published/granted' ||
-    clean === 'attended/organized';
+    clean === 'attended/organized' ||
+    clean === "are you" ||
+    clean === "status";
 };
 
+const isDateField = (label) => {
+  const clean = label.trim().toLowerCase()
+  return clean.includes('date')
+}
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
   'Publications',
@@ -36,9 +42,9 @@ const fields = {
   conference: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International', 'Document'],
 
   certifications: ['Name of Certification Course', 'Type of Certification', 'Organized by', 'Duration (in days)'],
-  sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration', 'Status', 'Academic Year', 'Document'],
-  research: ['Project Title', 'Year of Sanction', 'Duration', 'Funding Agency', 'Fund Received (in INR)', 'Are you Principal Investigator', 'Status', 'Document'],
-  consultancy: ['Project Title', 'Year of Sanction', 'Duration', 'Name of Funding Agency', 'Amount (in INR)', 'Are you Principal Investigator', 'Status', 'Document'],
+  sponsored: ['Project Title', 'Funding Details', 'Amount (in INR)', 'Duration (in months)', 'Status', 'Academic Year', 'Document'],
+  research: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Funding Agency', 'Fund Received (in INR)', 'Are you', 'Status', 'Document'],
+  consultancy: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Name of Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Document'],
   fdp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
   sttp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
   workshop: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
@@ -150,6 +156,28 @@ const AddCredentials = () => {
       return { isValid: false, message: `${label} is required` };
     }
 
+    if (isDateField(label)) {
+      const inputDate = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // normalize to midnight
+
+      const minDate = new Date("1900-01-01");
+
+      if (isNaN(inputDate.getTime())) {
+        return { isValid: false, message: "Invalid date format" };
+      }
+
+      if (inputDate < minDate) {
+        return { isValid: false, message: "Date must be after the year 1900" };
+      }
+
+      if (inputDate >= today) {
+        return { isValid: false, message: "Date must be before today" };
+      }
+
+      return { isValid: true };
+    }
+
     // --- Year validation
     if (cleanLabel.includes('year')) {
       if (!valStr) return { isValid: false, message: 'Year is required' };
@@ -161,11 +189,45 @@ const AddCredentials = () => {
       return { isValid: true };
     }
 
-    if(cleanLabel.includes('h-index')){
-      if(!valStr) return {isValid : false, message:'H-index is required'}
+    if (cleanLabel.includes('h-index')) {
+      if (!valStr) return { isValid: false, message: 'H-index is required' }
       if (isNaN(valNum)) return { isValid: false, message: 'H-index must be a number' };
       if (valNum < 0) return { isValid: false, message: 'H-index must be ≥ 0' };
-      return {isValid:true};
+      return { isValid: true };
+    }
+
+    if (cleanLabel.includes('academic year')) {
+      if (!valStr) {
+        return { isValid: false, message: 'Academic Year is required' };
+      }
+
+      // Regex: exactly 4 digits, hyphen, 4 digits
+      const academicYearRegex = /^(\d{4})-(\d{4})$/;
+      const match = valStr.match(academicYearRegex);
+
+      if (!match) {
+        return { isValid: false, message: 'Academic Year must be in YYYY-YYYY format (e.g., 2024-2025)' };
+      }
+
+      const [_, startYearStr, endYearStr] = match;
+      const startYear = Number(startYearStr);
+      const endYear = Number(endYearStr);
+      const currentYear = new Date().getFullYear(); // e.g., 2025
+
+      // Validate year ranges
+      if (startYear < 1900 || endYear < 1900) {
+        return { isValid: false, message: 'Years must be ≥ 1900' };
+      }
+      if (startYear > currentYear + 1 || endYear > currentYear + 2) {
+        return { isValid: false, message: `Years must not exceed ${currentYear + 2}` };
+      }
+
+      // Enforce consecutive years: endYear === startYear + 1
+      if (endYear !== startYear + 1) {
+        return { isValid: false, message: 'Academic Year must be consecutive (e.g., 2024-2025)' };
+      }
+
+      return { isValid: true };
     }
 
     // --- ISBN / ISSN validation
@@ -293,6 +355,18 @@ const AddCredentials = () => {
         { value: 'Organized', label: 'Organized' }
       ];
     }
+    else if (clean === 'are you') {
+      return [
+        { value: 'Principal Investigator', label: 'Principal Investigator' },
+        { value: 'Co-Principal Investigator', label: 'Co-Principal Investigator' }
+      ]
+    }
+    else if (clean === "status") {
+      return [
+        { value: "Ongoing", label: "Ongoing" },
+        { value: "Completed", label: "Completed" }
+      ]
+    }
     return [];
   };
 
@@ -414,6 +488,7 @@ const AddCredentials = () => {
                     const isFile = isFileField(cleanLabel);
                     const isRadio = isRadioField(cleanLabel);
                     const isNum = isNumberField(cleanLabel) && !isRadio;
+                    const isDate = isDateField(cleanLabel)
                     const value = formData[name] || '';
 
                     // 🔍 Find Mode field index and value
@@ -499,7 +574,7 @@ const AddCredentials = () => {
                           </select>
                         ) : (
                           <input
-                            type={isNum ? "number" : "text"}
+                            type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
                             value={value}
                             onChange={(e) => handleInputChange(name, e.target.value)}
                             onBlur={() => {

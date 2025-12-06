@@ -7,4 +7,4 @@ civil : hod.ce@jntukucev.ac.in
 bshss : hobshss@jntugvcev.edu.in
 mba :hod.mba@jntugvcev.edu.in
 met : hod.met@jntugvcev.edu.in
-phrmacy : 
+phrmacy :          
