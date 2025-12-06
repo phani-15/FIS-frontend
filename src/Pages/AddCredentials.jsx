@@ -161,6 +161,13 @@ const AddCredentials = () => {
       return { isValid: true };
     }
 
+    if(cleanLabel.includes('h-index')){
+      if(!valStr) return {isValid : false, message:'H-index is required'}
+      if (isNaN(valNum)) return { isValid: false, message: 'H-index must be a number' };
+      if (valNum < 0) return { isValid: false, message: 'H-index must be ≥ 0' };
+      return {isValid:true};
+    }
+
     // --- ISBN / ISSN validation
     if (cleanLabel.includes('isbn') || cleanLabel.includes('issn')) {
       if (!valStr) return { isValid: false, message: `${label} is required` };
@@ -295,7 +302,9 @@ const AddCredentials = () => {
       clean.includes('amount') ||
       clean.includes('number of students') ||
       clean.includes('fund received') ||
-      clean.includes('duration');
+      clean.includes('duration') ||
+      clean.includes('page') ||
+      clean.includes('impact')
   };
 
   const handleSubmit = (e) => {
@@ -306,7 +315,7 @@ const AddCredentials = () => {
     let isValid = true;
 
     currentFieldKeys.forEach((label, idx) => {
-      const name = `field_${idx}`;
+      const name = label;
       const value = formData[name] || '';
 
       const result = validateField(label, value);
@@ -376,7 +385,7 @@ const AddCredentials = () => {
                 id="subcategory"
                 value={subcategory}
                 onChange={handleSubcategoryChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-gray-500 "
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-0 focus:ring-gray-500 "
                 required
               >
                 <option value="">— Select type —</option>
@@ -400,7 +409,7 @@ const AddCredentials = () => {
 
                 <div className="space-y-5">
                   {currentFieldKeys.map((label, idx) => {
-                    const name = `field_${idx}`;
+                    const name = label;
                     const cleanLabel = label.trim();
                     const isFile = isFileField(cleanLabel);
                     const isRadio = isRadioField(cleanLabel);
