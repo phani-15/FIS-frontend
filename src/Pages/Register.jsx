@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Trash2, AlertTriangle, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
+import { address } from "framer-motion/client";
+import { number } from "framer-motion";
 
 export default function Register() {
   const navigate = useNavigate()
@@ -88,6 +90,8 @@ export default function Register() {
     gender: "",
     DOB: "",
     marital: "",
+    phone: "",
+    address: "",
     designation: "",
     department: "",
     college: "",
@@ -172,6 +176,7 @@ export default function Register() {
                         "designation": "Associate Professor",
                         "father": "Ramesh Kumar",
                         "gender": "Male",
+                  
                         "marital": "Married",
                         "name": "Dr. Harish Kumar",
                         "profile": "A dedicated educator with 15 years of teaching and research experience."
@@ -740,7 +745,63 @@ export default function Register() {
                 <option value="married">Married</option>
               </select>
             </div>
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label>Phone Number <span className="text-gray-600">(optional)</span></label>
+              <input
+                type="text"   
+                name="phone"
+                placeholder="enter your phone number"
+                value={personalData.phone}
+                onChange={handleChange}
+                className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.phone ? "border-red-500" : "border-gray-300 "
+                  }`}
+              
+              />
+              {errors.phone && <small className="text-red-600 text-sm">{errors.phone}</small>}
+            </div>
+            <div className="flex flex-col text-left space-y-2 mt-4">
+  <label>
+    Address <span className="text-gray-600">(optional)</span>
+  </label>
 
+
+  <div className="flex gap-3">
+    
+    <input
+      type="text"
+      name="area"
+      placeholder="Area / Street"
+      value={personalData.area}
+      onChange={handleChange}
+      className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${
+        errors.area ? "border-red-500" : "border-gray-300"
+      }`}
+    />
+
+   
+    <input
+      type="text"
+      name="city"
+      placeholder="City"
+      value={personalData.city}
+      onChange={handleChange}
+      className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${
+        errors.city ? "border-red-500" : "border-gray-300"
+      }`}
+    />
+  </div>
+
+  {/* Error Messages */}
+  {errors.area && (
+    <small className="text-red-600 text-sm">{errors.area}</small>
+  )}
+  {errors.city && (
+    <small className="text-red-600 text-sm">{errors.city}</small>
+  )}
+</div>
+
+              
+            
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label>College</label>
               <select

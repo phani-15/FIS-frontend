@@ -50,15 +50,17 @@ export default function Login() {
 			email:formData.username,
 			password:formData.password
 		})
-		.then(Data=>data=Data
-		)
-		console.log("login returned data:",data);
-		
-		authenticate(formData,()=>{
+		.then(data=>{
+			console.log("data=:",data);
+			console.log("id is :",data.user._id);
+			
+			authenticate(data,()=>{
 			setFormData({
 				...formData
 			})
 		})
+		}	)
+		// console.log("login returned data:",data);
 		navigate(`/profile/`)
 	};
 
