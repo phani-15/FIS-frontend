@@ -34,10 +34,9 @@ export default function ProfilePage() {
           "phone": "",
         "location": ""
       },
-      "loginData": {
+      "user": {
         "password": "Phani@123",
         "email": "phanipolavarapu15@gmail.com",
-      
         "cPassword": "Phani@123"
       },
       "education": {
@@ -55,7 +54,7 @@ export default function ProfilePage() {
           "year": "2013"
         },
         "degree":
-          [{
+          {
             "title": "Under Graduation",
             "degreeName": "B.Tech",
             "specialization": "Computer Science",
@@ -63,7 +62,7 @@ export default function ProfilePage() {
             "college": "JNTUGV,CEV",
             "university": "JNTUGV",
             "year": "2017"
-          }],
+          },
         "pg": {
           "title": "Post Graduation",
           "course": "M.Tech",
@@ -137,6 +136,9 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       const data = await Personal(profileId);  
+      console.log("Fetched profile data:", data);
+    
+      console.log("Profile ID:", profileId);
       if (data) setnewobj(data);
     } catch (error) {
       console.log("Fetch error:", error);
@@ -144,7 +146,7 @@ export default function ProfilePage() {
   };
 
   loadProfile();
-}, [profileId]);
+}, []);
 
 
   const viewer = "user"
@@ -247,16 +249,16 @@ export default function ProfilePage() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Mail size={16} className="text-blue-500" />
-                    {newObj.loginData.email}
+                    {newObj.user.email}
                   </div>
                  { newObj.personalData.phone && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Phone size={16} className="text-green-500" />
-                    {newObj.personalData.phone}
+                    {newObj.user.phone}
                   </div>}
 
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
-                    Joined: {newObj.personalData.date_of_join}
+                    Joined: {newObj.createdAt}
                   </div>
                  { newObj.personalData.location && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <MapPin  size={16} className="text-green-500" />
@@ -331,21 +333,20 @@ export default function ProfilePage() {
                   }
                   {
                     viewer === "user" &&
-                    newObj.education.degree.map((edu, index) => (
+  
                       <div
-                        key={index}
                         className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
                       >
                         <div className="flex-1">
                           <p className="font-semibold text-gray-800">
-                            {edu.degreeName} in {edu.specialization}
+                            { newObj.education.degree.degreeName} in { newObj.education.degree.specialization}
                           </p>
                           <p className="text-sm text-gray-600">
-                            {edu.college} • {edu.year}
+                            { newObj.education.degree.college} • { newObj.education.degree.year}
                           </p>
                         </div>
                       </div>
-                    ))}
+                    }
                 </div>
               </Section>
 

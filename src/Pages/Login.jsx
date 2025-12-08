@@ -59,9 +59,10 @@ export default function Login() {
 				...formData
 			})
 		})
+		navigate(`/profile/${data.user.id}`)
 		}	)
 		// console.log("login returned data:",data);
-		navigate(`/profile/`)
+		
 	};
 
 	return (
