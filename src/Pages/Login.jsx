@@ -52,20 +52,16 @@ export default function Login() {
 			password:formData.password
 		})
 		.then(data=>{
-			console.log(data);
-			if (data.eror) {
-				console.log("an erro occured :",data.error);
-				return
-			}
-			else{
-				authenticate(data,()=>{
-					setFormData({
-						...formData
-					})
-				})
-			}
+			console.log("data=:",data);
+			console.log("id is :",data.user._id);
 			
+			authenticate(data,()=>{
+			setFormData({
+				...formData
+			})
 		})
+		}	)
+		// console.log("login returned data:",data);
 		navigate(`/profile/`)
 	};
 
@@ -75,7 +71,7 @@ export default function Login() {
 
 				{/* Top Icon */}
 				<div className="flex justify-center mb-6">
-					<div className="p-4 bg-purple-100 rounded-xl shadow-sm">
+					<div className="p-4 bg-purple~-100 rounded-xl shadow-sm">
 						<Lock className="w-8 h-8 text-purple-600" />
 					</div>
 				</div>

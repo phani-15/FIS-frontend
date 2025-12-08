@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import {Personal} from "../core/Personal"
 import {
   Mail,
   Phone,
@@ -12,10 +13,12 @@ import {
   Printer,
 } from "lucide-react";
 import { useNavigate ,useParams} from "react-router-dom";
+
 export default function ProfilePage() {
    const {profileId}=useParams()
    const navigate = useNavigate()
   const [newObj, setnewobj] = useState(
+
     {
       "personalData": {
         "name": "Phani Polavarapu",
@@ -27,12 +30,14 @@ export default function ProfilePage() {
         "designation": "Assistant Professor",
         "department": "cse",
         "college": "University College of Engineering",
-        "date_of_join": "2023-09"
+        "date_of_join": "2023-09",
+          "phone": "",
+        "location": ""
       },
       "loginData": {
         "password": "Phani@123",
         "email": "phanipolavarapu15@gmail.com",
-        "phone": "8328186996",
+      
         "cPassword": "Phani@123"
       },
       "education": {
@@ -128,9 +133,19 @@ export default function ProfilePage() {
     }
   )
   
-  useEffect(()=>{
-   
-  },[])
+ useEffect(() => {
+  const loadProfile = async () => {
+    try {
+      const data = await Personal(profileId);  
+      if (data) setnewobj(data);
+    } catch (error) {
+      console.log("Fetch error:", error);
+    }
+  };
+
+  loadProfile();
+}, [profileId]);
+
 
   const viewer = "user"
   
@@ -178,7 +193,7 @@ export default function ProfilePage() {
 
                       {/* Edit Button */}
                       <button
-                        onClick={() => navigate('/edit')}
+                        onClick={() => navigate('/ea')}
                         className="relative group cursor-pointer">
                         <SquarePen />
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
@@ -225,7 +240,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Personal Info */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="mt-6 lg:mt-10 pt-6 border-t border-gray-200">
                 <h3 className="font-semibold text-gray-700 mb-3">
                   Contact Information
                 </h3>
@@ -234,15 +249,20 @@ export default function ProfilePage() {
                     <Mail size={16} className="text-blue-500" />
                     {newObj.loginData.email}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-700">
+                 { newObj.personalData.phone && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Phone size={16} className="text-green-500" />
-                    {newObj.loginData.phone}
-                  </div>
+                    {newObj.personalData.phone}
+                  </div>}
 
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
                     Joined: {newObj.personalData.date_of_join}
                   </div>
+                 { newObj.personalData.location && <div className="flex items-center gap-3 text-sm text-gray-700">
+                    <MapPin  size={16} className="text-green-500" />
+                    {newObj.personalData.location}
+                  </div>
+}
                 </div>
               </div>
             </div>

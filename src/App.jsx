@@ -31,7 +31,7 @@ export default function App() {
         <main className='grow'>
           <Routes>
             <Route path='/hod' element={<HODLogin />} />
-            <Route path='/iqac' element={<IQACLogin />} />
+            <Route path='/ofc' element={<IQACLogin />} />
             <Route path='/edit' element={<EditPage />} />
             <Route path='/' element={<Login />} />
             <Route path='/register' element={<Register />} />
@@ -49,7 +49,7 @@ export default function App() {
             <Route path='/resetHODpassword' element={<ResetHODPassword />} />
             <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />
             <Route path='/pc/' element={<ForgotPassword />} />
-            <Route path='/iqacChange' element={<ChangeIQACPassword />} />
+            <Route path='/ofcChange' element={<ChangeIQACPassword />} />
             <Route path='/ac' element={<AddCredentials />} />
             <Route path='/forgotpass' element={<Forgotiqac/>} />
           </Routes>

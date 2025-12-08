@@ -7,6 +7,7 @@ export const register=async user=>{
             Accept:"application/json",
             "Content-Type":"application/json"
         },
+         credentials: "include",
         body:JSON.stringify(user)
     })
     .then(res=>{
@@ -22,6 +23,7 @@ export const login=async user=>{
             Accept:"application/json",
             "Content-Type":"application/json"
         },
+        //  credentials: "include",
         body:JSON.stringify(user)
     })
     .then(res=>{return res.json()})
