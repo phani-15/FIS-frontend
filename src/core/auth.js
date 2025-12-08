@@ -24,8 +24,7 @@ export const login=async user=>{
         },
         body:JSON.stringify(user)
     })
-    .then(data=>{ console.log("in rest :",data);
-    })
+    .then(res=>{return res.json()})
     .catch(err=>console.log("error is ",err)
     )
 }

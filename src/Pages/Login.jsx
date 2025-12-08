@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {login,authenticate,isAuthenticated} from "../core/auth"
+import { error, values } from "pdf-lib";
 
 export default function Login() {
 
@@ -50,14 +51,20 @@ export default function Login() {
 			email:formData.username,
 			password:formData.password
 		})
-		.then(Data=>data=Data
-		)
-		console.log("login returned data:",data);
-		
-		authenticate(formData,()=>{
-			setFormData({
-				...formData
-			})
+		.then(data=>{
+			console.log(data);
+			if (data.eror) {
+				console.log("an erro occured :",data.error);
+				return
+			}
+			else{
+				authenticate(data,()=>{
+					setFormData({
+						...formData
+					})
+				})
+			}
+			
 		})
 		navigate(`/profile/`)
 	};
