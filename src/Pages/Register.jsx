@@ -9,7 +9,7 @@ import { number } from "framer-motion";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("oas"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
 

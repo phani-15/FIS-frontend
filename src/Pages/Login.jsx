@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {login,authenticate,isAuthenticated} from "../core/auth"
+import { error, values } from "pdf-lib";
 
 export default function Login() {
 
@@ -59,9 +60,10 @@ export default function Login() {
 				...formData
 			})
 		})
+		navigate(`/profile/${data.user.id}`)
 		}	)
 		// console.log("login returned data:",data);
-		navigate(`/profile/`)
+		
 	};
 
 	return (
@@ -70,7 +72,7 @@ export default function Login() {
 
 				{/* Top Icon */}
 				<div className="flex justify-center mb-6">
-					<div className="p-4 bg-purple-100 rounded-xl shadow-sm">
+					<div className="p-4 bg-purple~-100 rounded-xl shadow-sm">
 						<Lock className="w-8 h-8 text-purple-600" />
 					</div>
 				</div>

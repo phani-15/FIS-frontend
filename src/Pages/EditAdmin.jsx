@@ -55,12 +55,6 @@
         "Board Member, AICTE Curriculum Committee",
         "Expert Committee, State Educational Policy",
       ],
-      researchInterests: [
-        "Artificial Intelligence & Machine Learning",
-        "Natural Language Processing",
-        "Educational Technology",
-        "Data Mining & Big Data Analytics",
-      ],
     };
 
     // State to manage form data and active section
@@ -155,12 +149,7 @@
           ...prev,
           adminServiceOther: [...prev.adminServiceOther, '']
         }));
-      } else if (section === 'researchInterests') {
-        setProfile(prev => ({
-          ...prev,
-          researchInterests: [...prev.researchInterests, '']
-        }));
-      }
+      } 
     };
 
     // Remove item from array sections
@@ -224,7 +213,6 @@ const handleSave = () => {
     'professionalExperience',
     'adminServiceThis',
     'adminServiceOther',
-    'researchInterests',
   ];
 
   arraySections.forEach(section => {
@@ -303,7 +291,6 @@ const handleSave = () => {
       { id: 'professionalExperience', label: 'Professional Experience', icon: Briefcase },
       { id: 'adminServiceThis', label: 'Admin Service - This Institute', icon: Users },
       { id: 'adminServiceOther', label: 'Admin Service - Other Institutes', icon: Users },
-      { id: 'researchInterests', label: 'Research Interests', icon: BookOpen },
     ];
 
     // Render the active section
@@ -407,13 +394,13 @@ const handleSave = () => {
                       </div>
                       <button
                         onClick={() => restoreItem('education', index)}
-                        className="px-3 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 cursor-pointer transition-colors text-sm"
+                        className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
                       >
                       undo
                       </button>
                       <button
                         onClick={() => removeItem('education', index)}
-                        className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer transition-colors text-sm"
+                        className="px-3 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 font-semibold  cursor-pointer transition-colors text-sm"
                       >
                         Remove
                       </button>
@@ -461,7 +448,7 @@ const handleSave = () => {
                       </div>
                       <button
                         onClick={() => restoreItem('professionalExperience', index)}
-                        className="px-3 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 cursor-pointer transition-colors text-sm"
+                        className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
                       >
                         undo
                       </button>
@@ -470,7 +457,7 @@ const handleSave = () => {
                           if(confirm(`Remove professionalExperience of ${exp.role } from ${exp.institution}?`))
                           removeItem('professionalExperience', index)
                         }}
-                        className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer transition-colors text-sm"
+                        className="px-3 py-2 bg-gray-400 font-semibold text-white rounded-lg hover:bg-gray-500 cursor-pointer transition-colors text-sm"
                       >
                         Remove
                       </button>
@@ -500,7 +487,7 @@ const handleSave = () => {
                     />
                     <button
                       onClick={() => restoreItem('adminServiceThis', index)}
-                      className="px-3 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 cursor-pointer transition-colors text-sm"
+                      className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
                     >
                       undo
                     </button>
@@ -510,7 +497,7 @@ const handleSave = () => {
                              removeItem('adminServiceThis', index)
                         }
                       }
-                      className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer transition-colors text-sm"
+                      className="px-3 py-2 bg-gray-400 font-semibold text-white rounded-lg hover:bg-gray-500 cursor-pointer transition-colors text-sm"
                     >
                       Remove
                     </button>
@@ -539,7 +526,7 @@ const handleSave = () => {
                     />
                     <button
                       onClick={() => restoreItem('adminServiceOther', index)}
-                      className="px-3 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors text-sm"
+                      className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
                     >
                       undo
                     </button>
@@ -550,42 +537,7 @@ const handleSave = () => {
                              removeItem('adminServiceOther', index)
                         }
                       }
-                      className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        case 'researchInterests':
-          return (
-            <div className="space-y-4">
-              
-              <div className="space-y-3">
-                {profile.researchInterests.map((interest, index) => (
-                  interest&&
-                  <div key={index} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
-                    <input
-                      type="text"
-                      value={interest}
-                      onChange={(e) => {
-                        const updated = [...profile.researchInterests];
-                        updated[index] = e.target.value;
-                        setProfile(prev => ({ ...prev, researchInterests: updated }));
-                      }}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    />
-                    <button
-                      onClick={() => restoreItem('researchInterests', index)}
-                      className="px-3 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 cursor-pointer transition-colors text-sm"
-                    >
-                      undo
-                    </button>
-                    <button
-                      onClick={() => removeItem('researchInterests', index)}
-                      className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer transition-colors text-sm"
+                      className="px-3 py-2 bg-gray-400 font-semibold text-white rounded-lg hover:bg-gray-500 transition-colors text-sm"
                     >
                       Remove
                     </button>
@@ -602,14 +554,11 @@ const handleSave = () => {
     return (
       <div className="flex bg-gray-50 mx-32 mt-10 rounded-xl ">
         {/* Sidebar */}
-        <div className="w-64 bg-linear-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col rounded-xl">
+        <div className="w-64 bg-linear-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col items-center  rounded-xl">
           {/* Logo */}
           <div className="p-6 border-b border-gray-200">
-            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
-              Pd
-            </div>
+            <img src="../images/Profile2.avif" alt="Profile Picture"  className='  rounded-full h-38'/>
           </div>
-
           {/* Navigation */}
           <nav className="flex-1 p-6 space-y-2">
             {navItems.map((item) => {
@@ -637,8 +586,8 @@ const handleSave = () => {
         <div className="flex-1 flex-col items-center ">
           {/* Header */}
           <div className=" text-center mt-6 p-6">
-                <h1 className="text-3xl font-bold text-gray-900">Edit Profile</h1>
-            
+                <h1 className="text-3xl font-bold font-serif text-gray-900">Edit Profile</h1>
+
           </div>
 
           {/* Profile Section */}
@@ -656,7 +605,7 @@ const handleSave = () => {
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-2 border  bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50  flex items-center space-x-0.5"
+                  className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm flex gap-2 items-center"
                 >
                   <X className="w-4 h-4"/>
                   <span>Cancel</span>
@@ -664,7 +613,7 @@ const handleSave = () => {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 "
+                  className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 "
                 >
                   <Save className="w-4 h-4" />
                   <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>

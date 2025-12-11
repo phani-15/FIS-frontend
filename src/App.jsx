@@ -35,8 +35,13 @@ export default function App() {
             <Route path='/edit' element={<EditPage />} />
             <Route path='/' element={<Login />} />
             <Route path='/register' element={<Register />} />
-            <Route path='/profile' element={<Profile />} />
+<<<<<<< HEAD
+            <Route path='/profile/:profileId' element={<Profile />} />
             <Route path='/ofcDashboard' element={<IqacDashboard />} />
+=======
+            <Route path='/profile/' element={<Profile />} />
+            <Route path='/iqacDashboard' element={<IqacDashboard />} />
+>>>>>>> 8ac963c780c4268abc5e6df3428bbef1984a41b9
             <Route path='/add' element={<AddDetails />} />
             <Route path='/hodDashboard' element={<HodDashboard />} />
             <Route path='/adminPage' element={<Admin />} />
