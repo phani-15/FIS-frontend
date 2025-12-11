@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { X, Search, FileText } from "lucide-react";
+import { X, Search, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { facultyData ,facultyList} from "../assets/Data";
+import * as XLSX from "xlsx"; // Import XLSX library
+import { schemas, yearFields, certifications, facultyList } from '../assets/Data'
 
 export default function IQACDashboard() {
   const [filters, setFilters] = useState({
@@ -31,6 +32,218 @@ export default function IQACDashboard() {
     "M.Tech",
     "MBA",
   ];
+
+  // Helper: Get full list of attribute keys for a type
+  const getAllAttributesForType = (typeKey) => {
+    return getSchemaForType(typeKey).attributes.map(a => a.key);
+  };
+
+  // Helper: Define schema per type (label + attributes)
+  const getSchemaForType = (typeKey) => {
+    return schemas[typeKey] || { label: typeKey, attributes: [] };
+  };
+  // Extract year from a record
+  const extractYearFromRecord = (record, typeKey) => {
+    // Try to find a year field based on the type
+
+
+    const yearField = yearFields[typeKey];
+    if (!yearField || !record[yearField]) return null;
+
+    const value = record[yearField];
+    // Extract year from date string or use as-is
+    if (typeof value === 'string') {
+      const yearMatch = value.match(/\b(\d{4})\b/);
+      return yearMatch ? parseInt(yearMatch[1]) : parseInt(value);
+    }
+    return parseInt(value);
+  };
+
+  // Function to generate Excel file
+
+  // Add this helper function to sanitize sheet names
+  const sanitizeSheetName = (name) => {
+    // Remove characters not allowed in Excel sheet names
+    return name.replace(/[:\\/?*\[\]]/g, ' ');
+  };
+
+  // Then in your generateExcelReport function, update the sheet name line:
+  const generateExcelReport = async () => {
+    if (selectedTypes.length === 0) {
+      alert("Please select at least one report type.");
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      // Create a new workbook
+      const wb = XLSX.utils.book_new();
+
+      // Track sheet names to avoid duplicates
+      const usedSheetNames = new Set();
+
+      // For each selected type, create a worksheet
+      selectedTypes.forEach(typeKey => {
+        const schema = getSchemaForType(typeKey);
+        const selectedAttrs = selectedAttributes[typeKey] || [];
+
+        if (selectedAttrs.length === 0) {
+          console.warn(`No attributes selected for ${typeKey}, skipping...`);
+          return;
+        }
+
+        // Prepare headers (add Faculty Name and Role as first columns)
+        const headers = ["Faculty Name", "Faculty Role", ...selectedAttrs.map(attrKey => {
+          const attr = schema.attributes.find(a => a.key === attrKey);
+          return attr ? attr.label : attrKey;
+        })];
+
+        // Prepare data rows
+        const rows = [];
+
+        certifications.forEach(faculty => {
+          if (faculty.data && faculty.data[typeKey]) {
+            faculty.data[typeKey].forEach(record => {
+              // Apply year filter if specified
+              if (yearFrom || yearTo) {
+                const recordYear = extractYearFromRecord(record, typeKey);
+
+                if (yearFrom && recordYear && recordYear < parseInt(yearFrom)) {
+                  return; // Skip if before start year
+                }
+                if (yearTo && recordYear && recordYear > parseInt(yearTo)) {
+                  return; // Skip if after end year
+                }
+              }
+
+              const rowData = [faculty.name, faculty.role];
+
+              // Add selected attributes in order
+              selectedAttrs.forEach(attrKey => {
+                rowData.push(record[attrKey] || "");
+              });
+
+              rows.push(rowData);
+            });
+          }
+        });
+
+        if (rows.length > 0) {
+          // Create worksheet with headers and data
+          const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+          // Set column widths (auto-width approximation)
+          const colWidths = headers.map(header => ({
+            wch: Math.max(header.length, 15)
+          }));
+          ws['!cols'] = colWidths;
+
+          // Sanitize and ensure unique sheet name
+          let sheetName = sanitizeSheetName(schema.label);
+
+          // Ensure sheet name doesn't exceed 31 characters
+          sheetName = sheetName.substring(0, 31);
+
+          // Make sure sheet name is not empty
+          if (!sheetName.trim()) {
+            sheetName = `Sheet_${typeKey}`;
+          }
+
+          // Ensure uniqueness
+          let finalSheetName = sheetName;
+          let counter = 1;
+          while (usedSheetNames.has(finalSheetName) && counter < 100) {
+            finalSheetName = `${sheetName.substring(0, 28)}_${counter}`;
+            counter++;
+          }
+
+          usedSheetNames.add(finalSheetName);
+
+          // Add worksheet to workbook
+          XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
+        }
+      });
+
+      // Check if any worksheets were created
+      if (wb.SheetNames.length === 0) {
+        alert("No data found for the selected criteria.");
+        setIsGenerating(false);
+        return;
+      }
+
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `Faculty_Report_${timestamp}.xlsx`;
+
+      // Write and download the file
+      XLSX.writeFile(wb, filename);
+
+      // Close modal after successful generation
+      setShowExtractModal(false);
+      alert(`Report generated successfully: ${filename}`);
+
+    } catch (error) {
+      console.error("Error generating Excel report:", error);
+      alert(`Error generating report: ${error.message}`);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Handle form submission
+  const handleExtractReports = async (e) => {
+    e.preventDefault();
+    await generateExcelReport();
+  };
+
+  const printList = async () => {
+    try {
+      // Create a new workbook
+      const wb = XLSX.utils.book_new();
+
+      // Prepare headers
+      const headers = ["S.No", "Faculty Name", "Email", "Designation"];
+
+      // Prepare data rows
+      const rows = facultyList.map((faculty, index) => [
+        index + 1,
+        faculty.name,
+        faculty.mail || "", // Use email if available, otherwise empty string
+        faculty.role
+      ]);
+
+      // Combine headers and data
+      const data = [headers, ...rows];
+
+      // Create worksheet
+      const ws = XLSX.utils.aoa_to_sheet(data);
+
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 6 },  // S.No column width
+        { wch: 30 }, // Name column width
+        { wch: 35 }, // Email column width
+        { wch: 25 }  // Designation column width
+      ];
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, "Faculty List");
+
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `Faculty_List_${timestamp}.xlsx`;
+
+      // Download the file
+      XLSX.writeFile(wb, filename);
+
+      alert(`Faculty list exported successfully: ${filename}`);
+
+    } catch (error) {
+      console.error("Error exporting faculty list:", error);
+      alert("Error exporting faculty list. Please try again.");
+    }
+  };
 
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
@@ -181,26 +394,34 @@ export default function IQACDashboard() {
       {/* Pagination */}
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-wrap justify-center items-center gap-4 mt-6">
-          <button
-            className="px-5 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition disabled:opacity-50 cursor-pointer"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            ⬅️ Previous
-          </button>
-          <span className="font-medium">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="px-5 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition disabled:opacity-50 cursor-pointer"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Next ➡️
-          </button>
-        </div>
-      )}<AnimatePresence>
+        <>
+          <div className="flex flex-wrap justify-center items-center gap-4 mt-6">
+            <button
+              className="px-5 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition disabled:opacity-50 cursor-pointer"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              ⬅️ Previous
+            </button>
+            <span className="font-medium">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className="px-5 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition disabled:opacity-50 cursor-pointer"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next ➡️
+            </button>
+          </div>
+          <div className="flex justify-end ">
+            <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
+              <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
+            </div>
+          </div>
+        </>
+      )}
+      <AnimatePresence>
         {showExtractModal && (
           <>
             <motion.div

@@ -22,7 +22,7 @@ const yearFields = {
   repository: "Date / Year",
 };
 
-export const facultyData = [
+export const certifications = [
   {
     name: "Dr. Aarti Rao",
     role: "Professor",
@@ -527,7 +527,7 @@ export const facultyData = [
       patents: [
         {
           "Patent Number": "IN2024A000101",
-          "Title": "AI-Based Traffic Prediction System",
+          "Title of the Patent": "AI-Based Traffic Prediction System",
           "Status": "Published",
           "Issue Date": "2024-02-11",
           "Application Number": "AIPTS001"
@@ -637,7 +637,7 @@ export const facultyData = [
       patents: [
         {
           "Patent Number": "IN2024A000202",
-          "Title": "Hybrid Turbine Efficiency Enhancer",
+          "Title of the Patent": "Hybrid Turbine Efficiency Enhancer",
           "Status": "Filed",
           "Issue Date": "2024-01-28",
           "Application Number": "HTE002"
@@ -773,7 +773,7 @@ export const facultyData = [
       patents: [
         {
           "Patent Number": "IN2024A000333",
-          "Title": "Energy Efficient Cooling Blade",
+          "Title of the Patent": "Energy Efficient Cooling Blade",
           "Status": "Published",
           "Issue Date": "2024-03-16",
           "Application Number": "ECB003"
@@ -857,7 +857,7 @@ export const facultyData = [
       patents: [
         {
           "Patent Number": "IN2023A000403",
-          "Title": "Fast Charging Converter System",
+          "Title of the Patent": "Fast Charging Converter System",
           "Status": "Filed",
           "Issue Date": "2023-12-10",
           "Application Number": "FCC004"
@@ -951,7 +951,7 @@ export const facultyData = [
       patents: [
         {
           "Patent Number": "IN2024A000599",
-          "Title": "Eco-Friendly Cement Binder",
+          "Title of the Patent": "Eco-Friendly Cement Binder",
           "Status": "Published",
           "Issue Date": "2024-02-22",
           "Application Number": "ECB005"
@@ -1036,7 +1036,7 @@ export const facultyData = [
       patents: [
         {
           "Patent Number": "IN2024A000699",
-          "Title": "Zero-Friction Composite Material",
+          "Title of the Patent": "Zero-Friction Composite Material",
           "Status": "Filed",
           "Issue Date": "2024-03-01",
           "Application Number": "ZFC006"
@@ -1217,41 +1217,199 @@ const schemas =
 
   // Add seminar, etc. if needed (similar to workshop)
 };
-
-  const facultyList = [
-    { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
-    { name: "Dr. Jane Smith", department: "Electrical and Electronics Engineering", role: "Associate Professor" },
-    { name: "Dr. Mike Johnson", department: "Mechanical Engineering", role: "Assistant Professor" },
-    { name: "Dr. Emily Davis", department: "MBA", role: "Lecturer" },
-    { name: "Dr. William Brown", department: "Computer Science and Engineering", role: "Professor" },
-    { name: "Dr. Olivia Wilson", department: "Civil Engineering", role: "Assistant Professor" },
-    { name: "Dr. Henry Taylor", department: "Electronics and Communication Engineering", role: "Lecturer" },
-    { name: "Dr. Sophia Martinez", department: "Information Technology Engineering", role: "Researcher" },
-    { name: "Dr. Daniel Anderson", department: "Metallurgical Engineering", role: "Professor" },
-    { name: "Dr. Grace Lee", department: "M.Tech", role: "Assistant Professor" },
-    { name: "Dr. Benjamin Harris", department: "MBA", role: "Lecturer" },
-    { name: "Dr. Alice Walker", department: "Civil Engineering", role: "Professor" },
-    // Additional faculty 13-30
-    { name: "Dr. Christopher Young", department: "Computer Science and Engineering", role: "Assistant Professor" },
-    { name: "Dr. Rachel Green", department: "Electrical and Electronics Engineering", role: "Professor" },
-    { name: "Dr. Steven Hall", department: "Mechanical Engineering", role: "Associate Professor" },
-    { name: "Dr. Monica Clark", department: "MBA", role: "Assistant Professor" },
-    { name: "Dr. Kevin Lewis", department: "Information Technology Engineering", role: "Professor" },
-    { name: "Dr. Laura Robinson", department: "Civil Engineering", role: "Lecturer" },
-    { name: "Dr. Patrick Walker", department: "Metallurgical Engineering", role: "Assistant Professor" },
-    { name: "Dr. Kimberly Scott", department: "M.Tech", role: "Researcher" },
-    { name: "Dr. Anthony King", department: "Computer Science and Engineering", role: "Lecturer" },
-    { name: "Dr. Stephanie Adams", department: "Electrical and Electronics Engineering", role: "Assistant Professor" },
-    { name: "Dr. Brian Mitchell", department: "Mechanical Engineering", role: "Professor" },
-    { name: "Dr. Jennifer Phillips", department: "MBA", role: "Professor" },
-    { name: "Dr. Eric Campbell", department: "Information Technology Engineering", role: "Lecturer" },
-    { name: "Dr. Melissa Parker", department: "Civil Engineering", role: "Associate Professor" },
-    { name: "Dr. Joshua Rivera", department: "Computer Science and Engineering", role: "Researcher" },
-    { name: "Dr. Angela Brooks", department: "Electrical and Electronics Engineering", role: "Lecturer" },
-    { name: "Dr. Ryan Morris", department: "Mechanical Engineering", role: "Assistant Professor" },
-    { name: "Dr. Samantha Price", department: "MBA", role: "Assistant Professor" },
-    { name: "Dr. Nicholas Cox", department: "Information Technology Engineering", role: "Associate Professor" },
-    { name: "Dr. Olivia Foster", department: "Civil Engineering", role: "Lecturer" },
-  ];
+const facultyList = [
+  {
+    name: "Dr. John Doe",
+    department: "Computer Science and Engineering",
+    role: "Professor",
+    email: "john.doe@yourcollege.edu"
+  },
+  {
+    name: "Dr. Jane Smith",
+    department: "Electrical and Electronics Engineering",
+    role: "Associate Professor",
+    email: "jane.smith@yourcollege.edu"
+  },
+  {
+    name: "Dr. Mike Johnson",
+    department: "Mechanical Engineering",
+    role: "Assistant Professor",
+    email: "mike.johnson@yourcollege.edu"
+  },
+  {
+    name: "Dr. Emily Davis",
+    department: "MBA",
+    role: "Lecturer",
+    email: "emily.davis@yourcollege.edu"
+  },
+  {
+    name: "Dr. William Brown",
+    department: "Computer Science and Engineering",
+    role: "Professor",
+    email: "william.brown@yourcollege.edu"
+  },
+  {
+    name: "Dr. Olivia Wilson",
+    department: "Civil Engineering",
+    role: "Assistant Professor",
+    email: "olivia.wilson@yourcollege.edu"
+  },
+  {
+    name: "Dr. Henry Taylor",
+    department: "Electronics and Communication Engineering",
+    role: "Lecturer",
+    email: "henry.taylor@yourcollege.edu"
+  },
+  {
+    name: "Dr. Sophia Martinez",
+    department: "Information Technology Engineering",
+    role: "Researcher",
+    email: "sophia.martinez@yourcollege.edu"
+  },
+  {
+    name: "Dr. Daniel Anderson",
+    department: "Metallurgical Engineering",
+    role: "Professor",
+    email: "daniel.anderson@yourcollege.edu"
+  },
+  {
+    name: "Dr. Grace Lee",
+    department: "M.Tech",
+    role: "Assistant Professor",
+    email: "grace.lee@yourcollege.edu"
+  },
+  {
+    name: "Dr. Benjamin Harris",
+    department: "MBA",
+    role: "Lecturer",
+    email: "benjamin.harris@yourcollege.edu"
+  },
+  {
+    name: "Dr. Alice Walker",
+    department: "Civil Engineering",
+    role: "Professor",
+    email: "alice.walker@yourcollege.edu"
+  },
+  {
+    name: "Dr. Christopher Young",
+    department: "Computer Science and Engineering",
+    role: "Assistant Professor",
+    email: "christopher.young@yourcollege.edu"
+  },
+  {
+    name: "Dr. Rachel Green",
+    department: "Electrical and Electronics Engineering",
+    role: "Professor",
+    email: "rachel.green@yourcollege.edu"
+  },
+  {
+    name: "Dr. Steven Hall",
+    department: "Mechanical Engineering",
+    role: "Associate Professor",
+    email: "steven.hall@yourcollege.edu"
+  },
+  {
+    name: "Dr. Monica Clark",
+    department: "MBA",
+    role: "Assistant Professor",
+    email: "monica.clark@yourcollege.edu"
+  },
+  {
+    name: "Dr. Kevin Lewis",
+    department: "Information Technology Engineering",
+    role: "Professor",
+    email: "kevin.lewis@yourcollege.edu"
+  },
+  {
+    name: "Dr. Laura Robinson",
+    department: "Civil Engineering",
+    role: "Lecturer",
+    email: "laura.robinson@yourcollege.edu"
+  },
+  {
+    name: "Dr. Patrick Walker",
+    department: "Metallurgical Engineering",
+    role: "Assistant Professor",
+    email: "patrick.walker@yourcollege.edu"
+  },
+  {
+    name: "Dr. Kimberly Scott",
+    department: "M.Tech",
+    role: "Researcher",
+    email: "kimberly.scott@yourcollege.edu"
+  },
+  {
+    name: "Dr. Anthony King",
+    department: "Computer Science and Engineering",
+    role: "Lecturer",
+    email: "anthony.king@yourcollege.edu"
+  },
+  {
+    name: "Dr. Stephanie Adams",
+    department: "Electrical and Electronics Engineering",
+    role: "Assistant Professor",
+    email: "stephanie.adams@yourcollege.edu"
+  },
+  {
+    name: "Dr. Brian Mitchell",
+    department: "Mechanical Engineering",
+    role: "Professor",
+    email: "brian.mitchell@yourcollege.edu"
+  },
+  {
+    name: "Dr. Jennifer Phillips",
+    department: "MBA",
+    role: "Professor",
+    email: "jennifer.phillips@yourcollege.edu"
+  },
+  {
+    name: "Dr. Eric Campbell",
+    department: "Information Technology Engineering",
+    role: "Lecturer",
+    email: "eric.campbell@yourcollege.edu"
+  },
+  {
+    name: "Dr. Melissa Parker",
+    department: "Civil Engineering",
+    role: "Associate Professor",
+    email: "melissa.parker@yourcollege.edu"
+  },
+  {
+    name: "Dr. Joshua Rivera",
+    department: "Computer Science and Engineering",
+    role: "Researcher",
+    email: "joshua.rivera@yourcollege.edu"
+  },
+  {
+    name: "Dr. Angela Brooks",
+    department: "Electrical and Electronics Engineering",
+    role: "Lecturer",
+    email: "angela.brooks@yourcollege.edu"
+  },
+  {
+    name: "Dr. Ryan Morris",
+    department: "Mechanical Engineering",
+    role: "Assistant Professor",
+    email: "ryan.morris@yourcollege.edu"
+  },
+  {
+    name: "Dr. Samantha Price",
+    department: "MBA",
+    role: "Assistant Professor",
+    email: "samantha.price@yourcollege.edu"
+  },
+  {
+    name: "Dr. Nicholas Cox",
+    department: "Information Technology Engineering",
+    role: "Associate Professor",
+    email: "nicholas.cox@yourcollege.edu"
+  },
+  {
+    name: "Dr. Olivia Foster",
+    department: "Civil Engineering",
+    role: "Lecturer",
+    email: "olivia.foster@yourcollege.edu"
+  }
+];
 
 export { schemas, yearFields,facultyList }
