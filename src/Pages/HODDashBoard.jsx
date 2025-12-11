@@ -3,6 +3,7 @@ import { Search, X, User, ChevronDown, ShieldCheck, XCircle, ChevronUp, FileText
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
+import {schemas,yearFields} from '../assets/Data'
 
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
@@ -23,206 +24,13 @@ export default function HODDashBoard() {
 
   // Helper: Define schema per type (label + attributes)
   const getSchemaForType = (typeKey) => {
-    const schemas =
-    {
-      patents: {
-        label: "Patents",
-        attributes: [
-          { key: "Patent Number", label: "Patent Number", required: true },
-          { key: "Title of the Patent", label: "Title", required: true },
-          { key: "Published/Granted", label: "Status", required: true },
-          { key: "Year of Published/Granted", label: "Year", required: true },
-          { key: "National/International", label: "Scope", required: true },
-        ],
-      },
-      journal: {
-        label: "Journal Publications",
-        attributes: [
-          { key: "Title of the Paper", label: "Paper Title", required: true },
-          { key: "Name of the Journal", label: "Journal Name", required: true },
-          { key: "Year of Publication", label: "Year", required: true },
-          { key: "Impact Factor", label: "Impact Factor", required: false },
-          { key: "ISSN Number", label: "ISSN", required: false },
-          { key: "Indexing Platform", label: "Indexing", required: false },
-          { key: "H-index", label: "H-index", required: false },
-        ],
-      },
-      book: {
-        label: "Books",
-        attributes: [
-          { key: "Title of the Book", label: "Book Title", required: true },
-          { key: "Name of the Publisher", label: "Publisher", required: true },
-          { key: "Year of Publication", label: "Year", required: true },
-          { key: "ISBN Number", label: "ISBN", required: false },
-        ],
-      },
-      book_chapter: {
-        label: "Book Chapters",
-        attributes: [
-          { key: "Title of the Book Chapter", label: "Chapter Title", required: true },
-          { key: "Name of the Publisher", label: "Publisher", required: true },
-          { key: "Year of Publication", label: "Year", required: true },
-          { key: "ISBN Number", label: "ISBN", required: false },
-        ],
-      },
-      conference: {
-        label: "Conferences",
-        attributes: [
-          { key: "Title of the Paper", label: "Paper Title", required: true },
-          { key: "Title of the Conference", label: "Conference", required: true },
-          { key: "Date of Publication", label: "Date", required: false },
-          { key: "Organized by", label: "Organizer", required: true },
-        ],
-      },
-      certifications: {
-        label: "Certifications",
-        attributes: [
-          { key: "Name of Certification Course", label: "Course Name", required: true },
-          { key: "Type of Certification", label: "Type", required: true },
-          { key: "Organized by", label: "Organizer", required: true },
-          { key: "Duration (in days)", label: "Duration (days)", required: false },
-        ],
-      },
-      workshop: {
-        label: "Workshops",
-        attributes: [
-          { key: "Program Title", label: "Title", required: true },
-          { key: "Year", label: "Year", required: true },
-          { key: "Organizing Body", label: "Organizer", required: true },
-          { key: "Attended/Organized", label: "Role", required: true },
-        ],
-      },
-      fdp: {
-        label: "FDP / STTP",
-        attributes: [
-          { key: "Program Title", label: "Title", required: true },
-          { key: "Year", label: "Year", required: true },
-          { key: "Organizing Body", label: "Organizer", required: true },
-          { key: "Mode (Online/Offline)", label: "Mode", required: true },
-          { key: "Attended/Organized", label: "Role", required: true },
-        ],
-      },
-      webinar: {
-        label: "Webinars",
-        attributes: [
-          { key: "Program Title", label: "Title", required: true },
-          { key: "Year", label: "Year", required: true },
-          { key: "Organizing Body", label: "Organizer", required: true },
-          { key: "Mode (Online/Offline)", label: "Mode", required: true },
-          { key: "Attended/Organized", label: "Role", required: true },
-        ],
-      },
-      OC: {
-        label: "Orientation Courses",
-        attributes: [
-          { key: "Program Title", label: "Title", required: true },
-          { key: "Year", label: "Year", required: true },
-          { key: "Organizing Body", label: "Organizer", required: true },
-          { key: "Mode (Online/Offline)", label: "Mode", required: true },
-          { key: "Attended/Organized", label: "Role", required: true },
-        ],
-      },
-      keynote: {
-        label: "Keynote Talks",
-        attributes: [
-          { key: "Conference Title", label: "Event", required: true },
-          { key: "Name of the Event", label: "Event Name", required: true },
-          { key: "Date", label: "Date", required: false },
-          { key: "Topic / Title of Talk", label: "Talk Title", required: true },
-          { key: "Mode", label: "Mode", required: true },
-        ],
-      },
-      talk: {
-        label: "Expert Talks",
-        attributes: [
-          { key: "Event Title", label: "Event", required: true },
-          { key: "Name of the Event", label: "Event Name", required: true },
-          { key: "Date", label: "Date", required: false },
-          { key: "Topic / Title of Talk", label: "Talk Title", required: true },
-          { key: "Mode", label: "Mode", required: true },
-        ],
-      },
-      award_title: {
-        label: "Awards & Recognitions",
-        attributes: [
-          { key: "Award / Recognition Title", label: "Award Title", required: true },
-          { key: "Granting Organization / Institution", label: "Institution", required: true },
-          { key: "Year", label: "Year", required: true },
-        ],
-      },
-      research: {
-        label: "Research Projects",
-        attributes: [
-          { key: "Project Title", label: "Title", required: true },
-          { key: "Year of Sanction", label: "Sanction Year", required: true },
-          { key: "Duration (in months)", label: "Duration (months)", required: false },
-          { key: "Funding Agency", label: "Agency", required: true },
-          { key: "Fund Received (in INR)", label: "Amount (₹)", required: false },
-          { key: "Are you", label: "Role (PI/Co-PI)", required: true },
-          { key: "Status", label: "Status", required: true },
-        ],
-      },
-      sponsored: {
-        label: "Sponsored Projects",
-        attributes: [
-          { key: "Project Title", label: "Title", required: true },
-          { key: "Funding Details", label: "Funding Agency", required: true },
-          { key: "Amount (in INR)", label: "Amount (₹)", required: true },
-          { key: "Duration (in months)", label: "Duration (months)", required: false },
-          { key: "Status", label: "Status", required: true },
-          { key: "Academic Year", label: "Academic Year", required: false },
-        ],
-      },
-      consultancy: {
-        label: "Consultancy",
-        attributes: [
-          { key: "Project Title", label: "Title", required: true },
-          { key: "Year of Sanction", label: "Sanction Year", required: true },
-          { key: "Duration (in months)", label: "Duration (months)", required: false },
-          { key: "Name of Funding Agency", label: "Client", required: true },
-          { key: "Amount (in INR)", label: "Amount (₹)", required: true },
-          { key: "Are you ", label: "Role", required: true },
-        ],
-      },
-      phd_awarded: {
-        label: "PhD Students Awarded",
-        attributes: [
-          { key: "Year of Awarding", label: "Year", required: true },
-          { key: "Number of Students", label: "Count", required: true },
-        ],
-      },
-
-      // Add seminar, etc. if needed (similar to workshop)
-    };
     return schemas[typeKey] || { label: typeKey, attributes: [] };
   };
 
   // Extract year from a record
   const extractYearFromRecord = (record, typeKey) => {
     // Try to find a year field based on the type
-    const yearFields = {
-      patents: "Year of Published/Granted",
-      journal: "Year of Publication",
-      book: "Year of Publication",
-      book_chapter: "Year of Publication",
-      conference: "Date of Publication",
-      seminar: "Year",
-      workshop: "Year",
-      fdp: "Year",
-      webinar: "Year",
-      OC: "Year",
-      keynote: "Date",
-      talk: "Date",
-      certifications: null,
-      award_title: "Year",
-      research: "Year of Sanction",
-      sponsored: "Academic Year",
-      consultancy: "Year of Sanction",
-      phd_awarded: "Year of Awarding",
-      ieee: "Year Joined",
-      csi: "Year Joined",
-      repository: "Date / Year",
-    };
+  
 
     const yearField = yearFields[typeKey];
     if (!yearField || !record[yearField]) return null;
@@ -771,29 +579,29 @@ export default function HODDashBoard() {
     }
   ];
 
-  const [expand, setExpand] = useState(false);
   const [facultyList, setFacultyList] = useState([
-    { name: "Dr. John Doe", role: "Professor" },
-    { name: "Dr. Jane Smith", role: "Associate Professor" },
-    { name: "Dr. Mike Johnson", role: "Assistant Professor" },
-    { name: "Dr. Emily Davis", role: "Lecturer" },
-    { name: "Dr. William Brown", role: "Professor" },
-    { name: "Dr. Olivia Wilson", role: "Assistant Professor" },
-    { name: "Dr. Henry Taylor", role: "Lecturer" },
-    { name: "Dr. Sophia Martinez", role: "Researcher" },
-    { name: "Dr. Daniel Anderson", role: "Professor" },
-    { name: "Dr. Grace Lee", role: "Assistant Professor" },
-    { name: "Dr. Benjamin Harris", role: "Lecturer" },
-    { name: "Dr. Patrick Hall", role: "Researcher" },
-    { name: "Dr. Brenda Allen", role: "Assistant Professor" },
-    { name: "Dr. Steven Young", role: "Lecturer" },
-    { name: "Dr. Kimberly Scott", role: "Professor" },
-    { name: "Dr. Charles Adams", role: "Professor" },
-    { name: "Dr. Victoria Perez", role: "Assistant Professor" },
-    { name: "Dr. Jonathan Hall", role: "Researcher" },
-    { name: "Dr. Samantha Allen", role: "Lecturer" },
-    { name: "Dr. Brian Mitchell", role: "Associate Professor" },
-  ]);
+    { name: "Dr. John Doe", role: "Professor", mail: "jdoe@university.edu" },
+    { name: "Dr. Jane Smith", role: "Associate Professor", mail: "jsmith@university.edu" },
+    { name: "Dr. Mike Johnson", role: "Assistant Professor", mail: "mjohnson@university.edu" },
+    { name: "Dr. Emily Davis", role: "Lecturer", mail: "edavis@university.edu" },
+    { name: "Dr. William Brown", role: "Professor", mail: "wbrown@university.edu" },
+    { name: "Dr. Olivia Wilson", role: "Assistant Professor", mail: "owilson@university.edu" },
+    { name: "Dr. Henry Taylor", role: "Lecturer", mail: "htaylor@university.edu" },
+    { name: "Dr. Sophia Martinez", role: "Researcher", mail: "smartinez@university.edu" },
+    { name: "Dr. Daniel Anderson", role: "Professor", mail: "danderson@university.edu" },
+    { name: "Dr. Grace Lee", role: "Assistant Professor", mail: "glee@university.edu" },
+    { name: "Dr. Benjamin Harris", role: "Lecturer", mail: "bharris@university.edu" },
+    { name: "Dr. Patrick Hall", role: "Researcher", mail: "phall@university.edu" },
+    { name: "Dr. Brenda Allen", role: "Assistant Professor", mail: "ballen@university.edu" },
+    { name: "Dr. Steven Young", role: "Lecturer", mail: "syoung@university.edu" },
+    { name: "Dr. Kimberly Scott", role: "Professor", mail: "kscott@university.edu" },
+    { name: "Dr. Charles Adams", role: "Professor", mail: "cadams@university.edu" },
+    { name: "Dr. Victoria Perez", role: "Assistant Professor", mail: "vperez@university.edu" },
+    { name: "Dr. Jonathan Hall", role: "Researcher", mail: "jhall@university.edu" },
+    { name: "Dr. Samantha Allen", role: "Lecturer", mail: "sallen@university.edu" },
+    { name: "Dr. Brian Mitchell", role: "Associate Professor", mail: "bmitchell@university.edu" }
+  ]
+  );
 
   // Filter faculty list by search term
   const filteredFaculty = facultyList.filter((f) =>
@@ -815,7 +623,53 @@ export default function HODDashBoard() {
     );
   };
 
+  const printList = async () => {
+    try {
+      // Create a new workbook
+      const wb = XLSX.utils.book_new();
 
+      // Prepare headers
+      const headers = ["S.No", "Faculty Name", "Email", "Designation"];
+
+      // Prepare data rows
+      const rows = facultyList.map((faculty, index) => [
+        index + 1,
+        faculty.name,
+        faculty.mail || "", // Use email if available, otherwise empty string
+        faculty.role
+      ]);
+
+      // Combine headers and data
+      const data = [headers, ...rows];
+
+      // Create worksheet
+      const ws = XLSX.utils.aoa_to_sheet(data);
+
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 6 },  // S.No column width
+        { wch: 30 }, // Name column width
+        { wch: 35 }, // Email column width
+        { wch: 25 }  // Designation column width
+      ];
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, "Faculty List");
+
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `Faculty_List_${timestamp}.xlsx`;
+
+      // Download the file
+      XLSX.writeFile(wb, filename);
+
+      alert(`Faculty list exported successfully: ${filename}`);
+
+    } catch (error) {
+      console.error("Error exporting faculty list:", error);
+      alert("Error exporting faculty list. Please try again.");
+    }
+  };
 
   return (
     <div className="p-2 mx-auto max-w-6xl lg:text-sm rounded-3xl space-y-6">
@@ -836,7 +690,7 @@ export default function HODDashBoard() {
             Extract Reports
           </button>
         </div>
-        
+
         {/* Search Filter */}
         <div className="flex justify-end p-2">
           <div className="relative w-full max-w-sm">
@@ -917,6 +771,11 @@ export default function HODDashBoard() {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="flex justify-end ">
+          <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
+            <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
+          </div>
         </div>
       </div>
       {/* Extract Modal */}
