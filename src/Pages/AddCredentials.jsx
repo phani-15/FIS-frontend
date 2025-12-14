@@ -35,7 +35,7 @@ const groupOptions = [
 ];
 
 const fields = {
-  patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'National/International', 'Document'],
+  patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope', 'Document'],
   book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
   book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],
   journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication', 'Impact Factor', 'National/International', 'ISSN Number', 'Indexing Platform', 'H-index', 'Document'],
@@ -64,9 +64,9 @@ const fields = {
   course_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
   
   award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Year', 'Document'],
-  ieee: ['Organization Name', 'Membership ID (if any)', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  acm: ['Organization Name', 'Membership ID (if any)', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  csi: ['Organization Name', 'Membership ID (if any)', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  ieee: ['Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  acm: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  csi: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
   phd_awarded: ['Year of Awarding', 'Number of Students'],
   phd_ongoing: ['Year of Awarding', 'Number of Students'],
   mtech: ['Year of Awarding', 'Number of Students'],

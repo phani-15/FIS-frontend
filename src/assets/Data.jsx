@@ -1,3 +1,5 @@
+import { label } from "framer-motion/client";
+
 const yearFields = {
   patents: "Year of Published/Granted",
   journal: "Year of Publication",
@@ -34,7 +36,7 @@ export const certifications = [
           "Title of the Patent": "Neural Compression for Edge Devices",
           "Published/Granted": "Granted",
           "Year of Published/Granted": "2021",
-          "National/International": "International",
+          "Scope": "International",
           "Document": "aarti_rao_patent.pdf"
         }
       ],
@@ -45,7 +47,7 @@ export const certifications = [
           "Page Number": "12-25",
           "Year of Publication": "2021",
           "Impact Factor": "3.2",
-          "National/International": "International",
+          "Scope": "International",
           "ISSN Number": "2345-6789",
           "Indexing Platform": "Scopus",
           "H-index": "15",
@@ -66,7 +68,7 @@ export const certifications = [
           "Title of the Conference": "IEEE ICC 2022",
           "Date of Publication": "2022-06-15",
           "Organized by": "IEEE",
-          "National/International": "International",
+          "Scope": "International",
           "Document": "ramesh_gupta_conf.pdf"
         }
       ],
@@ -75,7 +77,7 @@ export const certifications = [
           "Title of the Book Chapter": "RF Front-End Techniques",
           "Name of the Publisher": "Springer",
           "Year of Publication": "2022",
-          "National/International": "International",
+          "Scope": "International",
           "ISBN Number": "978-81-32222-33-1",
           "No. of Authors": "2",
           "Document": "ramesh_gupta_chapter.pdf"
@@ -134,7 +136,7 @@ export const certifications = [
           "Page Number": "101-118",
           "Year of Publication": "2022",
           "Impact Factor": "4.1",
-          "National/International": "International",
+          "Scope": "International",
           "ISSN Number": "0976-4518",
           "Indexing Platform": "SCI",
           "H-index": "28",
@@ -198,7 +200,7 @@ export const certifications = [
           "Title of the Conference": "International Coastal Engineering 2022",
           "Date of Publication": "2022-11-20",
           "Organized by": "ICCE",
-          "National/International": "International",
+          "Scope": "International",
           "Document": "manoj_kumar_conf.pdf"
         }
       ]
@@ -215,7 +217,7 @@ export const certifications = [
           "Title of the Book": "Advanced Metallurgy and Materials",
           "Name of the Publisher": "Elsevier",
           "Year of Publication": "2020",
-          "National/International": "International",
+          "Scope": "International",
           "ISBN Number": "978-0-12-345678-9",
           "Document": "meera_iyer_book.pdf"
         }
@@ -243,7 +245,7 @@ export const certifications = [
           "Page Number": "88-102",
           "Year of Publication": "2023",
           "Impact Factor": "2.4",
-          "National/International": "International",
+          "Scope": "International",
           "ISSN Number": "2233-4455",
           "Indexing Platform": "Scopus",
           "H-index": "10",
@@ -303,7 +305,7 @@ export const certifications = [
           "Title of the Patent": "Adaptive Query Optimizer for NoSQL",
           "Published/Granted": "Granted",
           "Year of Published/Granted": "2020",
-          "National/International": "International",
+          "Scope": "International",
           "Document": "arjun_desai_patent.pdf"
         }
       ],
@@ -390,7 +392,7 @@ export const certifications = [
           "Page Number": "200-216",
           "Year of Publication": "2021",
           "Impact Factor": "2.2",
-          "National/International": "International",
+          "Scope": "International",
           "ISSN Number": "1456-7788",
           "Indexing Platform": "Scopus",
           "H-index": "12",
@@ -421,7 +423,7 @@ export const certifications = [
           "Title of the Book Chapter": "Nanoalloys and Properties",
           "Name of the Publisher": "Wiley",
           "Year of Publication": "2019",
-          "National/International": "International",
+          "Scope": "International",
           "ISBN Number": "978-81-22111-00-3",
           "No. of Authors": "3",
           "Document": "kiran_rao_chapter.pdf"
@@ -528,7 +530,8 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000101",
           "Title of the Patent": "AI-Based Traffic Prediction System",
-          "Status": "Published",
+          "Published/Granted": "Published",
+          "Scope": "International",
           "Issue Date": "2024-02-11",
           "Application Number": "AIPTS001"
         }
@@ -638,8 +641,9 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000202",
           "Title of the Patent": "Hybrid Turbine Efficiency Enhancer",
-          "Status": "Filed",
+          "Published/Granted": "Filed",
           "Issue Date": "2024-01-28",
+          "Scope": "International",
           "Application Number": "HTE002"
         }
       ],
@@ -774,8 +778,9 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000333",
           "Title of the Patent": "Energy Efficient Cooling Blade",
-          "Status": "Published",
+          "Published/Granted": "Published",
           "Issue Date": "2024-03-16",
+          "Scope": "International",
           "Application Number": "ECB003"
         }
       ],
@@ -858,8 +863,9 @@ export const certifications = [
         {
           "Patent Number": "IN2023A000403",
           "Title of the Patent": "Fast Charging Converter System",
-          "Status": "Filed",
+          "Published/Granted": "Filed",
           "Issue Date": "2023-12-10",
+          "Scope": "International",
           "Application Number": "FCC004"
         }
       ]
@@ -952,7 +958,8 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000599",
           "Title of the Patent": "Eco-Friendly Cement Binder",
-          "Status": "Published",
+          "Published/Granted": "Published",
+          "Scope": "International",
           "Issue Date": "2024-02-22",
           "Application Number": "ECB005"
         }
@@ -1037,7 +1044,8 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000699",
           "Title of the Patent": "Zero-Friction Composite Material",
-          "Status": "Filed",
+          "Published/Granted": "Filed",
+          "Scope": "International",
           "Issue Date": "2024-03-01",
           "Application Number": "ZFC006"
         }
@@ -1046,125 +1054,306 @@ export const certifications = [
   }
 ];
 
-const schemas =
-{
+const schemas = {
   patents: {
     label: "Patents",
     attributes: [
       { key: "Patent Number", label: "Patent Number", required: true },
       { key: "Title of the Patent", label: "Title", required: true },
-      { key: "Published/Granted", label: "Status", required: true },
+      { key: "Published/Granted", label: "Published/Granted", required: true },
       { key: "Year of Published/Granted", label: "Year", required: true },
-      { key: "National/International", label: "Scope", required: true },
+      { key: "Scope", label: "Scope", required: true },
     ],
   },
-  journal: {
-    label: "Journal Publications",
-    attributes: [
-      { key: "Title of the Paper", label: "Paper Title", required: true },
-      { key: "Name of the Journal", label: "Journal Name", required: true },
-      { key: "Year of Publication", label: "Year", required: true },
-      { key: "Impact Factor", label: "Impact Factor", required: false },
-      { key: "ISSN Number", label: "ISSN", required: false },
-      { key: "Indexing Platform", label: "Indexing", required: false },
-      { key: "H-index", label: "H-index", required: false },
-    ],
-  },
-  book: {
-    label: "Books",
-    attributes: [
-      { key: "Title of the Book", label: "Book Title", required: true },
-      { key: "Name of the Publisher", label: "Publisher", required: true },
-      { key: "Year of Publication", label: "Year", required: true },
-      { key: "ISBN Number", label: "ISBN", required: false },
-    ],
-  },
+
   book_chapter: {
     label: "Book Chapters",
     attributes: [
       { key: "Title of the Book Chapter", label: "Chapter Title", required: true },
       { key: "Name of the Publisher", label: "Publisher", required: true },
       { key: "Year of Publication", label: "Year", required: true },
+      { key: "National/International", label: "Scope", required: false },
+      { key: "ISBN Number", label: "ISBN", required: false },
+      { key: "No. of Authors", label: "Authors Count", required: false },
+    ],
+  },
+
+  book: {
+    label: "Books",
+    attributes: [
+      { key: "Title of the Book", label: "Book Title", required: true },
+      { key: "Name of the Publisher", label: "Publisher", required: true },
+      { key: "Year of Publication", label: "Year", required: true },
+      { key: "National/International", label: "Scope", required: false },
       { key: "ISBN Number", label: "ISBN", required: false },
     ],
   },
-  conference: {
-    label: "Conferences",
+
+  journal: {
+    label: "Journal Publications",
     attributes: [
       { key: "Title of the Paper", label: "Paper Title", required: true },
-      { key: "Title of the Conference", label: "Conference", required: true },
-      { key: "Date of Publication", label: "Date", required: false },
-      { key: "Organized by", label: "Organizer", required: true },
+      { key: "Name of the Journal", label: "Journal Name", required: true },
+      { key: "Page Number", label: "Page Number", required: false },
+      { key: "Year of Publication", label: "Year", required: true },
+      { key: "Impact Factor", label: "Impact Factor", required: false },
+      { key: "National/International", label: "Scope", required: false },
+      { key: "ISSN Number", label: "ISSN", required: false },
+      { key: "Indexing Platform", label: "Indexing", required: false },
+      { key: "H-index", label: "H-index", required: false },
     ],
   },
+
+  conference: {
+    label: "Conference Papers",
+    attributes: [
+      { key: "Title of the Paper", label: "Paper Title", required: true },
+      { key: "Title of the Conference", label: "Conference Title", required: true },
+      { key: "Date of Publication", label: "Date", required: false },
+      { key: "Organized by", label: "Organizer", required: true },
+      { key: "National/International", label: "Scope", required: false },
+    ],
+  },
+
   certifications: {
     label: "Certifications",
     attributes: [
       { key: "Name of Certification Course", label: "Course Name", required: true },
       { key: "Type of Certification", label: "Type", required: true },
       { key: "Organized by", label: "Organizer", required: true },
-      { key: "Duration (in days)", label: "Duration (days)", required: false },
+      { key: "Duration (in days)", label: "Duration (Days)", required: false },
     ],
   },
+
+  sponsored: {
+    label: "Sponsored Projects",
+    attributes: [
+      { key: "Project Title", label: "Title", required: true },
+      { key: "Funding Details", label: "Funding Details", required: true },
+      { key: "Amount (in INR)", label: "Amount (₹)", required: true },
+      { key: "Duration (in months)", label: "Duration (Months)", required: false },
+      { key: "Status", label: "Status", required: true },
+      { key: "Academic Year", label: "Academic Year", required: false },
+    ],
+  },
+
+  research: {
+    label: "Research Projects",
+    attributes: [
+      { key: "Project Title", label: "Title", required: true },
+      { key: "Year of Sanction", label: "Sanction Year", required: true },
+      { key: "Duration (in months)", label: "Duration (Months)", required: false },
+      { key: "Funding Agency", label: "Funding Agency", required: true },
+      { key: "Fund Received (in INR)", label: "Amount (₹)", required: false },
+      { key: "Are you", label: "Role (PI/Co-PI)", required: false },
+      { key: "Status", label: "Status", required: true },
+    ],
+  },
+
+  consultancy: {
+    label: "Consultancy Projects",
+    attributes: [
+      { key: "Project Title", label: "Title", required: true },
+      { key: "Year of Sanction", label: "Sanction Year", required: true },
+      { key: "Duration (in months)", label: "Duration (Months)", required: false },
+      { key: "Name of Funding Agency", label: "Funding Agency", required: true },
+      { key: "Amount (in INR)", label: "Amount (₹)", required: true },
+      { key: "Are you ", label: "Role", required: false },
+      { key: "Status", label: " Status", required : true}
+    ],
+  },
+
+  fdp: {
+    label: "FDP",
+    attributes: [
+      { key: "Program Title", label: "Program Title", required: true },
+      { key: "Year", label: "Year", required: true },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Organizing Body", label: "Organizer", required: true },
+      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Venue", label: "Venue", required: false },
+      { key: "Attended/Organized", label: "Role", required: true },
+    ],
+  },
+
+  sttp: {
+    label: "STTP",
+    attributes: [
+      { key: "Program Title", label: "Program Title", required: true },
+      { key: "Year", label: "Year", required: true },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Organizing Body", label: "Organizer", required: true },
+      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Venue", label: "Venue", required: false },
+      { key: "Attended/Organized", label: "Role", required: true },
+    ],
+  },
+
   workshop: {
     label: "Workshops",
     attributes: [
-      { key: "Program Title", label: "Title", required: true },
+      { key: "Program Title", label: "Program Title", required: true },
       { key: "Year", label: "Year", required: true },
+      { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
+      { key: "Mode (Online/Offline)", label: "Mode", required: false },
+      { key: "Venue", label: "Venue", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
-  fdp: {
-    label: "FDP / STTP",
+
+  seminar: {
+    label: "Seminars",
     attributes: [
-      { key: "Program Title", label: "Title", required: true },
+      { key: "Program Title", label: "Program Title", required: true },
       { key: "Year", label: "Year", required: true },
+      { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Mode (Online/Offline)", label: "Mode", required: false },
+      { key: "Venue", label: "Venue", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
+
   webinar: {
     label: "Webinars",
     attributes: [
-      { key: "Program Title", label: "Title", required: true },
+      { key: "Program Title", label: "Program Title", required: true },
       { key: "Year", label: "Year", required: true },
+      { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Venue", label: "Venue", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
+
+  RC: {
+    label: "Refresher Courses",
+    attributes: [
+      { key: "Program Title", label: "Program Title", required: true },
+      { key: "Year", label: "Year", required: true },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Organizing Body", label: "Organizer", required: true },
+      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Venue", label: "Venue", required: false },
+      { key: "Attended/Organized", label: "Role", required: true },
+    ],
+  },
+
   OC: {
     label: "Orientation Courses",
     attributes: [
-      { key: "Program Title", label: "Title", required: true },
+      { key: "Program Title", label: "Program Title", required: true },
       { key: "Year", label: "Year", required: true },
+      { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Venue", label: "Venue", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
-  keynote: {
-    label: "Keynote Talks",
-    attributes: [
-      { key: "Conference Title", label: "Event", required: true },
-      { key: "Name of the Event", label: "Event Name", required: true },
-      { key: "Date", label: "Date", required: false },
-      { key: "Topic / Title of Talk", label: "Talk Title", required: true },
-      { key: "Mode", label: "Mode", required: true },
-    ],
-  },
+
   talk: {
     label: "Expert Talks",
     attributes: [
-      { key: "Event Title", label: "Event", required: true },
+      { key: "Event Title", label: "Event Title", required: true },
       { key: "Name of the Event", label: "Event Name", required: true },
       { key: "Date", label: "Date", required: false },
       { key: "Topic / Title of Talk", label: "Talk Title", required: true },
-      { key: "Mode", label: "Mode", required: true },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Mode", label: "Mode", required: false },
+      { key: "Venue", label: "Venue", required: false },
     ],
   },
+
+  keynote: {
+    label: "Keynote Address",
+    attributes: [
+      { key: "Conference Title", label: "Conference Title", required: true },
+      { key: "Name of the Event", label: "Event Name", required: true },
+      { key: "Date", label: "Date", required: false },
+      { key: "Topic / Title of Talk", label: "Talk Title", required: true },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Mode", label: "Mode", required: false },
+      { key: "Venue", label: "Venue", required: false },
+    ],
+  },
+
+  chair: {
+    label: "Session Chair",
+    attributes: [
+      { key: "Conference Title", label: "Conference Title", required: true },
+      { key: "Name of the Event", label: "Event Name", required: true },
+      { key: "Date", label: "Date", required: false },
+      { key: "Topic / Title of Talk", label: "Talk Title", required: false },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Mode", label: "Mode", required: false },
+      { key: "Venue", label: "Venue", required: false },
+    ],
+  },
+
+  lecture: {
+    label: "Guest Lectures",
+    attributes: [
+      { key: "Event Title", label: "Event Title", required: true },
+      { key: "Organizing Institution", label: "Institution", required: true },
+      { key: "Name of the Event", label: "Event Name", required: true },
+      { key: "Date", label: "Date", required: false },
+      { key: "Topic / Title of Talk", label: "Talk Title", required: true },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Mode", label: "Mode", required: false },
+      { key: "Venue", label: "Venue", required: false },
+    ],
+  },
+
+  resource_person: {
+    label: "Resource Person",
+    attributes: [
+      { key: "Event Title", label: "Event Title", required: true },
+      { key: "Organizing Institution", label: "Institution", required: true },
+      { key: "Name of the Event", label: "Event Name", required: true },
+      { key: "Date", label: "Date", required: false },
+      { key: "Topic / Title of Talk", label: "Talk Title", required: true },
+      { key: "Scope", label: "Scope", required: false },
+      { key: "Mode", label: "Mode", required: false },
+      { key: "Venue", label: "Venue", required: false },
+    ],
+  },
+
+  mooc_content: {
+    label: "MOOC Content",
+    attributes: [
+      { key: "Content Title", label: "Content Title", required: true },
+      { key: "Platform / Repository Name", label: "Platform", required: true },
+      { key: "Associated Course/Subject", label: "Course/Subject", required: true },
+      { key: "Date / Year", label: "Date/Year", required: true },
+      { key: "Link", label: "Link", required: false },
+    ],
+  },
+
+  eContent: {
+    label: "e-Content",
+    attributes: [
+      { key: "Content Title", label: "Content Title", required: true },
+      { key: "Platform / Repository Name", label: "Platform", required: true },
+      { key: "Associated Course/Subject", label: "Course/Subject", required: true },
+      { key: "Date / Year", label: "Date/Year", required: true },
+      { key: "Link", label: "Link", required: false },
+    ],
+  },
+
+  course_content: {
+    label: "Course Content",
+    attributes: [
+      { key: "Content Title", label: "Content Title", required: true },
+      { key: "Platform / Repository Name", label: "Platform", required: true },
+      { key: "Associated Course/Subject", label: "Course/Subject", required: true },
+      { key: "Date / Year", label: "Date/Year", required: true },
+      { key: "Link", label: "Link", required: false },
+    ],
+  },
+
   award_title: {
     label: "Awards & Recognitions",
     attributes: [
@@ -1173,50 +1362,70 @@ const schemas =
       { key: "Year", label: "Year", required: true },
     ],
   },
-  research: {
-    label: "Research Projects",
+
+  ieee: {
+    label: "IEEE Membership",
     attributes: [
-      { key: "Project Title", label: "Title", required: true },
-      { key: "Year of Sanction", label: "Sanction Year", required: true },
-      { key: "Duration (in months)", label: "Duration (months)", required: false },
-      { key: "Funding Agency", label: "Agency", required: true },
-      { key: "Fund Received (in INR)", label: "Amount (₹)", required: false },
-      { key: "Are you", label: "Role (PI/Co-PI)", required: true },
-      { key: "Status", label: "Status", required: true },
+      { key: "Membership ID", label: "Membership ID", required: false },
+      { key: "Membership Type (Life/Annual/Student)", label: "Membership Type", required: true },
+      { key: "Year Joined", label: "Year Joined", required: true },
+      { key: "Validity Period (if applicable)", label: "Validity", required: false },
     ],
   },
-  sponsored: {
-    label: "Sponsored Projects",
+
+  acm: {
+    label: "ACM Membership",
     attributes: [
-      { key: "Project Title", label: "Title", required: true },
-      { key: "Funding Details", label: "Funding Agency", required: true },
-      { key: "Amount (in INR)", label: "Amount (₹)", required: true },
-      { key: "Duration (in months)", label: "Duration (months)", required: false },
-      { key: "Status", label: "Status", required: true },
-      { key: "Academic Year", label: "Academic Year", required: false },
+      { key: "Membership ID", label: "Membership ID", required: false },
+      { key: "Membership Type (Life/Annual/Student)", label: "Membership Type", required: true },
+      { key: "Year Joined", label: "Year Joined", required: true },
+      { key: "Validity Period (if applicable)", label: "Validity", required: false },
     ],
   },
-  consultancy: {
-    label: "Consultancy",
+
+  csi: {
+    label: "CSI Membership",
     attributes: [
-      { key: "Project Title", label: "Title", required: true },
-      { key: "Year of Sanction", label: "Sanction Year", required: true },
-      { key: "Duration (in months)", label: "Duration (months)", required: false },
-      { key: "Name of Funding Agency", label: "Client", required: true },
-      { key: "Amount (in INR)", label: "Amount (₹)", required: true },
-      { key: "Are you ", label: "Role", required: true },
+      { key: "Membership ID", label: "Membership ID", required: false },
+      { key: "Membership Type (Life/Annual/Student)", label: "Membership Type", required: true },
+      { key: "Year Joined", label: "Year Joined", required: true },
+      { key: "Validity Period (if applicable)", label: "Validity", required: false },
     ],
   },
+
   phd_awarded: {
     label: "PhD Students Awarded",
     attributes: [
       { key: "Year of Awarding", label: "Year", required: true },
-      { key: "Number of Students", label: "Count", required: true },
+      { key: "Number of Students", label: "Students", required: true },
     ],
   },
 
-  // Add seminar, etc. if needed (similar to workshop)
+  phd_ongoing: {
+    label: "PhD Students Ongoing",
+    attributes: [
+      { key: "Year of Awarding", label: "Year", required: true },
+      { key: "Number of Students", label: "Students", required: true },
+    ],
+  },
+
+  mtech: {
+    label: "M.Tech Students",
+    attributes: [
+      { key: "Year of Awarding", label: "Year", required: true },
+      { key: "Number of Students", label: "Students", required: true },
+    ],
+  },
+
+  mphilmba: {
+    label: "MPhil/MBA Students",
+    attributes: [
+      { key: "Year of Awarding", label: "Year", required: true },
+      { key: "Number of Students", label: "Students", required: true },
+    ],
+  },
 };
+
 const facultyList = [
   {
     name: "Dr. John Doe",
