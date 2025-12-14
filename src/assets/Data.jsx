@@ -1101,7 +1101,7 @@ const schemas = {
       { key: "Page Number", label: "Page Number", required: false },
       { key: "Year of Publication", label: "Year", required: true },
       { key: "ISBN Number", label: "ISBN", required: false },
-      {key : "Scope", label:"Scope" , required : true},
+      { key : "National/International", label:"Scope" , required : true},
       { key: "Impact Factor", label: "Impact Factor", required: false },
       { key: "ISSN Number", label: "ISSN", required: false },
       { key: "Indexing Platform", label: "Indexing", required: false },
