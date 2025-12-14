@@ -209,7 +209,7 @@ export default function IQACDashboard() {
       const rows = facultyList.map((faculty, index) => [
         index + 1,
         faculty.name,
-        faculty.mail || "", // Use email if available, otherwise empty string
+        faculty.email || "", // Use email if available, otherwise empty string
         faculty.role
       ]);
 

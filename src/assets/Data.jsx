@@ -1,3 +1,5 @@
+import { label } from "framer-motion/client";
+
 const yearFields = {
   patents: "Year of Published/Granted",
   journal: "Year of Publication",
@@ -75,7 +77,7 @@ export const certifications = [
           "Title of the Book Chapter": "RF Front-End Techniques",
           "Name of the Publisher": "Springer",
           "Year of Publication": "2022",
-          "National/International": "International",
+          "Scope": "International",
           "ISBN Number": "978-81-32222-33-1",
           "No. of Authors": "2",
           "Document": "ramesh_gupta_chapter.pdf"
@@ -421,7 +423,7 @@ export const certifications = [
           "Title of the Book Chapter": "Nanoalloys and Properties",
           "Name of the Publisher": "Wiley",
           "Year of Publication": "2019",
-          "National/International": "International",
+          "Scope": "International",
           "ISBN Number": "978-81-22111-00-3",
           "No. of Authors": "3",
           "Document": "kiran_rao_chapter.pdf"
@@ -529,7 +531,7 @@ export const certifications = [
           "Patent Number": "IN2024A000101",
           "Title of the Patent": "AI-Based Traffic Prediction System",
           "Status": "Published",
-          "Issue Date": "2024-02-11",
+          "Year of Published/Granted" : "2024",
           "Application Number": "AIPTS001"
         }
       ],
@@ -639,7 +641,7 @@ export const certifications = [
           "Patent Number": "IN2024A000202",
           "Title of the Patent": "Hybrid Turbine Efficiency Enhancer",
           "Status": "Filed",
-          "Issue Date": "2024-01-28",
+          "Year of Published/Granted" : "2024",
           "Application Number": "HTE002"
         }
       ],
@@ -775,7 +777,7 @@ export const certifications = [
           "Patent Number": "IN2024A000333",
           "Title of the Patent": "Energy Efficient Cooling Blade",
           "Status": "Published",
-          "Issue Date": "2024-03-16",
+          "Year of Published/Granted" : "2024",
           "Application Number": "ECB003"
         }
       ],
@@ -859,7 +861,7 @@ export const certifications = [
           "Patent Number": "IN2023A000403",
           "Title of the Patent": "Fast Charging Converter System",
           "Status": "Filed",
-          "Issue Date": "2023-12-10",
+          "Year of Published/Granted" : "2024",
           "Application Number": "FCC004"
         }
       ]
@@ -953,7 +955,7 @@ export const certifications = [
           "Patent Number": "IN2024A000599",
           "Title of the Patent": "Eco-Friendly Cement Binder",
           "Status": "Published",
-          "Issue Date": "2024-02-22",
+          "Year of Published/Granted" : "2024",
           "Application Number": "ECB005"
         }
       ],
@@ -1038,7 +1040,7 @@ export const certifications = [
           "Patent Number": "IN2024A000699",
           "Title of the Patent": "Zero-Friction Composite Material",
           "Status": "Filed",
-          "Issue Date": "2024-03-01",
+          "Year of Published/Granted" : "2024",
           "Application Number": "ZFC006"
         }
       ]
@@ -1086,6 +1088,7 @@ const schemas =
       { key: "Name of the Publisher", label: "Publisher", required: true },
       { key: "Year of Publication", label: "Year", required: true },
       { key: "ISBN Number", label: "ISBN", required: false },
+      {key : "Scope", label:"Scope" , required : true}
     ],
   },
   conference: {
@@ -1214,7 +1217,6 @@ const schemas =
       { key: "Number of Students", label: "Count", required: true },
     ],
   },
-
   // Add seminar, etc. if needed (similar to workshop)
 };
 const facultyList = [
