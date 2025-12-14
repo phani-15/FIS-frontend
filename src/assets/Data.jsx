@@ -1,5 +1,3 @@
-import { label } from "framer-motion/client";
-
 const yearFields = {
   patents: "Year of Published/Granted",
   journal: "Year of Publication",
@@ -641,6 +639,8 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000202",
           "Title of the Patent": "Hybrid Turbine Efficiency Enhancer",
+          "Status": "Filed",
+          "Year of Published/Granted" : "2024",
           "Published/Granted": "Filed",
           "Issue Date": "2024-01-28",
           "Scope": "International",
@@ -778,7 +778,8 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000333",
           "Title of the Patent": "Energy Efficient Cooling Blade",
-          "Published/Granted": "Published",
+          "Status": "Published",
+          "Year of Published/Granted" : "2024",
           "Issue Date": "2024-03-16",
           "Scope": "International",
           "Application Number": "ECB003"
@@ -863,7 +864,8 @@ export const certifications = [
         {
           "Patent Number": "IN2023A000403",
           "Title of the Patent": "Fast Charging Converter System",
-          "Published/Granted": "Filed",
+          "Status": "Filed",
+          "Year of Published/Granted" : "2024",
           "Issue Date": "2023-12-10",
           "Scope": "International",
           "Application Number": "FCC004"
@@ -958,7 +960,8 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000599",
           "Title of the Patent": "Eco-Friendly Cement Binder",
-          "Published/Granted": "Published",
+          "Status": "Published",
+          "Year of Published/Granted" : "2024",
           "Scope": "International",
           "Issue Date": "2024-02-22",
           "Application Number": "ECB005"
@@ -1044,7 +1047,8 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000699",
           "Title of the Patent": "Zero-Friction Composite Material",
-          "Published/Granted": "Filed",
+          "Status": "Filed",
+          "Year of Published/Granted" : "2024",
           "Scope": "International",
           "Issue Date": "2024-03-01",
           "Application Number": "ZFC006"
@@ -1096,8 +1100,9 @@ const schemas = {
       { key: "Name of the Journal", label: "Journal Name", required: true },
       { key: "Page Number", label: "Page Number", required: false },
       { key: "Year of Publication", label: "Year", required: true },
+      { key: "ISBN Number", label: "ISBN", required: false },
+      {key : "Scope", label:"Scope" , required : true},
       { key: "Impact Factor", label: "Impact Factor", required: false },
-      { key: "National/International", label: "Scope", required: false },
       { key: "ISSN Number", label: "ISSN", required: false },
       { key: "Indexing Platform", label: "Indexing", required: false },
       { key: "H-index", label: "H-index", required: false },
