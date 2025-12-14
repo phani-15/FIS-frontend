@@ -45,8 +45,8 @@ export const certifications = [
           "Page Number": "12-25",
           "Year of Publication": "2021",
           "Impact Factor": "3.2",
-          "Scope": "International",
-          "ISSN Number": "2345-6789",
+          "National/International": "International",
+          "ISBN Number": "2345-6789",
           "Indexing Platform": "Scopus",
           "H-index": "15",
           "Document": "aarti_rao_journal.pdf"
@@ -66,7 +66,7 @@ export const certifications = [
           "Title of the Conference": "IEEE ICC 2022",
           "Date of Publication": "2022-06-15",
           "Organized by": "IEEE",
-          "Scope": "International",
+          "National/International": "International",
           "Document": "ramesh_gupta_conf.pdf"
         }
       ],
@@ -75,7 +75,7 @@ export const certifications = [
           "Title of the Book Chapter": "RF Front-End Techniques",
           "Name of the Publisher": "Springer",
           "Year of Publication": "2022",
-          "Scope": "International",
+          "National/International": "International",
           "ISBN Number": "978-81-32222-33-1",
           "No. of Authors": "2",
           "Document": "ramesh_gupta_chapter.pdf"
@@ -134,8 +134,8 @@ export const certifications = [
           "Page Number": "101-118",
           "Year of Publication": "2022",
           "Impact Factor": "4.1",
-          "Scope": "International",
-          "ISSN Number": "0976-4518",
+          "National/International": "International",
+          "ISBN Number": "0976-4518",
           "Indexing Platform": "SCI",
           "H-index": "28",
           "Document": "vikram_singh_journal.pdf"
@@ -198,7 +198,7 @@ export const certifications = [
           "Title of the Conference": "International Coastal Engineering 2022",
           "Date of Publication": "2022-11-20",
           "Organized by": "ICCE",
-          "Scope": "International",
+          "National/International": "International",
           "Document": "manoj_kumar_conf.pdf"
         }
       ]
@@ -243,8 +243,8 @@ export const certifications = [
           "Page Number": "88-102",
           "Year of Publication": "2023",
           "Impact Factor": "2.4",
-          "Scope": "International",
-          "ISSN Number": "2233-4455",
+          "National/International": "International",
+          "ISBN Number": "2233-4455",
           "Indexing Platform": "Scopus",
           "H-index": "10",
           "Document": "sandeep_reddy_journal.pdf"
@@ -495,8 +495,7 @@ export const certifications = [
     data: {
       ieee: [
         {
-          "Organization Name": "IEEE",
-          "Membership ID (if any)": "IEEE7654321",
+          "Membership ID": "IEEE7654321",
           "Membership Type (Life/Annual/Student)": "Life",
           "Year Joined": "2015",
           "Validity Period (if applicable)": "Life",
@@ -530,23 +529,26 @@ export const certifications = [
           "Title of the Patent": "AI-Based Traffic Prediction System",
           "Published/Granted": "Published",
           "Scope": "International",
-          "Issue Date": "2024-02-11",
+          "Year of Published/Granted": "2020",
           "Application Number": "AIPTS001"
         }
       ],
-      conferences: [
+      conference: [
         {
           "Title": "Deep Learning Advances",
           "Conference Name": "ICML 2024",
+          "National/International": "International",
           "Date": "2024-03-10",
           "Location": "Hyderabad"
         }
       ],
       certifications: [
         {
-          "Name": "Google Professional Cloud Architect",
-          "Issued By": "Google",
-          "Year": "2023"
+          "Name of Certification Course": "Google Professional Cloud Architect",
+          "Year": "2023",
+          "Type of Certification": "Professional",
+          "Organized by": "Google",
+          "Duration (in days)": "45"
         }
       ]
     }
@@ -571,6 +573,7 @@ export const certifications = [
         {
           "Title": "Modern Cryptography Essentials",
           "Publisher": "Pearson",
+          "Scope" : "international",
           "ISBN": "978-1-23456-789-7",
           "Year": "2022"
         }
@@ -584,11 +587,12 @@ export const certifications = [
     role: "Assistant Professor",
     dept: "Electronics and Communication Engineering",
     data: {
-      conferences: [
+      conference: [
         {
           "Title": "5G mmWave Spectrum Optimization",
           "Conference Name": "ICC 2024",
           "Date": "2024-04-12",
+          "National/International" : "International",
           "Location": "Delhi"
         }
       ],
@@ -618,11 +622,12 @@ export const certifications = [
           "Year": "2024"
         }
       ],
-      conferences: [
+      conference: [
         {
           "Title": "Urban Planning Innovations",
           "Conference Name": "ICCE 2024",
           "Date": "2024-05-06",
+          "National/International" : "International",
           "Location": "Mumbai"
         }
       ]
@@ -639,7 +644,6 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000202",
           "Title of the Patent": "Hybrid Turbine Efficiency Enhancer",
-          "Status": "Filed",
           "Year of Published/Granted" : "2024",
           "Published/Granted": "Filed",
           "Issue Date": "2024-01-28",
@@ -683,9 +687,11 @@ export const certifications = [
       ],
       certifications: [
         {
-          "Name": "Financial Modelling Expert",
-          "Issued By": "Coursera",
-          "Year": "2022"
+          "Organized By": "Coursera",
+          "Year": "2022",
+          "Name of Certification Course": "Financial Modelling Expert",
+          "Type of Certification": "Professional",
+          "Duration (in days)": "45"
         }
       ]
     }
@@ -697,7 +703,7 @@ export const certifications = [
     role: "Researcher",
     dept: "Metallurgical Engineering",
     data: {
-      conferences: [
+      conference : [
         {
           "Title": "Metal Alloy Innovations",
           "Conference Name": "ICMME 2024",
@@ -731,7 +737,7 @@ export const certifications = [
           "Year": "2024"
         }
       ],
-      conferences: [
+      conference : [
         {
           "Title": "Power System Optimization",
           "Conference Name": "IEEMA 2023",
@@ -778,7 +784,7 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000333",
           "Title of the Patent": "Energy Efficient Cooling Blade",
-          "Status": "Published",
+          "Published/Granted": "Published",
           "Year of Published/Granted" : "2024",
           "Issue Date": "2024-03-16",
           "Scope": "International",
@@ -802,19 +808,22 @@ export const certifications = [
     role: "Researcher",
     dept: "Civil Engineering",
     data: {
-      conferences: [
+      conference: [
         {
           "Title": "Bridge Load Testing Methods",
           "Conference Name": "ICBE 2024",
           "Date": "2024-07-10",
+          "National/International": "International",
           "Location": "Kolkata"
         }
       ],
       certifications: [
         {
-          "Name": "AutoCAD Civil Expert",
-          "Issued By": "Autodesk",
-          "Year": "2023"
+          "Name of Certification Course": "AutoCAD Civil Expert",
+          "Year": "2023",
+          "Type of Certification": "Professional",
+          "Organized by": "Autodesk",
+          "Duration (in days)": "45"
         }
       ]
     }
@@ -852,11 +861,12 @@ export const certifications = [
     role: "Assistant Professor",
     dept: "Electrical and Electronics Engineering",
     data: {
-      conferences: [
+      conference: [
         {
           "Title": "EV Charging Architecture",
           "Conference Name": "EVCon 2024",
           "Date": "2024-03-19",
+          "National/International": "International",
           "Location": "Delhi"
         }
       ],
@@ -864,7 +874,7 @@ export const certifications = [
         {
           "Patent Number": "IN2023A000403",
           "Title of the Patent": "Fast Charging Converter System",
-          "Status": "Filed",
+          "Published/Granted": "Filed",
           "Year of Published/Granted" : "2024",
           "Issue Date": "2023-12-10",
           "Scope": "International",
@@ -891,9 +901,11 @@ export const certifications = [
       ],
       certifications: [
         {
-          "Name": "Ethical Hacking",
-          "Issued By": "EC-Council",
-          "Year": "2023"
+          "Organized By": "EC-Council",
+          "Year": "2023",
+          "Name of Certification Course": "Ethical Hacking",
+          "Type of Certification": "Professional",
+          "Duration (in days)": "45"
         }
       ]
     }
@@ -939,11 +951,12 @@ export const certifications = [
           "Year": "2024"
         }
       ],
-      conferences: [
+      conference: [
         {
           "Title": "IoT-Based Communication Systems",
           "Conference Name": "IoTCon 2023",
           "Date": "2023-12-08",
+          "National/International": "International",
           "Location": "Pune"
         }
       ]
@@ -960,7 +973,7 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000599",
           "Title of the Patent": "Eco-Friendly Cement Binder",
-          "Status": "Published",
+          "Published/Granted": "Published",
           "Year of Published/Granted" : "2024",
           "Scope": "International",
           "Issue Date": "2024-02-22",
@@ -985,19 +998,22 @@ export const certifications = [
     role: "Researcher",
     dept: "Computer Science and Engineering",
     data: {
-      conferences: [
+      conference: [
         {
           "Title": "Quantum Machine Learning Models",
           "Conference Name": "QML Summit 2024",
+          "National/International": "International",
           "Date": "2024-05-18",
           "Location": "Bangalore"
         }
       ],
       certifications: [
         {
-          "Name": "AWS Machine Learning Specialty",
-          "Issued By": "Amazon",
-          "Year": "2023"
+          "Year": "2023",
+          "Name of Certification Course": "AWS Machine Learning Specialty",
+          "Type of Certification": "Professional",
+          "Organized by": "IBM",
+          "Duration (in days)": "45"
         }
       ]
     }
@@ -1047,7 +1063,7 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000699",
           "Title of the Patent": "Zero-Friction Composite Material",
-          "Status": "Filed",
+          "Published/Granted": "Filed",
           "Year of Published/Granted" : "2024",
           "Scope": "International",
           "Issue Date": "2024-03-01",
