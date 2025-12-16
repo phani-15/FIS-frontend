@@ -535,10 +535,11 @@ export const certifications = [
       ],
       conference: [
         {
-          "Title": "Deep Learning Advances",
-          "Conference Name": "ICML 2024",
+          "Title of the Paper ": "Deep Learning Advances",
+          "Title of the Conference ": "ICML 2024",
           "National/International": "International",
-          "Date": "2024-03-10",
+          "Organized by": "IEEE Quantum",
+          "Date of Publication": "2024-03-10",
           "Location": "Hyderabad"
         }
       ],
@@ -560,7 +561,7 @@ export const certifications = [
     role: "Associate Professor",
     dept: "Information Technology Engineering",
     data: {
-      journals: [
+      journal: [
         {
           "Title": "Blockchain Security Framework",
           "Journal Name": "IEEE Access",
@@ -569,11 +570,11 @@ export const certifications = [
           "Year": "2023"
         }
       ],
-      books: [
+      book: [
         {
           "Title": "Modern Cryptography Essentials",
           "Publisher": "Pearson",
-          "Scope" : "international",
+          "National/International" : "international",
           "ISBN": "978-1-23456-789-7",
           "Year": "2022"
         }
@@ -589,9 +590,10 @@ export const certifications = [
     data: {
       conference: [
         {
-          "Title": "5G mmWave Spectrum Optimization",
-          "Conference Name": "ICC 2024",
-          "Date": "2024-04-12",
+          "Title of the Paper": "5G mmWave Spectrum Optimization",
+          "Title of the Conference": "ICC 2024",
+          "Date of Publication": "2024-04-12",
+          "Organized by": "IEEE Quantum",
           "National/International" : "International",
           "Location": "Delhi"
         }
@@ -613,7 +615,7 @@ export const certifications = [
     role: "Lecturer",
     dept: "Civil Engineering",
     data: {
-      journals: [
+      journal: [
         {
           "Title": "Soil Reinforcement Techniques",
           "Journal Name": "Springer GeoTech",
@@ -624,9 +626,10 @@ export const certifications = [
       ],
       conference: [
         {
-          "Title": "Urban Planning Innovations",
-          "Conference Name": "ICCE 2024",
-          "Date": "2024-05-06",
+          "Title of the Paper": "Urban Planning Innovations",
+          "Title of the Conference": "ICCE 2024",
+          "Date of Publication": "2024-05-06",
+          "Organized by": "IEEE Quantum",
           "National/International" : "International",
           "Location": "Mumbai"
         }
@@ -651,9 +654,10 @@ export const certifications = [
           "Application Number": "HTE002"
         }
       ],
-      books: [
+      book: [
         {
           "Title": "Thermodynamics Simplified",
+          "National/International":"International",
           "Publisher": "McGraw Hill",
           "ISBN": "978-0-12345-678-9",
           "Year": "2021"
@@ -676,7 +680,7 @@ export const certifications = [
     role: "Assistant Professor",
     dept: "MBA",
     data: {
-      journals: [
+      journal: [
         {
           "Title": "Behavioral Finance Patterns",
           "Journal Name": "Elsevier Finance",
@@ -687,7 +691,7 @@ export const certifications = [
       ],
       certifications: [
         {
-          "Organized By": "Coursera",
+          "Organized by": "Coursera",
           "Year": "2022",
           "Name of Certification Course": "Financial Modelling Expert",
           "Type of Certification": "Professional",
@@ -705,13 +709,15 @@ export const certifications = [
     data: {
       conference : [
         {
-          "Title": "Metal Alloy Innovations",
-          "Conference Name": "ICMME 2024",
-          "Date": "2024-06-14",
+          "Title of the Paper": "Metal Alloy Innovations",
+          "Title of the Conference": "ICMME 2024",
+          "Date of Publication": "2024-06-14",
+          "National/International":" International",
+          "Organized by": "IEEE Quantum",
           "Location": "Chennai"
         }
       ],
-      journals: [
+      journal: [
         {
           "Title": "Corrosion Resistance Analysis",
           "Journal Name": "Elsevier Materials",
@@ -739,9 +745,11 @@ export const certifications = [
       ],
       conference : [
         {
-          "Title": "Power System Optimization",
-          "Conference Name": "IEEMA 2023",
-          "Date": "2023-11-09",
+          "Title of the Paper": "Power System Optimization",
+          "Title of the Conference": "IEEMA 2023",
+          "Date of Publication": "2023-11-09",
+          "Organized by": "IEEE Quantum",
+          "National/International":"International",
           "Location": "Bangalore"
         }
       ]
@@ -754,15 +762,16 @@ export const certifications = [
     role: "Professor",
     dept: "Computer Science and Engineering",
     data: {
-      books: [
+      book: [
         {
           "Title": "Data Structures Deep Dive",
           "Publisher": "Wiley",
           "ISBN": "978-1-90876-543-2",
+          "National/International": "International",
           "Year": "2020"
         }
       ],
-      journals: [
+      journal: [
         {
           "Title": "AI Optimization in NLP",
           "Journal Name": "ACM Computing Surveys",
@@ -810,9 +819,10 @@ export const certifications = [
     data: {
       conference: [
         {
-          "Title": "Bridge Load Testing Methods",
-          "Conference Name": "ICBE 2024",
-          "Date": "2024-07-10",
+          "Title of the Paper": "Bridge Load Testing Methods",
+          "Title of the Conference": "ICBE 2024",
+          "Date of Publication": "2024-07-10",
+          "Organized by": "IEEE Quantum",
           "National/International": "International",
           "Location": "Kolkata"
         }
@@ -835,15 +845,16 @@ export const certifications = [
     role: "Professor",
     dept: "MBA",
     data: {
-      books: [
+      book: [
         {
           "Title": "Leadership Psychology",
           "Publisher": "Oxford",
           "ISBN": "978-0-19234-567-8",
+          "National/International": "International",
           "Year": "2019"
         }
       ],
-      journals: [
+      journal: [
         {
           "Title": "Human Resource Analytics",
           "Journal Name": "Springer HRM",
@@ -863,10 +874,11 @@ export const certifications = [
     data: {
       conference: [
         {
-          "Title": "EV Charging Architecture",
-          "Conference Name": "EVCon 2024",
-          "Date": "2024-03-19",
+          "Title of the Paper": "EV Charging Architecture",
+          "Title of the Conference": "EVCon 2024",
+          "Date of Publication": "2024-03-19",
           "National/International": "International",
+          "Organized by": "IEEE Quantum",
           "Location": "Delhi"
         }
       ],
@@ -890,7 +902,7 @@ export const certifications = [
     role: "Lecturer",
     dept: "Information Technology Engineering",
     data: {
-      journals: [
+      journal: [
         {
           "Title": "Cyber Security Threat Modeling",
           "Journal Name": "Elsevier Computers & Security",
@@ -901,7 +913,7 @@ export const certifications = [
       ],
       certifications: [
         {
-          "Organized By": "EC-Council",
+          "Organized by": "EC-Council",
           "Year": "2023",
           "Name of Certification Course": "Ethical Hacking",
           "Type of Certification": "Professional",
@@ -917,15 +929,16 @@ export const certifications = [
     role: "Professor",
     dept: "Metallurgical Engineering",
     data: {
-      books: [
+      book: [
         {
           "Title": "Advanced Metallurgy",
+          "National/International": "International",
           "Publisher": "CRC Press",
           "ISBN": "978-1-23411-445-1",
           "Year": "2020"
         }
       ],
-      journals: [
+      journal: [
         {
           "Title": "Nano Grain Structure Control",
           "Journal Name": "Materialia",
@@ -953,10 +966,11 @@ export const certifications = [
       ],
       conference: [
         {
-          "Title": "IoT-Based Communication Systems",
-          "Conference Name": "IoTCon 2023",
-          "Date": "2023-12-08",
+          "Title of the Paper": "IoT-Based Communication Systems",
+          "Title of the Conference": "IoTCon 2023",
+          "Date of Publication": "2023-12-08",
           "National/International": "International",
+          "Organized by": "IEEE Quantum",
           "Location": "Pune"
         }
       ]
@@ -980,7 +994,7 @@ export const certifications = [
           "Application Number": "ECB005"
         }
       ],
-      journals: [
+      journal: [
         {
           "Title": "Sustainable Construction",
           "Journal Name": "Elsevier Construction & Building Materials",
@@ -1000,10 +1014,11 @@ export const certifications = [
     data: {
       conference: [
         {
-          "Title": "Quantum Machine Learning Models",
-          "Conference Name": "QML Summit 2024",
+          "Title of the Paper": "Quantum Machine Learning Models",
+          "Title of the Conference": "QML Summit 2024",
           "National/International": "International",
-          "Date": "2024-05-18",
+          "Date of Publication": "2024-05-18",
+          "Organized by": "IEEE Quantum",
           "Location": "Bangalore"
         }
       ],
@@ -1025,9 +1040,10 @@ export const certifications = [
     role: "Associate Professor",
     dept: "Information Technology Engineering",
     data: {
-      books: [
+      book: [
         {
           "Title": "Cloud Native Development",
+          "National/International" : "International",
           "Publisher": "O'Reilly",
           "ISBN": "978-1-33733-881-0",
           "Year": "2020"
@@ -1050,7 +1066,7 @@ export const certifications = [
     role: "Professor",
     dept: "Mechanical Engineering",
     data: {
-      journals: [
+      journal: [
         {
           "Title": "Heat Transfer Optimization",
           "Journal Name": "ASME Thermal Science",
