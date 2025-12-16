@@ -69,127 +69,179 @@ export default function IQACDashboard() {
 
   // Then in your generateExcelReport function, update the sheet name line:
   const generateExcelReport = async () => {
-    if (selectedTypes.length === 0) {
-      alert("Please select at least one report type.");
-      return;
-    }
+  if (selectedTypes.length === 0) {
+    alert("Please select at least one report type.");
+    return;
+  }
 
-    setIsGenerating(true);
+  setIsGenerating(true);
 
-    try {
-      // Create a new workbook
-      const wb = XLSX.utils.book_new();
+  try {
+    const wb = XLSX.utils.book_new();
+    const usedSheetNames = new Set();
 
-      // Track sheet names to avoid duplicates
-      const usedSheetNames = new Set();
+    selectedTypes.forEach(typeKey => {
+      const schema = getSchemaForType(typeKey);
+      const selectedAttrs = selectedAttributes[typeKey] || [];
+      if (selectedAttrs.length === 0) return;
 
-      // For each selected type, create a worksheet
-      selectedTypes.forEach(typeKey => {
-        const schema = getSchemaForType(typeKey);
-        const selectedAttrs = selectedAttributes[typeKey] || [];
-
-        if (selectedAttrs.length === 0) {
-          console.warn(`No attributes selected for ${typeKey}, skipping...`);
-          return;
-        }
-
-        // Prepare headers (add Faculty Name and Role as first columns)
-        const headers = ["Faculty Name", "Faculty Role", ...selectedAttrs.map(attrKey => {
+      // Headers
+      const headers = [
+        "S.No",
+        "Faculty Name",
+        "Faculty Role",
+        ...selectedAttrs.map(attrKey => {
           const attr = schema.attributes.find(a => a.key === attrKey);
           return attr ? attr.label : attrKey;
-        })];
+        })
+      ];
 
-        // Prepare data rows
-        const rows = [];
+      // Group by department
+      const departmentData = {};
 
-        certifications.forEach(faculty => {
-          if (faculty.data && faculty.data[typeKey]) {
-            faculty.data[typeKey].forEach(record => {
-              // Apply year filter if specified
-              if (yearFrom || yearTo) {
-                const recordYear = extractYearFromRecord(record, typeKey);
+      certifications.forEach(faculty => {
+        if (faculty.data && faculty.data[typeKey]) {
+          faculty.data[typeKey].forEach(record => {
 
-                if (yearFrom && recordYear && recordYear < parseInt(yearFrom)) {
-                  return; // Skip if before start year
-                }
-                if (yearTo && recordYear && recordYear > parseInt(yearTo)) {
-                  return; // Skip if after end year
-                }
-              }
+            // Year filter
+            if (yearFrom || yearTo) {
+              const recordYear = extractYearFromRecord(record, typeKey);
+              if (yearFrom && recordYear && recordYear < parseInt(yearFrom)) return;
+              if (yearTo && recordYear && recordYear > parseInt(yearTo)) return;
+            }
 
-              const rowData = [faculty.name, faculty.role];
+            const dept = faculty.department || "Others";
+            if (!departmentData[dept]) departmentData[dept] = [];
 
-              // Add selected attributes in order
-              selectedAttrs.forEach(attrKey => {
-                rowData.push(record[attrKey] || "");
-              });
-
-              rows.push(rowData);
-            });
-          }
-        });
-
-        if (rows.length > 0) {
-          // Create worksheet with headers and data
-          const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-
-          // Set column widths (auto-width approximation)
-          const colWidths = headers.map(header => ({
-            wch: Math.max(header.length, 15)
-          }));
-          ws['!cols'] = colWidths;
-
-          // Sanitize and ensure unique sheet name
-          let sheetName = sanitizeSheetName(schema.label);
-
-          // Ensure sheet name doesn't exceed 31 characters
-          sheetName = sheetName.substring(0, 31);
-
-          // Make sure sheet name is not empty
-          if (!sheetName.trim()) {
-            sheetName = `Sheet_${typeKey}`;
-          }
-
-          // Ensure uniqueness
-          let finalSheetName = sheetName;
-          let counter = 1;
-          while (usedSheetNames.has(finalSheetName) && counter < 100) {
-            finalSheetName = `${sheetName.substring(0, 28)}_${counter}`;
-            counter++;
-          }
-
-          usedSheetNames.add(finalSheetName);
-
-          // Add worksheet to workbook
-          XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
+            const row = [faculty.name, faculty.role];
+            selectedAttrs.forEach(attrKey => row.push(record[attrKey] || ""));
+            departmentData[dept].push(row);
+          });
         }
       });
 
-      // Check if any worksheets were created
-      if (wb.SheetNames.length === 0) {
-        alert("No data found for the selected criteria.");
-        setIsGenerating(false);
-        return;
+      const sheetData = [];
+      const borderRanges = []; // Track table ranges for borders
+
+      Object.keys(departmentData).forEach(department => {
+        const rows = departmentData[department];
+        if (rows.length === 0) return;
+
+        const startRow = sheetData.length;
+
+        // Department title
+        sheetData.push([`Department: ${department}`]);
+
+        // Headers
+        sheetData.push(headers);
+
+        // Rows with serial numbers
+        rows.forEach((row, index) => {
+          sheetData.push([String(index + 1), ...row]);
+        });
+
+        const endRow = sheetData.length - 1;
+        borderRanges.push({ startRow, endRow });
+
+        sheetData.push([]); // Blank row
+      });
+
+      if (sheetData.length === 0) return;
+
+      const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+      // Column widths
+      ws["!cols"] = headers.map(h => ({
+        wch: Math.max(h.length, 18)
+      }));
+
+      // ---------------- STYLING ----------------
+
+      const range = XLSX.utils.decode_range(ws["!ref"]);
+
+      // Apply styles cell-by-cell
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+          const cell = ws[cellAddress];
+          if (!cell) continue;
+
+          // Department title (bold)
+          if (cell.v && typeof cell.v === "string" && cell.v.startsWith("Department:")) {
+            cell.s = {
+              font: { bold: true, sz: 12 },
+              alignment: { horizontal: "left" }
+            };
+          }
+
+          // Header row (bold)
+          if (R > 0 && sheetData[R - 1] &&
+              sheetData[R - 1][0] &&
+              typeof sheetData[R - 1][0] === "string" &&
+              sheetData[R - 1][0].startsWith("Department:")) {
+            cell.s = {
+              font: { bold: true },
+              alignment: { horizontal: "center" }
+            };
+          }
+        }
       }
 
-      // Generate filename with timestamp
-      const timestamp = new Date().toISOString().split('T')[0];
-      const filename = `Faculty_Report_${timestamp}.xlsx`;
+      // Apply borders to each department table
+      borderRanges.forEach(({ startRow, endRow }) => {
+        for (let R = startRow + 1; R <= endRow; R++) {
+          for (let C = 0; C < headers.length; C++) {
+            const addr = XLSX.utils.encode_cell({ r: R, c: C });
+            if (!ws[addr]) continue;
 
-      // Write and download the file
-      XLSX.writeFile(wb, filename);
+            ws[addr].s = {
+              ...(ws[addr].s || {}),
+              border: {
+                top: { style: "thin" },
+                bottom: { style: "thin" },
+                left: { style: "thin" },
+                right: { style: "thin" }
+              }
+            };
+          }
+        }
+      });
 
-      // Close modal after successful generation
-      setShowExtractModal(false);
-      alert(`Report generated successfully: ${filename}`);
+      // Sheet name
+      let sheetName = sanitizeSheetName(schema.label).substring(0, 31);
+      if (!sheetName.trim()) sheetName = `Sheet_${typeKey}`;
 
-    } catch (error) {
-      console.error("Error generating Excel report:", error);
-      alert(`Error generating report: ${error.message}`);
-    } finally {
-      setIsGenerating(false);
+      let finalSheetName = sheetName;
+      let counter = 1;
+      while (usedSheetNames.has(finalSheetName)) {
+        finalSheetName = `${sheetName.substring(0, 28)}_${counter++}`;
+      }
+      usedSheetNames.add(finalSheetName);
+
+      XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
+    });
+
+    if (wb.SheetNames.length === 0) {
+      alert("No data found for the selected criteria.");
+      return;
     }
-  };
+
+    const timestamp = new Date().toISOString().split("T")[0];
+    const filename = `Faculty_Report_${timestamp}.xlsx`;
+
+    XLSX.writeFile(wb, filename);
+
+    setShowExtractModal(false);
+    alert(`Report generated successfully: ${filename}`);
+
+  } catch (error) {
+    console.error("Excel generation error:", error);
+    alert(`Error generating report: ${error.message}`);
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
 
   // Handle form submission
   const handleExtractReports = async (e) => {
@@ -199,51 +251,64 @@ export default function IQACDashboard() {
 
   const printList = async () => {
     try {
-      // Create a new workbook
       const wb = XLSX.utils.book_new();
 
+      // Group faculty by department
+      const departmentMap = {};
+
+      facultyList.forEach(faculty => {
+        const dept = faculty.department || "Others";
+        if (!departmentMap[dept]) {
+          departmentMap[dept] = [];
+        }
+        departmentMap[dept].push(faculty);
+      });
+
       // Prepare headers
-      const headers = ["S.No", "Faculty Name", "Email", "Designation"];
+      const headers = ["S.No", "Faculty Name", "Email", "Designation", "Department"];
 
-      // Prepare data rows
-      const rows = facultyList.map((faculty, index) => [
-        index + 1,
-        faculty.name,
-        faculty.email || "", // Use email if available, otherwise empty string
-        faculty.role
-      ]);
+      // Create one sheet per department
+      Object.keys(departmentMap).forEach(department => {
+        const rows = departmentMap[department].map((faculty, index) => [
+          index + 1,
+          faculty.name,
+          faculty.email || "",
+          faculty.role,
+          faculty.department || "N/A"
+        ]);
 
-      // Combine headers and data
-      const data = [headers, ...rows];
+        const data = [headers, ...rows];
+        const ws = XLSX.utils.aoa_to_sheet(data);
 
-      // Create worksheet
-      const ws = XLSX.utils.aoa_to_sheet(data);
+        // Column widths
+        ws["!cols"] = [
+          { wch: 6 },
+          { wch: 30 },
+          { wch: 35 },
+          { wch: 25 },
+          { wch: 30 }
+        ];
 
-      // Set column widths
-      ws['!cols'] = [
-        { wch: 6 },  // S.No column width
-        { wch: 30 }, // Name column width
-        { wch: 35 }, // Email column width
-        { wch: 25 }  // Designation column width
-      ];
+        // Sheet names must be <= 31 chars
+        const sheetName = department.substring(0, 31);
 
-      // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, "Faculty List");
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+      });
 
-      // Generate filename with timestamp
-      const timestamp = new Date().toISOString().split('T')[0];
-      const filename = `Faculty_List_${timestamp}.xlsx`;
+      // Filename
+      const timestamp = new Date().toISOString().split("T")[0];
+      const filename = `Faculty_List_Branch_Wise_${timestamp}.xlsx`;
 
-      // Download the file
       XLSX.writeFile(wb, filename);
 
-      alert(`Faculty list exported successfully: ${filename}`);
+      alert(`Branch-wise faculty list exported successfully: ${filename}`);
 
     } catch (error) {
       console.error("Error exporting faculty list:", error);
       alert("Error exporting faculty list. Please try again.");
     }
   };
+
 
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
