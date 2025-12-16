@@ -215,7 +215,7 @@ export const certifications = [
           "Title of the Book": "Advanced Metallurgy and Materials",
           "Name of the Publisher": "Elsevier",
           "Year of Publication": "2020",
-          "Scope": "International",
+          "National/International" : "international",
           "ISBN Number": "978-0-12-345678-9",
           "Document": "meera_iyer_book.pdf"
         }
@@ -535,8 +535,8 @@ export const certifications = [
       ],
       conference: [
         {
-          "Title of the Paper ": "Deep Learning Advances",
-          "Title of the Conference ": "ICML 2024",
+          "Title of the Paper": "Deep Learning Advances",
+          "Title of the Conference": "ICML 2024",
           "National/International": "International",
           "Organized by": "IEEE Quantum",
           "Date of Publication": "2024-03-10",
@@ -572,11 +572,11 @@ export const certifications = [
       ],
       book: [
         {
-          "Title": "Modern Cryptography Essentials",
-          "Publisher": "Pearson",
+          "Title of the Book": "Modern Cryptography Essentials",
+          "Name of the Publisher": "Pearson",
           "National/International" : "international",
           "ISBN": "978-1-23456-789-7",
-          "Year": "2022"
+          "Year of Publication": "2022"
         }
       ]
     }
@@ -656,11 +656,11 @@ export const certifications = [
       ],
       book: [
         {
-          "Title": "Thermodynamics Simplified",
+          "Title of the Book": "Thermodynamics Simplified",
           "National/International":"International",
-          "Publisher": "McGraw Hill",
+          "Name of the Publisher": "McGraw Hill",
           "ISBN": "978-0-12345-678-9",
-          "Year": "2021"
+          "Year of Publication": "2021"
         }
       ],
       fdps: [
@@ -764,11 +764,11 @@ export const certifications = [
     data: {
       book: [
         {
-          "Title": "Data Structures Deep Dive",
-          "Publisher": "Wiley",
+          "Title of the Book": "Data Structures Deep Dive",
+          "Name of the Publisher": "Wiley",
           "ISBN": "978-1-90876-543-2",
           "National/International": "International",
-          "Year": "2020"
+          "Year of Publication": "2020"
         }
       ],
       journal: [
@@ -847,11 +847,11 @@ export const certifications = [
     data: {
       book: [
         {
-          "Title": "Leadership Psychology",
-          "Publisher": "Oxford",
+          "Title of the Book": "Leadership Psychology",
+          "Name of the Publisher": "Oxford",
           "ISBN": "978-0-19234-567-8",
           "National/International": "International",
-          "Year": "2019"
+          "Year of Publication": "2019"
         }
       ],
       journal: [
@@ -931,11 +931,11 @@ export const certifications = [
     data: {
       book: [
         {
-          "Title": "Advanced Metallurgy",
+          "Title of the Book": "Advanced Metallurgy",
           "National/International": "International",
-          "Publisher": "CRC Press",
+          "Name of the Publisher": "CRC Press",
           "ISBN": "978-1-23411-445-1",
-          "Year": "2020"
+          "Year of Publication": "2020"
         }
       ],
       journal: [
@@ -1042,11 +1042,11 @@ export const certifications = [
     data: {
       book: [
         {
-          "Title": "Cloud Native Development",
+          "Title of the Book": "Cloud Native Development",
           "National/International" : "International",
-          "Publisher": "O'Reilly",
+          "Name of the Publisher": "O'Reilly",
           "ISBN": "978-1-33733-881-0",
-          "Year": "2020"
+          "Year of Publication": "2020"
         }
       ],
       fdps: [
