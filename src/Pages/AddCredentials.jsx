@@ -62,11 +62,11 @@ const fields = {
   mooc_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
   eContent: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
   course_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  
+
   award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Year', 'Document'],
   ieee: ['Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  acm: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  csi: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  acm: ['Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  csi: ['Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
   phd_awarded: ['Year of Awarding', 'Number of Students'],
   phd_ongoing: ['Year of Awarding', 'Number of Students'],
   mtech: ['Year of Awarding', 'Number of Students'],
@@ -425,8 +425,8 @@ const AddCredentials = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6">
       <div className="bg-white shadow-xl rounded-xl overflow-hidden">
-        <div className="bg-linear-to-r from-purple-700 to-violet-700 px-6 py-5">
-          <h1 className="text-2xl font-bold text-white text-center">Add New Credential</h1>
+        <div className="bg-linear-to-r from-purple-600 to-violet-800 px-6 py-5">
+          <h1 className="text-3xl font-semibold text-white text-center font-sans" style={{ fontFamily: "Times New Roman, serif" }}>Add New Credential</h1>
         </div>
 
         <div className="p-6">
@@ -602,12 +602,6 @@ const AddCredentials = () => {
                 {/* Submit Buttons */}
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <button
-                    type="submit"
-                    className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
-                  >
-                    Submit {group}
-                  </button>
-                  <button
                     type="button"
                     onClick={() => {
                       setGroup('');
@@ -619,6 +613,12 @@ const AddCredentials = () => {
                     className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-sm transition"
                   >
                     Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
+                  >
+                    Submit {group}
                   </button>
                 </div>
               </div>
