@@ -104,7 +104,7 @@ export const certifications = [
           "Scope": "National",
           "Organizing Body": "IIIT Bangalore",
           "Mode (Online/Offline)": "Online",
-          "Venue": "Virtual",
+          "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
       ]
@@ -119,7 +119,7 @@ export const certifications = [
       sponsored: [
         {
           "Project Title": "Smart Grid Stability Analysis",
-          "Funding Details": "DST",
+          "Funding Agency": "DST",
           "Amount (in INR)": "3200000",
           "Duration (in months)": "36",
           "Status": "Ongoing",
@@ -156,7 +156,7 @@ export const certifications = [
           "Scope": "National",
           "Organizing Body": "IIT Madras",
           "Mode (Online/Offline)": "Online",
-          "Venue": "Virtual",
+          "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
       ],
@@ -168,7 +168,7 @@ export const certifications = [
           "Topic / Title of Talk": "Lean Manufacturing for SMEs",
           "Scope": "National",
           "Mode": "Offline",
-          "Venue": "Mumbai",
+          "Place": "Mumbai",
           "Document": "priya_nair_talk.pdf"
         }
       ]
@@ -273,7 +273,7 @@ export const certifications = [
           "Scope": "National",
           "Organizing Body": "IIM Bangalore",
           "Mode (Online/Offline)": "Online",
-          "Venue": "Virtual",
+          "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
       ],
@@ -310,7 +310,7 @@ export const certifications = [
       sponsored: [
         {
           "Project Title": "AI for Smart Cities",
-          "Funding Details": "AICTE",
+          "Funding Agency": "AICTE",
           "Amount (in INR)": "2000000",
           "Duration (in months)": "24",
           "Status": "Completed",
@@ -339,7 +339,7 @@ export const certifications = [
           "Scope": "National",
           "Organizing Body": "IEEE MTT",
           "Mode (Online/Offline)": "Online",
-          "Venue": "Virtual",
+          "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
       ]
@@ -371,7 +371,7 @@ export const certifications = [
           "Topic / Title of Talk": "Two-Phase Flow Modelling",
           "Scope": "International",
           "Mode": "Offline",
-          "Venue": "Chennai",
+          "Place": "Chennai",
           "Document": "rohit_verma_talk.pdf"
         }
       ]
@@ -404,7 +404,7 @@ export const certifications = [
           "Scope": "National",
           "Organizing Body": "IIT Bombay",
           "Mode (Online/Offline)": "Online",
-          "Venue": "Virtual",
+          "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
       ]
@@ -481,7 +481,7 @@ export const certifications = [
           "Scope": "Institutional",
           "Organizing Body": "NIT Warangal",
           "Mode (Online/Offline)": "Offline",
-          "Venue": "NIT Warangal",
+          "Place": "NIT Warangal",
           "Attended/Organized": "Attended"
         }
       ]
@@ -1166,7 +1166,7 @@ const schemas = {
     label: "Sponsored Projects",
     attributes: [
       { key: "Project Title", label: "Title", required: true },
-      { key: "Funding Details", label: "Funding Details", required: true },
+      { key: "Funding Agency", label: "Funding Agency", required: true },
       { key: "Amount (in INR)", label: "Amount (₹)", required: true },
       { key: "Duration (in months)", label: "Duration (Months)", required: false },
       { key: "Status", label: "Status", required: true },
@@ -1208,7 +1208,7 @@ const schemas = {
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: true },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
@@ -1221,7 +1221,7 @@ const schemas = {
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: true },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
@@ -1234,7 +1234,7 @@ const schemas = {
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: false },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
@@ -1247,7 +1247,7 @@ const schemas = {
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: false },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
@@ -1260,7 +1260,7 @@ const schemas = {
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: true },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
@@ -1273,7 +1273,7 @@ const schemas = {
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: true },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
@@ -1286,7 +1286,7 @@ const schemas = {
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode (Online/Offline)", label: "Mode", required: true },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
   },
@@ -1300,7 +1300,7 @@ const schemas = {
       { key: "Topic / Title of Talk", label: "Talk Title", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Mode", label: "Mode", required: false },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
     ],
   },
 
@@ -1313,7 +1313,7 @@ const schemas = {
       { key: "Topic / Title of Talk", label: "Talk Title", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Mode", label: "Mode", required: false },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
     ],
   },
 
@@ -1326,7 +1326,7 @@ const schemas = {
       { key: "Topic / Title of Talk", label: "Talk Title", required: false },
       { key: "Scope", label: "Scope", required: false },
       { key: "Mode", label: "Mode", required: false },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
     ],
   },
 
@@ -1340,7 +1340,7 @@ const schemas = {
       { key: "Topic / Title of Talk", label: "Talk Title", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Mode", label: "Mode", required: false },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
     ],
   },
 
@@ -1354,7 +1354,7 @@ const schemas = {
       { key: "Topic / Title of Talk", label: "Talk Title", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Mode", label: "Mode", required: false },
-      { key: "Venue", label: "Venue", required: false },
+      { key: "Place", label: "Place", required: false },
     ],
   },
 
@@ -1662,35 +1662,48 @@ const fields = {
   patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope', 'Document'],
   book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
   book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],
-  journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication', 'Impact Factor', 'National/International', 'ISSN Number', 'Indexing Platform', 'H-index', 'Document'],
-  conference: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International', 'Document'],
+  journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication','Volume Number', 'Impact Factor (Thomson Reuters)', 'National/International', 'ISSN Number', 'No.of Authors','Author','Indexing Platform', 'H-index', 'Document'],
+  conference_paper: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International', 'Document'],
 
-  certifications: ['Name of Certification Course', 'Type of Certification', 'Organized by', 'Duration (in days)'],
-  sponsored: ['Project Title', 'Funding Details', 'Amount (in INR)', 'Duration (in months)', 'Status', 'Academic Year', 'Document'],
-  research: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Funding Agency', 'Fund Received (in INR)', 'Are you', 'Status', 'Document'],
-  consultancy: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Name of Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Document'],
-  fdp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  sttp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  workshop: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  seminar: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  webinar: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  RC: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  OC: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
+  nptel: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
+  swayam: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
+  coursera: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
+  infosysspringboard: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
+  edx: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
+  other: ['Name of Certification Course', 'Type of Certification','Organized by', 'Duration (in weeks)','certificate'],
 
-  talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  chair: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  lecture: ['Event Title', 'Organizing Institution', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  resource_person: ['Event Title', 'Organizing Institution', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
+  sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration (in months)', 'Academic Year','Are you','Status',  'Document'],
+  research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency','Sanctioned Amount','Recieved Amount (utilized)', 'Are you', 'Status', 'Document'],
+  consultancy: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Document'],
+
+  fdp: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  sttp: ['Program Title','Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  conference: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  workshop: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  seminar: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  webinar: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  RC: ['Program Title', 'Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  OC: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+
+  talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
+  keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
+  chair: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
+  lecture: ['Organizing Institution', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
+  resource_person: ['Event Title', 'Organizing Institution','Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
 
   mooc_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
   eContent: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
   course_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
   
-  award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Year', 'Document'],
+  award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Scope','Year', 'Document'],
+
   ieee: ['Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
   acm: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
   csi: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  ie: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  iete: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  other_bodies: [ 'Name of the Professional Body', 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+
   phd_awarded: ['Year of Awarding', 'Number of Students'],
   phd_ongoing: ['Year of Awarding', 'Number of Students'],
   mtech: ['Year of Awarding', 'Number of Students'],

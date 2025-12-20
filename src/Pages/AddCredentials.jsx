@@ -14,6 +14,8 @@ const isRadioField = (label) => {
     clean === 'published/granted' ||
     clean === 'attended/organized' ||
     clean === "are you" ||
+    clean === "author" ||
+    clean === "type of certification" ||
     clean === "status";
 };
 
@@ -38,7 +40,7 @@ const groupOptions = [
 const subcategories = {
   'Publications': [
     { label: 'Journal Paper', value: 'journal' },
-    { label: 'Conference Paper', value: 'conference' },
+    { label: 'Conference Paper/Seminar Paper', value: 'conference_paper' },
     { label: 'Book Chapter', value: 'book_chapter' },
     { label: 'Book', value: 'book' },
   ],
@@ -59,6 +61,7 @@ const subcategories = {
     { label: 'FDP', value: 'fdp' },
     { label: 'STTP', value: 'sttp' },
     { label: 'Workshop', value: 'workshop' },
+    { label: 'Conference', value: 'conference' },
     { label: 'Seminar', value: 'seminar' },
     { label: 'Webinar', value: 'webinar' },
     { label: 'Refresh Course', value: 'rc' },
@@ -83,20 +86,20 @@ const subcategories = {
     { label: 'IEEE', value: 'ieee' },
     { label: 'ACM', value: 'acm' },
     { label: 'CSI', value: 'csi' },
-    { label: 'Others', value: 'other' },
+    { label: 'IE', value: 'ie' },
+    { label: 'IETE', value: 'iete' },
+    { label: 'Others', value: 'other_bodies' },
   ],
   'Research Guidance': [
     { label: 'Ph.D. (Awarded)', value: 'phd_awarded' },
     { label: 'Ph.D. (Ongoing)', value: 'phd_ongoing' },
     { label: 'M.Tech/M.E/MCA', value: 'mtech' },
-    { label: 'M.Phil/MBA', value: 'mphilmba' },
   ],
 };
 
 const directFieldGroups = {
   'Patents': 'patents',
   'Awards and Recognitions': 'award_title',
-  'Certifications': 'certifications',
 };
 
 const AddCredentials = () => {
@@ -327,6 +330,18 @@ const AddCredentials = () => {
         { value: "Ongoing", label: "Ongoing" },
         { value: "Completed", label: "Completed" }
       ]
+    }
+    else if( clean === "type of certification"){
+      return [
+        { value: "FDP", label: "FDP" },
+        { value: "Certification Course", label: "Certification Course" }
+      ];
+    } 
+    else if(clean === "author"){
+      return [
+        { value: "First Author", label: "First Author" },
+        { value: "Co-Author", label: "Co-Author" }
+      ];
     }
     return [];
   };
