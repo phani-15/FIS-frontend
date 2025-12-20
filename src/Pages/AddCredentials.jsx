@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { fields } from '../assets/Data.jsx';
 
 // 🔧 Helpers (pure JS)
 const isFileField = (label) => {
@@ -33,45 +34,6 @@ const groupOptions = [
   'Memberships in Professional Bodies',
   'Research Guidance',
 ];
-
-const fields = {
-  patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope', 'Document'],
-  book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
-  book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],
-  journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication', 'Impact Factor', 'National/International', 'ISSN Number', 'Indexing Platform', 'H-index', 'Document'],
-  conference: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International', 'Document'],
-
-  certifications: ['Name of Certification Course', 'Type of Certification', 'Organized by', 'Duration (in days)'],
-  sponsored: ['Project Title', 'Funding Details', 'Amount (in INR)', 'Duration (in months)', 'Status', 'Academic Year', 'Document'],
-  research: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Funding Agency', 'Fund Received (in INR)', 'Are you', 'Status', 'Document'],
-  consultancy: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Name of Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Document'],
-  fdp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  sttp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  workshop: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  seminar: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  webinar: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  RC: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  OC: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-
-  talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  chair: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  lecture: ['Event Title', 'Organizing Institution', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  resource_person: ['Event Title', 'Organizing Institution', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-
-  mooc_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  eContent: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  course_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  
-  award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Year', 'Document'],
-  ieee: ['Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  acm: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  csi: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  phd_awarded: ['Year of Awarding', 'Number of Students'],
-  phd_ongoing: ['Year of Awarding', 'Number of Students'],
-  mtech: ['Year of Awarding', 'Number of Students'],
-  mphilmba: ['Year of Awarding', 'Number of Students'],
-};
 
 const subcategories = {
   'Publications': [

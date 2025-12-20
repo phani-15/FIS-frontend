@@ -30,7 +30,7 @@ export default function ProfilePage() {
         "designation": "Assistant Professor",
         "department": "cse",
         "college": "University College of Engineering",
-        "date_of_join": "2023-09",
+        "date_of_join": "15-09-2011",
           "phone": "",
         "location": ""
       },
@@ -84,12 +84,6 @@ export default function ProfilePage() {
         "postdoc": []
       },
       "experience": [
-        {
-          "institute": "JNTUGV",
-          "designation": "Asst.Professor",
-          "from": 2021,
-          "to": 2023
-        },
         {
           "institute": "JNTUGV",
           "designation": "Asst.Professor",
@@ -258,7 +252,7 @@ export default function ProfilePage() {
 
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
-                    Joined: {newObj.createdAt}
+                    Joined: <span className="font-semibold"> {newObj.personalData.date_of_join}</span>
                   </div>
                  { newObj.personalData.location && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <MapPin  size={16} className="text-green-500" />

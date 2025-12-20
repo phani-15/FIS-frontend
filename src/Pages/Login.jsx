@@ -91,7 +91,7 @@ export default function Login() {
 							htmlFor="username"
 							className="block mb-1 text-sm font-medium text-gray-700"
 						>
-							Email / Phone number
+							Email
 						</label>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">
@@ -141,8 +141,7 @@ export default function Login() {
 						Login
 						<LogIn className="w-5 h-5" />
 					</button>
-					<p className="text-center">New user ? <span className="text-blue-800 cursor-pointer hover:underline" onClick={() => navigate('/register')}>Register</span></p>
-					<p className="mt-2 hover:underline cursor-pointer text-center text-violet-700" onClick={()=>navigate('/rp')}>Reset Password</p>
+					<p className="mt-1 hover:underline cursor-pointer text-center text-violet-700" onClick={()=>navigate('/rp')}>Forgot/Reset Password?</p>
 				</form>
 			</div>
 		</div>

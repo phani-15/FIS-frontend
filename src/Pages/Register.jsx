@@ -9,7 +9,7 @@ import { number } from "framer-motion";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
 
@@ -893,14 +893,6 @@ export default function Register() {
 
             <div className="flex gap-3 justify-end">
               <button
-                type="button"
-                onClick={() => setStep("signUp")}
-                className="mt-6 hover:bg-slate-200 bg-slate-100  px-4 py-2 cursor-pointer rounded-lg border border-gray-400 flex items-center gap-0.5"
-              >
-                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
-              </button>
-
-              <button
                 type="submit"
                 className="mt-6  cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white p-2 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
               >
@@ -924,7 +916,6 @@ export default function Register() {
                   {renderEduFields(level)}
                 </div>
               ))}
-              <h1>This testing Phrase</h1>
               {/* PhD Section */}
               <div className="mt-6">
                 <div className="flex items-center space-x-4 mb-4">
