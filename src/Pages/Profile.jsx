@@ -224,7 +224,7 @@ export default function ProfilePage() {
                   <div className="flex flex-col  gap-3">
                     {viewer == "user" &&
                       <button
-                        onClick={() => navigate('/add')}
+                        onClick={() => navigate('/ac')}
                         className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
                     }
                     <button
