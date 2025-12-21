@@ -103,7 +103,7 @@ export const certifications = [
           "Year": "2023",
           "Scope": "National",
           "Organizing Body": "IIIT Bangalore",
-          "Mode (Online/Offline)": "Online",
+          "Mode": "Online",
           "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
@@ -155,7 +155,7 @@ export const certifications = [
           "Year": "2022",
           "Scope": "National",
           "Organizing Body": "IIT Madras",
-          "Mode (Online/Offline)": "Online",
+          "Mode": "Online",
           "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
@@ -272,7 +272,7 @@ export const certifications = [
           "Year": "2023",
           "Scope": "National",
           "Organizing Body": "IIM Bangalore",
-          "Mode (Online/Offline)": "Online",
+          "Mode": "Online",
           "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
@@ -338,7 +338,7 @@ export const certifications = [
           "Year": "2024",
           "Scope": "National",
           "Organizing Body": "IEEE MTT",
-          "Mode (Online/Offline)": "Online",
+          "Mode": "Online",
           "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
@@ -403,7 +403,7 @@ export const certifications = [
           "Year": "2022",
           "Scope": "National",
           "Organizing Body": "IIT Bombay",
-          "Mode (Online/Offline)": "Online",
+          "Mode": "Online",
           "Place": "Virtual",
           "Attended/Organized": "Attended"
         }
@@ -480,7 +480,7 @@ export const certifications = [
           "Year": "2022",
           "Scope": "Institutional",
           "Organizing Body": "NIT Warangal",
-          "Mode (Online/Offline)": "Offline",
+          "Mode": "Offline",
           "Place": "NIT Warangal",
           "Attended/Organized": "Attended"
         }
@@ -1141,7 +1141,7 @@ const schemas = {
     ],
   },
 
-  conference: {
+  conference_paper: {
     label: "Conference Papers",
     attributes: [
       { key: "Title of the Paper", label: "Paper Title", required: true },
@@ -1207,7 +1207,7 @@ const schemas = {
       { key: "Year", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
@@ -1220,7 +1220,7 @@ const schemas = {
       { key: "Year", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
@@ -1233,7 +1233,7 @@ const schemas = {
       { key: "Year", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: false },
+      { key: "Mode", label: "Mode", required: false },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
@@ -1246,7 +1246,7 @@ const schemas = {
       { key: "Year", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: false },
+      { key: "Mode", label: "Mode", required: false },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
@@ -1259,7 +1259,7 @@ const schemas = {
       { key: "Year", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
@@ -1272,7 +1272,7 @@ const schemas = {
       { key: "Year", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
@@ -1285,7 +1285,7 @@ const schemas = {
       { key: "Year", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: false },
       { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode (Online/Offline)", label: "Mode", required: true },
+      { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/Organized", label: "Role", required: true },
     ],
@@ -1676,14 +1676,14 @@ const fields = {
   research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency','Sanctioned Amount','Recieved Amount (utilized)', 'Are you', 'Status', 'Document'],
   consultancy: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Document'],
 
-  fdp: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
-  sttp: ['Program Title','Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
-  conference: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
-  workshop: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
-  seminar: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
-  webinar: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
-  RC: ['Program Title', 'Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
-  OC: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Place', 'Attended/Organized','Role'],
+  fdp: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  sttp: ['Program Title','Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  conference: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  workshop: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  seminar: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  webinar: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  RC: ['Program Title', 'Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  OC: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
 
   talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
   keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
@@ -1710,4 +1710,7 @@ const fields = {
   mphilmba: ['Year of Awarding', 'Number of Students'],
 };
 
-export { schemas, yearFields,facultyList,fields }
+const phd_awarded_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Awarding', 'Proceeding'];
+const phd_joining_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Joining', 'Allotment order'];
+
+export { schemas, yearFields,facultyList,fields, phd_awarded_fields, phd_joining_fields };

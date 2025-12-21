@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
+import { phd_awarded_fields, phd_joining_fields } from '../assets/Data.jsx';
 import { form, select } from 'framer-motion/client';
 
 // ✅ Data Structures (fixed syntax errors)
@@ -91,7 +92,7 @@ const AddCredentials = () => {
   // 🔧 Helpers (pure JS)
   const isFileField = (label) => {
     const clean = label.trim().toLowerCase();
-    return clean.includes('document') || clean.includes('certificate');
+    return clean.includes('document') || clean.includes('certificate') || clean.includes('proceeding') || clean.includes('allotment order');
   };
 
   const isRadioField = (label) => {
@@ -116,6 +117,10 @@ const AddCredentials = () => {
     return clean === 'place';
   };
 
+  const isIndexing = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'indexing platform';
+  }
 
   // 🔍 Validation Helper (pure JS)
   const validateField = (label, value) => {
@@ -378,6 +383,44 @@ const AddCredentials = () => {
     return roleValue === 'Organized';
   }
 
+  const handlePhdSubmit = (e) => {
+    e.preventDefault();
+    // Validate all fields
+    const newErrors = {};
+    let isValid = true;
+    const numPhd = Number(formData['Number of Ph.D. Awarded'] || 0);
+    for (let i = 0; i < numPhd; i++) {
+      phd_awarded_fields.forEach((label) => {
+        const name = `${label}__${i}`;
+        const value = formData[name] || '';
+        const result = validateField(label, value);
+        if (!result.isValid && result.message) {
+          newErrors[name] = result.message;
+          isValid = false;
+        }
+      });
+    }
+    if (!isValid) {
+      setErrors(newErrors);
+      return;
+    }
+    // ✅ Build payload
+    const payload = {
+      group,
+      subcategory,
+      formData,
+      files: fileMap
+    };
+    console.log('✅ Submitted:', payload);
+    alert(`✅ ${group} - ${subcategory} added!`);
+    // Reset
+    setGroup('');
+    setSubcategory('');
+    setFormData({});
+    setFileMap({});
+    setErrors({});
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -482,118 +525,194 @@ const AddCredentials = () => {
 
           {/* Form Fields */}
           {(group && (!hasSubcategories || subcategory)) && currentFieldKeys.length > 0 && (
-            <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-              <div className="border-t pt-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  {group}
-                  {hasSubcategories && ` → ${subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}`}
-                </h2>
-
-                <div className="space-y-5">
-                  {currentFieldKeys.map((label, idx) => {
-                    const name = label;
-                    const cleanLabel = label.trim();
-                    const isFile = isFileField(cleanLabel);
-                    const isRadio = isRadioField(cleanLabel);
-                    const isNum = isNumberField(cleanLabel) && !isRadio;
-                    const isDate = isDateField(cleanLabel)
-                    const isPlaceField = isPlace(cleanLabel);
-                    const value = formData[name] || '';
-                    const modeValue = formData['Mode'] || '';
-                    const isRoleField = isRole(cleanLabel);
-
-                    if (isPlaceField && modeValue !== 'Offline') {
-                      return null; // 🚫 completely hide Place
-                    }
-
-                    if (isRoleField && !isOrganized()) {
-                      return null; // 🚫 hide Role if not Organized
-                    }
-
-                    return (
-                      <div key={name}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          {cleanLabel}
-                          {!isFile && !isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
-                        </label>
-
-                        {isRadio ? (
-                          <div className="flex flex-wrap gap-4 mt-1">
-                            {getRadioOptions(cleanLabel).map(opt => (
-                              <label key={opt.value} className="flex items-center cursor-pointer">
-                                <input
-                                  type="radio"
-                                  name={name}
-                                  value={opt.value}
-                                  checked={value === opt.value}
-                                  onChange={() => {
-                                    handleInputChange(name, opt.value);
-
-                                    if (opt.value === 'Attended') {
-                                      setFormData(prev => {
-                                        const updated = { ...prev };
-                                        delete updated['Role']; // ✅ remove role completely
-                                        return updated;
-                                      });
-                                    }
-                                    else {
-                                      setFormData(prev => ({ ...prev, 'Role': prev['Role'] || '' }));
-                                    }
-                                  }}
-                                  className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                                  required
-                                />
-                                <span className={`ml-2 ${value === opt.value ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
-                                  {opt.label}
-                                </span>
+            subcategory === 'phd_awarded' ? (
+              <form onSubmit={handlePhdSubmit} className="space-y-6 animate-fade-in">
+                <div className="border-t pt-6">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                  </h2>
+                  <div className="space-y-5">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Number of Ph.D. Awarded<span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={formData['Number of Ph.D. Awarded'] || ''}
+                      onChange={(e) => handleInputChange('Number of Ph.D. Awarded', e.target.value)}
+                      className={`w-full px-3 py-2 border rounded-md ${errors['Number of Ph.D. Awarded'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                        } `}
+                      placeholder={`Enter Number of Ph.D. Awarded`}
+                      required
+                      min="1"
+                    />
+                    {errors['Number of Ph.D. Awarded'] && (
+                      <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of Ph.D. Awarded']}</p>
+                    )}
+                    {/* I want to add formData['Number of Ph.D. Awarded'] times of phd_awarded_fields */}
+                    {Array.from({ length: Number(formData['Number of Ph.D. Awarded'] || 0) }, (_, i) => (
+                      <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                        <h3 className="text-md font-semibold text-gray-700 mb-3">Ph.D. Scholar {i + 1}</h3>
+                        {phd_awarded_fields.map((label, idx) => {
+                          const name = `${label}__${i}`;
+                          const cleanLabel = label.trim();
+                          const isFile = isFileField(cleanLabel);
+                          const isNum = isNumberField(cleanLabel);
+                          const isDate = isDateField(cleanLabel)
+                          const value = formData[name] || '';
+                          return (
+                            <div key={name} className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {cleanLabel}
+                                {!isFile && <span className="text-red-500 ml-1">*</span>}
                               </label>
-                            ))}
-                          </div>
-                        ) : isFile ? (
-                          <div className="mt-1 flex items-center">
-                            <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                              <span className="text-sm text-blue-600 font-medium">
-                                {value || 'Choose file'}
-                              </span>
-                              <input
-                                type="file"
-                                className="hidden"
-                                onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                accept=".pdf,.jpg,.jpeg,.png"
-                              />
-                            </label>
-                            {value && (
-                              <button
-                                type="button"
-                                onClick={() => handleFileChange(name, null)}
-                                className="ml-2 text-xs text-red-500 hover:text-red-700"
-                              >
-                                ✕ Clear
-                              </button>
-                            )}
-                          </div>
-                        ) : cleanLabel === 'Scope' ? (
-                          <select
-                            value={value}
-                            onChange={(e) => handleInputChange(name, e.target.value)}
-                            onBlur={() => {
-                              const result = validateField(label, formData[name] || '');
-                              if (!result.isValid && result.message) {
-                                setErrors(prev => ({ ...prev, [name]: result.message }));
-                              }
-                            }}
-                            className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                              }`}
-                          >
-                            <option value="">Select Scope</option>
-                            <option value="International (Abroad)">International (Abroad)</option>
-                            <option value="International (within India)">International (within India)</option>
-                            <option value="National Level">National Level</option>
-                            <option value="State Level">State Level</option>
-                            <option value="University Level">University Level</option>
-                          </select>
-                        ) :
-                          isRoleField ? (
+                              {isFile ? (
+                                <div className="mt-1 flex items-center">
+                                  <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                    <span className="text-sm text-blue-600 font-medium">
+                                      {value || 'Choose file'}
+                                    </span>
+                                    <input
+                                      type="file"
+                                      className="hidden"
+                                      onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                      accept=".pdf,.jpg,.jpeg,.png"
+                                    />
+                                  </label>
+                                  {value && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleFileChange(name, null)}
+                                      className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                    >
+                                      ✕ Clear
+                                    </button>
+                                  )}
+                                </div>
+                              ) : (
+                                <input
+                                  type={isNum ? "number" : isDate ? "date" : "text"}
+                                  value={value}
+                                  onChange={(e) => handleInputChange(name, e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    } `}
+                                  placeholder={`Enter ${cleanLabel}`}
+                                  required={!isFile}
+                                  min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                  step={isNum ? "1" : undefined}
+                                />
+                              )}
+                              {errors[name] && (
+                                <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+
+                    <div className="mt-6">
+                      <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            ) :
+              <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+                <div className="border-t pt-6">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    {group}
+                    {hasSubcategories && ` → ${subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}`}
+                  </h2>
+
+                  <div className="space-y-5">
+                    {currentFieldKeys.map((label, idx) => {
+                      const name = label;
+                      const cleanLabel = label.trim();
+                      const isFile = isFileField(cleanLabel);
+                      const isRadio = isRadioField(cleanLabel);
+                      const isNum = isNumberField(cleanLabel) && !isRadio;
+                      const isDate = isDateField(cleanLabel)
+                      const isPlaceField = isPlace(cleanLabel);
+                      const value = formData[name] || '';
+                      const modeValue = formData['Mode'] || '';
+                      const isRoleField = isRole(cleanLabel);
+
+                      if (isPlaceField && modeValue !== 'Offline') {
+                        return null; // 🚫 completely hide Place
+                      }
+
+                      if (isRoleField && !isOrganized()) {
+                        return null; // 🚫 hide Role if not Organized
+                      }
+
+                      return (
+                        <div key={name}>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            {cleanLabel}
+                            {!isFile && !isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
+                          </label>
+
+                          {isRadio ? (
+                            <div className="flex flex-wrap gap-4 mt-1">
+                              {getRadioOptions(cleanLabel).map(opt => (
+                                <label key={opt.value} className="flex items-center cursor-pointer">
+                                  <input
+                                    type="radio"
+                                    name={name}
+                                    value={opt.value}
+                                    checked={value === opt.value}
+                                    onChange={() => {
+                                      handleInputChange(name, opt.value);
+
+                                      if (opt.value === 'Attended') {
+                                        setFormData(prev => {
+                                          const updated = { ...prev };
+                                          delete updated['Role']; // ✅ remove role completely
+                                          return updated;
+                                        });
+                                      }
+                                      else {
+                                        setFormData(prev => ({ ...prev, 'Role': prev['Role'] || '' }));
+                                      }
+                                    }}
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                                    required
+                                  />
+                                  <span className={`ml-2 ${value === opt.value ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                                    {opt.label}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          ) : isFile ? (
+                            <div className="mt-1 flex items-center">
+                              <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                <span className="text-sm text-blue-600 font-medium">
+                                  {value || 'Choose file'}
+                                </span>
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                  accept=".pdf,.jpg,.jpeg,.png"
+                                />
+                              </label>
+                              {value && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleFileChange(name, null)}
+                                  className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                >
+                                  ✕ Clear
+                                </button>
+                              )}
+                            </div>
+                          ) : cleanLabel === 'Scope' ? (
                             <select
                               value={value}
                               onChange={(e) => handleInputChange(name, e.target.value)}
@@ -604,18 +723,18 @@ const AddCredentials = () => {
                                 }
                               }}
                               className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                }`}>
-                              <option value="">Select Role</option>
-                              <option value="Convenor">Convenor</option>
-                              <option value="Co-Convenor">Co-Convenor</option>
-                              <option value="Coordinator">Coordinator</option>
-                              <option value="Co-Coordinator">Co-Coordinator</option>
-                              <option value="Member">Member</option>
+                                }`}
+                            >
+                              <option value="">Select Scope</option>
+                              <option value="International (Abroad)">International (Abroad)</option>
+                              <option value="International (within India)">International (within India)</option>
+                              <option value="National Level">National Level</option>
+                              <option value="State Level">State Level</option>
+                              <option value="University Level">University Level</option>
                             </select>
                           ) :
-                            (
-                              <input
-                                type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
+                            isRoleField ? (
+                              <select
                                 value={value}
                                 onChange={(e) => handleInputChange(name, e.target.value)}
                                 onBlur={() => {
@@ -625,46 +744,87 @@ const AddCredentials = () => {
                                   }
                                 }}
                                 className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                  } `}
-                                placeholder={`Enter ${cleanLabel}`}
-                                required={!isFile}
-                                min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
-                                step={isNum ? "1" : undefined}
-                              />
-                            )}
+                                  }`}>
+                                <option value="">Select Role</option>
+                                <option value="Convenor">Convenor</option>
+                                <option value="Co-Convenor">Co-Convenor</option>
+                                <option value="Coordinator">Coordinator</option>
+                                <option value="Co-Coordinator">Co-Coordinator</option>
+                                <option value="Member">Member</option>
+                              </select>
+                            ) :
+                              isIndexing(cleanLabel) ? (
+                                <select
+                                  value={value}
+                                  onChange={(e) => handleInputChange(name, e.target.value)}
+                                  onBlur={() => {
+                                    const result = validateField(label, formData[name] || '');
+                                    if (!result.isValid && result.message) {
+                                      setErrors(prev => ({ ...prev, [name]: result.message }));
+                                    }
+                                  }}
+                                  className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    }`}
+                                >
+                                  <option value="">Select Indexing</option>
+                                  <option value="SCI">SCI</option>
+                                  <option value="Scopus">Scopus</option>
+                                  <option value="Web of Science">Web of Science</option>
+                                </select>
+                              )
+                                :
+                                (
+                                  <input
+                                    type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
+                                    value={value}
+                                    onChange={(e) => handleInputChange(name, e.target.value)}
+                                    onBlur={() => {
+                                      const result = validateField(label, formData[name] || '');
+                                      if (!result.isValid && result.message) {
+                                        setErrors(prev => ({ ...prev, [name]: result.message }));
+                                      }
+                                    }}
+                                    className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                      } `}
+                                    placeholder={`Enter ${cleanLabel}`}
+                                    required={!isFile}
+                                    min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                    step={isNum ? "1" : undefined}
+                                  />
+                                )}
 
-                        {errors[name] && (
-                          <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                          {errors[name] && (
+                            <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                {/* Submit Buttons */}
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setGroup('');
-                      setSubcategory('');
-                      setFormData({});
-                      setFileMap({});
-                      setErrors({});
-                    }}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-sm transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
-                  >
-                    Submit {group}
-                  </button>
+                  {/* Submit Buttons */}
+                  <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGroup('');
+                        setSubcategory('');
+                        setFormData({});
+                        setFileMap({});
+                        setErrors({});
+                      }}
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-sm transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
+                    >
+                      Submit {group}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
           )}
         </div>
       </div>
