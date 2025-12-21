@@ -118,7 +118,7 @@ export default function Register() {
   const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [experience, setExperience] = useState([
-    { institute: "", designation: "", from: "", to: "" }
+    { institute: "", type: "", designation: "", from: "", to: "" }
   ])
 
   const [PhDs, setPhDs] = useState([]);
@@ -162,137 +162,137 @@ export default function Register() {
     });
   }, []);
 
-  const test=async ()=>{
+  const test = async () => {
     const obj1 = {
-                      "loginData": {
-                        "email": "vi2@gmail.com",
-                        "password": "1234567890",
-                        "phone": "1234567999"
-                      },
-                      "personalData": {
-                        "DOB": "1985-06-15",
-                        "college": "University College of Engineering",
-                        "department": "Computer Science",
-                        "designation": "Associate Professor",
-                        "father": "Ramesh Kumar",
-                        "gender": "Male",
-                  
-                        "marital": "Married",
-                        "name": "Dr. Harish Kumar",
-                        "profile": "A dedicated educator with 15 years of teaching and research experience."
-                      },
-                      "education": {
-                        "tenth": {
-                          "percentage": "88%",
-                          "school": "St. John's High School",
-                          "year": "2001"
-                        },
-                        "twelth": {
-                          "college": "Narayana Junior College",
-                          "percentage": "92%",
-                          "type": "Intermediate",
-                          "year": "2003"
-                        },
-                        "degree": {
-                          "college": "ABC Degree College",
-                          "degreeName": "B.Tech",
-                          "percentage": "75%",
-                          "specialization": "Computer Science",
-                          "title": "Graduate in Computer Science",
-                          "university": "JNTU Hyderabad",
-                          "year": "2007"
-                        },
-                        "pg": {
-                          "college": "XYZ College of Engineering",
-                          "course": "M.Tech",
-                          "percentage": "82%",
-                          "specialization": "Software Engineering",
-                          "university": "Osmania University",
-                          "year": "2009"
-                        },
-                        "phd": [
-                          {
-                            "University": "IIT Bombay",
-                            "department": "Computer Science",
-                            "specialization": "Machine Learning",
-                            "under_the_proffessor": "Dr. S. Raman",
-                            "year": 2015
-                          },
-                          {
-                            "University": "IISC Bangalore",
-                            "department": "Artificial Intelligence",
-                            "specialization": "Deep Learning",
-                            "under_the_proffessor": "Dr. Anita Verma",
-                            "year": 2018
-                          }
-                        ],
-                        "postdoc": [
-                          {
-                            "University": "MIT",
-                            "specialization": "Neural Networks",
-                            "under_the_proffessor": "Dr. John Doe",
-                            "year": 2020
-                          }
-                        ]
-                      },
-                      "experience": [
-                        {
-                          "designation": "Assistant Professor",
-                          "institute": "XYZ Engineering College",
-                          "from": 2010,
-                          "to": 2015
-                        },
-                        {
-                          "designation": "Senior Assistant Professor",
-                          "institute": "ABC Institute of Technology",
-                          "from": 2015,
-                          "to": 2019
-                        },
-                        {
-                          "designation": "Associate Professor",
-                          "institute": "University College of Engineering",
-                          "from": 2019,
-                          "to": 2024
-                        }
-                      ],
-                      "administrativeService": [
-                        {
-                          "designation": "Department Coordinator",
-                          "from": 2016,
-                          "to": 2018
-                        },
-                        {
-                          "designation": "Training & Placement Officer",
-                          "from": 2018,
-                          "to": 2020
-                        }
-                      ],
-                      "otheradministrativeervice": [
-                        {
-                          "designation": "Research Committee Member",
-                          "institute": "ABC Institute",
-                          "from": 2015,
-                          "to": "2017"
-                        },
-                        {
-                          "designation": "Library Committee Chair",
-                          "institute": "XYZ Engineering College",
-                          "from": 2017,
-                          "to": "2019"
-                        },
-                        {
-                          "designation": "Cultural Event Coordinator",
-                          "institute": "University College of Engineering",
-                          "from": 2020,
-                          "to": "2023"
-                        }
-                      ]
-                    }
-                    console.log("final object is : ", obj1);
-                    await register(obj1)
-                      .then(console.log("user saved succesfully !")
-                      )
-                    navigate("/");
+      "loginData": {
+        "email": "vi2@gmail.com",
+        "password": "1234567890",
+        "phone": "1234567999"
+      },
+      "personalData": {
+        "DOB": "1985-06-15",
+        "college": "University College of Engineering",
+        "department": "Computer Science",
+        "designation": "Associate Professor",
+        "father": "Ramesh Kumar",
+        "gender": "Male",
+
+        "marital": "Married",
+        "name": "Dr. Harish Kumar",
+        "profile": "A dedicated educator with 15 years of teaching and research experience."
+      },
+      "education": {
+        "tenth": {
+          "percentage": "88%",
+          "school": "St. John's High School",
+          "year": "2001"
+        },
+        "twelth": {
+          "college": "Narayana Junior College",
+          "percentage": "92%",
+          "type": "Intermediate",
+          "year": "2003"
+        },
+        "degree": {
+          "college": "ABC Degree College",
+          "degreeName": "B.Tech",
+          "percentage": "75%",
+          "specialization": "Computer Science",
+          "title": "Graduate in Computer Science",
+          "university": "JNTU Hyderabad",
+          "year": "2007"
+        },
+        "pg": {
+          "college": "XYZ College of Engineering",
+          "course": "M.Tech",
+          "percentage": "82%",
+          "specialization": "Software Engineering",
+          "university": "Osmania University",
+          "year": "2009"
+        },
+        "phd": [
+          {
+            "University": "IIT Bombay",
+            "department": "Computer Science",
+            "specialization": "Machine Learning",
+            "under_the_proffessor": "Dr. S. Raman",
+            "year": 2015
+          },
+          {
+            "University": "IISC Bangalore",
+            "department": "Artificial Intelligence",
+            "specialization": "Deep Learning",
+            "under_the_proffessor": "Dr. Anita Verma",
+            "year": 2018
+          }
+        ],
+        "postdoc": [
+          {
+            "University": "MIT",
+            "specialization": "Neural Networks",
+            "under_the_proffessor": "Dr. John Doe",
+            "year": 2020
+          }
+        ]
+      },
+      "experience": [
+        {
+          "designation": "Assistant Professor",
+          "institute": "XYZ Engineering College",
+          "from": 2010,
+          "to": 2015
+        },
+        {
+          "designation": "Senior Assistant Professor",
+          "institute": "ABC Institute of Technology",
+          "from": 2015,
+          "to": 2019
+        },
+        {
+          "designation": "Associate Professor",
+          "institute": "University College of Engineering",
+          "from": 2019,
+          "to": 2024
+        }
+      ],
+      "administrativeService": [
+        {
+          "designation": "Department Coordinator",
+          "from": 2016,
+          "to": 2018
+        },
+        {
+          "designation": "Training & Placement Officer",
+          "from": 2018,
+          "to": 2020
+        }
+      ],
+      "otheradministrativeervice": [
+        {
+          "designation": "Research Committee Member",
+          "institute": "ABC Institute",
+          "from": 2015,
+          "to": "2017"
+        },
+        {
+          "designation": "Library Committee Chair",
+          "institute": "XYZ Engineering College",
+          "from": 2017,
+          "to": "2019"
+        },
+        {
+          "designation": "Cultural Event Coordinator",
+          "institute": "University College of Engineering",
+          "from": 2020,
+          "to": "2023"
+        }
+      ]
+    }
+    console.log("final object is : ", obj1);
+    await register(obj1)
+      .then(console.log("user saved succesfully !")
+      )
+    navigate("/");
   }
 
 
@@ -300,7 +300,7 @@ export default function Register() {
   const addExperience = useCallback(() => {
     setExperience((prev) => [
       ...prev,
-      { institute: "", designation: "", from: "", to: "" }
+      { institute: "", type: "", designation: "", from: "", to: "" }
     ]);
   }, []);
 
@@ -461,7 +461,7 @@ export default function Register() {
   const addPostDoc = useCallback(() => {
     setPostDocs(prev => [
       ...prev,
-      { specialization: "", under_the_proffessor: "", University: "", year: "" }
+      { specialization: "", under_the_proffessor: "", country: "", University: "", duration: "", year: "" }
     ]);
   }, []);
 
@@ -748,60 +748,58 @@ export default function Register() {
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label>Phone Number <span className="text-gray-600">(optional)</span></label>
               <input
-                type="text"   
+                type="text"
                 name="phone"
                 placeholder="enter your phone number"
                 value={personalData.phone}
                 onChange={handleChange}
                 className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.phone ? "border-red-500" : "border-gray-300 "
                   }`}
-              
+
               />
               {errors.phone && <small className="text-red-600 text-sm">{errors.phone}</small>}
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
-  <label>
-    Address <span className="text-gray-600">(optional)</span>
-  </label>
+              <label>
+                Address <span className="text-gray-600">(optional)</span>
+              </label>
 
 
-  <div className="flex gap-3">
-    
-    <input
-      type="text"
-      name="area"
-      placeholder="Area / Street"
-      value={personalData.area}
-      onChange={handleChange}
-      className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${
-        errors.area ? "border-red-500" : "border-gray-300"
-      }`}
-    />
+              <div className="flex gap-3">
 
-   
-    <input
-      type="text"
-      name="city"
-      placeholder="City"
-      value={personalData.city}
-      onChange={handleChange}
-      className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${
-        errors.city ? "border-red-500" : "border-gray-300"
-      }`}
-    />
-  </div>
+                <input
+                  type="text"
+                  name="area"
+                  placeholder="Area / Street"
+                  value={personalData.area}
+                  onChange={handleChange}
+                  className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${errors.area ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
 
-  {/* Error Messages */}
-  {errors.area && (
-    <small className="text-red-600 text-sm">{errors.area}</small>
-  )}
-  {errors.city && (
-    <small className="text-red-600 text-sm">{errors.city}</small>
-  )}
-</div>
 
-              
-            
+                <input
+                  type="text"
+                  name="city"
+                  placeholder="City"
+                  value={personalData.city}
+                  onChange={handleChange}
+                  className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${errors.city ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+              </div>
+
+              {/* Error Messages */}
+              {errors.area && (
+                <small className="text-red-600 text-sm">{errors.area}</small>
+              )}
+              {errors.city && (
+                <small className="text-red-600 text-sm">{errors.city}</small>
+              )}
+            </div>
+
+
+
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label>College</label>
               <select
@@ -992,9 +990,9 @@ export default function Register() {
                         />
 
                         <InputField
-                          label="Year of Completion"
+                          label="Year of Awarded"
                           name="year"
-                          placeholder="enter the year of completion"
+                          placeholder="enter the year of award"
                           value={phd.year}
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.year`]}
@@ -1094,9 +1092,9 @@ export default function Register() {
                         />
 
                         <InputField
-                          label="Year of Completion"
+                          label="Year"
                           name="year"
-                          placeholder="enter the year of completion"
+                          placeholder="enter the year"
                           value={postdoc.year}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.year`]}
@@ -1188,7 +1186,52 @@ export default function Register() {
                   error={errors[`experience.${index}.designation`]}
                   required
                 />
-
+                {/* radio button for experience type as institute/university */}
+                <div>
+                  <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Type </label>
+                  <div className="flex flex-wrap gap-4 mt-1 m-2">
+                    <div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name={`type-${index}`}
+                          value="institute"
+                          checked={exp.type === "institute"}
+                          onChange={() =>
+                            handleExperienceChange(index, {
+                              target: { name: "type", value: "institute" }
+                            })
+                          }
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          required
+                        />
+                        <span className={`ml-2 ${exp.type === "institute" ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                          Institute
+                        </span>
+                      </label>
+                    </div>
+                    <div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name={`type-${index}`}
+                          value="university"
+                          checked={exp.type === "university"}
+                          onChange={() =>
+                            handleExperienceChange(index, {
+                              target: { name: "type", value: "university" }
+                            })
+                          }
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          required
+                        />
+                        <span className={`ml-2 ${exp.type === "university" ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                          University
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   {/* FROM Field - Corrected to use a mapped array for year generation */}
                   <div className="flex flex-col space-y-2">
@@ -1731,7 +1774,7 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
-                    onClick={()=>(
+                    onClick={() => (
                       test()
                     )}
                     className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"

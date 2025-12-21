@@ -1,28 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
+import { form, select } from 'framer-motion/client';
 
-// 🔧 Helpers (pure JS)
-const isFileField = (label) => {
-  const clean = label.trim().toLowerCase();
-  return clean.includes('document') || clean.includes('certificate');
-};
-
-const isRadioField = (label) => {
-  const clean = label.trim().toLowerCase();
-  return clean === 'national/international' ||
-    clean === 'mode (online/offline)' ||
-    clean === 'published/granted' ||
-    clean === 'attended/organized' ||
-    clean === "are you" ||
-    clean === "author" ||
-    clean === "type of certification" ||
-    clean === "status";
-};
-
-const isDateField = (label) => {
-  const clean = label.trim().toLowerCase()
-  return clean.includes('date')
-}
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
   'Publications',
@@ -109,6 +88,35 @@ const AddCredentials = () => {
   const [fileMap, setFileMap] = useState({});
   const [errors, setErrors] = useState({});
 
+  // 🔧 Helpers (pure JS)
+  const isFileField = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean.includes('document') || clean.includes('certificate');
+  };
+
+  const isRadioField = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'national/international' ||
+      clean === 'mode' ||
+      clean === 'published/granted' ||
+      clean === 'attended/organized' ||
+      clean === "are you" ||
+      clean === "author" ||
+      clean === "type of certification" ||
+      clean === "status";
+  };
+
+  const isDateField = (label) => {
+    const clean = label.trim().toLowerCase()
+    return clean.includes('date')
+  }
+
+  const isPlace = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'place';
+  };
+
+
   // 🔍 Validation Helper (pure JS)
   const validateField = (label, value) => {
     const cleanLabel = label.trim().toLowerCase();
@@ -118,6 +126,9 @@ const AddCredentials = () => {
     // Required check for non-file, non-radio, non-scope
     if (!isFileField(label) && !isRadioField(label) && !valStr) {
       return { isValid: false, message: `${label} is required` };
+    }
+    if (cleanLabel === 'role' && formData['Attended/Organized'] !== 'Organized') {
+      return { isValid: true };
     }
 
     if (isDateField(label)) {
@@ -301,7 +312,7 @@ const AddCredentials = () => {
         { value: 'National', label: 'National' },
         { value: 'International', label: 'International' }
       ];
-    } else if (clean === 'mode (online/offline)') {
+    } else if (clean === 'mode') {
       return [
         { value: 'Online', label: 'Online' },
         { value: 'Offline', label: 'Offline' }
@@ -331,13 +342,13 @@ const AddCredentials = () => {
         { value: "Completed", label: "Completed" }
       ]
     }
-    else if( clean === "type of certification"){
+    else if (clean === "type of certification") {
       return [
         { value: "FDP", label: "FDP" },
         { value: "Certification Course", label: "Certification Course" }
       ];
-    } 
-    else if(clean === "author"){
+    }
+    else if (clean === "author") {
       return [
         { value: "First Author", label: "First Author" },
         { value: "Co-Author", label: "Co-Author" }
@@ -357,6 +368,16 @@ const AddCredentials = () => {
       clean.includes('impact')
   };
 
+  const isRole = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'role';
+  }
+
+  const isOrganized = () => {
+    const roleValue = formData['Attended/Organized'] || '';
+    return roleValue === 'Organized';
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -367,6 +388,17 @@ const AddCredentials = () => {
     currentFieldKeys.forEach((label, idx) => {
       const name = label;
       const value = formData[name] || '';
+      const clean = label.trim().toLowerCase();
+
+      // 🚫 Skip Place validation when Mode ≠ Offline
+      if (clean === 'place' && formData['Mode'] !== 'Offline') {
+        return;
+      }
+
+      // 🚫 Skip Role when not Organized
+      if (clean === 'role' && formData['Attended/Organized'] !== 'Organized') {
+        return;
+      }
 
       const result = validateField(label, value);
       if (!result.isValid && result.message) {
@@ -465,18 +497,17 @@ const AddCredentials = () => {
                     const isRadio = isRadioField(cleanLabel);
                     const isNum = isNumberField(cleanLabel) && !isRadio;
                     const isDate = isDateField(cleanLabel)
+                    const isPlaceField = isPlace(cleanLabel);
                     const value = formData[name] || '';
+                    const modeValue = formData['Mode'] || '';
+                    const isRoleField = isRole(cleanLabel);
 
-                    // 🔍 Find Mode field index and value
-                    const modeIndex = currentFieldKeys.findIndex(
-                      lbl => lbl.trim().toLowerCase().includes('mode') &&
-                        (lbl.toLowerCase().includes('online') || lbl.toLowerCase().includes('offline'))
-                    );
-                    const modeValue = modeIndex !== -1 ? formData[`field_${modeIndex}`] || '' : '';
+                    if (isPlaceField && modeValue !== 'Offline') {
+                      return null; // 🚫 completely hide Place
+                    }
 
-                    // 🚫 Hide "Venue" when Mode is "Online"
-                    if (cleanLabel.toLowerCase() === 'venue' && modeValue.toLowerCase() === 'online') {
-                      return null;
+                    if (isRoleField && !isOrganized()) {
+                      return null; // 🚫 hide Role if not Organized
                     }
 
                     return (
@@ -495,7 +526,20 @@ const AddCredentials = () => {
                                   name={name}
                                   value={opt.value}
                                   checked={value === opt.value}
-                                  onChange={() => handleInputChange(name, opt.value)}
+                                  onChange={() => {
+                                    handleInputChange(name, opt.value);
+
+                                    if (opt.value === 'Attended') {
+                                      setFormData(prev => {
+                                        const updated = { ...prev };
+                                        delete updated['Role']; // ✅ remove role completely
+                                        return updated;
+                                      });
+                                    }
+                                    else {
+                                      setFormData(prev => ({ ...prev, 'Role': prev['Role'] || '' }));
+                                    }
+                                  }}
                                   className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                                   required
                                 />
@@ -548,25 +592,46 @@ const AddCredentials = () => {
                             <option value="State Level">State Level</option>
                             <option value="University Level">University Level</option>
                           </select>
-                        ) : (
-                          <input
-                            type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
-                            value={value}
-                            onChange={(e) => handleInputChange(name, e.target.value)}
-                            onBlur={() => {
-                              const result = validateField(label, formData[name] || '');
-                              if (!result.isValid && result.message) {
-                                setErrors(prev => ({ ...prev, [name]: result.message }));
-                              }
-                            }}
-                            className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                              } `}
-                            placeholder={`Enter ${cleanLabel}`}
-                            required={!isFile}
-                            min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
-                            step={isNum ? "1" : undefined}
-                          />
-                        )}
+                        ) :
+                          isRoleField ? (
+                            <select
+                              value={value}
+                              onChange={(e) => handleInputChange(name, e.target.value)}
+                              onBlur={() => {
+                                const result = validateField(label, formData[name] || '');
+                                if (!result.isValid && result.message) {
+                                  setErrors(prev => ({ ...prev, [name]: result.message }));
+                                }
+                              }}
+                              className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                }`}>
+                              <option value="">Select Role</option>
+                              <option value="Convenor">Convenor</option>
+                              <option value="Co-Convenor">Co-Convenor</option>
+                              <option value="Coordinator">Coordinator</option>
+                              <option value="Co-Coordinator">Co-Coordinator</option>
+                              <option value="Member">Member</option>
+                            </select>
+                          ) :
+                            (
+                              <input
+                                type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
+                                value={value}
+                                onChange={(e) => handleInputChange(name, e.target.value)}
+                                onBlur={() => {
+                                  const result = validateField(label, formData[name] || '');
+                                  if (!result.isValid && result.message) {
+                                    setErrors(prev => ({ ...prev, [name]: result.message }));
+                                  }
+                                }}
+                                className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                  } `}
+                                placeholder={`Enter ${cleanLabel}`}
+                                required={!isFile}
+                                min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                step={isNum ? "1" : undefined}
+                              />
+                            )}
 
                         {errors[name] && (
                           <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
