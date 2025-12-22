@@ -14,12 +14,10 @@ const yearFields = {
   certifications: null,
   award_title: "Year",
   research: "Year of Sanction",
-  sponsored: "Academic Year",
   consultancy: "Year of Sanction",
   phd_awarded: "Year of Awarding",
   ieee: "Year Joined",
   csi: "Year Joined",
-  repository: "Date / Year",
 };
 
 export const certifications = [
@@ -1658,7 +1656,11 @@ const facultyList = [
   }
 ];
 
+const phd_awarded_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Awarding', 'Proceeding'];
+const phd_joining_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Joining', 'Allotment order'];
+
 const fields = {
+  foreign_visits : ['Purpose of Visit','Nature of Visit','Name of Conference/Event','Academic Year','Name of Host Organization','Country Visited','Start Date','End Date','Duration (in days)','Role of Faculty','Title of the Paper/Talk','Sponsoring Agency','Amount Sanctioned','Travel Grant Recieved','document'],
   patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope', 'Document'],
   book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
   book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],
@@ -1672,9 +1674,9 @@ const fields = {
   edx: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
   other: ['Name of Certification Course', 'Type of Certification','Organized by', 'Duration (in weeks)','certificate'],
 
-  sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration (in months)', 'Academic Year','Are you','Status',  'Document'],
-  research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency','Sanctioned Amount','Recieved Amount (utilized)', 'Are you', 'Status', 'Document'],
-  consultancy: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Document'],
+  sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration (in months)', 'Academic Year','Are you','Status',  'Sanctioning Order','Utilization Certificate (final year)'],
+  research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency','Sanctioned Amount','Recieved Amount (utilized)', 'Are you', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
+  consultancy: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
 
   fdp: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
   sttp: ['Program Title','Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
@@ -1692,25 +1694,20 @@ const fields = {
   resource_person: ['Event Title', 'Organizing Institution','Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
 
   mooc_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  eContent: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  course_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
+  e_content: ['Title of the e-Content', 'Developed module is being used by', 'Year',],
   
   award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Scope','Year', 'Document'],
 
-  ieee: ['Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  acm: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  csi: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  ie: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  iete: [ 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  other_bodies: [ 'Name of the Professional Body', 'Membership ID', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-
-  phd_awarded: ['Year of Awarding', 'Number of Students'],
-  phd_ongoing: ['Year of Awarding', 'Number of Students'],
+  ieee: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  acm: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  csi: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  ie: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  iete: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  other_bodies: [ 'Name of the Professional Body', 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  
+  phd_awarded : ['Number of Students',phd_awarded_fields],
+  phd_ongoing : ['Number of Students',phd_joining_fields],
   mtech: ['Year of Awarding', 'Number of Students'],
-  mphilmba: ['Year of Awarding', 'Number of Students'],
 };
-
-const phd_awarded_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Awarding', 'Proceeding'];
-const phd_joining_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Joining', 'Allotment order'];
 
 export { schemas, yearFields,facultyList,fields, phd_awarded_fields, phd_joining_fields };

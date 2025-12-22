@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
 import { phd_awarded_fields, phd_joining_fields } from '../assets/Data.jsx';
-import { form, select } from 'framer-motion/client';
 
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
   'Publications',
   'Patents',
+  'Foreign Visits',
   'Academic Enrichment Programs',
   'Projects',
   'Certifications',
@@ -17,6 +17,17 @@ const groupOptions = [
   'Research Guidance',
 ];
 
+const select_fields = ['Purpose of Visit', 'Nature of Visit', 'Role of Faculty', 'Scope', 'Membership Type', 'Role', 'Indexing Platform']
+
+const select_options = {
+  'Purpose of Visit': ['Conference', 'Workshop', 'FDP', 'Research Collaboration', 'Invited Lecture', 'MoU Activity', 'Training', 'Others'],
+  'Nature of Visit': ['Official', 'Self-sponsored', 'Sponsored'],
+  'Role of Faculty': ['Presenter', 'Invited Speaker', 'Resource Person', 'Session Chair', 'Participant'],
+  'Scope': ['International (Abroad)', 'International (within India)', 'National Level', 'State Level', 'University Level'],
+  'Membership Type': ['Life', 'Annual', 'Student'],
+  'Role': ['Convenor', 'Co-Convenor', 'Coordinator', 'Co-Coordinator', 'Member'],
+  'Indexing Platform': ['Scopus', 'Web of Science', 'SCI'],
+}
 const subcategories = {
   'Publications': [
     { label: 'Journal Paper', value: 'journal' },
@@ -80,6 +91,7 @@ const subcategories = {
 const directFieldGroups = {
   'Patents': 'patents',
   'Awards and Recognitions': 'award_title',
+  'Foreign Visits': 'foreign_visits',
 };
 
 const AddCredentials = () => {
@@ -92,7 +104,7 @@ const AddCredentials = () => {
   // 🔧 Helpers (pure JS)
   const isFileField = (label) => {
     const clean = label.trim().toLowerCase();
-    return clean.includes('document') || clean.includes('certificate') || clean.includes('proceeding') || clean.includes('allotment order');
+    return clean.includes('document') || clean.includes('sanctioning order') || clean.includes('certificate') || clean.includes('proceeding') || clean.includes('allotment order');
   };
 
   const isRadioField = (label) => {
@@ -106,6 +118,11 @@ const AddCredentials = () => {
       clean === "type of certification" ||
       clean === "status";
   };
+
+  const isUtilCertificate = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'utilization certificate (final year)';
+  }
 
   const isDateField = (label) => {
     const clean = label.trim().toLowerCase()
@@ -131,6 +148,9 @@ const AddCredentials = () => {
     // Required check for non-file, non-radio, non-scope
     if (!isFileField(label) && !isRadioField(label) && !valStr) {
       return { isValid: false, message: `${label} is required` };
+    }
+    if (isUtilCertificate(label) && formData['Status'] === 'Ongoing') {
+      return { isValid: true };
     }
     if (cleanLabel === 'role' && formData['Attended/Organized'] !== 'Organized') {
       return { isValid: true };
@@ -159,7 +179,7 @@ const AddCredentials = () => {
     }
 
     // --- Year validation
-    if (cleanLabel.includes('year')) {
+    if (cleanLabel.includes('year') && !cleanLabel.includes('academic') && !cleanLabel.includes('certificate')) {
       if (!valStr) return { isValid: false, message: 'Year is required' };
       if (isNaN(valNum)) return { isValid: false, message: 'Year must be a number' };
       if (!Number.isInteger(valNum)) return { isValid: false, message: 'Year must be a whole number' };
@@ -364,11 +384,13 @@ const AddCredentials = () => {
 
   const isNumberField = (label) => {
     const clean = label.toLowerCase();
-    return clean.includes('year') ||
+    return (clean.includes('year') && !clean.includes('academic')) ||
       clean.includes('amount') ||
       clean.includes('number of students') ||
       clean.includes('fund received') ||
-      clean.includes('duration') ||
+      clean.includes('in weeks') ||
+      clean.includes('in days') ||
+      clean.includes('in months') ||
       clean.includes('page') ||
       clean.includes('impact')
   };
@@ -421,6 +443,12 @@ const AddCredentials = () => {
     setErrors({});
   };
 
+  const isMembership = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean.includes('membership type');
+  };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -438,6 +466,12 @@ const AddCredentials = () => {
         return;
       }
 
+      if (clean === 'validity period (if applicable)') {
+        if (formData['Membership Type (Life/Annual/Student)'] === 'Life') {
+          return; // 🚫 Skip validation for Life members
+        }
+      }
+
       // 🚫 Skip Role when not Organized
       if (clean === 'role' && formData['Attended/Organized'] !== 'Organized') {
         return;
@@ -452,6 +486,7 @@ const AddCredentials = () => {
 
     if (!isValid) {
       setErrors(newErrors);
+      console.log('❌ Validation Errors:', newErrors);
       return;
     }
 
@@ -641,6 +676,7 @@ const AddCredentials = () => {
                       const value = formData[name] || '';
                       const modeValue = formData['Mode'] || '';
                       const isRoleField = isRole(cleanLabel);
+                      const isUtilCert = isUtilCertificate(cleanLabel);
 
                       if (isPlaceField && modeValue !== 'Offline') {
                         return null; // 🚫 completely hide Place
@@ -648,6 +684,48 @@ const AddCredentials = () => {
 
                       if (isRoleField && !isOrganized()) {
                         return null; // 🚫 hide Role if not Organized
+                      }
+                      const isValidityPeriod =
+                        cleanLabel.toLowerCase() === 'validity period (if applicable)';
+
+                      if (
+                        isValidityPeriod &&
+                        formData['Membership Type (Life/Annual/Student)'] === 'Life'
+                      ) {
+                        return null;
+                      }
+
+                      if (isUtilCert && formData['Status'] === 'Ongoing') {
+                        return null;
+                      }
+
+                      const isSelect = select_fields.includes(cleanLabel);
+
+                      if (isSelect) {
+                        return (
+                          <div key={name}>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">  
+                              {cleanLabel}
+                              <span className="text-red-500 ml-1">*</span>
+                            </label>
+                            <select
+                              id={name}
+                              value={value}
+                              onChange={(e) => handleInputChange(name, e.target.value)}
+                              className={`w-full px-4 py-3 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                } `}
+                              required
+                            >
+                              <option value="">— Select {cleanLabel} —</option>
+                              {select_options[cleanLabel]?.map(opt => (
+                                <option key={opt} value={opt}>{opt}</option>
+                              ))}
+                            </select>
+                            {errors[name] && (
+                              <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                            )}
+                          </div>
+                        );
                       }
 
                       return (
@@ -668,7 +746,6 @@ const AddCredentials = () => {
                                     checked={value === opt.value}
                                     onChange={() => {
                                       handleInputChange(name, opt.value);
-
                                       if (opt.value === 'Attended') {
                                         setFormData(prev => {
                                           const updated = { ...prev };
@@ -676,7 +753,7 @@ const AddCredentials = () => {
                                           return updated;
                                         });
                                       }
-                                      else {
+                                      else if (opt.value === 'Organized') {
                                         setFormData(prev => ({ ...prev, 'Role': prev['Role'] || '' }));
                                       }
                                     }}
@@ -689,90 +766,55 @@ const AddCredentials = () => {
                                 </label>
                               ))}
                             </div>
-                          ) : isFile ? (
-                            <div className="mt-1 flex items-center">
-                              <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                                <span className="text-sm text-blue-600 font-medium">
-                                  {value || 'Choose file'}
-                                </span>
-                                <input
-                                  type="file"
-                                  className="hidden"
-                                  onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                  accept=".pdf,.jpg,.jpeg,.png"
-                                />
-                              </label>
-                              {value && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleFileChange(name, null)}
-                                  className="ml-2 text-xs text-red-500 hover:text-red-700"
-                                >
-                                  ✕ Clear
-                                </button>
-                              )}
-                            </div>
-                          ) : cleanLabel === 'Scope' ? (
-                            <select
-                              value={value}
-                              onChange={(e) => handleInputChange(name, e.target.value)}
-                              onBlur={() => {
-                                const result = validateField(label, formData[name] || '');
-                                if (!result.isValid && result.message) {
-                                  setErrors(prev => ({ ...prev, [name]: result.message }));
-                                }
-                              }}
-                              className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                }`}
-                            >
-                              <option value="">Select Scope</option>
-                              <option value="International (Abroad)">International (Abroad)</option>
-                              <option value="International (within India)">International (within India)</option>
-                              <option value="National Level">National Level</option>
-                              <option value="State Level">State Level</option>
-                              <option value="University Level">University Level</option>
-                            </select>
                           ) :
-                            isRoleField ? (
-                              <select
-                                value={value}
-                                onChange={(e) => handleInputChange(name, e.target.value)}
-                                onBlur={() => {
-                                  const result = validateField(label, formData[name] || '');
-                                  if (!result.isValid && result.message) {
-                                    setErrors(prev => ({ ...prev, [name]: result.message }));
-                                  }
-                                }}
-                                className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                  }`}>
-                                <option value="">Select Role</option>
-                                <option value="Convenor">Convenor</option>
-                                <option value="Co-Convenor">Co-Convenor</option>
-                                <option value="Coordinator">Coordinator</option>
-                                <option value="Co-Coordinator">Co-Coordinator</option>
-                                <option value="Member">Member</option>
-                              </select>
+                            isUtilCert ? (
+                              <div className="mt-1 flex items-center">
+                                <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                  <span className="text-sm text-blue-600 font-medium">
+                                    {value || 'Choose file'}
+                                  </span>
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                  />
+                                </label>
+                                {value && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleFileChange(name, null)}
+                                    className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                  >
+                                    ✕ Clear
+                                  </button>
+                                )}
+                              </div>
                             ) :
-                              isIndexing(cleanLabel) ? (
-                                <select
-                                  value={value}
-                                  onChange={(e) => handleInputChange(name, e.target.value)}
-                                  onBlur={() => {
-                                    const result = validateField(label, formData[name] || '');
-                                    if (!result.isValid && result.message) {
-                                      setErrors(prev => ({ ...prev, [name]: result.message }));
-                                    }
-                                  }}
-                                  className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                    }`}
-                                >
-                                  <option value="">Select Indexing</option>
-                                  <option value="SCI">SCI</option>
-                                  <option value="Scopus">Scopus</option>
-                                  <option value="Web of Science">Web of Science</option>
-                                </select>
-                              )
-                                :
+                              isFile ? (
+                                <div className="mt-1 flex items-center">
+                                  <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                    <span className="text-sm text-blue-600 font-medium">
+                                      {value || 'Choose file'}
+                                    </span>
+                                    <input
+                                      type="file"
+                                      className="hidden"
+                                      onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                      accept=".pdf,.jpg,.jpeg,.png"
+                                    />
+                                  </label>
+                                  {value && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleFileChange(name, null)}
+                                      className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                    >
+                                      ✕ Clear
+                                    </button>
+                                  )}
+                                </div>
+                              ) :
                                 (
                                   <input
                                     type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
@@ -787,7 +829,7 @@ const AddCredentials = () => {
                                     className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
                                       } `}
                                     placeholder={`Enter ${cleanLabel}`}
-                                    required={!isFile}
+                                    required={!isFile && cleanLabel !== 'validity period (if applicable)'}
                                     min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
                                     step={isNum ? "1" : undefined}
                                   />

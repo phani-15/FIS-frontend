@@ -4,12 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Trash2, AlertTriangle, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
-import { address } from "framer-motion/client";
-import { number } from "framer-motion";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("experience"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("as"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
 
@@ -127,7 +125,7 @@ export default function Register() {
   // const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
   const [administrativeService, setAdministrativeService] = useState([
-    { designation: "", from: "", to: "" }
+    { designation: "", level: "", from: "", to: "" }
   ])
 
   const [otherAdministrativeService, setOtherAdministrativeService] = useState([
@@ -153,6 +151,21 @@ export default function Register() {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
+  const validateOAS = () => {
+    const newErrors = {};
+    otherAdministrativeService.forEach((oas, index) => {
+      if (!haveOAS) return; // skip if not applicable
+      if (!oas.institute.trim()) newErrors[`otherAdministrativeService.${index}.institute`] = "Institute is required";
+      if (!oas.designation.trim()) newErrors[`otherAdministrativeService.${index}.designation`] = "Designation is required";
+      if (!oas.from || oas.from === "0") newErrors[`otherAdministrativeService.${index}.from`] = "From year is required";
+      if (!oas.to) newErrors[`otherAdministrativeService.${index}.to`] = "To year is required";
+      else if (parseInt(oas.from) > parseInt(oas.to)) {
+        newErrors[`otherAdministrativeService.${index}.to`] = "'To' year cannot be earlier than 'From' year.";
+      }
+    });
+    return newErrors;
+  };
+
   const handleExperienceChange = useCallback((index, e) => {
     const { name, value } = e.target;
     setExperience((prev) => {
@@ -161,6 +174,27 @@ export default function Register() {
       return updated;
     });
   }, []);
+
+  const validateAS = () => {
+    const newErrors = {};
+    administrativeService.forEach((as, index) => {
+      if (!as.designation.trim()) {
+        newErrors[`administrativeService.${index}.designation`] = "Designation is required";
+      }
+      if (!as.level.trim()) {
+        newErrors[`administrativeService.${index}.level`] = "Level is required";
+      }
+      if (!as.from || as.from === "0") {
+        newErrors[`administrativeService.${index}.from`] = "From year is required";
+      }
+      if (!as.to || as.to === "") {
+        newErrors[`administrativeService.${index}.to`] = "To year is required";
+      } else if (as.to !== "Present" && parseInt(as.from) > parseInt(as.to)) {
+        newErrors[`administrativeService.${index}.to`] = "'To' year must be greater than or equal to 'From' year";
+      }
+    });
+    return newErrors;
+  };
 
   const test = async () => {
     const obj1 = {
@@ -258,6 +292,7 @@ export default function Register() {
       "administrativeService": [
         {
           "designation": "Department Coordinator",
+          "level": "University level",
           "from": 2016,
           "to": 2018
         },
@@ -355,7 +390,7 @@ export default function Register() {
   const addAS = useCallback(() => {
     setAdministrativeService(prev => [
       ...prev,
-      { designation: "", from: "", to: "" }
+      { designation: "", level: "", from: "", to: "" }
     ]);
   }, []);
 
@@ -1384,27 +1419,16 @@ export default function Register() {
                 className="text-2xl font-semibold mb-6"
                 style={{ fontFamily: "Times New Roman, serif" }}
               >
-                Administrative Service in this Institute
+                Administrative Service/Additional Duties in this Institute
               </h1>
-
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  administrativeService.forEach((as, index) => {
-                    if (as.to != "Present" && as.from > as.to) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        [`administrativeService.${index}.to`]:
-                          "'To' year must be greater than or equal to 'From' year",
-                      }));
-
-                    }
-                  });
-                  if (Object.entries(errors).length === 0) {
+                  const newErrors = validateAS();
+                  setErrors(newErrors);
+                  if (Object.keys(newErrors).length === 0) {
+                    console.log("Administrative Service Data:", administrativeService);
                     setStep("oas");
-                  }
-                  else {
-                    console.log(errors);
                   }
                 }}
                 className="flex flex-col space-y-6"
@@ -1426,6 +1450,29 @@ export default function Register() {
                       onChange={(e) => handleASChange(index, e)}
                       required
                     />
+                    <div className="flex flex-col text-left space-y-2 mt-4">
+                      <label>Level of Service:</label>
+                      <div className="flex space-x-6 mt-1">
+                        {["Departmental", "College", "University"].map((level) => (
+                          <label key={level} className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name={`level-${index}`}
+                            value={level.toLowerCase()}
+                            checked={as.level === level.toLowerCase()}
+                            onChange={() =>
+                              handleASChange(index, {
+                                target: { name: "level", value: level.toLowerCase() }
+                              })
+                            }
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                            required
+                          />
+                          <span className={`ml-2 ${as.level === level.toLowerCase() ? 'font-semibold text-gray-900' : 'text-gray-700'}`}> {level}</span>
+                        </label>))}
+
+                      </div>
+                    </div>
 
                     {/* Group for From and To years */}
                     <div className="grid grid-cols-2 gap-4">
@@ -1578,22 +1625,12 @@ export default function Register() {
 
               {/* The form container maintains the vertical spacing and centering */}
               <form
-                onSubmit={async (e) => {
+                onSubmit={(e) => {
                   e.preventDefault();
-                  otherAdministrativeService.forEach((oas, index) => {
-                    if (oas.to < oas.from) {
-                      setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        [`otherAdministrativeService.${index}.to`]: "'To' year cannot be earlier than 'From' year.",
-                      }));
-                      return;
-                    }
-
-                  });
-                  if (errors.length > 0) {
-                    console.log("errors exist : ", errors)
-                  }
-                  else {
+                  const newErrors = validateOAS();
+                  setErrors(newErrors);
+                  if (Object.keys(newErrors).length === 0) {
+                    // Submit final data
                     const obj1 = {
                       personalData: personalData,
                       loginData: loginData,
@@ -1601,14 +1638,13 @@ export default function Register() {
                       experience: experience,
                       administrativeService: administrativeService,
                       otherAdministrativeService: otherAdministrativeService,
-                    }
-                    console.log("final object is : ", obj1)
-                    navigate("/");
+                    };
+                    console.log("final object is:", obj1);
+                    register(obj1).then(() => navigate("/"));
                   }
                 }}
                 className="flex flex-col space-y-6"
               >
-
                 {haveOAS && (
                   <div className="space-y-6">
                     {otherAdministrativeService.map((oas, index) => (
