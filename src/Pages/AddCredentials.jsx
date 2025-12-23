@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
-import { phd_awarded_fields, phd_joining_fields } from '../assets/Data.jsx';
+import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
+import { label } from 'framer-motion/client';
 
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
@@ -17,7 +18,7 @@ const groupOptions = [
   'Research Guidance',
 ];
 
-const select_fields = ['Purpose of Visit', 'Nature of Visit', 'Role of Faculty', 'Scope', 'Membership Type', 'Role', 'Indexing Platform']
+const select_fields = ['Purpose of Visit', 'Nature of Visit', 'Contribution in MOOC', 'Role of Faculty', 'Scope', 'Membership Type', 'Role', 'Indexing Platform']
 
 const select_options = {
   'Purpose of Visit': ['Conference', 'Workshop', 'FDP', 'Research Collaboration', 'Invited Lecture', 'MoU Activity', 'Training', 'Others'],
@@ -27,7 +28,10 @@ const select_options = {
   'Membership Type': ['Life', 'Annual', 'Student'],
   'Role': ['Convenor', 'Co-Convenor', 'Coordinator', 'Co-Coordinator', 'Member'],
   'Indexing Platform': ['Scopus', 'Web of Science', 'SCI'],
+  'Contribution in MOOC': ['Developed complete MOOCs', 'Developed modules for MOOCs', 'Content writer', 'Subject matter expert', 'Course Coordinator'],
+  'Contribution in e-Content': ['Developed complete e-Content module', 'Contributed to e-Content module development (atleast 1 quadrant)','Editor of e-Content', ],
 }
+
 const subcategories = {
   'Publications': [
     { label: 'Journal Paper', value: 'journal' },
@@ -68,10 +72,8 @@ const subcategories = {
   ],
   'Content Development': [
     { label: 'MOOCs', value: 'mooc_content' },
-    { label: 'e-Content', value: 'econtent' },
-    { label: 'Course Content', value: 'course_content' },
-    { label: 'Lab Manual', value: 'lab_manual' },
-    { label: 'Institutional Repository', value: 'repository' },
+    { label: 'e-Content', value: 'e_content' },
+    { label: 'Innovative Pedagogy', value: 'innovative_pedagogy' },
   ],
   'Memberships in Professional Bodies': [
     { label: 'IEEE', value: 'ieee' },
@@ -116,7 +118,8 @@ const AddCredentials = () => {
       clean === "are you" ||
       clean === "author" ||
       clean === "type of certification" ||
-      clean === "status";
+      clean === "status" ||
+      clean === "role of scholar"
   };
 
   const isUtilCertificate = (label) => {
@@ -272,6 +275,206 @@ const AddCredentials = () => {
     return group && subcategories[group] && subcategories[group].length > 0;
   }, [group]);
 
+  const handlemoocSubmit = (e) => {
+    e.preventDefault();
+    console.log("🚀 MOOC SUBMIT triggered");
+
+    const newErrors = {};
+    let isValid = true;
+
+    // 🔹 Step 1: Validate global fields
+    const contribution = formData['Contribution in MOOC']?.trim();
+    const numMOOCsStr = formData['Number of MOOCs']?.trim();
+    const numMOOCs = Number(numMOOCsStr);
+
+    // Contribution is required
+    if (!contribution) {
+      newErrors['Contribution in MOOC'] = 'Contribution in MOOC is required';
+      isValid = false;
+    }
+
+    // Number of MOOCs validation
+    if (!numMOOCsStr) {
+      newErrors['Number of MOOCs'] = 'Number of MOOCs is required';
+      isValid = false;
+    } else if (isNaN(numMOOCs)) {
+      newErrors['Number of MOOCs'] = 'Must be a valid number';
+      isValid = false;
+    } else if (!Number.isInteger(numMOOCs) || numMOOCs < 1) {
+      newErrors['Number of MOOCs'] = 'Must be a whole number ≥ 1';
+      isValid = false;
+    }
+
+    // 🔹 Step 2: Validate each MOOC instance (only if numMOOCs ≥ 1 and no prior errors)
+    if (isValid && numMOOCs > 0) {
+      const moocInstanceFields = ['Title of the MOOC', 'Month & Year']; // ← use only per-MOOC fields
+
+      for (let i = 0; i < numMOOCs; i++) {
+        moocInstanceFields.forEach((label) => {
+          const name = `${label}__${i}`;
+          const value = (formData[name] || '').trim();
+
+          // Special: Month & Year is a `type="month"` input → format "YYYY-MM"
+          if (label === 'Month & Year') {
+            if (!value) {
+              newErrors[name] = 'Month & Year is required';
+              isValid = false;
+            } else if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
+              newErrors[name] = 'Invalid format. Use YYYY-MM (e.g., 2024-08)';
+              isValid = false;
+            } else {
+              const inputDate = new Date(`${value}-01`);
+              const today = new Date();
+              // Normalize to first of month for fair comparison
+              today.setDate(1);
+              if (inputDate > today) {
+                newErrors[name] = 'Month & Year must be in the past';
+                isValid = false;
+              }
+            }
+          } else {
+            // 'Title of the MOOC' — non-empty string
+            if (!value) {
+              newErrors[name] = `${label} is required`;
+              isValid = false;
+            }
+          }
+        });
+      }
+    }
+
+    // 🔹 Step 3: Update UI & exit if invalid
+    setErrors(newErrors);
+    if (!isValid) {
+      console.warn('❌ MOOC validation failed:', newErrors);
+      return;
+    }
+
+    // 🔹 Step 4: ✅ Build structured payload
+    const moocs = [];
+    for (let i = 0; i < numMOOCs; i++) {
+      moocs.push({
+        title: formData[`Title of the MOOC__${i}`] || '',
+        monthYear: formData[`Month & Year__${i}`] || ''
+      });
+    }
+
+    const payload = {
+      group,
+      subcategory,
+      formData: {
+        contributionInMOOC: contribution,
+        numberOfMOOCs: numMOOCs,
+        moocs
+      },
+      // Optional: include files if any were uploaded (e.g., certificates, links, docs)
+      files: { ...fileMap } // currently unused in MOOC, but safe to keep
+    };
+
+    console.log('✅ MOOC Submission Payload:', payload);
+    alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
+  }
+
+  const handleESubmit = (e) => {
+    e.preventDefault();
+    console.log("🚀 e-Content SUBMIT triggered");
+
+    const newErrors = {};
+    let isValid = true;
+
+    // 🔹 Step 1: Validate global fields
+    const contribution = formData['Contribution in e-Content']?.trim();
+    const numMOOCsStr = formData['Number of e-Contents']?.trim();
+    const numMOOCs = Number(numMOOCsStr);
+
+    // Contribution is required
+    if (!contribution) {
+      newErrors['Contribution in e-Content'] = 'Contribution in e-Content is required';
+      isValid = false;
+    }
+
+    // Number of e-Contents validation
+    if (!numMOOCsStr) {
+      newErrors['Number of e-Contents'] = 'Number of e-Contents is required';
+      isValid = false;
+    } else if (isNaN(numMOOCs)) {
+      newErrors['Number of e-Contents'] = 'Must be a valid number';
+      isValid = false;
+    } else if (!Number.isInteger(numMOOCs) || numMOOCs < 1) {
+      newErrors['Number of e-Contents'] = 'Must be a whole number ≥ 1';
+      isValid = false;
+    }
+
+    // 🔹 Step 2: Validate each e-Content instance (only if numMOOCs ≥ 1 and no prior errors)
+    if (isValid && numMOOCs > 0) {
+      const moocInstanceFields = ['Title of the e-Content', 'Month & Year']; // ← use only per-MOOC fields
+
+      for (let i = 0; i < numMOOCs; i++) {
+        moocInstanceFields.forEach((label) => {
+          const name = `${label}__${i}`;
+          const value = (formData[name] || '').trim();
+
+          // Special: Month & Year is a `type="month"` input → format "YYYY-MM"
+          if (label === 'Month & Year') {
+            if (!value) {
+              newErrors[name] = 'Month & Year is required';
+              isValid = false;
+            } else if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
+              newErrors[name] = 'Invalid format. Use YYYY-MM (e.g., 2024-08)';
+              isValid = false;
+            } else {
+              const inputDate = new Date(`${value}-01`);
+              const today = new Date();
+              // Normalize to first of month for fair comparison
+              today.setDate(1);
+              if (inputDate > today) {
+                newErrors[name] = 'Month & Year must be in the past';
+                isValid = false;
+              }
+            }
+          } else {
+            // 'Title of the MOOC' — non-empty string
+            if (!value) {
+              newErrors[name] = `${label} is required`;
+              isValid = false;
+            }
+          }
+        });
+      }
+    }
+
+    // 🔹 Step 3: Update UI & exit if invalid
+    setErrors(newErrors);
+    if (!isValid) {
+      console.warn('❌ MOOC validation failed:', newErrors);
+      return;
+    }
+
+    // 🔹 Step 4: ✅ Build structured payload
+    const moocs = [];
+    for (let i = 0; i < numMOOCs; i++) {
+      moocs.push({
+        title: formData[`Title of the MOOC__${i}`] || '',
+        monthYear: formData[`Month & Year__${i}`] || ''
+      });
+    }
+
+    const payload = {
+      group,
+      subcategory,
+      formData: {
+        contributionInEContent: contribution,
+        numberOfEContents: numMOOCs,
+        moocs
+      },
+      // Optional: include files if any were uploaded (e.g., certificates, links, docs)
+      files: { ...fileMap } // currently unused in MOOC, but safe to keep
+    };
+
+    console.log('✅ MOOC Submission Payload:', payload);
+    alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
+  }
+
   const currentFieldKeys = useMemo(() => {
     if (!group) return [];
 
@@ -379,6 +582,12 @@ const AddCredentials = () => {
         { value: "Co-Author", label: "Co-Author" }
       ];
     }
+    else if (clean === 'role of scholar') {
+      return [
+        { value: 'Supervisor', label: "SuperVisor" },
+        { value: "Co-Supervisor", label: "Co-Supervisor" }
+      ]
+    }
     return [];
   };
 
@@ -392,6 +601,7 @@ const AddCredentials = () => {
       clean.includes('in days') ||
       clean.includes('in months') ||
       clean.includes('page') ||
+      clean.includes('score') ||
       clean.includes('impact')
   };
 
@@ -405,8 +615,46 @@ const AddCredentials = () => {
     return roleValue === 'Organized';
   }
 
-  const handlePhdSubmit = (e) => {
+  const handlePhdjoinedSubmit = (e) => {
     e.preventDefault();
+    // Validate all fields
+    const newErrors = {};
+    let isValid = true;
+    const numPhd = Number(formData['Number of Ph.D. joined'] || 0);
+    for (let i = 0; i < numPhd; i++) {
+      phd_joining_fields.forEach((label) => {
+        const name = `${label}__${i}`;
+        const value = formData[name] || '';
+        const result = validateField(label, value);
+        if (!result.isValid && result.message) {
+          newErrors[name] = result.message;
+          isValid = false;
+        }
+      });
+    }
+    if (!isValid) {
+      setErrors(newErrors);
+      return;
+    }
+    // ✅ Build payload
+    const payload = {
+      group,
+      subcategory,
+      formData,
+      files: fileMap
+    };
+    console.log('✅ Submitted:', payload);
+    alert(`✅ ${group} - ${subcategory} added!`);
+    // Reset
+    setGroup('');
+    setSubcategory('');
+    setFormData({});
+    setFileMap({});
+    setErrors({});
+  };
+
+  const handlePhdSubmit = (e) => {
+    e.preventDefault()
     // Validate all fields
     const newErrors = {};
     let isValid = true;
@@ -594,6 +842,7 @@ const AddCredentials = () => {
                           const isNum = isNumberField(cleanLabel);
                           const isDate = isDateField(cleanLabel)
                           const value = formData[name] || '';
+                          const isRadio = isRadioField(cleanLabel);
                           return (
                             <div key={name} className="mb-4">
                               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -623,19 +872,37 @@ const AddCredentials = () => {
                                     </button>
                                   )}
                                 </div>
-                              ) : (
-                                <input
-                                  type={isNum ? "number" : isDate ? "date" : "text"}
-                                  value={value}
-                                  onChange={(e) => handleInputChange(name, e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                    } `}
-                                  placeholder={`Enter ${cleanLabel}`}
-                                  required={!isFile}
-                                  min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
-                                  step={isNum ? "1" : undefined}
-                                />
-                              )}
+                              ) :
+                                isRadio ? (
+                                  <div className="space-x-4">
+                                    {getRadioOptions(cleanLabel).map((option) => (
+                                      <label key={option.value} className="inline-flex items-center">
+                                        <input
+                                          type="radio"
+                                          name={name}
+                                          value={option.value}
+                                          checked={value === option.value}
+                                          onChange={(e) => handleInputChange(name, e.target.value)}
+                                          className="form-radio text-blue-600"
+                                        />
+                                        <span className="ml-2 text-gray-700">{option.label}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                ) :
+                                  (
+                                    <input
+                                      type={isNum ? "number" : isDate ? "date" : "text"}
+                                      value={value}
+                                      onChange={(e) => handleInputChange(name, e.target.value)}
+                                      className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                        } `}
+                                      placeholder={`Enter ${cleanLabel}`}
+                                      required={!isFile}
+                                      min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                      step={isNum ? "1" : undefined}
+                                    />
+                                  )}
                               {errors[name] && (
                                 <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
                               )}
@@ -657,216 +924,482 @@ const AddCredentials = () => {
                 </div>
               </form>
             ) :
-              <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-                <div className="border-t pt-6">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                    {group}
-                    {hasSubcategories && ` → ${subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}`}
-                  </h2>
 
-                  <div className="space-y-5">
-                    {currentFieldKeys.map((label, idx) => {
-                      const name = label;
-                      const cleanLabel = label.trim();
-                      const isFile = isFileField(cleanLabel);
-                      const isRadio = isRadioField(cleanLabel);
-                      const isNum = isNumberField(cleanLabel) && !isRadio;
-                      const isDate = isDateField(cleanLabel)
-                      const isPlaceField = isPlace(cleanLabel);
-                      const value = formData[name] || '';
-                      const modeValue = formData['Mode'] || '';
-                      const isRoleField = isRole(cleanLabel);
-                      const isUtilCert = isUtilCertificate(cleanLabel);
-
-                      if (isPlaceField && modeValue !== 'Offline') {
-                        return null; // 🚫 completely hide Place
-                      }
-
-                      if (isRoleField && !isOrganized()) {
-                        return null; // 🚫 hide Role if not Organized
-                      }
-                      const isValidityPeriod =
-                        cleanLabel.toLowerCase() === 'validity period (if applicable)';
-
-                      if (
-                        isValidityPeriod &&
-                        formData['Membership Type (Life/Annual/Student)'] === 'Life'
-                      ) {
-                        return null;
-                      }
-
-                      if (isUtilCert && formData['Status'] === 'Ongoing') {
-                        return null;
-                      }
-
-                      const isSelect = select_fields.includes(cleanLabel);
-
-                      if (isSelect) {
-                        return (
-                          <div key={name}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">  
-                              {cleanLabel}
-                              <span className="text-red-500 ml-1">*</span>
-                            </label>
-                            <select
-                              id={name}
-                              value={value}
-                              onChange={(e) => handleInputChange(name, e.target.value)}
-                              className={`w-full px-4 py-3 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                } `}
-                              required
-                            >
-                              <option value="">— Select {cleanLabel} —</option>
-                              {select_options[cleanLabel]?.map(opt => (
-                                <option key={opt} value={opt}>{opt}</option>
-                              ))}
-                            </select>
-                            {errors[name] && (
-                              <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
-                            )}
-                          </div>
-                        );
-                      }
-
-                      return (
-                        <div key={name}>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            {cleanLabel}
-                            {!isFile && !isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
-                          </label>
-
-                          {isRadio ? (
-                            <div className="flex flex-wrap gap-4 mt-1">
-                              {getRadioOptions(cleanLabel).map(opt => (
-                                <label key={opt.value} className="flex items-center cursor-pointer">
-                                  <input
-                                    type="radio"
-                                    name={name}
-                                    value={opt.value}
-                                    checked={value === opt.value}
-                                    onChange={() => {
-                                      handleInputChange(name, opt.value);
-                                      if (opt.value === 'Attended') {
-                                        setFormData(prev => {
-                                          const updated = { ...prev };
-                                          delete updated['Role']; // ✅ remove role completely
-                                          return updated;
-                                        });
-                                      }
-                                      else if (opt.value === 'Organized') {
-                                        setFormData(prev => ({ ...prev, 'Role': prev['Role'] || '' }));
-                                      }
-                                    }}
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                                    required
-                                  />
-                                  <span className={`ml-2 ${value === opt.value ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
-                                    {opt.label}
-                                  </span>
+              subcategory === 'e_content' ? (
+                <form onSubmit={handleESubmit} className="space-y-6 animate-fade-in">
+                  <div className="border-t pt-6">
+                    <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                      {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                    </h2>
+                    <div className="space-y-5">
+                      <label htmlFor="Contribution in e-Content">Contribution in e-Content</label>
+                      <select
+                        id="Contribution in e-Content"
+                        value={formData['Contribution in e-Content'] || ''}
+                        onChange={(e) => handleInputChange('Contribution in e-Content', e.target.value)}
+                        className={`w-full px-3 py-2 border rounded-md ${errors['Contribution in e-Content'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          } `}
+                      >
+                        <option value="">Select Contribution</option>
+                        {select_options['Contribution in e-Content']?.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Number of e-Contents<span className="text-red-500 ml-1">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={formData['Number of e-Contents'] || ''}
+                        onChange={(e) => handleInputChange('Number of e-Contents', e.target.value)}
+                        className={`w-full px-3 py-2 border rounded-md ${errors['Number of e-Contents'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          } `}
+                        placeholder={`Enter Number of e-Contents`}
+                        required
+                        min="1"
+                      />
+                      {errors['Number of e-Contents'] && (
+                        <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of e-Contents']}</p>
+                      )}
+                      {/* I want to add formData['Number of e-Contents'] times of mooc_fields */}
+                      {Array.from({ length: Number(formData['Number of e-Contents'] || 0) }, (_, i) => (
+                        <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                          <h3 className="text-md font-semibold text-gray-700 mb-3">e-Content {i + 1}</h3>
+                          {e_content_fields.map((label, idx) => {
+                            const name = `${label}__${i}`;
+                            const cleanLabel = label.trim();
+                            const isMonth = cleanLabel.includes('month');
+                            const value = formData[name] || '';
+                            return (
+                              <div key={name} className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  {cleanLabel} <span className="text-red-500 ml-1">*</span>
                                 </label>
-                              ))}
-                            </div>
-                          ) :
-                            isUtilCert ? (
-                              <div className="mt-1 flex items-center">
-                                <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                                  <span className="text-sm text-blue-600 font-medium">
-                                    {value || 'Choose file'}
-                                  </span>
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                    accept=".pdf,.jpg,.jpeg,.png"
-                                  />
-                                </label>
-                                {value && (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleFileChange(name, null)}
-                                    className="ml-2 text-xs text-red-500 hover:text-red-700"
-                                  >
-                                    ✕ Clear
-                                  </button>
+                                <input
+                                  type={isMonth ? "month" : "text"}
+                                  value={value}
+                                  onChange={(e) => handleInputChange(name, e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    } `}
+                                  placeholder={`Enter ${cleanLabel}`}
+                                  required={true}
+                                  min={isMonth ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                  step={isMonth ? "1" : undefined}
+                                />
+
+                                {errors[name] && (
+                                  <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
                                 )}
                               </div>
-                            ) :
-                              isFile ? (
-                                <div className="mt-1 flex items-center">
-                                  <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                                    <span className="text-sm text-blue-600 font-medium">
-                                      {value || 'Choose file'}
-                                    </span>
-                                    <input
-                                      type="file"
-                                      className="hidden"
-                                      onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                      accept=".pdf,.jpg,.jpeg,.png"
-                                    />
+                            );
+                          })}
+                        </div>
+                      ))}
+
+                      <div className="mt-6">
+                        <button
+                          type="submit"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              )
+                :
+                subcategory === 'mooc_content' ? (
+                  <form onSubmit={handlemoocSubmit} className="space-y-6 animate-fade-in">
+                    <div className="border-t pt-6">
+                      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                        {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                      </h2>
+                      <div className="space-y-5">
+                        <label htmlFor="Contribution in MOOC">Contribution in MOOC</label>
+                        <select
+                          id="Contribution in MOOC"
+                          value={formData['Contribution in MOOC'] || ''}
+                          onChange={(e) => handleInputChange('Contribution in MOOC', e.target.value)}
+                          className={`w-full px-3 py-2 border rounded-md ${errors['Contribution in MOOC'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            } `}
+                        >
+                          <option value="">Select Contribution</option>
+                          {select_options['Contribution in MOOC']?.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Number of MOOCs<span className="text-red-500 ml-1">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={formData['Number of MOOCs'] || ''}
+                          onChange={(e) => handleInputChange('Number of MOOCs', e.target.value)}
+                          className={`w-full px-3 py-2 border rounded-md ${errors['Number of MOOCs'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            } `}
+                          placeholder={`Enter Number of MOOCs`}
+                          required
+                          min="1"
+                        />
+                        {errors['Number of MOOCs'] && (
+                          <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of MOOCs']}</p>
+                        )}
+                        {/* I want to add formData['Number of MOOCs'] times of mooc_fields */}
+                        {Array.from({ length: Number(formData['Number of MOOCs'] || 0) }, (_, i) => (
+                          <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                            <h3 className="text-md font-semibold text-gray-700 mb-3">Scholar {i + 1}</h3>
+                            {MOOC_fields.map((label, idx) => {
+                              const name = `${label}__${i}`;
+                              const cleanLabel = label.trim();
+                              const isMonth = cleanLabel.includes('month');
+                              const value = formData[name] || '';
+                              return (
+                                <div key={name} className="mb-4">
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {cleanLabel} <span className="text-red-500 ml-1">*</span>
                                   </label>
-                                  {value && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleFileChange(name, null)}
-                                      className="ml-2 text-xs text-red-500 hover:text-red-700"
-                                    >
-                                      ✕ Clear
-                                    </button>
-                                  )}
-                                </div>
-                              ) :
-                                (
                                   <input
-                                    type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
+                                    type={isMonth ? "month" : "text"}
                                     value={value}
                                     onChange={(e) => handleInputChange(name, e.target.value)}
-                                    onBlur={() => {
-                                      const result = validateField(label, formData[name] || '');
-                                      if (!result.isValid && result.message) {
-                                        setErrors(prev => ({ ...prev, [name]: result.message }));
-                                      }
-                                    }}
                                     className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
                                       } `}
                                     placeholder={`Enter ${cleanLabel}`}
-                                    required={!isFile && cleanLabel !== 'validity period (if applicable)'}
-                                    min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
-                                    step={isNum ? "1" : undefined}
+                                    required={true}
+                                    min={isMonth ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                    step={isMonth ? "1" : undefined}
                                   />
-                                )}
 
-                          {errors[name] && (
-                            <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
-                          )}
+                                  {errors[name] && (
+                                    <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ))}
+
+                        <div className="mt-6">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            Submit
+                          </button>
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    </div>
+                  </form>
+                )
+                  :
+                  subcategory === 'phd_ongoing' ? (
+                    <form onSubmit={handlePhdjoinedSubmit} className="space-y-6 animate-fade-in">
+                      <div className="border-t pt-6">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                          {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                        </h2>
+                        <div className="space-y-5">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Number of PhD Students Joined<span className="text-red-500 ml-1">*</span>
+                          </label>
+                          <input
+                            type="number"
+                            value={formData['Number of Ph.D. joined'] || ''}
+                            onChange={(e) => handleInputChange('Number of Ph.D. joined', e.target.value)}
+                            className={`w-full px-3 py-2 border rounded-md ${errors['Number of Ph.D. joined'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                              } `}
+                            placeholder={`Enter Number of Ph.D students joined`}
+                            required
+                            min="1"
+                          />
+                          {errors['Number of Ph.D. joined'] && (
+                            <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of Ph.D. joined']}</p>
+                          )}
+                          {/* I want to add formData['Number of Ph.D. Awarded'] times of phd_awarded_fields */}
+                          {Array.from({ length: Number(formData['Number of Ph.D. joined'] || 0) }, (_, i) => (
+                            <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                              <h3 className="text-md font-semibold text-gray-700 mb-3">Scholar {i + 1}</h3>
+                              {phd_joining_fields.map((label, idx) => {
+                                const name = `${label}__${i}`;
+                                const cleanLabel = label.trim();
+                                const isFile = isFileField(cleanLabel);
+                                const isNum = isNumberField(cleanLabel);
+                                const isDate = isDateField(cleanLabel)
+                                const value = formData[name] || '';
+                                return (
+                                  <div key={name} className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      {cleanLabel}
+                                      {!isFile && <span className="text-red-500 ml-1">*</span>}
+                                    </label>
+                                    {isFile ? (
+                                      <div className="mt-1 flex items-center">
+                                        <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                          <span className="text-sm text-blue-600 font-medium">
+                                            {value || 'Choose file'}
+                                          </span>
+                                          <input
+                                            type="file"
+                                            className="hidden"
+                                            onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                            accept=".pdf,.jpg,.jpeg,.png"
+                                          />
+                                        </label>
+                                        {value && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleFileChange(name, null)}
+                                            className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                          >
+                                            ✕ Clear
+                                          </button>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <input
+                                        type={isNum ? "number" : isDate ? "date" : "text"}
+                                        value={value}
+                                        onChange={(e) => handleInputChange(name, e.target.value)}
+                                        className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                          } `}
+                                        placeholder={`Enter ${cleanLabel}`}
+                                        required={!isFile}
+                                        min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                        step={isNum ? "1" : undefined}
+                                      />
+                                    )}
+                                    {errors[name] && (
+                                      <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ))}
 
-                  {/* Submit Buttons */}
-                  <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setGroup('');
-                        setSubcategory('');
-                        setFormData({});
-                        setFileMap({});
-                        setErrors({});
-                      }}
-                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-sm transition"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
-                    >
-                      Submit {group}
-                    </button>
-                  </div>
-                </div>
-              </form>
+                          <div className="mt-6">
+                            <button
+                              type="submit"
+                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+                      <div className="border-t pt-6">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                          {group}
+                          {hasSubcategories && ` → ${subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}`}
+                        </h2>
+
+                        <div className="space-y-5">
+                          {currentFieldKeys.map((label, idx) => {
+                            const name = label;
+                            const cleanLabel = label.trim();
+                            const isFile = isFileField(cleanLabel);
+                            const isRadio = isRadioField(cleanLabel);
+                            const isNum = isNumberField(cleanLabel) && !isRadio;
+                            const isDate = isDateField(cleanLabel)
+                            const isPlaceField = isPlace(cleanLabel);
+                            const value = formData[name] || '';
+                            const modeValue = formData['Mode'] || '';
+                            const isRoleField = isRole(cleanLabel);
+                            const isUtilCert = isUtilCertificate(cleanLabel);
+
+                            if (isPlaceField && modeValue !== 'Offline') {
+                              return null; // 🚫 completely hide Place
+                            }
+
+                            if (isRoleField && !isOrganized()) {
+                              return null; // 🚫 hide Role if not Organized
+                            }
+                            const isValidityPeriod =
+                              cleanLabel.toLowerCase() === 'validity period (if applicable)';
+
+                            if (
+                              isValidityPeriod &&
+                              formData['Membership Type (Life/Annual/Student)'] === 'Life'
+                            ) {
+                              return null;
+                            }
+
+                            if (isUtilCert && formData['Status'] === 'Ongoing') {
+                              return null;
+                            }
+
+                            const isSelect = select_fields.includes(cleanLabel);
+
+                            if (isSelect) {
+                              return (
+                                <div key={name}>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {cleanLabel}
+                                    <span className="text-red-500 ml-1">*</span>
+                                  </label>
+                                  <select
+                                    id={name}
+                                    value={value}
+                                    onChange={(e) => handleInputChange(name, e.target.value)}
+                                    className={`w-full px-4 py-3 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                      } `}
+                                    required
+                                  >
+                                    <option value="">— Select {cleanLabel} —</option>
+                                    {select_options[cleanLabel]?.map(opt => (
+                                      <option key={opt} value={opt}>{opt}</option>
+                                    ))}
+                                  </select>
+                                  {errors[name] && (
+                                    <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                  )}
+                                </div>
+                              );
+                            }
+
+                            return (
+                              <div key={name}>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  {cleanLabel}
+                                  {!isFile && !isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
+                                </label>
+
+                                {isRadio ? (
+                                  <div className="flex flex-wrap gap-4 mt-1">
+                                    {getRadioOptions(cleanLabel).map(opt => (
+                                      <label key={opt.value} className="flex items-center cursor-pointer">
+                                        <input
+                                          type="radio"
+                                          name={name}
+                                          value={opt.value}
+                                          checked={value === opt.value}
+                                          onChange={() => {
+                                            handleInputChange(name, opt.value);
+                                            if (opt.value === 'Attended') {
+                                              setFormData(prev => {
+                                                const updated = { ...prev };
+                                                delete updated['Role']; // ✅ remove role completely
+                                                return updated;
+                                              });
+                                            }
+                                            else if (opt.value === 'Organized') {
+                                              setFormData(prev => ({ ...prev, 'Role': prev['Role'] || '' }));
+                                            }
+                                          }}
+                                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                                          required
+                                        />
+                                        <span className={`ml-2 ${value === opt.value ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                                          {opt.label}
+                                        </span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                ) :
+                                  isUtilCert ? (
+                                    <div className="mt-1 flex items-center">
+                                      <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                        <span className="text-sm text-blue-600 font-medium">
+                                          {value || 'Choose file'}
+                                        </span>
+                                        <input
+                                          type="file"
+                                          className="hidden"
+                                          onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                          accept=".pdf,.jpg,.jpeg,.png"
+                                        />
+                                      </label>
+                                      {value && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleFileChange(name, null)}
+                                          className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                        >
+                                          ✕ Clear
+                                        </button>
+                                      )}
+                                    </div>
+                                  ) :
+                                    isFile ? (
+                                      <div className="mt-1 flex items-center">
+                                        <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                          <span className="text-sm text-blue-600 font-medium">
+                                            {value || 'Choose file'}
+                                          </span>
+                                          <input
+                                            type="file"
+                                            className="hidden"
+                                            onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                            accept=".pdf,.jpg,.jpeg,.png"
+                                          />
+                                        </label>
+                                        {value && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleFileChange(name, null)}
+                                            className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                          >
+                                            ✕ Clear
+                                          </button>
+                                        )}
+                                      </div>
+                                    ) :
+                                      (
+                                        <input
+                                          type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
+                                          value={value}
+                                          onChange={(e) => handleInputChange(name, e.target.value)}
+                                          onBlur={() => {
+                                            const result = validateField(label, formData[name] || '');
+                                            if (!result.isValid && result.message) {
+                                              setErrors(prev => ({ ...prev, [name]: result.message }));
+                                            }
+                                          }}
+                                          className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            } `}
+                                          placeholder={`Enter ${cleanLabel}`}
+                                          required={!isFile && cleanLabel !== 'validity period (if applicable)'}
+                                          min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                          step={isNum ? "1" : undefined}
+                                        />
+                                      )}
+
+                                {errors[name] && (
+                                  <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Submit Buttons */}
+                        <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGroup('');
+                              setSubcategory('');
+                              setFormData({});
+                              setFileMap({});
+                              setErrors({});
+                            }}
+                            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-sm transition"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
+                          >
+                            Submit {group}
+                          </button>
+                        </div>
+                      </div>
+                    </form>)
           )}
         </div>
       </div>
