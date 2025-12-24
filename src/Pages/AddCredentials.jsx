@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
 import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
 import { label } from 'framer-motion/client';
+import { values } from 'pdf-lib';
 
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
@@ -16,6 +17,7 @@ const groupOptions = [
   'Awards and Recognitions',
   'Memberships in Professional Bodies',
   'Research Guidance',
+  'Transmission works'
 ];
 
 const select_fields = ['Purpose of Visit', 'Nature of Visit', 'Contribution in MOOC', 'Role of Faculty', 'Scope', 'Membership Type', 'Role', 'Indexing Platform']
@@ -46,6 +48,10 @@ const subcategories = {
     { label: 'Infosys SpringBoard', value: 'infosysspringboard' },
     { label: 'edX', value: 'edx' },
     { label: 'Others', value: 'other' },
+  ],
+  'Transmission works': [
+    { label: 'Any MOOCs course', value:'any_moocs_course' },
+    { label: 'Book/Book Chapter', value:'book_book_chapter' },
   ],
   'Projects': [
     { label: 'Sponsored', value: 'sponsored' },
@@ -137,11 +143,6 @@ const AddCredentials = () => {
     return clean === 'place';
   };
 
-  const isIndexing = (label) => {
-    const clean = label.trim().toLowerCase();
-    return clean === 'indexing platform';
-  }
-
   // 🔍 Validation Helper (pure JS)
   const validateField = (label, value) => {
     const cleanLabel = label.trim().toLowerCase();
@@ -182,13 +183,34 @@ const AddCredentials = () => {
     }
 
     // --- Year validation
-    if (cleanLabel.includes('year') && !cleanLabel.includes('academic') && !cleanLabel.includes('certificate')) {
+    if (cleanLabel.includes('year') && !cleanLabel.includes('academic') && !cleanLabel.includes('month') && !cleanLabel.includes('certificate')) {
       if (!valStr) return { isValid: false, message: 'Year is required' };
       if (isNaN(valNum)) return { isValid: false, message: 'Year must be a number' };
       if (!Number.isInteger(valNum)) return { isValid: false, message: 'Year must be a whole number' };
       if (valNum < 1900) return { isValid: false, message: 'Year must be ≥ 1900' };
       const currentYear = new Date().getFullYear(); // 2025
       if (valNum > currentYear) return { isValid: false, message: `Year must be ≤ ${currentYear}` };
+      return { isValid: true };
+    }
+    else if(cleanLabel.includes('year') && cleanLabel.includes('month')) {
+      if (!valStr) return { isValid: false, message: 'Month & Year is required' };  
+      // Expected format: "YYYY-MM"
+      const monthYearRegex = /^(\d{4})-(0[1-9]|1[0-2])$/;
+      if (!monthYearRegex.test(valStr)) {
+        return { isValid: false, message: 'Month & Year must be in YYYY-MM format (e.g., 2024-08)' };
+      }
+      const [_, yearStr, monthStr] = valStr.match(monthYearRegex);
+      const year = Number(yearStr);
+      const month = Number(monthStr);
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1; // zero-based
+      if (year < 1900) {
+        return { isValid: false, message: 'Year must be ≥ 1900' };
+      }
+      if (year > currentYear || (year === currentYear && month > currentMonth)) {
+        return { isValid: false, message: 'Month & Year must not be in the future' };
+      }
       return { isValid: true };
     }
 
@@ -593,7 +615,7 @@ const AddCredentials = () => {
 
   const isNumberField = (label) => {
     const clean = label.toLowerCase();
-    return (clean.includes('year') && !clean.includes('academic')) ||
+    return (clean.includes('year') && !clean.includes('month') &&  !clean.includes('academic')) ||
       clean.includes('amount') ||
       clean.includes('number of students') ||
       clean.includes('fund received') ||
@@ -601,7 +623,6 @@ const AddCredentials = () => {
       clean.includes('in days') ||
       clean.includes('in months') ||
       clean.includes('page') ||
-      clean.includes('score') ||
       clean.includes('impact')
   };
 
@@ -1048,7 +1069,7 @@ const AddCredentials = () => {
                         {/* I want to add formData['Number of MOOCs'] times of mooc_fields */}
                         {Array.from({ length: Number(formData['Number of MOOCs'] || 0) }, (_, i) => (
                           <div key={i} className="p-4 border rounded-lg bg-gray-50">
-                            <h3 className="text-md font-semibold text-gray-700 mb-3">Scholar {i + 1}</h3>
+                            <h3 className="text-md font-semibold text-gray-700 mb-3">MOOC {i + 1}</h3>
                             {MOOC_fields.map((label, idx) => {
                               const name = `${label}__${i}`;
                               const cleanLabel = label.trim();
@@ -1059,6 +1080,8 @@ const AddCredentials = () => {
                                   <label className="block text-sm font-medium text-gray-700 mb-1">
                                     {cleanLabel} <span className="text-red-500 ml-1">*</span>
                                   </label>
+
+                                 {/* { add isFile input type} */}
                                   <input
                                     type={isMonth ? "month" : "text"}
                                     value={value}

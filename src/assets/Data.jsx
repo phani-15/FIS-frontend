@@ -1658,8 +1658,8 @@ const facultyList = [
 
 const phd_awarded_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Awarding', 'Proceeding'];
 const phd_joining_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Joining', 'Allotment order'];
-const MOOC_fields = ['Title of the MOOC','Month & Year'];
-const e_content_fields = ['Title of the e-Content','Month & Year','Module is being used by Organization'];
+const MOOC_fields = ['Title of the MOOC','Month & Year','Document'];
+const e_content_fields = ['Title of the e-Content','Month & Year','Module is being used by Organization','Document'];
 
 const fields = {
   foreign_visits : ['Purpose of Visit','Nature of Visit','Name of Conference/Event','Academic Year','Name of Host Organization','Country Visited','Start Date','End Date','Duration (in days)','Role of Faculty','Title of the Paper/Talk','Sponsoring Agency','Amount Sanctioned','Travel Grant Recieved','document'],
@@ -1697,7 +1697,7 @@ const fields = {
 
   mooc_content: ['Contribution in MOOC','Number of MOOCs',...MOOC_fields],
   e_content: ['Contribution in e-Content','Number of e-Contents', ...e_content_fields],
-  innovative_pedagogy : ['Title of the Pedagogical Innovation','Nature of Pedagogical Innovation','Year of development','Pedagogy is being used by Organization','Score Claimed'],
+  innovative_pedagogy : ['Title of the Pedagogical Innovation','Nature of Pedagogical Innovation','Year of development','Pedagogy is being used by Organization','Document'],
   
   award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Scope','Year', 'Document'],
 
@@ -1707,10 +1707,14 @@ const fields = {
   ie: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
   iete: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
   other_bodies: [ 'Name of the Professional Body', 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  
+
+  any_moocs_course: ['Name of Certification Course', 'Duration','Transmitted language','certificate'],
+  book_book_chapter:['Title of the Book/Book Chapter', 'Name of the Publisher','Month & year of Publication', 'ISBN/ISSN Number', 'No. of Chapters translated', 'No. of books translated','Document'],
+
   phd_awarded : ['Number of Students',...phd_awarded_fields],
   phd_ongoing : ['Number of Students',...phd_joining_fields],
   mtech: ['Year of Awarding', 'Number of Students'],
+
 };
 
 export { schemas, yearFields,facultyList,fields, phd_awarded_fields, phd_joining_fields, MOOC_fields,e_content_fields };
