@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, X, User, ChevronDown, ShieldCheck, XCircle, ChevronUp, FileText, Download } from "lucide-react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate ,useParams} from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
 import { schemas, yearFields, certifications,facultyList } from '../assets/Data'
@@ -8,7 +8,7 @@ import { schemas, yearFields, certifications,facultyList } from '../assets/Data'
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
   const navigate = useNavigate();
-
+  const {userId}=useParams()
   // --- State for report modal ---
   const [showExtractModal, setShowExtractModal] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -21,6 +21,9 @@ export default function HODDashBoard() {
   const getAllAttributesForType = (typeKey) => {
     return getSchemaForType(typeKey).attributes.map(a => a.key);
   };
+  useEffect(async ()=>{
+    
+  },[])
 
   // Helper: Define schema per type (label + attributes)
   const getSchemaForType = (typeKey) => {

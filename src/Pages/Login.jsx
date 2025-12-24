@@ -43,18 +43,12 @@ export default function Login() {
 			document.getElementById("emptyusername").innerHTML = "<p class='text-red-600 text-sm'>Enter a valid email or phone number</p>";
 			return;
 		}
-
-		console.log("formdata is :",formData);
-		let data="";
 		// 🚀 You can send formData to your backend API here
 		await login({
 			email:formData.username,
 			password:formData.password
 		})
 		.then(data=>{
-			console.log("data=:",data);
-			console.log("id is :",data.user._id);
-			
 			authenticate(data,()=>{
 			setFormData({
 				...formData
