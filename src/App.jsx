@@ -43,7 +43,7 @@ export default function App() {
             <Route path='/iqacDashboard' element={<IqacDashboard />} />
 
             <Route path='/add' element={<AddDetails />} />
-            <Route path='/hodDashboard' element={<HodDashboard />} />
+            <Route path='/hodDashboard/:userId' element={<HodDashboard />} />
             <Route path='/adminPage' element={<Admin />} />
             <Route path='/admin' element={<AdminLogin />} />
             <Route path='/vc' element={<ViewCertificaion />} />
