@@ -110,7 +110,7 @@ export default function IQACDashboard() {
               if (yearTo && recordYear && recordYear > parseInt(yearTo)) return;
             }
 
-            const dept = faculty.department || "Others";
+            const dept = faculty.dept || "Others";
             if (!departmentData[dept]) departmentData[dept] = [];
 
             const row = [faculty.name, faculty.role];

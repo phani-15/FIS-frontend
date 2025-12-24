@@ -4,12 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Trash2, AlertTriangle, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
-import { address } from "framer-motion/client";
-import { number } from "framer-motion";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("as"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
 
@@ -118,7 +116,7 @@ export default function Register() {
   const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [experience, setExperience] = useState([
-    { institute: "", designation: "", from: "", to: "" }
+    { institute: "", type: "", designation: "", from: "", to: "" }
   ])
 
   const [PhDs, setPhDs] = useState([]);
@@ -127,7 +125,7 @@ export default function Register() {
   // const [PostDocs, setPostDocs] = useState(obj.postdoc || []);
 
   const [administrativeService, setAdministrativeService] = useState([
-    { designation: "", from: "", to: "" }
+    { designation: "", level: "", from: "", to: "" }
   ])
 
   const [otherAdministrativeService, setOtherAdministrativeService] = useState([
@@ -153,6 +151,21 @@ export default function Register() {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
+  const validateOAS = () => {
+    const newErrors = {};
+    otherAdministrativeService.forEach((oas, index) => {
+      if (!haveOAS) return; // skip if not applicable
+      if (!oas.institute.trim()) newErrors[`otherAdministrativeService.${index}.institute`] = "Institute is required";
+      if (!oas.designation.trim()) newErrors[`otherAdministrativeService.${index}.designation`] = "Designation is required";
+      if (!oas.from || oas.from === "0") newErrors[`otherAdministrativeService.${index}.from`] = "From year is required";
+      if (!oas.to) newErrors[`otherAdministrativeService.${index}.to`] = "To year is required";
+      else if (parseInt(oas.from) > parseInt(oas.to)) {
+        newErrors[`otherAdministrativeService.${index}.to`] = "'To' year cannot be earlier than 'From' year.";
+      }
+    });
+    return newErrors;
+  };
+
   const handleExperienceChange = useCallback((index, e) => {
     const { name, value } = e.target;
     setExperience((prev) => {
@@ -162,137 +175,159 @@ export default function Register() {
     });
   }, []);
 
-  const test=async ()=>{
+  const validateAS = () => {
+    const newErrors = {};
+    administrativeService.forEach((as, index) => {
+      if (!as.designation.trim()) {
+        newErrors[`administrativeService.${index}.designation`] = "Designation is required";
+      }
+      if (!as.level.trim()) {
+        newErrors[`administrativeService.${index}.level`] = "Level is required";
+      }
+      if (!as.from || as.from === "0") {
+        newErrors[`administrativeService.${index}.from`] = "From year is required";
+      }
+      if (!as.to || as.to === "") {
+        newErrors[`administrativeService.${index}.to`] = "To year is required";
+      } else if (as.to !== "Present" && parseInt(as.from) > parseInt(as.to)) {
+        newErrors[`administrativeService.${index}.to`] = "'To' year must be greater than or equal to 'From' year";
+      }
+    });
+    return newErrors;
+  };
+
+  const test = async () => {
     const obj1 = {
-                      "loginData": {
-                        "email": "vi2@gmail.com",
-                        "password": "1234567890",
-                        "phone": "1234567999"
-                      },
-                      "personalData": {
-                        "DOB": "1985-06-15",
-                        "college": "University College of Engineering",
-                        "department": "Computer Science",
-                        "designation": "Associate Professor",
-                        "father": "Ramesh Kumar",
-                        "gender": "Male",
-                  
-                        "marital": "Married",
-                        "name": "Dr. Harish Kumar",
-                        "profile": "A dedicated educator with 15 years of teaching and research experience."
-                      },
-                      "education": {
-                        "tenth": {
-                          "percentage": "88%",
-                          "school": "St. John's High School",
-                          "year": "2001"
-                        },
-                        "twelth": {
-                          "college": "Narayana Junior College",
-                          "percentage": "92%",
-                          "type": "Intermediate",
-                          "year": "2003"
-                        },
-                        "degree": {
-                          "college": "ABC Degree College",
-                          "degreeName": "B.Tech",
-                          "percentage": "75%",
-                          "specialization": "Computer Science",
-                          "title": "Graduate in Computer Science",
-                          "university": "JNTU Hyderabad",
-                          "year": "2007"
-                        },
-                        "pg": {
-                          "college": "XYZ College of Engineering",
-                          "course": "M.Tech",
-                          "percentage": "82%",
-                          "specialization": "Software Engineering",
-                          "university": "Osmania University",
-                          "year": "2009"
-                        },
-                        "phd": [
-                          {
-                            "University": "IIT Bombay",
-                            "department": "Computer Science",
-                            "specialization": "Machine Learning",
-                            "under_the_proffessor": "Dr. S. Raman",
-                            "year": 2015
-                          },
-                          {
-                            "University": "IISC Bangalore",
-                            "department": "Artificial Intelligence",
-                            "specialization": "Deep Learning",
-                            "under_the_proffessor": "Dr. Anita Verma",
-                            "year": 2018
-                          }
-                        ],
-                        "postdoc": [
-                          {
-                            "University": "MIT",
-                            "specialization": "Neural Networks",
-                            "under_the_proffessor": "Dr. John Doe",
-                            "year": 2020
-                          }
-                        ]
-                      },
-                      "experience": [
-                        {
-                          "designation": "Assistant Professor",
-                          "institute": "XYZ Engineering College",
-                          "from": 2010,
-                          "to": 2015
-                        },
-                        {
-                          "designation": "Senior Assistant Professor",
-                          "institute": "ABC Institute of Technology",
-                          "from": 2015,
-                          "to": 2019
-                        },
-                        {
-                          "designation": "Associate Professor",
-                          "institute": "University College of Engineering",
-                          "from": 2019,
-                          "to": 2024
-                        }
-                      ],
-                      "administrativeService": [
-                        {
-                          "designation": "Department Coordinator",
-                          "from": 2016,
-                          "to": 2018
-                        },
-                        {
-                          "designation": "Training & Placement Officer",
-                          "from": 2018,
-                          "to": 2020
-                        }
-                      ],
-                      "otheradministrativeervice": [
-                        {
-                          "designation": "Research Committee Member",
-                          "institute": "ABC Institute",
-                          "from": 2015,
-                          "to": "2017"
-                        },
-                        {
-                          "designation": "Library Committee Chair",
-                          "institute": "XYZ Engineering College",
-                          "from": 2017,
-                          "to": "2019"
-                        },
-                        {
-                          "designation": "Cultural Event Coordinator",
-                          "institute": "University College of Engineering",
-                          "from": 2020,
-                          "to": "2023"
-                        }
-                      ]
-                    }
-                    console.log("final object is : ", obj1);
-                    await register(obj1)
-                      .then(console.log("user saved succesfully !")
-                      )
-                    navigate("/");
+      "loginData": {
+        "email": "vi2@gmail.com",
+        "password": "1234567890",
+        "phone": "1234567999"
+      },
+      "personalData": {
+        "DOB": "1985-06-15",
+        "college": "University College of Engineering",
+        "department": "Computer Science",
+        "designation": "Associate Professor",
+        "father": "Ramesh Kumar",
+        "gender": "Male",
+
+        "marital": "Married",
+        "name": "Dr. Harish Kumar",
+        "profile": "A dedicated educator with 15 years of teaching and research experience."
+      },
+      "education": {
+        "tenth": {
+          "percentage": "88%",
+          "school": "St. John's High School",
+          "year": "2001"
+        },
+        "twelth": {
+          "college": "Narayana Junior College",
+          "percentage": "92%",
+          "type": "Intermediate",
+          "year": "2003"
+        },
+        "degree": {
+          "college": "ABC Degree College",
+          "degreeName": "B.Tech",
+          "percentage": "75%",
+          "specialization": "Computer Science",
+          "title": "Graduate in Computer Science",
+          "university": "JNTU Hyderabad",
+          "year": "2007"
+        },
+        "pg": {
+          "college": "XYZ College of Engineering",
+          "course": "M.Tech",
+          "percentage": "82%",
+          "specialization": "Software Engineering",
+          "university": "Osmania University",
+          "year": "2009"
+        },
+        "phd": [
+          {
+            "University": "IIT Bombay",
+            "department": "Computer Science",
+            "specialization": "Machine Learning",
+            "under_the_proffessor": "Dr. S. Raman",
+            "year": 2015
+          },
+          {
+            "University": "IISC Bangalore",
+            "department": "Artificial Intelligence",
+            "specialization": "Deep Learning",
+            "under_the_proffessor": "Dr. Anita Verma",
+            "year": 2018
+          }
+        ],
+        "postdoc": [
+          {
+            "University": "MIT",
+            "specialization": "Neural Networks",
+            "under_the_proffessor": "Dr. John Doe",
+            "year": 2020
+          }
+        ]
+      },
+      "experience": [
+        {
+          "designation": "Assistant Professor",
+          "institute": "XYZ Engineering College",
+          "from": 2010,
+          "to": 2015
+        },
+        {
+          "designation": "Senior Assistant Professor",
+          "institute": "ABC Institute of Technology",
+          "from": 2015,
+          "to": 2019
+        },
+        {
+          "designation": "Associate Professor",
+          "institute": "University College of Engineering",
+          "from": 2019,
+          "to": 2024
+        }
+      ],
+      "administrativeService": [
+        {
+          "designation": "Department Coordinator",
+          "level": "University level",
+          "from": 2016,
+          "to": 2018
+        },
+        {
+          "designation": "Training & Placement Officer",
+          "from": 2018,
+          "to": 2020
+        }
+      ],
+      "otheradministrativeervice": [
+        {
+          "designation": "Research Committee Member",
+          "institute": "ABC Institute",
+          "from": 2015,
+          "to": "2017"
+        },
+        {
+          "designation": "Library Committee Chair",
+          "institute": "XYZ Engineering College",
+          "from": 2017,
+          "to": "2019"
+        },
+        {
+          "designation": "Cultural Event Coordinator",
+          "institute": "University College of Engineering",
+          "from": 2020,
+          "to": "2023"
+        }
+      ]
+    }
+    console.log("final object is : ", obj1);
+    await register(obj1)
+      .then(console.log("user saved succesfully !")
+      )
+    navigate("/");
   }
 
 
@@ -300,7 +335,7 @@ export default function Register() {
   const addExperience = useCallback(() => {
     setExperience((prev) => [
       ...prev,
-      { institute: "", designation: "", from: "", to: "" }
+      { institute: "", type: "", designation: "", from: "", to: "" }
     ]);
   }, []);
 
@@ -355,7 +390,7 @@ export default function Register() {
   const addAS = useCallback(() => {
     setAdministrativeService(prev => [
       ...prev,
-      { designation: "", from: "", to: "" }
+      { designation: "", level: "", from: "", to: "" }
     ]);
   }, []);
 
@@ -461,7 +496,7 @@ export default function Register() {
   const addPostDoc = useCallback(() => {
     setPostDocs(prev => [
       ...prev,
-      { specialization: "", under_the_proffessor: "", University: "", year: "" }
+      { specialization: "", under_the_proffessor: "", country: "", University: "", duration: "", year: "" }
     ]);
   }, []);
 
@@ -748,60 +783,58 @@ export default function Register() {
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label>Phone Number <span className="text-gray-600">(optional)</span></label>
               <input
-                type="text"   
+                type="text"
                 name="phone"
                 placeholder="enter your phone number"
                 value={personalData.phone}
                 onChange={handleChange}
                 className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.phone ? "border-red-500" : "border-gray-300 "
                   }`}
-              
+
               />
               {errors.phone && <small className="text-red-600 text-sm">{errors.phone}</small>}
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
-  <label>
-    Address <span className="text-gray-600">(optional)</span>
-  </label>
+              <label>
+                Address <span className="text-gray-600">(optional)</span>
+              </label>
 
 
-  <div className="flex gap-3">
-    
-    <input
-      type="text"
-      name="area"
-      placeholder="Area / Street"
-      value={personalData.area}
-      onChange={handleChange}
-      className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${
-        errors.area ? "border-red-500" : "border-gray-300"
-      }`}
-    />
+              <div className="flex gap-3">
 
-   
-    <input
-      type="text"
-      name="city"
-      placeholder="City"
-      value={personalData.city}
-      onChange={handleChange}
-      className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${
-        errors.city ? "border-red-500" : "border-gray-300"
-      }`}
-    />
-  </div>
+                <input
+                  type="text"
+                  name="area"
+                  placeholder="Area / Street"
+                  value={personalData.area}
+                  onChange={handleChange}
+                  className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${errors.area ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
 
-  {/* Error Messages */}
-  {errors.area && (
-    <small className="text-red-600 text-sm">{errors.area}</small>
-  )}
-  {errors.city && (
-    <small className="text-red-600 text-sm">{errors.city}</small>
-  )}
-</div>
 
-              
-            
+                <input
+                  type="text"
+                  name="city"
+                  placeholder="City"
+                  value={personalData.city}
+                  onChange={handleChange}
+                  className={`w-1/2 pl-3 pr-3 py-2 border rounded-lg focus:ring-1 focus:outline-none ${errors.city ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+              </div>
+
+              {/* Error Messages */}
+              {errors.area && (
+                <small className="text-red-600 text-sm">{errors.area}</small>
+              )}
+              {errors.city && (
+                <small className="text-red-600 text-sm">{errors.city}</small>
+              )}
+            </div>
+
+
+
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label>College</label>
               <select
@@ -893,14 +926,6 @@ export default function Register() {
 
             <div className="flex gap-3 justify-end">
               <button
-                type="button"
-                onClick={() => setStep("signUp")}
-                className="mt-6 hover:bg-slate-200 bg-slate-100  px-4 py-2 cursor-pointer rounded-lg border border-gray-400 flex items-center gap-0.5"
-              >
-                <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
-              </button>
-
-              <button
                 type="submit"
                 className="mt-6  cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white p-2 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition flex items-center gap-0.5"
               >
@@ -924,7 +949,6 @@ export default function Register() {
                   {renderEduFields(level)}
                 </div>
               ))}
-              <h1>This testing Phrase</h1>
               {/* PhD Section */}
               <div className="mt-6">
                 <div className="flex items-center space-x-4 mb-4">
@@ -1001,9 +1025,9 @@ export default function Register() {
                         />
 
                         <InputField
-                          label="Year of Completion"
+                          label="Year of Awarded"
                           name="year"
-                          placeholder="enter the year of completion"
+                          placeholder="enter the year of award"
                           value={phd.year}
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.year`]}
@@ -1103,9 +1127,9 @@ export default function Register() {
                         />
 
                         <InputField
-                          label="Year of Completion"
+                          label="Year"
                           name="year"
-                          placeholder="enter the year of completion"
+                          placeholder="enter the year"
                           value={postdoc.year}
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.year`]}
@@ -1197,7 +1221,52 @@ export default function Register() {
                   error={errors[`experience.${index}.designation`]}
                   required
                 />
-
+                {/* radio button for experience type as institute/university */}
+                <div>
+                  <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Type </label>
+                  <div className="flex flex-wrap gap-4 mt-1 m-2">
+                    <div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name={`type-${index}`}
+                          value="institute"
+                          checked={exp.type === "institute"}
+                          onChange={() =>
+                            handleExperienceChange(index, {
+                              target: { name: "type", value: "institute" }
+                            })
+                          }
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          required
+                        />
+                        <span className={`ml-2 ${exp.type === "institute" ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                          Institute
+                        </span>
+                      </label>
+                    </div>
+                    <div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name={`type-${index}`}
+                          value="university"
+                          checked={exp.type === "university"}
+                          onChange={() =>
+                            handleExperienceChange(index, {
+                              target: { name: "type", value: "university" }
+                            })
+                          }
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          required
+                        />
+                        <span className={`ml-2 ${exp.type === "university" ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                          University
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   {/* FROM Field - Corrected to use a mapped array for year generation */}
                   <div className="flex flex-col space-y-2">
@@ -1350,27 +1419,16 @@ export default function Register() {
                 className="text-2xl font-semibold mb-6"
                 style={{ fontFamily: "Times New Roman, serif" }}
               >
-                Administrative Service in this Institute
+                Administrative Service/Additional Duties in this Institute
               </h1>
-
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  administrativeService.forEach((as, index) => {
-                    if (as.to != "Present" && as.from > as.to) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        [`administrativeService.${index}.to`]:
-                          "'To' year must be greater than or equal to 'From' year",
-                      }));
-
-                    }
-                  });
-                  if (Object.entries(errors).length === 0) {
+                  const newErrors = validateAS();
+                  setErrors(newErrors);
+                  if (Object.keys(newErrors).length === 0) {
+                    console.log("Administrative Service Data:", administrativeService);
                     setStep("oas");
-                  }
-                  else {
-                    console.log(errors);
                   }
                 }}
                 className="flex flex-col space-y-6"
@@ -1392,6 +1450,29 @@ export default function Register() {
                       onChange={(e) => handleASChange(index, e)}
                       required
                     />
+                    <div className="flex flex-col text-left space-y-2 mt-4">
+                      <label>Level of Service:</label>
+                      <div className="flex space-x-6 mt-1">
+                        {["Departmental", "College", "University"].map((level) => (
+                          <label key={level} className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name={`level-${index}`}
+                            value={level.toLowerCase()}
+                            checked={as.level === level.toLowerCase()}
+                            onChange={() =>
+                              handleASChange(index, {
+                                target: { name: "level", value: level.toLowerCase() }
+                              })
+                            }
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                            required
+                          />
+                          <span className={`ml-2 ${as.level === level.toLowerCase() ? 'font-semibold text-gray-900' : 'text-gray-700'}`}> {level}</span>
+                        </label>))}
+
+                      </div>
+                    </div>
 
                     {/* Group for From and To years */}
                     <div className="grid grid-cols-2 gap-4">
@@ -1544,22 +1625,12 @@ export default function Register() {
 
               {/* The form container maintains the vertical spacing and centering */}
               <form
-                onSubmit={async (e) => {
+                onSubmit={(e) => {
                   e.preventDefault();
-                  otherAdministrativeService.forEach((oas, index) => {
-                    if (oas.to < oas.from) {
-                      setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        [`otherAdministrativeService.${index}.to`]: "'To' year cannot be earlier than 'From' year.",
-                      }));
-                      return;
-                    }
-
-                  });
-                  if (errors.length > 0) {
-                    console.log("errors exist : ", errors)
-                  }
-                  else {
+                  const newErrors = validateOAS();
+                  setErrors(newErrors);
+                  if (Object.keys(newErrors).length === 0) {
+                    // Submit final data
                     const obj1 = {
                       personalData: personalData,
                       loginData: loginData,
@@ -1567,14 +1638,13 @@ export default function Register() {
                       experience: experience,
                       administrativeService: administrativeService,
                       otherAdministrativeService: otherAdministrativeService,
-                    }
-                    console.log("final object is : ", obj1)
-                    navigate("/");
+                    };
+                    console.log("final object is:", obj1);
+                    register(obj1).then(() => navigate("/"));
                   }
                 }}
                 className="flex flex-col space-y-6"
               >
-
                 {haveOAS && (
                   <div className="space-y-6">
                     {otherAdministrativeService.map((oas, index) => (
@@ -1740,7 +1810,7 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
-                    onClick={()=>(
+                    onClick={() => (
                       test()
                     )}
                     className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
