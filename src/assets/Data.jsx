@@ -213,7 +213,7 @@ export const certifications = [
           "Title of the Book": "Advanced Metallurgy and Materials",
           "Name of the Publisher": "Elsevier",
           "Year of Publication": "2020",
-          "National/International" : "international",
+          "National/International": "international",
           "ISBN Number": "978-0-12-345678-9",
           "Document": "meera_iyer_book.pdf"
         }
@@ -572,7 +572,7 @@ export const certifications = [
         {
           "Title of the Book": "Modern Cryptography Essentials",
           "Name of the Publisher": "Pearson",
-          "National/International" : "international",
+          "National/International": "international",
           "ISBN": "978-1-23456-789-7",
           "Year of Publication": "2022"
         }
@@ -592,7 +592,7 @@ export const certifications = [
           "Title of the Conference": "ICC 2024",
           "Date of Publication": "2024-04-12",
           "Organized by": "IEEE Quantum",
-          "National/International" : "International",
+          "National/International": "International",
           "Location": "Delhi"
         }
       ],
@@ -628,7 +628,7 @@ export const certifications = [
           "Title of the Conference": "ICCE 2024",
           "Date of Publication": "2024-05-06",
           "Organized by": "IEEE Quantum",
-          "National/International" : "International",
+          "National/International": "International",
           "Location": "Mumbai"
         }
       ]
@@ -645,7 +645,7 @@ export const certifications = [
         {
           "Patent Number": "IN2024A000202",
           "Title of the Patent": "Hybrid Turbine Efficiency Enhancer",
-          "Year of Published/Granted" : "2024",
+          "Year of Published/Granted": "2024",
           "Published/Granted": "Filed",
           "Issue Date": "2024-01-28",
           "Scope": "International",
@@ -655,7 +655,7 @@ export const certifications = [
       book: [
         {
           "Title of the Book": "Thermodynamics Simplified",
-          "National/International":"International",
+          "National/International": "International",
           "Name of the Publisher": "McGraw Hill",
           "ISBN": "978-0-12345-678-9",
           "Year of Publication": "2021"
@@ -705,12 +705,12 @@ export const certifications = [
     role: "Researcher",
     dept: "Metallurgical Engineering",
     data: {
-      conference : [
+      conference: [
         {
           "Title of the Paper": "Metal Alloy Innovations",
           "Title of the Conference": "ICMME 2024",
           "Date of Publication": "2024-06-14",
-          "National/International":" International",
+          "National/International": " International",
           "Organized by": "IEEE Quantum",
           "Location": "Chennai"
         }
@@ -741,13 +741,13 @@ export const certifications = [
           "Year": "2024"
         }
       ],
-      conference : [
+      conference: [
         {
           "Title of the Paper": "Power System Optimization",
           "Title of the Conference": "IEEMA 2023",
           "Date of Publication": "2023-11-09",
           "Organized by": "IEEE Quantum",
-          "National/International":"International",
+          "National/International": "International",
           "Location": "Bangalore"
         }
       ]
@@ -792,7 +792,7 @@ export const certifications = [
           "Patent Number": "IN2024A000333",
           "Title of the Patent": "Energy Efficient Cooling Blade",
           "Published/Granted": "Published",
-          "Year of Published/Granted" : "2024",
+          "Year of Published/Granted": "2024",
           "Issue Date": "2024-03-16",
           "Scope": "International",
           "Application Number": "ECB003"
@@ -885,7 +885,7 @@ export const certifications = [
           "Patent Number": "IN2023A000403",
           "Title of the Patent": "Fast Charging Converter System",
           "Published/Granted": "Filed",
-          "Year of Published/Granted" : "2024",
+          "Year of Published/Granted": "2024",
           "Issue Date": "2023-12-10",
           "Scope": "International",
           "Application Number": "FCC004"
@@ -986,7 +986,7 @@ export const certifications = [
           "Patent Number": "IN2024A000599",
           "Title of the Patent": "Eco-Friendly Cement Binder",
           "Published/Granted": "Published",
-          "Year of Published/Granted" : "2024",
+          "Year of Published/Granted": "2024",
           "Scope": "International",
           "Issue Date": "2024-02-22",
           "Application Number": "ECB005"
@@ -1041,7 +1041,7 @@ export const certifications = [
       book: [
         {
           "Title of the Book": "Cloud Native Development",
-          "National/International" : "International",
+          "National/International": "International",
           "Name of the Publisher": "O'Reilly",
           "ISBN": "978-1-33733-881-0",
           "Year of Publication": "2020"
@@ -1078,7 +1078,7 @@ export const certifications = [
           "Patent Number": "IN2024A000699",
           "Title of the Patent": "Zero-Friction Composite Material",
           "Published/Granted": "Filed",
-          "Year of Published/Granted" : "2024",
+          "Year of Published/Granted": "2024",
           "Scope": "International",
           "Issue Date": "2024-03-01",
           "Application Number": "ZFC006"
@@ -1131,7 +1131,7 @@ const schemas = {
       { key: "Page Number", label: "Page Number", required: false },
       { key: "Year of Publication", label: "Year", required: true },
       { key: "ISBN Number", label: "ISBN", required: false },
-      { key : "National/International", label:"Scope" , required : true},
+      { key: "National/International", label: "Scope", required: true },
       { key: "Impact Factor", label: "Impact Factor", required: false },
       { key: "ISSN Number", label: "ISSN", required: false },
       { key: "Indexing Platform", label: "Indexing", required: false },
@@ -1194,7 +1194,7 @@ const schemas = {
       { key: "Name of Funding Agency", label: "Funding Agency", required: true },
       { key: "Amount (in INR)", label: "Amount (₹)", required: true },
       { key: "Are you ", label: "Role", required: false },
-      { key: "Status", label: " Status", required : true}
+      { key: "Status", label: " Status", required: true }
     ],
   },
 
@@ -1656,65 +1656,89 @@ const facultyList = [
   }
 ];
 
-const phd_awarded_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Awarding', 'Proceeding'];
-const phd_joining_fields = ['Title of the Thesis', 'Name of the Scholar','Reg No.','Role of Scholar', 'Year of Joining', 'Allotment order'];
-const MOOC_fields = ['Title of the MOOC','Month & Year','Document'];
-const e_content_fields = ['Title of the e-Content','Month & Year','Module is being used by Organization','Document'];
+const phd_awarded_fields = ['Title of the Thesis', 'Name of the Scholar', 'Reg No.', 'Role of Scholar', 'Year of Awarding', 'Proceeding'];
+const phd_joining_fields = ['Title of the Thesis', 'Name of the Scholar', 'Reg No.', 'Role of Scholar', 'Year of Joining', 'Allotment order'];
+const MOOC_fields = ['Title of the MOOC', 'Month & Year', 'Document'];
+const e_content_fields = ['Title of the e-Content', 'Month & Year', 'Module is being used by Organization', 'Document'];
 
 const fields = {
-  foreign_visits : ['Purpose of Visit','Nature of Visit','Name of Conference/Event','Academic Year','Name of Host Organization','Country Visited','Start Date','End Date','Duration (in days)','Role of Faculty','Title of the Paper/Talk','Sponsoring Agency','Amount Sanctioned','Travel Grant Recieved','document'],
+  foreign_visits: ['Purpose of Visit', 'Nature of Visit', 'Name of Conference/Event', 'Academic Year', 'Name of Host Organization', 'Country Visited', 'Start Date', 'End Date', 'Duration (in days)', 'Role of Faculty', 'Title of the Paper/Talk', 'Sponsoring Agency', 'Amount Sanctioned', 'Travel Grant Recieved', 'document'],
   patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope', 'Document'],
   book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
   book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],
-  journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication','Volume Number', 'Impact Factor (Thomson Reuters)', 'National/International', 'ISSN Number', 'No.of Authors','Author','Indexing Platform', 'H-index', 'Document'],
+  journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication', 'Volume Number', 'Impact Factor (Thomson Reuters)', 'National/International', 'ISSN Number', 'No.of Authors', 'Author', 'Indexing Platform', 'H-index', 'Document'],
   conference_paper: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International', 'Document'],
 
-  nptel: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
-  swayam: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
-  coursera: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
-  infosysspringboard: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
-  edx: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)','certificate'],
-  other: ['Name of Certification Course', 'Type of Certification','Organized by', 'Duration (in weeks)','certificate'],
+  nptel: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
+  swayam: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
+  coursera: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
+  infosysspringboard: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
+  edx: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
+  other: ['Name of Certification Course', 'Type of Certification', 'Organized by', 'Duration (in weeks)', 'certificate'],
 
-  sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration (in months)', 'Academic Year','Are you','Status',  'Sanctioning Order','Utilization Certificate (final year)'],
-  research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency','Sanctioned Amount','Recieved Amount (utilized)', 'Are you', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
+  sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration (in months)', 'Academic Year', 'Are you', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
+  research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Sanctioned Amount', 'Recieved Amount (utilized)', 'Are you', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
   consultancy: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
 
-  fdp: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
-  sttp: ['Program Title','Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
-  conference: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
-  workshop: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
-  seminar: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
-  webinar: ['Program Title', 'Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
-  RC: ['Program Title', 'Starting Date','Ending Date',  'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
-  OC: ['Program Title','Starting Date','Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized','Role'],
+  fdp: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
+  sttp: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
+  conference: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
+  workshop: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
+  seminar: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
+  webinar: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
+  RC: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
+  OC: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
 
   talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
   keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
   chair: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
   lecture: ['Organizing Institution', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
-  resource_person: ['Event Title', 'Organizing Institution','Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
+  resource_person: ['Event Title', 'Organizing Institution', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
 
-  mooc_content: ['Contribution in MOOC','Number of MOOCs',...MOOC_fields],
-  e_content: ['Contribution in e-Content','Number of e-Contents', ...e_content_fields],
-  innovative_pedagogy : ['Title of the Pedagogical Innovation','Nature of Pedagogical Innovation','Year of development','Pedagogy is being used by Organization','Document'],
-  
-  award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Scope','Year', 'Document'],
+  mooc_content: ['Contribution in MOOC', 'Number of MOOCs', ...MOOC_fields],
+  e_content: ['Contribution in e-Content', 'Number of e-Contents', ...e_content_fields],
+  innovative_pedagogy: ['Title of the Pedagogical Innovation', 'Nature of Pedagogical Innovation', 'Year of development', 'Pedagogy is being used by Organization', 'Document'],
+
+  award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Scope', 'Year', 'Document'],
 
   ieee: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  acm: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  csi: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  ie: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  iete: [ 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  other_bodies: [ 'Name of the Professional Body', 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  acm: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  csi: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  ie: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  iete: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
+  other_bodies: ['Name of the Professional Body', 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
 
-  any_moocs_course: ['Name of Certification Course', 'Duration','Transmitted language','certificate'],
-  book_book_chapter:['Title of the Book/Book Chapter', 'Name of the Publisher','Month & year of Publication', 'ISBN/ISSN Number', 'No. of Chapters translated', 'No. of books translated','Document'],
+  any_moocs_course: ['Name of Certification Course', 'Duration', 'Transmitted language', 'certificate'],
+  book_book_chapter: ['Title of the Book/Book Chapter', 'Name of the Publisher', 'Month & year of Publication', 'ISBN/ISSN Number', 'No. of Chapters translated', 'No. of books translated', 'Document'],
 
-  phd_awarded : ['Number of Students',...phd_awarded_fields],
-  phd_ongoing : ['Number of Students',...phd_joining_fields],
+  phd_awarded: ['Number of Students', ...phd_awarded_fields],
+  phd_ongoing: ['Number of Students', ...phd_joining_fields],
   mtech: ['Year of Awarding', 'Number of Students'],
 
 };
 
-export { schemas, yearFields,facultyList,fields, phd_awarded_fields, phd_joining_fields, MOOC_fields,e_content_fields };
+const Keys = [
+  { key: "patents", label: "Patents" },
+  { key: "journal", label: "Journal Publications" },
+  { key: "book", label: "Books" },
+  { key: "book_chapter", label: "Book Chapters" },
+  { key: "conference", label: "Conferences" },
+  { key: "seminar", label: "Seminars" },
+  { key: "workshop", label: "Workshops" },
+  { key: "fdp", label: "FDP / STTP" },
+  { key: "webinar", label: "Webinars" },
+  { key: "OC", label: "Orientation Courses" },
+  { key: "keynote", label: "Keynote Talks" },
+  { key: "talk", label: "Expert Talks" },
+  { key: "certifications", label: "Certifications" },
+  { key: "award_title", label: "Awards & Recognitions" },
+  { key: "research", label: "Research Projects" },
+  { key: "sponsored", label: "Sponsored Projects" },
+  { key: "consultancy", label: "Consultancy" },
+  { key: "phd_awarded", label: "PhD Students Awarded" },
+  { key: "ieee", label: "IEEE Membership" },
+  { key: "csi", label: "CSI Membership" },
+  { key: "repository", label: "Repository Contributions" },
+]
+
+export { schemas, yearFields, facultyList, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, Keys };

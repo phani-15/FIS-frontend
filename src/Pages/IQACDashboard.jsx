@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, Search, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { schemas, yearFields, certifications, facultyList } from '../assets/Data'
+import { schemas, yearFields, certifications, facultyList, Keys } from '../assets/Data'
 
 export default function IQACDashboard() {
   const [filters, setFilters] = useState({
@@ -69,178 +69,178 @@ export default function IQACDashboard() {
 
   // Then in your generateExcelReport function, update the sheet name line:
   const generateExcelReport = async () => {
-  if (selectedTypes.length === 0) {
-    alert("Please select at least one report type.");
-    return;
-  }
-
-  setIsGenerating(true);
-
-  try {
-    const wb = XLSX.utils.book_new();
-    const usedSheetNames = new Set();
-
-    selectedTypes.forEach(typeKey => {
-      const schema = getSchemaForType(typeKey);
-      const selectedAttrs = selectedAttributes[typeKey] || [];
-      if (selectedAttrs.length === 0) return;
-
-      // Headers
-      const headers = [
-        "S.No",
-        "Faculty Name",
-        "Faculty Role",
-        ...selectedAttrs.map(attrKey => {
-          const attr = schema.attributes.find(a => a.key === attrKey);
-          return attr ? attr.label : attrKey;
-        })
-      ];
-
-      // Group by department
-      const departmentData = {};
-
-      certifications.forEach(faculty => {
-        if (faculty.data && faculty.data[typeKey]) {
-          faculty.data[typeKey].forEach(record => {
-
-            // Year filter
-            if (yearFrom || yearTo) {
-              const recordYear = extractYearFromRecord(record, typeKey);
-              if (yearFrom && recordYear && recordYear < parseInt(yearFrom)) return;
-              if (yearTo && recordYear && recordYear > parseInt(yearTo)) return;
-            }
-
-            const dept = faculty.dept || "Others";
-            if (!departmentData[dept]) departmentData[dept] = [];
-
-            const row = [faculty.name, faculty.role];
-            selectedAttrs.forEach(attrKey => row.push(record[attrKey] || ""));
-            departmentData[dept].push(row);
-          });
-        }
-      });
-
-      const sheetData = [];
-      const borderRanges = []; // Track table ranges for borders
-
-      Object.keys(departmentData).forEach(department => {
-        const rows = departmentData[department];
-        if (rows.length === 0) return;
-
-        const startRow = sheetData.length;
-
-        // Department title
-        sheetData.push([`Department: ${department}`]);
-
-        // Headers
-        sheetData.push(headers);
-
-        // Rows with serial numbers
-        rows.forEach((row, index) => {
-          sheetData.push([String(index + 1), ...row]);
-        });
-
-        const endRow = sheetData.length - 1;
-        borderRanges.push({ startRow, endRow });
-
-        sheetData.push([]); // Blank row
-      });
-
-      if (sheetData.length === 0) return;
-
-      const ws = XLSX.utils.aoa_to_sheet(sheetData);
-
-      // Column widths
-      ws["!cols"] = headers.map(h => ({
-        wch: Math.max(h.length, 18)
-      }));
-
-      // ---------------- STYLING ----------------
-
-      const range = XLSX.utils.decode_range(ws["!ref"]);
-
-      // Apply styles cell-by-cell
-      for (let R = range.s.r; R <= range.e.r; ++R) {
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-          const cell = ws[cellAddress];
-          if (!cell) continue;
-
-          // Department title (bold)
-          if (cell.v && typeof cell.v === "string" && cell.v.startsWith("Department:")) {
-            cell.s = {
-              font: { bold: true, sz: 12 },
-              alignment: { horizontal: "left" }
-            };
-          }
-
-          // Header row (bold)
-          if (R > 0 && sheetData[R - 1] &&
-              sheetData[R - 1][0] &&
-              typeof sheetData[R - 1][0] === "string" &&
-              sheetData[R - 1][0].startsWith("Department:")) {
-            cell.s = {
-              font: { bold: true },
-              alignment: { horizontal: "center" }
-            };
-          }
-        }
-      }
-
-      // Apply borders to each department table
-      borderRanges.forEach(({ startRow, endRow }) => {
-        for (let R = startRow + 1; R <= endRow; R++) {
-          for (let C = 0; C < headers.length; C++) {
-            const addr = XLSX.utils.encode_cell({ r: R, c: C });
-            if (!ws[addr]) continue;
-
-            ws[addr].s = {
-              ...(ws[addr].s || {}),
-              border: {
-                top: { style: "thin" },
-                bottom: { style: "thin" },
-                left: { style: "thin" },
-                right: { style: "thin" }
-              }
-            };
-          }
-        }
-      });
-
-      // Sheet name
-      let sheetName = sanitizeSheetName(schema.label).substring(0, 31);
-      if (!sheetName.trim()) sheetName = `Sheet_${typeKey}`;
-
-      let finalSheetName = sheetName;
-      let counter = 1;
-      while (usedSheetNames.has(finalSheetName)) {
-        finalSheetName = `${sheetName.substring(0, 28)}_${counter++}`;
-      }
-      usedSheetNames.add(finalSheetName);
-
-      XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
-    });
-
-    if (wb.SheetNames.length === 0) {
-      alert("No data found for the selected criteria.");
+    if (selectedTypes.length === 0) {
+      alert("Please select at least one report type.");
       return;
     }
 
-    const timestamp = new Date().toISOString().split("T")[0];
-    const filename = `Faculty_Report_${timestamp}.xlsx`;
+    setIsGenerating(true);
 
-    XLSX.writeFile(wb, filename);
+    try {
+      const wb = XLSX.utils.book_new();
+      const usedSheetNames = new Set();
 
-    setShowExtractModal(false);
-    alert(`Report generated successfully: ${filename}`);
+      selectedTypes.forEach(typeKey => {
+        const schema = getSchemaForType(typeKey);
+        const selectedAttrs = selectedAttributes[typeKey] || [];
+        if (selectedAttrs.length === 0) return;
 
-  } catch (error) {
-    console.error("Excel generation error:", error);
-    alert(`Error generating report: ${error.message}`);
-  } finally {
-    setIsGenerating(false);
-  }
-};
+        // Headers
+        const headers = [
+          "S.No",
+          "Faculty Name",
+          "Faculty Role",
+          ...selectedAttrs.map(attrKey => {
+            const attr = schema.attributes.find(a => a.key === attrKey);
+            return attr ? attr.label : attrKey;
+          })
+        ];
+
+        // Group by department
+        const departmentData = {};
+
+        certifications.forEach(faculty => {
+          if (faculty.data && faculty.data[typeKey]) {
+            faculty.data[typeKey].forEach(record => {
+
+              // Year filter
+              if (yearFrom || yearTo) {
+                const recordYear = extractYearFromRecord(record, typeKey);
+                if (yearFrom && recordYear && recordYear < parseInt(yearFrom)) return;
+                if (yearTo && recordYear && recordYear > parseInt(yearTo)) return;
+              }
+
+              const dept = faculty.dept || "Others";
+              if (!departmentData[dept]) departmentData[dept] = [];
+
+              const row = [faculty.name, faculty.role];
+              selectedAttrs.forEach(attrKey => row.push(record[attrKey] || ""));
+              departmentData[dept].push(row);
+            });
+          }
+        });
+
+        const sheetData = [];
+        const borderRanges = []; // Track table ranges for borders
+
+        Object.keys(departmentData).forEach(department => {
+          const rows = departmentData[department];
+          if (rows.length === 0) return;
+
+          const startRow = sheetData.length;
+
+          // Department title
+          sheetData.push([`Department: ${department}`]);
+
+          // Headers
+          sheetData.push(headers);
+
+          // Rows with serial numbers
+          rows.forEach((row, index) => {
+            sheetData.push([String(index + 1), ...row]);
+          });
+
+          const endRow = sheetData.length - 1;
+          borderRanges.push({ startRow, endRow });
+
+          sheetData.push([]); // Blank row
+        });
+
+        if (sheetData.length === 0) return;
+
+        const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+        // Column widths
+        ws["!cols"] = headers.map(h => ({
+          wch: Math.max(h.length, 18)
+        }));
+
+        // ---------------- STYLING ----------------
+
+        const range = XLSX.utils.decode_range(ws["!ref"]);
+
+        // Apply styles cell-by-cell
+        for (let R = range.s.r; R <= range.e.r; ++R) {
+          for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+            const cell = ws[cellAddress];
+            if (!cell) continue;
+
+            // Department title (bold)
+            if (cell.v && typeof cell.v === "string" && cell.v.startsWith("Department:")) {
+              cell.s = {
+                font: { bold: true, sz: 12 },
+                alignment: { horizontal: "left" }
+              };
+            }
+
+            // Header row (bold)
+            if (R > 0 && sheetData[R - 1] &&
+              sheetData[R - 1][0] &&
+              typeof sheetData[R - 1][0] === "string" &&
+              sheetData[R - 1][0].startsWith("Department:")) {
+              cell.s = {
+                font: { bold: true },
+                alignment: { horizontal: "center" }
+              };
+            }
+          }
+        }
+
+        // Apply borders to each department table
+        borderRanges.forEach(({ startRow, endRow }) => {
+          for (let R = startRow + 1; R <= endRow; R++) {
+            for (let C = 0; C < headers.length; C++) {
+              const addr = XLSX.utils.encode_cell({ r: R, c: C });
+              if (!ws[addr]) continue;
+
+              ws[addr].s = {
+                ...(ws[addr].s || {}),
+                border: {
+                  top: { style: "thin" },
+                  bottom: { style: "thin" },
+                  left: { style: "thin" },
+                  right: { style: "thin" }
+                }
+              };
+            }
+          }
+        });
+
+        // Sheet name
+        let sheetName = sanitizeSheetName(schema.label).substring(0, 31);
+        if (!sheetName.trim()) sheetName = `Sheet_${typeKey}`;
+
+        let finalSheetName = sheetName;
+        let counter = 1;
+        while (usedSheetNames.has(finalSheetName)) {
+          finalSheetName = `${sheetName.substring(0, 28)}_${counter++}`;
+        }
+        usedSheetNames.add(finalSheetName);
+
+        XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
+      });
+
+      if (wb.SheetNames.length === 0) {
+        alert("No data found for the selected criteria.");
+        return;
+      }
+
+      const timestamp = new Date().toISOString().split("T")[0];
+      const filename = `Faculty_Report_${timestamp}.xlsx`;
+
+      XLSX.writeFile(wb, filename);
+
+      setShowExtractModal(false);
+      alert(`Report generated successfully: ${filename}`);
+
+    } catch (error) {
+      console.error("Excel generation error:", error);
+      alert(`Error generating report: ${error.message}`);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
 
   // Handle form submission
@@ -524,33 +524,11 @@ export default function IQACDashboard() {
                   <form onSubmit={handleExtractReports} className="space-y-4">
                     {/* Dynamic Report Type + Attribute Selection */}
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-semibold mb-1">
                         Select Report Types
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                        {[
-                          { key: "patents", label: "Patents" },
-                          { key: "journal", label: "Journal Publications" },
-                          { key: "book", label: "Books" },
-                          { key: "book_chapter", label: "Book Chapters" },
-                          { key: "conference", label: "Conferences" },
-                          { key: "seminar", label: "Seminars" },
-                          { key: "workshop", label: "Workshops" },
-                          { key: "fdp", label: "FDP / STTP" },
-                          { key: "webinar", label: "Webinars" },
-                          { key: "OC", label: "Orientation Courses" },
-                          { key: "keynote", label: "Keynote Talks" },
-                          { key: "talk", label: "Expert Talks" },
-                          { key: "certifications", label: "Certifications" },
-                          { key: "award_title", label: "Awards & Recognitions" },
-                          { key: "research", label: "Research Projects" },
-                          { key: "sponsored", label: "Sponsored Projects" },
-                          { key: "consultancy", label: "Consultancy" },
-                          { key: "phd_awarded", label: "PhD Students Awarded" },
-                          { key: "ieee", label: "IEEE Membership" },
-                          { key: "csi", label: "CSI Membership" },
-                          { key: "repository", label: "Repository Contributions" },
-                        ].map((type) => (
+                        {Keys.map((type) => (
                           <label key={type.key} className="flex items-center gap-2">
                             <input
                               type="checkbox"
