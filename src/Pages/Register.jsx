@@ -1,13 +1,14 @@
-import React, { useState, useCallback, useEffect, use } from "react";
+import React, { useState, useCallback, useEffect, } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-import { Trash2, AlertTriangle, Info } from "lucide-react"
+import { Trash2, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
+import { area } from "framer-motion/client";
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("as"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
 
@@ -90,6 +91,8 @@ export default function Register() {
     marital: "",
     phone: "",
     address: "",
+    area:"",
+    city:"",
     designation: "",
     department: "",
     college: "",
@@ -423,6 +426,7 @@ export default function Register() {
   const handleSubmitPersonal = useCallback(
     (e) => {
       e.preventDefault();
+      setErrors({});
       setStep("education");
     }, [personalData]
   );

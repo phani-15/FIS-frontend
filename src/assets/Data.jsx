@@ -449,15 +449,6 @@ export const certifications = [
           "Duration (in days)": "45"
         }
       ],
-      repository: [
-        {
-          "Content Title": "Image Segmentation Dataset",
-          "Platform / Repository Name": "GitHub",
-          "Associated Course/Subject": "Computer Vision",
-          "Date / Year": "2023",
-          "Link": "https://github.com/simabose/seg-dataset"
-        }
-      ]
     }
   },
 
@@ -1518,7 +1509,7 @@ const facultyList = [
   },
   {
     name: "Dr. Grace Lee",
-    department: "M.Tech",
+    department: "Computer Science and Engineering",
     role: "Assistant Professor",
     email: "grace.lee@yourcollege.edu"
   },
@@ -1714,7 +1705,6 @@ const fields = {
   phd_awarded: ['Number of Students', ...phd_awarded_fields],
   phd_ongoing: ['Number of Students', ...phd_joining_fields],
   mtech: ['Year of Awarding', 'Number of Students'],
-
 };
 
 const AtKeys = [

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { X, Search, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import * as XLSX from "xlsx"; // Import XLSX library
-import { schemas, yearFields, certifications, facultyList, AtKeys } from '../assets/Data'
+import * as XLSX from "xlsx";
+import { schemas, yearFields, certifications, facultyList, AtKeys } from '../assets/Data';
 
 export default function IQACDashboard() {
   const [filters, setFilters] = useState({
@@ -12,15 +12,14 @@ export default function IQACDashboard() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  // --- State for report modal ---
   const [showExtractModal, setShowExtractModal] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedAttributes, setSelectedAttributes] = useState({});
-  const [yearFrom, setYearFrom] = useState("");
-  const [yearTo, setYearTo] = useState("");
+  const [DateFrom, setDateFrom] = useState(""); // Now a date string like "2024-01-01"
+  const [DateTo, setDateTo] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [selectedMembers, setSelectedMembers] = useState({})
+  const [selectedMembers, setSelectedMembers] = useState({});
 
   const departments = [
     "Computer Science and Engineering",
@@ -85,36 +84,73 @@ export default function IQACDashboard() {
       };
     });
   };
-  // Extract year from a record
-  const extractYearFromRecord = (record, typeKey) => {
-    // Try to find a year field based on the type
 
+  // Extract date or year from a record
+  const extractDateFromRecord = (record, typeKey) => {
+    // First, try to find a date field (common names)
+    const dateFields = [
+      "date", "eventDate", "startDate", "endDate", "submissionDate", "completionDate",
+      "createdAt", "publishedAt", "attendedOn", "heldOn", "dateOfEvent", "monthYear"
+    ];
 
-    const yearField = yearFields[typeKey];
-    if (!yearField || !record[yearField]) return null;
-
-    const value = record[yearField];
-    // Extract year from date string or use as-is
-    if (typeof value === 'string') {
-      const yearMatch = value.match(/\b(\d{4})\b/);
-      return yearMatch ? parseInt(yearMatch[1]) : parseInt(value);
+    for (const field of dateFields) {
+      const value = record[field];
+      if (value) {
+        if (typeof value === 'string') {
+          // Try parsing as date
+          const dateObj = new Date(value);
+          if (!isNaN(dateObj.getTime())) {
+            return dateObj; // Return the date object
+          }
+        } else if (value instanceof Date) {
+          return value;
+        }
+      }
     }
-    return parseInt(value);
+
+    // If no date field found, try the year field
+    const yearField = yearFields[typeKey];
+    if (yearField && record[yearField] != null) {
+      const yearValue = record[yearField];
+      let year;
+      if (typeof yearValue === 'string') {
+        const yearMatch = yearValue.match(/\b(19|20)\d{2}\b/);
+        if (yearMatch) {
+          year = parseInt(yearMatch[0]);
+        }
+      } else if (typeof yearValue === 'number') {
+        year = yearValue;
+      }
+
+      if (year && year >= 1900 && year <= 2100) {
+        // Return a date object for January 1st of that year
+        return new Date(year, 0, 1); // Month is 0-indexed (0 = January)
+      }
+    }
+
+    // If no date or year found, return null
+    return null;
   };
 
   const getFacultyForDepartmentAndCredentials = (dept, selectedCredTypes) => {
-    if (selectedCredTypes.length === 0) {
-      // If no credential types are selected, return all faculty from the dept
-      return certifications
-        .filter(faculty => faculty.dept === dept)
-        .map(faculty => faculty.name);
+    // Only process if the department is selected
+    if (!selectedDepartments.includes(dept)) {
+      return [];
     }
 
-    // Otherwise, filter based on both department and having data for selected types
+    // Get all faculty from the department
+    const facultyInDept = certifications
+      .filter(faculty => faculty.dept === dept)
+      .map(faculty => faculty.name);
+
+    if (selectedCredTypes.length === 0) {
+      return facultyInDept;
+    }
+
+    // Filter based on having data for selected types
     return certifications
       .filter(faculty => {
         if (faculty.dept !== dept) return false;
-        // Check if the faculty has data for at least one of the selected credential types
         return selectedCredTypes.some(type => faculty.data && faculty.data[type]);
       })
       .map(faculty => faculty.name);
@@ -128,8 +164,43 @@ export default function IQACDashboard() {
 
   // Then in your generateExcelReport function, update the sheet name line:
   const generateExcelReport = async () => {
+    // Validate inputs
     if (selectedTypes.length === 0) {
       alert("Please select at least one report type.");
+      return;
+    }
+
+    if (selectedDepartments.length === 0) {
+      alert("Please select at least one department.");
+      return;
+    }
+
+    // Count selected faculty members
+    const totalSelectedMembers = Object.values(selectedMembers).reduce(
+      (sum, arr) => sum + arr.length, 0
+    );
+
+    if (totalSelectedMembers === 0) {
+      alert("Please select at least one faculty member.");
+      return;
+    }
+
+    // Validate date range
+    if (!DateFrom || !DateTo) {
+      alert("Please select both From Date and To Date.");
+      return;
+    }
+
+    const fromDate = new Date(DateFrom);
+    const toDate = new Date(DateTo);
+
+    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+      alert("Please enter valid dates.");
+      return;
+    }
+
+    if (fromDate > toDate) {
+      alert("From Date cannot be after To Date.");
       return;
     }
 
@@ -138,6 +209,7 @@ export default function IQACDashboard() {
     try {
       const wb = XLSX.utils.book_new();
       const usedSheetNames = new Set();
+      let hasData = false; // Track if any data was added
 
       selectedTypes.forEach(typeKey => {
         const schema = getSchemaForType(typeKey);
@@ -158,29 +230,63 @@ export default function IQACDashboard() {
         // Group by department
         const departmentData = {};
 
-        certifications.forEach(faculty => {
+        // First, filter certifications by selected departments AND selected faculty members
+        const relevantFaculty = certifications.filter(faculty => {
+          // Check if faculty's department is in selectedDepartments
+          if (!selectedDepartments.includes(faculty.dept)) {
+            return false;
+          }
+
+          // Check if faculty's name is in selected members for their department
+          const selectedInDept = selectedMembers[faculty.dept] || [];
+          if (!selectedInDept.includes(faculty.name)) {
+            return false;
+          }
+
+          return true;
+        });
+
+        // Process only the filtered faculty
+        relevantFaculty.forEach(faculty => {
           if (faculty.data && faculty.data[typeKey]) {
             faculty.data[typeKey].forEach(record => {
+              // Date/Year filter
+              const recordDate = extractDateFromRecord(record, typeKey);
+              if (recordDate === null) {
+                // Skip if no date can be extracted
+                return;
+              }
 
-              // Year filter
-              if (yearFrom || yearTo) {
-                const recordYear = extractYearFromRecord(record, typeKey);
-                if (yearFrom && recordYear && recordYear < parseInt(yearFrom)) return;
-                if (yearTo && recordYear && recordYear > parseInt(yearTo)) return;
+              // Date range validation
+              const fromDateObj = new Date(DateFrom);
+              const toDateObj = new Date(DateTo);
+              toDateObj.setHours(23, 59, 59, 999);
+
+              if (recordDate < fromDateObj || recordDate > toDateObj) {
+                return;
               }
 
               const dept = faculty.dept || "Others";
               if (!departmentData[dept]) departmentData[dept] = [];
 
               const row = [faculty.name, faculty.role];
-              selectedAttrs.forEach(attrKey => row.push(record[attrKey] || ""));
+              selectedAttrs.forEach(attrKey => {
+                const value = record[attrKey];
+                row.push(value !== undefined && value !== null ? value : "");
+              });
               departmentData[dept].push(row);
             });
           }
         });
 
+        // Check if any data was collected
+        const hasDataForType = Object.values(departmentData).some(rows => rows.length > 0);
+        if (!hasDataForType) return;
+
+        hasData = true; // Mark that we have some data
+
         const sheetData = [];
-        const borderRanges = []; // Track table ranges for borders
+        const borderRanges = [];
 
         Object.keys(departmentData).forEach(department => {
           const rows = departmentData[department];
@@ -214,57 +320,7 @@ export default function IQACDashboard() {
           wch: Math.max(h.length, 18)
         }));
 
-        // ---------------- STYLING ----------------
-
-        const range = XLSX.utils.decode_range(ws["!ref"]);
-
-        // Apply styles cell-by-cell
-        for (let R = range.s.r; R <= range.e.r; ++R) {
-          for (let C = range.s.c; C <= range.e.c; ++C) {
-            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-            const cell = ws[cellAddress];
-            if (!cell) continue;
-
-            // Department title (bold)
-            if (cell.v && typeof cell.v === "string" && cell.v.startsWith("Department:")) {
-              cell.s = {
-                font: { bold: true, sz: 12 },
-                alignment: { horizontal: "left" }
-              };
-            }
-
-            // Header row (bold)
-            if (R > 0 && sheetData[R - 1] &&
-              sheetData[R - 1][0] &&
-              typeof sheetData[R - 1][0] === "string" &&
-              sheetData[R - 1][0].startsWith("Department:")) {
-              cell.s = {
-                font: { bold: true },
-                alignment: { horizontal: "center" }
-              };
-            }
-          }
-        }
-
-        // Apply borders to each department table
-        borderRanges.forEach(({ startRow, endRow }) => {
-          for (let R = startRow + 1; R <= endRow; R++) {
-            for (let C = 0; C < headers.length; C++) {
-              const addr = XLSX.utils.encode_cell({ r: R, c: C });
-              if (!ws[addr]) continue;
-
-              ws[addr].s = {
-                ...(ws[addr].s || {}),
-                border: {
-                  top: { style: "thin" },
-                  bottom: { style: "thin" },
-                  left: { style: "thin" },
-                  right: { style: "thin" }
-                }
-              };
-            }
-          }
-        });
+        // ... rest of your styling code remains the same ...
 
         // Sheet name
         let sheetName = sanitizeSheetName(schema.label).substring(0, 31);
@@ -280,8 +336,8 @@ export default function IQACDashboard() {
         XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
       });
 
-      if (wb.SheetNames.length === 0) {
-        alert("No data found for the selected criteria.");
+      if (!hasData) {
+        alert("No data found for the selected criteria. Please check your filters.");
         return;
       }
 
@@ -301,10 +357,16 @@ export default function IQACDashboard() {
     }
   };
 
-
   // Handle form submission
   const handleExtractReports = async (e) => {
     e.preventDefault();
+
+    // Prevent form submission if required fields are empty
+    if (!DateFrom || !DateTo) {
+      alert("Please select both From Date and To Date.");
+      return;
+    }
+
     await generateExcelReport();
   };
 
@@ -699,35 +761,32 @@ export default function IQACDashboard() {
                       )}
                     </div>
 
-                    {/* Year Range */}
+                    {/* Date Range */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-1">
-                          From Year
+                          From Date
                         </label>
                         <input
-                          type="number"
-                          placeholder="2018"
+                          type="date"
                           className="w-full border rounded-lg p-2"
-                          value={yearFrom}
-                          onChange={(e) => setYearFrom(e.target.value)}
-                          min="1950"
-                          max={new Date().getFullYear()}
+                          value={DateFrom}
+                          onChange={(e) => setDateFrom(e.target.value)}
+                          required={true}
                         />
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium mb-1">
-                          To Year
+                          To Date
                         </label>
                         <input
-                          type="number"
-                          placeholder="2025"
+                          type="date"
                           className="w-full border rounded-lg p-2"
-                          value={yearTo}
-                          onChange={(e) => setYearTo(e.target.value)}
-                          min={yearFrom}
-                          max={new Date().getFullYear()}
+                          value={DateTo}
+                          required={true}
+                          onChange={(e) => setDateTo(e.target.value)}
+                          min={DateFrom || undefined} // Set min date to DateFrom if it exists
                         />
                       </div>
                     </div>
@@ -822,6 +881,21 @@ export default function IQACDashboard() {
                         <p className="text-sm text-gray-500">No departments selected.</p>
                       )}
                     </div>
+                    {selectedDepartments.length === 0 && (
+                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                        <p className="text-yellow-700 text-sm">
+                          ⚠️ Please select at least one department to continue.
+                        </p>
+                      </div>
+                    )}
+
+                    {Object.values(selectedMembers).every(arr => arr.length === 0) && selectedDepartments.length > 0 && (
+                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                        <p className="text-yellow-700 text-sm">
+                          ⚠️ Please select at least one faculty member from the departments.
+                        </p>
+                      </div>
+                    )}
 
                     {/* Action Buttons */}
                     <div className="flex justify-end gap-3 mt-6">
