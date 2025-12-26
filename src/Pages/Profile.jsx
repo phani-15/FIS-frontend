@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Personal} from "../core/Personal"
+import { Personal } from "../core/Personal"
 import {
   Mail,
   Phone,
@@ -12,11 +12,11 @@ import {
   Award,
   Printer,
 } from "lucide-react";
-import { useNavigate ,useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function ProfilePage() {
-   const {profileId}=useParams()
-   const navigate = useNavigate()
+  const { profileId } = useParams()
+  const navigate = useNavigate()
   const [newObj, setnewobj] = useState(
 
     {
@@ -144,7 +144,7 @@ export default function ProfilePage() {
 
 
   const viewer = "user"
-  
+
   // Static Profile Data
 
   // Section Component
@@ -245,7 +245,7 @@ export default function ProfilePage() {
                     <Mail size={16} className="text-blue-500" />
                     {newObj.user.email}
                   </div>
-                 { newObj.personalData.phone && <div className="flex items-center gap-3 text-sm text-gray-700">
+                  {newObj.personalData.phone && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Phone size={16} className="text-green-500" />
                     {newObj.user.phone}
                   </div>}
@@ -254,11 +254,11 @@ export default function ProfilePage() {
                     <Calendar size={16} className="text-purple-500" />
                     Joined: <span className="font-semibold"> {newObj.personalData.date_of_join}</span>
                   </div>
-                 { newObj.personalData.location && <div className="flex items-center gap-3 text-sm text-gray-700">
-                    <MapPin  size={16} className="text-green-500" />
+                  {newObj.personalData.location && <div className="flex items-center gap-3 text-sm text-gray-700">
+                    <MapPin size={16} className="text-green-500" />
                     {newObj.personalData.location}
                   </div>
-}
+                  }
                 </div>
               </div>
             </div>
