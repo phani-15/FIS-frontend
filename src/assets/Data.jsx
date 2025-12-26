@@ -1717,7 +1717,7 @@ const fields = {
 
 };
 
-const Keys = [
+const AtKeys = [
   { key: "patents", label: "Patents" },
   { key: "journal", label: "Journal Publications" },
   { key: "book", label: "Books" },
@@ -1741,4 +1741,4 @@ const Keys = [
   { key: "repository", label: "Repository Contributions" },
 ]
 
-export { schemas, yearFields, facultyList, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, Keys };
+export { schemas, yearFields, facultyList, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, AtKeys };

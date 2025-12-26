@@ -31,7 +31,7 @@ const select_options = {
   'Role': ['Convenor', 'Co-Convenor', 'Coordinator', 'Co-Coordinator', 'Member'],
   'Indexing Platform': ['Scopus', 'Web of Science', 'SCI'],
   'Contribution in MOOC': ['Developed complete MOOCs', 'Developed modules for MOOCs', 'Content writer', 'Subject matter expert', 'Course Coordinator'],
-  'Contribution in e-Content': ['Developed complete e-Content module', 'Contributed to e-Content module development (atleast 1 quadrant)','Editor of e-Content', ],
+  'Contribution in e-Content': ['Developed complete e-Content module', 'Contributed to e-Content module development (atleast 1 quadrant)', 'Editor of e-Content',],
 }
 
 const subcategories = {
@@ -50,8 +50,8 @@ const subcategories = {
     { label: 'Others', value: 'other' },
   ],
   'Transmission works': [
-    { label: 'Any MOOCs course', value:'any_moocs_course' },
-    { label: 'Book/Book Chapter', value:'book_book_chapter' },
+    { label: 'Any MOOCs course', value: 'any_moocs_course' },
+    { label: 'Book/Book Chapter', value: 'book_book_chapter' },
   ],
   'Projects': [
     { label: 'Sponsored', value: 'sponsored' },
@@ -192,8 +192,8 @@ const AddCredentials = () => {
       if (valNum > currentYear) return { isValid: false, message: `Year must be ≤ ${currentYear}` };
       return { isValid: true };
     }
-    else if(cleanLabel.includes('year') && cleanLabel.includes('month')) {
-      if (!valStr) return { isValid: false, message: 'Month & Year is required' };  
+    else if (cleanLabel.includes('year') && cleanLabel.includes('month')) {
+      if (!valStr) return { isValid: false, message: 'Month & Year is required' };
       // Expected format: "YYYY-MM"
       const monthYearRegex = /^(\d{4})-(0[1-9]|1[0-2])$/;
       if (!monthYearRegex.test(valStr)) {
@@ -615,7 +615,7 @@ const AddCredentials = () => {
 
   const isNumberField = (label) => {
     const clean = label.toLowerCase();
-    return (clean.includes('year') && !clean.includes('month') &&  !clean.includes('academic')) ||
+    return (clean.includes('year') && !clean.includes('month') && !clean.includes('academic')) ||
       clean.includes('amount') ||
       clean.includes('number of students') ||
       clean.includes('fund received') ||
@@ -1081,7 +1081,7 @@ const AddCredentials = () => {
                                     {cleanLabel} <span className="text-red-500 ml-1">*</span>
                                   </label>
 
-                                 {/* { add isFile input type} */}
+                                  {/* { add isFile input type} */}
                                   <input
                                     type={isMonth ? "month" : "text"}
                                     value={value}

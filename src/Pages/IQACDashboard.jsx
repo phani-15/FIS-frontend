@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, Search, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { schemas, yearFields, certifications, facultyList, Keys } from '../assets/Data'
+import { schemas, yearFields, certifications, facultyList, AtKeys } from '../assets/Data'
 
 export default function IQACDashboard() {
   const [filters, setFilters] = useState({
@@ -19,9 +19,10 @@ export default function IQACDashboard() {
   const [yearFrom, setYearFrom] = useState("");
   const [yearTo, setYearTo] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState({})
 
   const departments = [
-    "All",
     "Computer Science and Engineering",
     "Electronics and Communication Engineering",
     "Electrical and Electronics Engineering",
@@ -42,6 +43,48 @@ export default function IQACDashboard() {
   const getSchemaForType = (typeKey) => {
     return schemas[typeKey] || { label: typeKey, attributes: [] };
   };
+
+  const handleFacultyToggle = (dept, facultyName) => {
+    setSelectedMembers(prev => {
+      const currentSelected = prev[dept] || [];
+      let newSelected;
+
+      if (currentSelected.includes(facultyName)) {
+        // Remove faculty member
+        newSelected = currentSelected.filter(name => name !== facultyName);
+      } else {
+        // Add faculty member
+        newSelected = [...currentSelected, facultyName];
+      }
+
+      // Return the updated state object
+      return {
+        ...prev,
+        [dept]: newSelected,
+      };
+    });
+  };
+
+  const handleSelectAllForDept = (dept, facultyList) => {
+    setSelectedMembers(prev => {
+      const currentSelected = prev[dept] || [];
+      const allSelected = facultyList.length > 0 && facultyList.every(name => currentSelected.includes(name));
+
+      let newSelected;
+      if (allSelected) {
+        // Deselect all
+        newSelected = [];
+      } else {
+        // Select all
+        newSelected = [...facultyList];
+      }
+
+      return {
+        ...prev,
+        [dept]: newSelected,
+      };
+    });
+  };
   // Extract year from a record
   const extractYearFromRecord = (record, typeKey) => {
     // Try to find a year field based on the type
@@ -59,7 +102,23 @@ export default function IQACDashboard() {
     return parseInt(value);
   };
 
-  // Function to generate Excel file
+  const getFacultyForDepartmentAndCredentials = (dept, selectedCredTypes) => {
+    if (selectedCredTypes.length === 0) {
+      // If no credential types are selected, return all faculty from the dept
+      return certifications
+        .filter(faculty => faculty.dept === dept)
+        .map(faculty => faculty.name);
+    }
+
+    // Otherwise, filter based on both department and having data for selected types
+    return certifications
+      .filter(faculty => {
+        if (faculty.dept !== dept) return false;
+        // Check if the faculty has data for at least one of the selected credential types
+        return selectedCredTypes.some(type => faculty.data && faculty.data[type]);
+      })
+      .map(faculty => faculty.name);
+  };
 
   // Add this helper function to sanitize sheet names
   const sanitizeSheetName = (name) => {
@@ -361,6 +420,7 @@ export default function IQACDashboard() {
               setCurrentPage(1);
             }}
           >
+            <option key="All" value="All">All</option>
             {departments.map((dept, idx) => (
               <option key={idx} value={dept}>
                 {dept}
@@ -494,7 +554,6 @@ export default function IQACDashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50"
-              onClick={() => setShowExtractModal(false)}
             />
 
             <motion.div
@@ -528,7 +587,7 @@ export default function IQACDashboard() {
                         Select Report Types
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                        {Keys.map((type) => (
+                        {AtKeys.map((type) => (
                           <label key={type.key} className="flex items-center gap-2">
                             <input
                               type="checkbox"
@@ -671,6 +730,97 @@ export default function IQACDashboard() {
                           max={new Date().getFullYear()}
                         />
                       </div>
+                    </div>
+
+                    {/* add selection of one or more departments as per the requirement all of the selected previously*/}
+                    <div className="mt-4">
+                      <label className="block text-md font-medium mb-1">
+                        Select Departments
+                      </label>
+                      <div className="space-y-2">
+                        {departments.map((dept) => (
+                          <label key={dept} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={selectedDepartments.includes(dept)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedDepartments((prev) => [...prev, dept]);
+                                } else {
+                                  setSelectedDepartments((prev) => prev.filter((d) => d !== dept));
+                                  // Optional: Also clear selected members for this department if deselected
+                                  setSelectedMembers(prev => {
+                                    const newMembers = { ...prev };
+                                    delete newMembers[dept];
+                                    return newMembers;
+                                  });
+                                }
+                              }}
+                              className="rounded text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-sm">{dept}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* I want to select the candidates from the certifications based on the selected departments */}
+                    <div className="mt-4">
+                      <label className="block text-md font-medium mb-1">
+                        Select Candidates for each Department
+                      </label>
+                      {selectedDepartments.length > 0 ? (
+                        selectedDepartments.map((dept) => {
+                          // Get faculty for the current department based on selected credential types
+                          const facultyInDept = getFacultyForDepartmentAndCredentials(dept, selectedTypes);
+                          const selectedInDept = selectedMembers[dept] || [];
+
+                          return (
+                            <div key={dept} className="mb-4 border rounded-lg p-4 bg-gray-50">
+                              <div className="font-medium text-indigo-700 mb-3 flex items-center gap-2">
+                                <span>🏢</span>
+                                {dept}
+                              </div>
+
+                              {/* Select All / Clear All for this department */}
+                              <div className="flex justify-between items-center mb-3">
+                                <span className="text-xs text-gray-600">
+                                  {selectedInDept.length} of {facultyInDept.length} selected
+                                </span>
+                                <div className="flex gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSelectAllForDept(dept, facultyInDept)}
+                                    className="text-xs text-indigo-600 hover:underline"
+                                  >
+                                    {selectedInDept.length === facultyInDept.length ? 'Clear All' : 'Select All'}
+                                  </button>
+                                </div>
+                              </div>
+
+                              {facultyInDept.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                                  {facultyInDept.map((facultyName) => (
+                                    <label key={`${dept}-${facultyName}`} className="flex items-start gap-2"> {/* Unique key including dept */}
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedInDept.includes(facultyName)}
+                                        onChange={() => handleFacultyToggle(dept, facultyName)}
+                                        className="mt-1 rounded text-indigo-600 focus:ring-indigo-500"
+                                      />
+                                      <span className="text-sm">{facultyName}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-sm text-gray-500">No faculty members found for selected credentials in this department.</p>
+                              )}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-sm text-gray-500">No departments selected.</p>
+                      )}
                     </div>
 
                     {/* Action Buttons */}
