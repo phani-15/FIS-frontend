@@ -52,17 +52,16 @@ export default function Login() {
 			password:formData.password
 		})
 		.then(data=>{
-			console.log("data=:",data);
-			console.log("id is :",data.user._id);
-			
+			console.log(data);
 			authenticate(data,()=>{
 			setFormData({
 				...formData
 			})
 		})
+		navigate(`/profile/${data.user.id}`)
 		}	)
 		// console.log("login returned data:",data);
-		navigate(`/profile/`)
+		
 	};
 
 	return (
