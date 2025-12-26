@@ -35,10 +35,15 @@ export default function App() {
             <Route path='/edit' element={<EditPage />} />
             <Route path='/' element={<Login />} />
             <Route path='/register' element={<Register />} />
+
             <Route path='/profile/:profileId' element={<Profile />} />
+            <Route path='/ofcDashboard' element={<IqacDashboard />} />
+
+            <Route path='/profile/' element={<Profile />} />
             <Route path='/iqacDashboard' element={<IqacDashboard />} />
+
             <Route path='/add' element={<AddDetails />} />
-            <Route path='/hodDashboard' element={<HodDashboard />} />
+            <Route path='/hodDashboard/:userId' element={<HodDashboard />} />
             <Route path='/adminPage' element={<Admin />} />
             <Route path='/admin' element={<AdminLogin />} />
             <Route path='/vc' element={<ViewCertificaion />} />

@@ -1,29 +1,14 @@
 import React, { useState, useMemo } from 'react';
+import { fields } from '../assets/Data.jsx';
+import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
+import { label } from 'framer-motion/client';
+import { values } from 'pdf-lib';
 
-// 🔧 Helpers (pure JS)
-const isFileField = (label) => {
-  const clean = label.trim().toLowerCase();
-  return clean.includes('document') || clean.includes('certificate');
-};
-
-const isRadioField = (label) => {
-  const clean = label.trim().toLowerCase();
-  return clean === 'national/international' ||
-    clean === 'mode (online/offline)' ||
-    clean === 'published/granted' ||
-    clean === 'attended/organized' ||
-    clean === "are you" ||
-    clean === "status";
-};
-
-const isDateField = (label) => {
-  const clean = label.trim().toLowerCase()
-  return clean.includes('date')
-}
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
   'Publications',
   'Patents',
+  'Foreign Visits',
   'Academic Enrichment Programs',
   'Projects',
   'Certifications',
@@ -32,52 +17,27 @@ const groupOptions = [
   'Awards and Recognitions',
   'Memberships in Professional Bodies',
   'Research Guidance',
+  'Transmission works'
 ];
 
-const fields = {
-  patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'National/International', 'Document'],
-  book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
-  book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],
-  journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication', 'Impact Factor', 'National/International', 'ISSN Number', 'Indexing Platform', 'H-index', 'Document'],
-  conference: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International', 'Document'],
+const select_fields = ['Purpose of Visit', 'Nature of Visit', 'Contribution in MOOC', 'Role of Faculty', 'Scope', 'Membership Type', 'Role', 'Indexing Platform']
 
-  certifications: ['Name of Certification Course', 'Type of Certification', 'Organized by', 'Duration (in days)'],
-  sponsored: ['Project Title', 'Funding Details', 'Amount (in INR)', 'Duration (in months)', 'Status', 'Academic Year', 'Document'],
-  research: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Funding Agency', 'Fund Received (in INR)', 'Are you', 'Status', 'Document'],
-  consultancy: ['Project Title', 'Year of Sanction', 'Duration (in months)', 'Name of Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Document'],
-  fdp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  sttp: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  workshop: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  seminar: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  webinar: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  RC: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-  OC: ['Program Title', 'Year', 'Scope', 'Organizing Body', 'Mode (Online/Offline)', 'Venue', 'Attended/Organized'],
-
-  talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  chair: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  lecture: ['Event Title', 'Organizing Institution', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-  resource_person: ['Event Title', 'Organizing Institution', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Venue', 'Document'],
-
-  mooc_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  eContent: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  course_content: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  lab_manual: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  repository: ['Content Title', 'Platform / Repository Name', 'Associated Course/Subject', 'Date / Year', 'Link'],
-  award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Year', 'Document'],
-  ieee: ['Organization Name', 'Membership ID (if any)', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  acm: ['Organization Name', 'Membership ID (if any)', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  csi: ['Organization Name', 'Membership ID (if any)', 'Membership Type (Life/Annual/Student)', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  phd_awarded: ['Year of Awarding', 'Number of Students'],
-  phd_ongoing: ['Year of Awarding', 'Number of Students'],
-  mtech: ['Year of Awarding', 'Number of Students'],
-  mphilmba: ['Year of Awarding', 'Number of Students'],
-};
+const select_options = {
+  'Purpose of Visit': ['Conference', 'Workshop', 'FDP', 'Research Collaboration', 'Invited Lecture', 'MoU Activity', 'Training', 'Others'],
+  'Nature of Visit': ['Official', 'Self-sponsored', 'Sponsored'],
+  'Role of Faculty': ['Presenter', 'Invited Speaker', 'Resource Person', 'Session Chair', 'Participant'],
+  'Scope': ['International (Abroad)', 'International (within India)', 'National Level', 'State Level', 'University Level'],
+  'Membership Type': ['Life', 'Annual', 'Student'],
+  'Role': ['Convenor', 'Co-Convenor', 'Coordinator', 'Co-Coordinator', 'Member'],
+  'Indexing Platform': ['Scopus', 'Web of Science', 'SCI'],
+  'Contribution in MOOC': ['Developed complete MOOCs', 'Developed modules for MOOCs', 'Content writer', 'Subject matter expert', 'Course Coordinator'],
+  'Contribution in e-Content': ['Developed complete e-Content module', 'Contributed to e-Content module development (atleast 1 quadrant)', 'Editor of e-Content',],
+}
 
 const subcategories = {
   'Publications': [
     { label: 'Journal Paper', value: 'journal' },
-    { label: 'Conference Paper', value: 'conference' },
+    { label: 'Conference Paper/Seminar Paper', value: 'conference_paper' },
     { label: 'Book Chapter', value: 'book_chapter' },
     { label: 'Book', value: 'book' },
   ],
@@ -89,6 +49,10 @@ const subcategories = {
     { label: 'edX', value: 'edx' },
     { label: 'Others', value: 'other' },
   ],
+  'Transmission works': [
+    { label: 'Any MOOCs course', value: 'any_moocs_course' },
+    { label: 'Book/Book Chapter', value: 'book_book_chapter' },
+  ],
   'Projects': [
     { label: 'Sponsored', value: 'sponsored' },
     { label: 'Consultancy', value: 'consultancy' },
@@ -98,6 +62,7 @@ const subcategories = {
     { label: 'FDP', value: 'fdp' },
     { label: 'STTP', value: 'sttp' },
     { label: 'Workshop', value: 'workshop' },
+    { label: 'Conference', value: 'conference' },
     { label: 'Seminar', value: 'seminar' },
     { label: 'Webinar', value: 'webinar' },
     { label: 'Refresh Course', value: 'rc' },
@@ -113,29 +78,28 @@ const subcategories = {
   ],
   'Content Development': [
     { label: 'MOOCs', value: 'mooc_content' },
-    { label: 'e-Content', value: 'econtent' },
-    { label: 'Course Content', value: 'course_content' },
-    { label: 'Lab Manual', value: 'lab_manual' },
-    { label: 'Institutional Repository', value: 'repository' },
+    { label: 'e-Content', value: 'e_content' },
+    { label: 'Innovative Pedagogy', value: 'innovative_pedagogy' },
   ],
   'Memberships in Professional Bodies': [
     { label: 'IEEE', value: 'ieee' },
     { label: 'ACM', value: 'acm' },
     { label: 'CSI', value: 'csi' },
-    { label: 'Others', value: 'other' },
+    { label: 'IE', value: 'ie' },
+    { label: 'IETE', value: 'iete' },
+    { label: 'Others', value: 'other_bodies' },
   ],
   'Research Guidance': [
     { label: 'Ph.D. (Awarded)', value: 'phd_awarded' },
     { label: 'Ph.D. (Ongoing)', value: 'phd_ongoing' },
     { label: 'M.Tech/M.E/MCA', value: 'mtech' },
-    { label: 'M.Phil/MBA', value: 'mphilmba' },
   ],
 };
 
 const directFieldGroups = {
   'Patents': 'patents',
   'Awards and Recognitions': 'award_title',
-  'Certifications': 'certifications',
+  'Foreign Visits': 'foreign_visits',
 };
 
 const AddCredentials = () => {
@@ -144,6 +108,40 @@ const AddCredentials = () => {
   const [formData, setFormData] = useState({});
   const [fileMap, setFileMap] = useState({});
   const [errors, setErrors] = useState({});
+
+  // 🔧 Helpers (pure JS)
+  const isFileField = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean.includes('document') || clean.includes('sanctioning order') || clean.includes('certificate') || clean.includes('proceeding') || clean.includes('allotment order');
+  };
+
+  const isRadioField = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'national/international' ||
+      clean === 'mode' ||
+      clean === 'published/granted' ||
+      clean === 'attended/organized' ||
+      clean === "are you" ||
+      clean === "author" ||
+      clean === "type of certification" ||
+      clean === "status" ||
+      clean === "role of scholar"
+  };
+
+  const isUtilCertificate = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'utilization certificate (final year)';
+  }
+
+  const isDateField = (label) => {
+    const clean = label.trim().toLowerCase()
+    return clean.includes('date')
+  }
+
+  const isPlace = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'place';
+  };
 
   // 🔍 Validation Helper (pure JS)
   const validateField = (label, value) => {
@@ -154,6 +152,12 @@ const AddCredentials = () => {
     // Required check for non-file, non-radio, non-scope
     if (!isFileField(label) && !isRadioField(label) && !valStr) {
       return { isValid: false, message: `${label} is required` };
+    }
+    if (isUtilCertificate(label) && formData['Status'] === 'Ongoing') {
+      return { isValid: true };
+    }
+    if (cleanLabel === 'role' && formData['Attended/Organized'] !== 'Organized') {
+      return { isValid: true };
     }
 
     if (isDateField(label)) {
@@ -179,13 +183,34 @@ const AddCredentials = () => {
     }
 
     // --- Year validation
-    if (cleanLabel.includes('year')) {
+    if (cleanLabel.includes('year') && !cleanLabel.includes('academic') && !cleanLabel.includes('month') && !cleanLabel.includes('certificate')) {
       if (!valStr) return { isValid: false, message: 'Year is required' };
       if (isNaN(valNum)) return { isValid: false, message: 'Year must be a number' };
       if (!Number.isInteger(valNum)) return { isValid: false, message: 'Year must be a whole number' };
       if (valNum < 1900) return { isValid: false, message: 'Year must be ≥ 1900' };
       const currentYear = new Date().getFullYear(); // 2025
       if (valNum > currentYear) return { isValid: false, message: `Year must be ≤ ${currentYear}` };
+      return { isValid: true };
+    }
+    else if (cleanLabel.includes('year') && cleanLabel.includes('month')) {
+      if (!valStr) return { isValid: false, message: 'Month & Year is required' };
+      // Expected format: "YYYY-MM"
+      const monthYearRegex = /^(\d{4})-(0[1-9]|1[0-2])$/;
+      if (!monthYearRegex.test(valStr)) {
+        return { isValid: false, message: 'Month & Year must be in YYYY-MM format (e.g., 2024-08)' };
+      }
+      const [_, yearStr, monthStr] = valStr.match(monthYearRegex);
+      const year = Number(yearStr);
+      const month = Number(monthStr);
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1; // zero-based
+      if (year < 1900) {
+        return { isValid: false, message: 'Year must be ≥ 1900' };
+      }
+      if (year > currentYear || (year === currentYear && month > currentMonth)) {
+        return { isValid: false, message: 'Month & Year must not be in the future' };
+      }
       return { isValid: true };
     }
 
@@ -272,6 +297,206 @@ const AddCredentials = () => {
     return group && subcategories[group] && subcategories[group].length > 0;
   }, [group]);
 
+  const handlemoocSubmit = (e) => {
+    e.preventDefault();
+    console.log("🚀 MOOC SUBMIT triggered");
+
+    const newErrors = {};
+    let isValid = true;
+
+    // 🔹 Step 1: Validate global fields
+    const contribution = formData['Contribution in MOOC']?.trim();
+    const numMOOCsStr = formData['Number of MOOCs']?.trim();
+    const numMOOCs = Number(numMOOCsStr);
+
+    // Contribution is required
+    if (!contribution) {
+      newErrors['Contribution in MOOC'] = 'Contribution in MOOC is required';
+      isValid = false;
+    }
+
+    // Number of MOOCs validation
+    if (!numMOOCsStr) {
+      newErrors['Number of MOOCs'] = 'Number of MOOCs is required';
+      isValid = false;
+    } else if (isNaN(numMOOCs)) {
+      newErrors['Number of MOOCs'] = 'Must be a valid number';
+      isValid = false;
+    } else if (!Number.isInteger(numMOOCs) || numMOOCs < 1) {
+      newErrors['Number of MOOCs'] = 'Must be a whole number ≥ 1';
+      isValid = false;
+    }
+
+    // 🔹 Step 2: Validate each MOOC instance (only if numMOOCs ≥ 1 and no prior errors)
+    if (isValid && numMOOCs > 0) {
+      const moocInstanceFields = ['Title of the MOOC', 'Month & Year']; // ← use only per-MOOC fields
+
+      for (let i = 0; i < numMOOCs; i++) {
+        moocInstanceFields.forEach((label) => {
+          const name = `${label}__${i}`;
+          const value = (formData[name] || '').trim();
+
+          // Special: Month & Year is a `type="month"` input → format "YYYY-MM"
+          if (label === 'Month & Year') {
+            if (!value) {
+              newErrors[name] = 'Month & Year is required';
+              isValid = false;
+            } else if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
+              newErrors[name] = 'Invalid format. Use YYYY-MM (e.g., 2024-08)';
+              isValid = false;
+            } else {
+              const inputDate = new Date(`${value}-01`);
+              const today = new Date();
+              // Normalize to first of month for fair comparison
+              today.setDate(1);
+              if (inputDate > today) {
+                newErrors[name] = 'Month & Year must be in the past';
+                isValid = false;
+              }
+            }
+          } else {
+            // 'Title of the MOOC' — non-empty string
+            if (!value) {
+              newErrors[name] = `${label} is required`;
+              isValid = false;
+            }
+          }
+        });
+      }
+    }
+
+    // 🔹 Step 3: Update UI & exit if invalid
+    setErrors(newErrors);
+    if (!isValid) {
+      console.warn('❌ MOOC validation failed:', newErrors);
+      return;
+    }
+
+    // 🔹 Step 4: ✅ Build structured payload
+    const moocs = [];
+    for (let i = 0; i < numMOOCs; i++) {
+      moocs.push({
+        title: formData[`Title of the MOOC__${i}`] || '',
+        monthYear: formData[`Month & Year__${i}`] || ''
+      });
+    }
+
+    const payload = {
+      group,
+      subcategory,
+      formData: {
+        contributionInMOOC: contribution,
+        numberOfMOOCs: numMOOCs,
+        moocs
+      },
+      // Optional: include files if any were uploaded (e.g., certificates, links, docs)
+      files: { ...fileMap } // currently unused in MOOC, but safe to keep
+    };
+
+    console.log('✅ MOOC Submission Payload:', payload);
+    alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
+  }
+
+  const handleESubmit = (e) => {
+    e.preventDefault();
+    console.log("🚀 e-Content SUBMIT triggered");
+
+    const newErrors = {};
+    let isValid = true;
+
+    // 🔹 Step 1: Validate global fields
+    const contribution = formData['Contribution in e-Content']?.trim();
+    const numMOOCsStr = formData['Number of e-Contents']?.trim();
+    const numMOOCs = Number(numMOOCsStr);
+
+    // Contribution is required
+    if (!contribution) {
+      newErrors['Contribution in e-Content'] = 'Contribution in e-Content is required';
+      isValid = false;
+    }
+
+    // Number of e-Contents validation
+    if (!numMOOCsStr) {
+      newErrors['Number of e-Contents'] = 'Number of e-Contents is required';
+      isValid = false;
+    } else if (isNaN(numMOOCs)) {
+      newErrors['Number of e-Contents'] = 'Must be a valid number';
+      isValid = false;
+    } else if (!Number.isInteger(numMOOCs) || numMOOCs < 1) {
+      newErrors['Number of e-Contents'] = 'Must be a whole number ≥ 1';
+      isValid = false;
+    }
+
+    // 🔹 Step 2: Validate each e-Content instance (only if numMOOCs ≥ 1 and no prior errors)
+    if (isValid && numMOOCs > 0) {
+      const moocInstanceFields = ['Title of the e-Content', 'Month & Year']; // ← use only per-MOOC fields
+
+      for (let i = 0; i < numMOOCs; i++) {
+        moocInstanceFields.forEach((label) => {
+          const name = `${label}__${i}`;
+          const value = (formData[name] || '').trim();
+
+          // Special: Month & Year is a `type="month"` input → format "YYYY-MM"
+          if (label === 'Month & Year') {
+            if (!value) {
+              newErrors[name] = 'Month & Year is required';
+              isValid = false;
+            } else if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
+              newErrors[name] = 'Invalid format. Use YYYY-MM (e.g., 2024-08)';
+              isValid = false;
+            } else {
+              const inputDate = new Date(`${value}-01`);
+              const today = new Date();
+              // Normalize to first of month for fair comparison
+              today.setDate(1);
+              if (inputDate > today) {
+                newErrors[name] = 'Month & Year must be in the past';
+                isValid = false;
+              }
+            }
+          } else {
+            // 'Title of the MOOC' — non-empty string
+            if (!value) {
+              newErrors[name] = `${label} is required`;
+              isValid = false;
+            }
+          }
+        });
+      }
+    }
+
+    // 🔹 Step 3: Update UI & exit if invalid
+    setErrors(newErrors);
+    if (!isValid) {
+      console.warn('❌ MOOC validation failed:', newErrors);
+      return;
+    }
+
+    // 🔹 Step 4: ✅ Build structured payload
+    const moocs = [];
+    for (let i = 0; i < numMOOCs; i++) {
+      moocs.push({
+        title: formData[`Title of the MOOC__${i}`] || '',
+        monthYear: formData[`Month & Year__${i}`] || ''
+      });
+    }
+
+    const payload = {
+      group,
+      subcategory,
+      formData: {
+        contributionInEContent: contribution,
+        numberOfEContents: numMOOCs,
+        moocs
+      },
+      // Optional: include files if any were uploaded (e.g., certificates, links, docs)
+      files: { ...fileMap } // currently unused in MOOC, but safe to keep
+    };
+
+    console.log('✅ MOOC Submission Payload:', payload);
+    alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
+  }
+
   const currentFieldKeys = useMemo(() => {
     if (!group) return [];
 
@@ -337,7 +562,7 @@ const AddCredentials = () => {
         { value: 'National', label: 'National' },
         { value: 'International', label: 'International' }
       ];
-    } else if (clean === 'mode (online/offline)') {
+    } else if (clean === 'mode') {
       return [
         { value: 'Online', label: 'Online' },
         { value: 'Offline', label: 'Offline' }
@@ -367,19 +592,131 @@ const AddCredentials = () => {
         { value: "Completed", label: "Completed" }
       ]
     }
+    else if (clean === "type of certification") {
+      return [
+        { value: "FDP", label: "FDP" },
+        { value: "Certification Course", label: "Certification Course" }
+      ];
+    }
+    else if (clean === "author") {
+      return [
+        { value: "First Author", label: "First Author" },
+        { value: "Co-Author", label: "Co-Author" }
+      ];
+    }
+    else if (clean === 'role of scholar') {
+      return [
+        { value: 'Supervisor', label: "SuperVisor" },
+        { value: "Co-Supervisor", label: "Co-Supervisor" }
+      ]
+    }
     return [];
   };
 
   const isNumberField = (label) => {
     const clean = label.toLowerCase();
-    return clean.includes('year') ||
+    return (clean.includes('year') && !clean.includes('month') && !clean.includes('academic')) ||
       clean.includes('amount') ||
       clean.includes('number of students') ||
       clean.includes('fund received') ||
-      clean.includes('duration') ||
+      clean.includes('in weeks') ||
+      clean.includes('in days') ||
+      clean.includes('in months') ||
       clean.includes('page') ||
       clean.includes('impact')
   };
+
+  const isRole = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean === 'role';
+  }
+
+  const isOrganized = () => {
+    const roleValue = formData['Attended/Organized'] || '';
+    return roleValue === 'Organized';
+  }
+
+  const handlePhdjoinedSubmit = (e) => {
+    e.preventDefault();
+    // Validate all fields
+    const newErrors = {};
+    let isValid = true;
+    const numPhd = Number(formData['Number of Ph.D. joined'] || 0);
+    for (let i = 0; i < numPhd; i++) {
+      phd_joining_fields.forEach((label) => {
+        const name = `${label}__${i}`;
+        const value = formData[name] || '';
+        const result = validateField(label, value);
+        if (!result.isValid && result.message) {
+          newErrors[name] = result.message;
+          isValid = false;
+        }
+      });
+    }
+    if (!isValid) {
+      setErrors(newErrors);
+      return;
+    }
+    // ✅ Build payload
+    const payload = {
+      group,
+      subcategory,
+      formData,
+      files: fileMap
+    };
+    console.log('✅ Submitted:', payload);
+    alert(`✅ ${group} - ${subcategory} added!`);
+    // Reset
+    setGroup('');
+    setSubcategory('');
+    setFormData({});
+    setFileMap({});
+    setErrors({});
+  };
+
+  const handlePhdSubmit = (e) => {
+    e.preventDefault()
+    // Validate all fields
+    const newErrors = {};
+    let isValid = true;
+    const numPhd = Number(formData['Number of Ph.D. Awarded'] || 0);
+    for (let i = 0; i < numPhd; i++) {
+      phd_awarded_fields.forEach((label) => {
+        const name = `${label}__${i}`;
+        const value = formData[name] || '';
+        const result = validateField(label, value);
+        if (!result.isValid && result.message) {
+          newErrors[name] = result.message;
+          isValid = false;
+        }
+      });
+    }
+    if (!isValid) {
+      setErrors(newErrors);
+      return;
+    }
+    // ✅ Build payload
+    const payload = {
+      group,
+      subcategory,
+      formData,
+      files: fileMap
+    };
+    console.log('✅ Submitted:', payload);
+    alert(`✅ ${group} - ${subcategory} added!`);
+    // Reset
+    setGroup('');
+    setSubcategory('');
+    setFormData({});
+    setFileMap({});
+    setErrors({});
+  };
+
+  const isMembership = (label) => {
+    const clean = label.trim().toLowerCase();
+    return clean.includes('membership type');
+  };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -391,6 +728,23 @@ const AddCredentials = () => {
     currentFieldKeys.forEach((label, idx) => {
       const name = label;
       const value = formData[name] || '';
+      const clean = label.trim().toLowerCase();
+
+      // 🚫 Skip Place validation when Mode ≠ Offline
+      if (clean === 'place' && formData['Mode'] !== 'Offline') {
+        return;
+      }
+
+      if (clean === 'validity period (if applicable)') {
+        if (formData['Membership Type (Life/Annual/Student)'] === 'Life') {
+          return; // 🚫 Skip validation for Life members
+        }
+      }
+
+      // 🚫 Skip Role when not Organized
+      if (clean === 'role' && formData['Attended/Organized'] !== 'Organized') {
+        return;
+      }
 
       const result = validateField(label, value);
       if (!result.isValid && result.message) {
@@ -401,6 +755,7 @@ const AddCredentials = () => {
 
     if (!isValid) {
       setErrors(newErrors);
+      console.log('❌ Validation Errors:', newErrors);
       return;
     }
 
@@ -426,8 +781,8 @@ const AddCredentials = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6">
       <div className="bg-white shadow-xl rounded-xl overflow-hidden">
-        <div className="bg-linear-to-r from-purple-700 to-violet-700 px-6 py-5">
-          <h1 className="text-2xl font-bold text-white text-center">Add New Credential</h1>
+        <div className="bg-linear-to-r from-purple-600 to-violet-800 px-6 py-5">
+          <h1 className="text-3xl font-semibold text-white text-center font-sans" style={{ fontFamily: "Times New Roman, serif" }}>Add New Credential</h1>
         </div>
 
         <div className="p-6">
@@ -474,156 +829,600 @@ const AddCredentials = () => {
 
           {/* Form Fields */}
           {(group && (!hasSubcategories || subcategory)) && currentFieldKeys.length > 0 && (
-            <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-              <div className="border-t pt-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  {group}
-                  {hasSubcategories && ` → ${subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}`}
-                </h2>
-
-                <div className="space-y-5">
-                  {currentFieldKeys.map((label, idx) => {
-                    const name = label;
-                    const cleanLabel = label.trim();
-                    const isFile = isFileField(cleanLabel);
-                    const isRadio = isRadioField(cleanLabel);
-                    const isNum = isNumberField(cleanLabel) && !isRadio;
-                    const isDate = isDateField(cleanLabel)
-                    const value = formData[name] || '';
-
-                    // 🔍 Find Mode field index and value
-                    const modeIndex = currentFieldKeys.findIndex(
-                      lbl => lbl.trim().toLowerCase().includes('mode') &&
-                        (lbl.toLowerCase().includes('online') || lbl.toLowerCase().includes('offline'))
-                    );
-                    const modeValue = modeIndex !== -1 ? formData[`field_${modeIndex}`] || '' : '';
-
-                    // 🚫 Hide "Venue" when Mode is "Online"
-                    if (cleanLabel.toLowerCase() === 'venue' && modeValue.toLowerCase() === 'online') {
-                      return null;
-                    }
-
-                    return (
-                      <div key={name}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          {cleanLabel}
-                          {!isFile && !isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
-                        </label>
-
-                        {isRadio ? (
-                          <div className="flex flex-wrap gap-4 mt-1">
-                            {getRadioOptions(cleanLabel).map(opt => (
-                              <label key={opt.value} className="flex items-center cursor-pointer">
-                                <input
-                                  type="radio"
-                                  name={name}
-                                  value={opt.value}
-                                  checked={value === opt.value}
-                                  onChange={() => handleInputChange(name, opt.value)}
-                                  className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                                  required
-                                />
-                                <span className={`ml-2 ${value === opt.value ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
-                                  {opt.label}
-                                </span>
+            subcategory === 'phd_awarded' ? (
+              <form onSubmit={handlePhdSubmit} className="space-y-6 animate-fade-in">
+                <div className="border-t pt-6">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                  </h2>
+                  <div className="space-y-5">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Number of Ph.D. Awarded<span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={formData['Number of Ph.D. Awarded'] || ''}
+                      onChange={(e) => handleInputChange('Number of Ph.D. Awarded', e.target.value)}
+                      className={`w-full px-3 py-2 border rounded-md ${errors['Number of Ph.D. Awarded'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                        } `}
+                      placeholder={`Enter Number of Ph.D. Awarded`}
+                      required
+                      min="1"
+                    />
+                    {errors['Number of Ph.D. Awarded'] && (
+                      <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of Ph.D. Awarded']}</p>
+                    )}
+                    {/* I want to add formData['Number of Ph.D. Awarded'] times of phd_awarded_fields */}
+                    {Array.from({ length: Number(formData['Number of Ph.D. Awarded'] || 0) }, (_, i) => (
+                      <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                        <h3 className="text-md font-semibold text-gray-700 mb-3">Ph.D. Scholar {i + 1}</h3>
+                        {phd_awarded_fields.map((label, idx) => {
+                          const name = `${label}__${i}`;
+                          const cleanLabel = label.trim();
+                          const isFile = isFileField(cleanLabel);
+                          const isNum = isNumberField(cleanLabel);
+                          const isDate = isDateField(cleanLabel)
+                          const value = formData[name] || '';
+                          const isRadio = isRadioField(cleanLabel);
+                          return (
+                            <div key={name} className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {cleanLabel}
+                                {!isFile && <span className="text-red-500 ml-1">*</span>}
                               </label>
-                            ))}
-                          </div>
-                        ) : isFile ? (
-                          <div className="mt-1 flex items-center">
-                            <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                              <span className="text-sm text-blue-600 font-medium">
-                                {value || 'Choose file'}
-                              </span>
-                              <input
-                                type="file"
-                                className="hidden"
-                                onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                accept=".pdf,.jpg,.jpeg,.png"
-                              />
-                            </label>
-                            {value && (
-                              <button
-                                type="button"
-                                onClick={() => handleFileChange(name, null)}
-                                className="ml-2 text-xs text-red-500 hover:text-red-700"
-                              >
-                                ✕ Clear
-                              </button>
-                            )}
-                          </div>
-                        ) : cleanLabel === 'Scope' ? (
-                          <select
-                            value={value}
-                            onChange={(e) => handleInputChange(name, e.target.value)}
-                            onBlur={() => {
-                              const result = validateField(label, formData[name] || '');
-                              if (!result.isValid && result.message) {
-                                setErrors(prev => ({ ...prev, [name]: result.message }));
-                              }
-                            }}
-                            className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                              }`}
-                          >
-                            <option value="">Select Scope</option>
-                            <option value="International (Abroad)">International (Abroad)</option>
-                            <option value="International (within India)">International (within India)</option>
-                            <option value="National Level">National Level</option>
-                            <option value="State Level">State Level</option>
-                            <option value="University Level">University Level</option>
-                          </select>
-                        ) : (
-                          <input
-                            type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
-                            value={value}
-                            onChange={(e) => handleInputChange(name, e.target.value)}
-                            onBlur={() => {
-                              const result = validateField(label, formData[name] || '');
-                              if (!result.isValid && result.message) {
-                                setErrors(prev => ({ ...prev, [name]: result.message }));
-                              }
-                            }}
-                            className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                              } `}
-                            placeholder={`Enter ${cleanLabel}`}
-                            required={!isFile}
-                            min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
-                            step={isNum ? "1" : undefined}
-                          />
-                        )}
-
-                        {errors[name] && (
-                          <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
-                        )}
+                              {isFile ? (
+                                <div className="mt-1 flex items-center">
+                                  <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                    <span className="text-sm text-blue-600 font-medium">
+                                      {value || 'Choose file'}
+                                    </span>
+                                    <input
+                                      type="file"
+                                      className="hidden"
+                                      onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                      accept=".pdf,.jpg,.jpeg,.png"
+                                    />
+                                  </label>
+                                  {value && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleFileChange(name, null)}
+                                      className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                    >
+                                      ✕ Clear
+                                    </button>
+                                  )}
+                                </div>
+                              ) :
+                                isRadio ? (
+                                  <div className="space-x-4">
+                                    {getRadioOptions(cleanLabel).map((option) => (
+                                      <label key={option.value} className="inline-flex items-center">
+                                        <input
+                                          type="radio"
+                                          name={name}
+                                          value={option.value}
+                                          checked={value === option.value}
+                                          onChange={(e) => handleInputChange(name, e.target.value)}
+                                          className="form-radio text-blue-600"
+                                        />
+                                        <span className="ml-2 text-gray-700">{option.label}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                ) :
+                                  (
+                                    <input
+                                      type={isNum ? "number" : isDate ? "date" : "text"}
+                                      value={value}
+                                      onChange={(e) => handleInputChange(name, e.target.value)}
+                                      className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                        } `}
+                                      placeholder={`Enter ${cleanLabel}`}
+                                      required={!isFile}
+                                      min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                      step={isNum ? "1" : undefined}
+                                    />
+                                  )}
+                              {errors[name] && (
+                                <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
+                    ))}
 
-                {/* Submit Buttons */}
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
-                  >
-                    Submit {group}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setGroup('');
-                      setSubcategory('');
-                      setFormData({});
-                      setFileMap({});
-                      setErrors({});
-                    }}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-sm transition"
-                  >
-                    Cancel
-                  </button>
+                    <div className="mt-6">
+                      <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            ) :
+
+              subcategory === 'e_content' ? (
+                <form onSubmit={handleESubmit} className="space-y-6 animate-fade-in">
+                  <div className="border-t pt-6">
+                    <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                      {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                    </h2>
+                    <div className="space-y-5">
+                      <label htmlFor="Contribution in e-Content">Contribution in e-Content</label>
+                      <select
+                        id="Contribution in e-Content"
+                        value={formData['Contribution in e-Content'] || ''}
+                        onChange={(e) => handleInputChange('Contribution in e-Content', e.target.value)}
+                        className={`w-full px-3 py-2 border rounded-md ${errors['Contribution in e-Content'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          } `}
+                      >
+                        <option value="">Select Contribution</option>
+                        {select_options['Contribution in e-Content']?.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Number of e-Contents<span className="text-red-500 ml-1">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={formData['Number of e-Contents'] || ''}
+                        onChange={(e) => handleInputChange('Number of e-Contents', e.target.value)}
+                        className={`w-full px-3 py-2 border rounded-md ${errors['Number of e-Contents'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          } `}
+                        placeholder={`Enter Number of e-Contents`}
+                        required
+                        min="1"
+                      />
+                      {errors['Number of e-Contents'] && (
+                        <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of e-Contents']}</p>
+                      )}
+                      {/* I want to add formData['Number of e-Contents'] times of mooc_fields */}
+                      {Array.from({ length: Number(formData['Number of e-Contents'] || 0) }, (_, i) => (
+                        <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                          <h3 className="text-md font-semibold text-gray-700 mb-3">e-Content {i + 1}</h3>
+                          {e_content_fields.map((label, idx) => {
+                            const name = `${label}__${i}`;
+                            const cleanLabel = label.trim();
+                            const isMonth = cleanLabel.includes('month');
+                            const value = formData[name] || '';
+                            return (
+                              <div key={name} className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  {cleanLabel} <span className="text-red-500 ml-1">*</span>
+                                </label>
+                                <input
+                                  type={isMonth ? "month" : "text"}
+                                  value={value}
+                                  onChange={(e) => handleInputChange(name, e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    } `}
+                                  placeholder={`Enter ${cleanLabel}`}
+                                  required={true}
+                                  min={isMonth ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                  step={isMonth ? "1" : undefined}
+                                />
+
+                                {errors[name] && (
+                                  <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ))}
+
+                      <div className="mt-6">
+                        <button
+                          type="submit"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              )
+                :
+                subcategory === 'mooc_content' ? (
+                  <form onSubmit={handlemoocSubmit} className="space-y-6 animate-fade-in">
+                    <div className="border-t pt-6">
+                      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                        {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                      </h2>
+                      <div className="space-y-5">
+                        <label htmlFor="Contribution in MOOC">Contribution in MOOC</label>
+                        <select
+                          id="Contribution in MOOC"
+                          value={formData['Contribution in MOOC'] || ''}
+                          onChange={(e) => handleInputChange('Contribution in MOOC', e.target.value)}
+                          className={`w-full px-3 py-2 border rounded-md ${errors['Contribution in MOOC'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            } `}
+                        >
+                          <option value="">Select Contribution</option>
+                          {select_options['Contribution in MOOC']?.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Number of MOOCs<span className="text-red-500 ml-1">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={formData['Number of MOOCs'] || ''}
+                          onChange={(e) => handleInputChange('Number of MOOCs', e.target.value)}
+                          className={`w-full px-3 py-2 border rounded-md ${errors['Number of MOOCs'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            } `}
+                          placeholder={`Enter Number of MOOCs`}
+                          required
+                          min="1"
+                        />
+                        {errors['Number of MOOCs'] && (
+                          <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of MOOCs']}</p>
+                        )}
+                        {/* I want to add formData['Number of MOOCs'] times of mooc_fields */}
+                        {Array.from({ length: Number(formData['Number of MOOCs'] || 0) }, (_, i) => (
+                          <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                            <h3 className="text-md font-semibold text-gray-700 mb-3">MOOC {i + 1}</h3>
+                            {MOOC_fields.map((label, idx) => {
+                              const name = `${label}__${i}`;
+                              const cleanLabel = label.trim();
+                              const isMonth = cleanLabel.includes('month');
+                              const value = formData[name] || '';
+                              return (
+                                <div key={name} className="mb-4">
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {cleanLabel} <span className="text-red-500 ml-1">*</span>
+                                  </label>
+
+                                  {/* { add isFile input type} */}
+                                  <input
+                                    type={isMonth ? "month" : "text"}
+                                    value={value}
+                                    onChange={(e) => handleInputChange(name, e.target.value)}
+                                    className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                      } `}
+                                    placeholder={`Enter ${cleanLabel}`}
+                                    required={true}
+                                    min={isMonth ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                    step={isMonth ? "1" : undefined}
+                                  />
+
+                                  {errors[name] && (
+                                    <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ))}
+
+                        <div className="mt-6">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                )
+                  :
+                  subcategory === 'phd_ongoing' ? (
+                    <form onSubmit={handlePhdjoinedSubmit} className="space-y-6 animate-fade-in">
+                      <div className="border-t pt-6">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                          {group} → {subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}
+                        </h2>
+                        <div className="space-y-5">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Number of PhD Students Joined<span className="text-red-500 ml-1">*</span>
+                          </label>
+                          <input
+                            type="number"
+                            value={formData['Number of Ph.D. joined'] || ''}
+                            onChange={(e) => handleInputChange('Number of Ph.D. joined', e.target.value)}
+                            className={`w-full px-3 py-2 border rounded-md ${errors['Number of Ph.D. joined'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                              } `}
+                            placeholder={`Enter Number of Ph.D students joined`}
+                            required
+                            min="1"
+                          />
+                          {errors['Number of Ph.D. joined'] && (
+                            <p className="mt-1 text-sm text-red-600 font-medium">{errors['Number of Ph.D. joined']}</p>
+                          )}
+                          {/* I want to add formData['Number of Ph.D. Awarded'] times of phd_awarded_fields */}
+                          {Array.from({ length: Number(formData['Number of Ph.D. joined'] || 0) }, (_, i) => (
+                            <div key={i} className="p-4 border rounded-lg bg-gray-50">
+                              <h3 className="text-md font-semibold text-gray-700 mb-3">Scholar {i + 1}</h3>
+                              {phd_joining_fields.map((label, idx) => {
+                                const name = `${label}__${i}`;
+                                const cleanLabel = label.trim();
+                                const isFile = isFileField(cleanLabel);
+                                const isNum = isNumberField(cleanLabel);
+                                const isDate = isDateField(cleanLabel)
+                                const value = formData[name] || '';
+                                return (
+                                  <div key={name} className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      {cleanLabel}
+                                      {!isFile && <span className="text-red-500 ml-1">*</span>}
+                                    </label>
+                                    {isFile ? (
+                                      <div className="mt-1 flex items-center">
+                                        <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                          <span className="text-sm text-blue-600 font-medium">
+                                            {value || 'Choose file'}
+                                          </span>
+                                          <input
+                                            type="file"
+                                            className="hidden"
+                                            onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                            accept=".pdf,.jpg,.jpeg,.png"
+                                          />
+                                        </label>
+                                        {value && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleFileChange(name, null)}
+                                            className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                          >
+                                            ✕ Clear
+                                          </button>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <input
+                                        type={isNum ? "number" : isDate ? "date" : "text"}
+                                        value={value}
+                                        onChange={(e) => handleInputChange(name, e.target.value)}
+                                        className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                          } `}
+                                        placeholder={`Enter ${cleanLabel}`}
+                                        required={!isFile}
+                                        min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                        step={isNum ? "1" : undefined}
+                                      />
+                                    )}
+                                    {errors[name] && (
+                                      <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ))}
+
+                          <div className="mt-6">
+                            <button
+                              type="submit"
+                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+                      <div className="border-t pt-6">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                          {group}
+                          {hasSubcategories && ` → ${subcategories[group]?.find(s => s.value === subcategory)?.label || subcategory}`}
+                        </h2>
+
+                        <div className="space-y-5">
+                          {currentFieldKeys.map((label, idx) => {
+                            const name = label;
+                            const cleanLabel = label.trim();
+                            const isFile = isFileField(cleanLabel);
+                            const isRadio = isRadioField(cleanLabel);
+                            const isNum = isNumberField(cleanLabel) && !isRadio;
+                            const isDate = isDateField(cleanLabel)
+                            const isPlaceField = isPlace(cleanLabel);
+                            const value = formData[name] || '';
+                            const modeValue = formData['Mode'] || '';
+                            const isRoleField = isRole(cleanLabel);
+                            const isUtilCert = isUtilCertificate(cleanLabel);
+
+                            if (isPlaceField && modeValue !== 'Offline') {
+                              return null; // 🚫 completely hide Place
+                            }
+
+                            if (isRoleField && !isOrganized()) {
+                              return null; // 🚫 hide Role if not Organized
+                            }
+                            const isValidityPeriod =
+                              cleanLabel.toLowerCase() === 'validity period (if applicable)';
+
+                            if (
+                              isValidityPeriod &&
+                              formData['Membership Type (Life/Annual/Student)'] === 'Life'
+                            ) {
+                              return null;
+                            }
+
+                            if (isUtilCert && formData['Status'] === 'Ongoing') {
+                              return null;
+                            }
+
+                            const isSelect = select_fields.includes(cleanLabel);
+
+                            if (isSelect) {
+                              return (
+                                <div key={name}>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {cleanLabel}
+                                    <span className="text-red-500 ml-1">*</span>
+                                  </label>
+                                  <select
+                                    id={name}
+                                    value={value}
+                                    onChange={(e) => handleInputChange(name, e.target.value)}
+                                    className={`w-full px-4 py-3 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                      } `}
+                                    required
+                                  >
+                                    <option value="">— Select {cleanLabel} —</option>
+                                    {select_options[cleanLabel]?.map(opt => (
+                                      <option key={opt} value={opt}>{opt}</option>
+                                    ))}
+                                  </select>
+                                  {errors[name] && (
+                                    <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                  )}
+                                </div>
+                              );
+                            }
+
+                            return (
+                              <div key={name}>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  {cleanLabel}
+                                  {!isFile && !isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
+                                </label>
+
+                                {isRadio ? (
+                                  <div className="flex flex-wrap gap-4 mt-1">
+                                    {getRadioOptions(cleanLabel).map(opt => (
+                                      <label key={opt.value} className="flex items-center cursor-pointer">
+                                        <input
+                                          type="radio"
+                                          name={name}
+                                          value={opt.value}
+                                          checked={value === opt.value}
+                                          onChange={() => {
+                                            handleInputChange(name, opt.value);
+                                            if (opt.value === 'Attended') {
+                                              setFormData(prev => {
+                                                const updated = { ...prev };
+                                                delete updated['Role']; // ✅ remove role completely
+                                                return updated;
+                                              });
+                                            }
+                                            else if (opt.value === 'Organized') {
+                                              setFormData(prev => ({ ...prev, 'Role': prev['Role'] || '' }));
+                                            }
+                                          }}
+                                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                                          required
+                                        />
+                                        <span className={`ml-2 ${value === opt.value ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                                          {opt.label}
+                                        </span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                ) :
+                                  isUtilCert ? (
+                                    <div className="mt-1 flex items-center">
+                                      <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                        <span className="text-sm text-blue-600 font-medium">
+                                          {value || 'Choose file'}
+                                        </span>
+                                        <input
+                                          type="file"
+                                          className="hidden"
+                                          onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                          accept=".pdf,.jpg,.jpeg,.png"
+                                        />
+                                      </label>
+                                      {value && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleFileChange(name, null)}
+                                          className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                        >
+                                          ✕ Clear
+                                        </button>
+                                      )}
+                                    </div>
+                                  ) :
+                                    isFile ? (
+                                      <div className="mt-1 flex items-center">
+                                        <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                                          <span className="text-sm text-blue-600 font-medium">
+                                            {value || 'Choose file'}
+                                          </span>
+                                          <input
+                                            type="file"
+                                            className="hidden"
+                                            onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
+                                            accept=".pdf,.jpg,.jpeg,.png"
+                                          />
+                                        </label>
+                                        {value && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleFileChange(name, null)}
+                                            className="ml-2 text-xs text-red-500 hover:text-red-700"
+                                          >
+                                            ✕ Clear
+                                          </button>
+                                        )}
+                                      </div>
+                                    ) :
+                                      (
+                                        <input
+                                          type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
+                                          value={value}
+                                          onChange={(e) => handleInputChange(name, e.target.value)}
+                                          onBlur={() => {
+                                            const result = validateField(label, formData[name] || '');
+                                            if (!result.isValid && result.message) {
+                                              setErrors(prev => ({ ...prev, [name]: result.message }));
+                                            }
+                                          }}
+                                          className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            } `}
+                                          placeholder={`Enter ${cleanLabel}`}
+                                          required={!isFile && cleanLabel !== 'validity period (if applicable)'}
+                                          min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
+                                          step={isNum ? "1" : undefined}
+                                        />
+                                      )}
+
+                                {errors[name] && (
+                                  <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Submit Buttons */}
+                        <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGroup('');
+                              setSubcategory('');
+                              setFormData({});
+                              setFileMap({});
+                              setErrors({});
+                            }}
+                            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-sm transition"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="flex-1 bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg shadow-md transition focus:outline-none "
+                          >
+                            Submit {group}
+                          </button>
+                        </div>
+                      </div>
+                    </form>)
           )}
         </div>
       </div>

@@ -273,7 +273,7 @@ const handleSave = () => {
   console.log("Final Changes:", diff);
 
     if(confirm("Profile saved successfully!")){
-      navigate('/adminPage')
+      navigate('/profile/');
     }
 
 };
@@ -605,7 +605,7 @@ const handleSave = () => {
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleCancel}
-                  className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm flex gap-2 items-center"
+                  className="px-5 py-2 text-sm font-bold bg-gray-600 text-white  rounded-lg hover:bg-gray-500 shadow-sm flex gap-2 items-center"
                 >
                   <X className="w-4 h-4"/>
                   <span>Cancel</span>
@@ -613,7 +613,7 @@ const handleSave = () => {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 "
+                  className="px-6 py-2 bg-linear-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 "
                 >
                   <Save className="w-4 h-4" />
                   <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
