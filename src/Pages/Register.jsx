@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useEffect, } from "react";
+import React, { useState, useCallback, useEffect, useRef} from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
 import { area } from "framer-motion/client";
+import ProfilePictureCropper from "../components/ProfilePictureCropper";
 
 export default function Register() {
   const navigate = useNavigate()
@@ -111,6 +112,60 @@ export default function Register() {
     return newErrors;
   };
 
+  // Handle file selection
+const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setProfileImageSrc(event.target.result);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+   // Handle crop completion
+  const handleCropComplete = async (croppedBlob) => {
+    if (!croppedBlob) return;
+
+    // Create a File object from the blob
+    const croppedFile = new File([croppedBlob], 'profile-picture.jpg', {
+      type: 'image/jpeg'
+    });
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(croppedBlob);
+
+    setCroppedImage(croppedFile);
+    setCroppedPreview(previewUrl);
+    setShowCropper(false);
+    
+    // Also update personalData with the file
+    setpersonalData(prev => ({ ...prev, avatar: croppedFile }));
+  };
+
+   // Handle crop cancel
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setProfileImageSrc(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleExperienceChange = useCallback((index, e) => {
     const { name, value } = e.target;
     setExperience((prev) => {
@@ -119,6 +174,26 @@ export default function Register() {
       return updated;
     });
   }, []);
+
+  // Remove profile picture
+  const handleRemoveProfilePicture = () => {
+    setCroppedImage(null);
+    setCroppedPreview(null);
+    setProfileImageSrc(null);
+    setpersonalData(prev => ({ ...prev, avatar: null }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Clean up URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      if (croppedPreview) {
+        URL.revokeObjectURL(croppedPreview);
+      }
+    };
+  }, [croppedPreview]);
 
   const validateAS = () => {
     const newErrors = {};
@@ -279,7 +354,7 @@ export default function Register() {
   // phone handler: keep only digits and limit to 10
   const handlePhoneChange = useCallback((e) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-    setLoginData((prev) => ({ ...prev, phone: digits }));
+    setpersonalData((prev) => ({ ...prev, phone: digits }));
     setErrors((prev) => ({ ...prev, phone: "" }));
   }, []);
 
@@ -582,7 +657,7 @@ export default function Register() {
               inputMode="numeric"
               placeholder="Enter phone number"
               error={errors.phone}
-              required
+              required = {true}
             />
 
             <InputField
@@ -644,6 +719,14 @@ export default function Register() {
                     }
                   }}
                 />
+                {/* Cropper Modal */}
+      {showCropper && profileImageSrc && (
+        <ProfilePictureCropper
+          image={profileImageSrc}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
 
                 {previewUrl && (
                   <div>
@@ -717,13 +800,14 @@ export default function Register() {
               </select>
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>Phone Number <span className="text-gray-600">(optional)</span></label>
+              <label>Phone Number</label>
               <input
                 type="text"
                 name="phone"
                 placeholder="enter your phone number"
                 value={personalData.phone}
-                onChange={handleChange}
+                onChange={handlePhoneChange}
+                required
                 className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.phone ? "border-red-500" : "border-gray-300 "
                   }`}
 
