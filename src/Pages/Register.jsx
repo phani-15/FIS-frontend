@@ -284,22 +284,11 @@ const handleFileSelect = (e) => {
   const test = async () => {
     const obj1 = {
       "loginData": {
-        "email": "vi2@gmail.com",
+        "email": "vi92@gmail.com",
         "password": "1234567890",
-        "phone": "1234567999"
+        "phone": "1234567995"
       },
-      "personalData": {
-        "DOB": "1985-06-15",
-        "college": "University College of Engineering",
-        "department": "Computer Science",
-        "designation": "Associate Professor",
-        "father": "Ramesh Kumar",
-        "gender": "Male",
-
-        "marital": "Married",
-        "name": "Dr. Harish Kumar",
-        "profile": "A dedicated educator with 15 years of teaching and research experience."
-      },
+      "personalData":personalData,
       "education": {
         "tenth": {
           "percentage": "88%",
@@ -408,7 +397,6 @@ const handleFileSelect = (e) => {
         }
       ]
     }
-    console.log("final object is : ", obj1);
     await register(obj1)
       .then(console.log("user saved succesfully !")
       )
@@ -1720,7 +1708,7 @@ const handleFileSelect = (e) => {
 
               {/* The form container maintains the vertical spacing and centering */}
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
                   const newErrors = validateOAS();
                   setErrors(newErrors);
@@ -1735,7 +1723,7 @@ const handleFileSelect = (e) => {
                       otherAdministrativeService: otherAdministrativeService,
                     };
                     console.log("final object is:", obj1);
-                    register(obj1).then(() => navigate("/"));
+                    await register(obj1).then(() => navigate("/"));
                   }
                 }}
                 className="flex flex-col space-y-6"
@@ -1905,9 +1893,6 @@ const handleFileSelect = (e) => {
                   </button>
                   <button
                     type="submit"
-                    onClick={() => (
-                      test()
-                    )}
                     className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Finish Registration
