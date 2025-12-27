@@ -68,10 +68,6 @@ export default function HODLogin() {
 		
 	};
     
-    
-    
-  
-
   return (
     <div className="flex justify-center items-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
