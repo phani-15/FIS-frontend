@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {login,authenticate,isAuthenticated} from "../core/auth"
+import { error, values } from "pdf-lib";
 
 export default function Login() {
 
 	const [formData, setFormData] = useState({
-		username: "vi2@gmail.com",
+		username: "srinu478@gmail.com",
 		password: "1234567890",
 	});
-
 	const handleChange = (e) => {
 		const { id, value } = e.target;
 		setFormData((prev) => ({
@@ -42,24 +42,19 @@ export default function Login() {
 			document.getElementById("emptyusername").innerHTML = "<p class='text-red-600 text-sm'>Enter a valid email or phone number</p>";
 			return;
 		}
-
-		console.log("formdata is :",formData);
-		let data="";
 		// 🚀 You can send formData to your backend API here
 		await login({
 			email:formData.username,
 			password:formData.password
 		})
-		.then(Data=>data=Data
-		)
-		console.log("login returned data:",data);
-		
-		authenticate(formData,()=>{
+		.then(data=>{
+			authenticate(data,()=>{
 			setFormData({
 				...formData
 			})
 		})
-		navigate(`/profile/`)
+		navigate(`/profile/${data.user.id}`)
+		})
 	};
 
 	return (
@@ -68,7 +63,7 @@ export default function Login() {
 
 				{/* Top Icon */}
 				<div className="flex justify-center mb-6">
-					<div className="p-4 bg-purple-100 rounded-xl shadow-sm">
+					<div className="p-4 bg-purple~-100 rounded-xl shadow-sm">
 						<Lock className="w-8 h-8 text-purple-600" />
 					</div>
 				</div>
@@ -87,7 +82,7 @@ export default function Login() {
 							htmlFor="username"
 							className="block mb-1 text-sm font-medium text-gray-700"
 						>
-							Email / Phone number
+							Email
 						</label>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">
@@ -137,8 +132,7 @@ export default function Login() {
 						Login
 						<LogIn className="w-5 h-5" />
 					</button>
-					<p className="text-center">New user ? <span className="text-blue-800 cursor-pointer hover:underline" onClick={() => navigate('/register')}>Register</span></p>
-					<p className="mt-2 hover:underline cursor-pointer text-center text-violet-700" onClick={()=>navigate('/rp')}>Reset Password</p>
+					<p className="mt-1 hover:underline cursor-pointer text-center text-violet-700" onClick={()=>navigate('/rp')}>Forgot/Reset Password?</p>
 				</form>
 			</div>
 		</div>

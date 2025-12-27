@@ -1,13 +1,11 @@
 import {API} from "../backend"
-
+import {objectToFormData} from "../utils/formDataConverter"
 export const register=async user=>{
+    const fromdata=objectToFormData(user)
     return await fetch(`${API}/register`,{
         method:"POST",
-        headers:{
-            Accept:"application/json",
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify(user)
+        cedentials: "include",
+        body:fromdata
     })
     .then(res=>{
         return res.json()
@@ -22,10 +20,10 @@ export const login=async user=>{
             Accept:"application/json",
             "Content-Type":"application/json"
         },
+        //  credentials: "include",
         body:JSON.stringify(user)
     })
-    .then(data=>{ console.log("in rest :",data);
-    })
+    .then(res=>{return res.json()})
     .catch(err=>console.log("error is ",err)
     )
 }

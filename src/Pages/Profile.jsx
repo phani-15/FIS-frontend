@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Personal } from "../core/Personal"
+import {API} from"../backend"
 import {
   Mail,
   Phone,
@@ -11,11 +13,14 @@ import {
   Award,
   Printer,
 } from "lucide-react";
-import { useNavigate ,useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 export default function ProfilePage() {
-   const {profileId}=useParams()
-   const navigate = useNavigate()
+  const { profileId } = useParams()
+  const imageurl=API.replace("/api","")
+  const navigate = useNavigate()
   const [newObj, setnewobj] = useState(
+
     {
       "personalData": {
         "name": "Phani Polavarapu",
@@ -27,12 +32,13 @@ export default function ProfilePage() {
         "designation": "Assistant Professor",
         "department": "cse",
         "college": "University College of Engineering",
-        "date_of_join": "2023-09"
+        "date_of_join": "15-09-2011",
+          "phone": "",
+        "location": ""
       },
-      "loginData": {
+      "user": {
         "password": "Phani@123",
         "email": "phanipolavarapu15@gmail.com",
-        "phone": "8328186996",
         "cPassword": "Phani@123"
       },
       "education": {
@@ -50,7 +56,7 @@ export default function ProfilePage() {
           "year": "2013"
         },
         "degree":
-          [{
+          {
             "title": "Under Graduation",
             "degreeName": "B.Tech",
             "specialization": "Computer Science",
@@ -58,7 +64,7 @@ export default function ProfilePage() {
             "college": "JNTUGV,CEV",
             "university": "JNTUGV",
             "year": "2017"
-          }],
+          },
         "pg": {
           "title": "Post Graduation",
           "course": "M.Tech",
@@ -80,12 +86,6 @@ export default function ProfilePage() {
         "postdoc": []
       },
       "experience": [
-        {
-          "institute": "JNTUGV",
-          "designation": "Asst.Professor",
-          "from": 2021,
-          "to": 2023
-        },
         {
           "institute": "JNTUGV",
           "designation": "Asst.Professor",
@@ -128,12 +128,22 @@ export default function ProfilePage() {
     }
   )
   
-  useEffect(()=>{
-   
-  },[])
+ useEffect(() => {
+  const loadProfile = async () => {
+    try {
+      const data = await Personal(profileId);  
+      if (data) setnewobj(data);
+    } catch (error) {
+      console.log("Fetch error:", error);
+    }
+  };
 
-  const viewer = "user"
-  
+  loadProfile();
+}, []);
+console.log(newObj);
+
+  const viewer = newObj.role
+
   // Static Profile Data
 
   // Section Component
@@ -160,7 +170,7 @@ export default function ProfilePage() {
               <div className="text-center">
                 <img
                   draggable="false"
-                  src={newObj.personalData.avatar}
+                  src={`${imageurl}/uploads/${newObj.personalData.avatar}`}
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover mx-auto"
                 />
@@ -178,7 +188,7 @@ export default function ProfilePage() {
 
                       {/* Edit Button */}
                       <button
-                        onClick={() => navigate('/edit')}
+                        onClick={() => navigate('/ea')}
                         className="relative group cursor-pointer">
                         <SquarePen />
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
@@ -213,7 +223,7 @@ export default function ProfilePage() {
                   <div className="flex flex-col  gap-3">
                     {viewer == "user" &&
                       <button
-                        onClick={() => navigate('/add')}
+                        onClick={() => navigate(`/ac/${newObj.user._id}/${newObj.credentials}`)}
                         className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
                     }
                     <button
@@ -225,24 +235,29 @@ export default function ProfilePage() {
               </div>
 
               {/* Personal Info */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="mt-6 lg:mt-10 pt-6 border-t border-gray-200">
                 <h3 className="font-semibold text-gray-700 mb-3">
                   Contact Information
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Mail size={16} className="text-blue-500" />
-                    {newObj.loginData.email}
+                    {newObj.user.email}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-700">
+                  {newObj.personalData.phone && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Phone size={16} className="text-green-500" />
-                    {newObj.loginData.phone}
-                  </div>
+                    {newObj.personalData.phone}
+                  </div>}
 
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
-                    Joined: {newObj.personalData.date_of_join}
+                    Joined: <span className="font-semibold"> {newObj.personalData.date_of_join}</span>
                   </div>
+                  {newObj.personalData.location && <div className="flex items-center gap-3 text-sm text-gray-700">
+                    <MapPin size={16} className="text-green-500" />
+                    {newObj.personalData.location}
+                  </div>
+                  }
                 </div>
               </div>
             </div>
@@ -311,21 +326,20 @@ export default function ProfilePage() {
                   }
                   {
                     viewer === "user" &&
-                    newObj.education.degree.map((edu, index) => (
+  
                       <div
-                        key={index}
                         className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
                       >
                         <div className="flex-1">
                           <p className="font-semibold text-gray-800">
-                            {edu.degreeName} in {edu.specialization}
+                            { newObj.education.degree.degreeName} in { newObj.education.degree.specialization}
                           </p>
                           <p className="text-sm text-gray-600">
-                            {edu.college} • {edu.year}
+                            { newObj.education.degree.college} • { newObj.education.degree.year}
                           </p>
                         </div>
                       </div>
-                    ))}
+                    }
                 </div>
               </Section>
 

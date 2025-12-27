@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
 import { col } from "framer-motion/client";
+import {authenticate} from "../core/auth"
+import axios from "axios"
+import { hodlogin } from "../core/hod";
 
 export default function HODLogin() {
   const navigate = useNavigate()
@@ -38,7 +41,7 @@ export default function HODLogin() {
     document.getElementById("empty" + id).innerHTML = "";
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.department) {
       document.getElementById("emptyusername").innerHTML = "<p class='text-red-600 text-sm'>Username is required</p>";
@@ -49,9 +52,22 @@ export default function HODLogin() {
       return;
     }
     console.log(formData);
-    navigate("/hodDashboard")
-  };
-
+    await hodlogin({
+			department:formData.department,
+			password:formData.password
+		})
+		.then(data=>{
+			authenticate(data,()=>{
+			setFormData({
+				...formData
+			})
+		})
+		navigate(`/hodDashboard/${data.user.id}`)
+		}	)
+		// console.log("login returned data:",data);
+		
+	};
+    
   return (
     <div className="flex justify-center items-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
@@ -151,4 +167,5 @@ export default function HODLogin() {
       </div>
     </div>
   );
+
 }
