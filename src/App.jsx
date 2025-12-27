@@ -49,7 +49,7 @@ export default function App() {
             <Route path='/vc' element={<ViewCertificaion />} />
             <Route path='/ea' element={<EditAdmin />} />
             <Route path='/fp/' element={<ForgotPassword />} />
-            <Route path='/ac' element={<AddCredentials />} />
+            <Route path='/ac/:userId/:credId' element={<AddCredentials />} />
             <Route path='/rp' element={<ResetPassword />} />
             <Route path='/resetHODpassword' element={<ResetHODPassword />} />
             <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />

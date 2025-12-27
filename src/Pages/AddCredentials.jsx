@@ -104,6 +104,7 @@ const directFieldGroups = {
 };
 
 const AddCredentials = () => {
+  const {userId,credId}=useParams
   const [group, setGroup] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [formData, setFormData] = useState({});

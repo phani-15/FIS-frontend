@@ -11,106 +11,41 @@ export default function Register() {
   const navigate = useNavigate()
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
-  const [haveOAS, setHaveOAS] = useState(true); 
-
-  // Profile picture states
-  const [showCropper, setShowCropper] = useState(false);
-  const [profileImageSrc, setProfileImageSrc] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [croppedPreview, setCroppedPreview] = useState(null);
-  const fileInputRef = useRef(null);
-
-  const obj = {
-    "tenth": {
-      "title": "Tenth",
-      "school": "dkvnsd",
-      "percentage": "",
-      "year": "2009"
-    },
-    "twelth": {
-      "title": "Intermediate/Diploma",
-      "type": "Intermediate",
-      "college": "hl.,h",
-      "percentage": "",
-      "year": "2011"
-    },
-    "degree": {
-      "title": "Under Graduation",
-      "degreeName": "vbnmvf",
-      "specialization": "gjftrj",
-      "percentage": "",
-      "college": "klfgfdjnzs",
-      "university": "mghcf",
-      "year": "2013"
-    },
-    "pg": {
-      "title": "Post Graduation",
-      "course": "fbmrfxd",
-      "specialization": "mgh,g",
-      "percentage": "",
-      "college": "gfjmxf",
-      "university": "fgkmcd",
-      "year": "2009"
-    },
-    "phd": [
-      {
-        "specialization": "cv nfgnfs",
-        "under_the_proffessor": "",
-        "department": "dsdfbga",
-        "University": "dfbarb",
-        "year": "2023"
-      },
-      {
-        "specialization": "gmmx",
-        "under_the_proffessor": "",
-        "department": "sdgfsdh",
-        "University": "fmsfghmsf",
-        "year": "2023"
-      },
-      {
-        "specialization": "fddns",
-        "under_the_proffessor": "sfrnmfgns",
-        "department": "fdhsdhfd",
-        "University": "radhafdbz",
-        "year": "2000"
-      }
-    ],
-    "postdoc": [
-      {
-        "specialization": "AI/ML",
-        "under_the_proffessor": "Sukumar",
-        "University": "KL University",
-        "year": "2020"
-      },
-      {
-        "specialization": "Deep Learning",
-        "under_the_proffessor": "Surya",
-        "University": "AKNU",
-        "year": "2022"
-      }
-    ]
-  }
+  const [haveOAS, setHaveOAS] = useState(true);
+  // const [personalData, setpersonalData] = useState({
+  //   name: "",
+  //   avatar: null,
+  //   father: "",
+  //   gender: "",
+  //   DOB: "",
+  //   marital: "",
+  //   phone: "",
+  //   area:"",
+  //   city:"",
+  //   designation: "",
+  //   department: "",
+  //   college: "",
+  //   date_of_join: new Date().toISOString().slice(0, 7), // current year-month
+  // });
   const [personalData, setpersonalData] = useState({
-    name: "",
+    name: "Srinivas Rao polavarapu",
     avatar: null,
-    father: "",
-    gender: "",
+    father: "nothing",
+    gender: "female",
     DOB: "",
-    marital: "",
-    phone: "",
-    address: "",
-    area:"",
-    city:"",
-    designation: "",
-    department: "",
-    college: "",
+    marital: "married",
+    phone: "1234567896",
+    area:"kukatpallyground",
+    city:"hyderabadcity",
+    designation: "professor",
+    department: "cse",
+    college: "JNTUGV-CEV",
     date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   });
 
   const [loginData, setLoginData] = useState({
     password: "",
     email: "",
-    phone: "",
     cPassword: ""
   })
 
@@ -284,9 +219,8 @@ const handleFileSelect = (e) => {
   const test = async () => {
     const obj1 = {
       "loginData": {
-        "email": "vi92@gmail.com",
+        "email": "srinu478@gmail.com",
         "password": "1234567890",
-        "phone": "1234567995"
       },
       "personalData":personalData,
       "education": {
@@ -497,6 +431,9 @@ const handleFileSelect = (e) => {
     (e) => {
       e.preventDefault();
       setErrors({});
+      console.log(personalData);
+      
+      test()
       setStep("education");
     }, [personalData]
   );
