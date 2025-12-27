@@ -7,80 +7,9 @@ import { register } from "../core/auth"
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState("as"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("signUp"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
-
-  const obj = {
-    "tenth": {
-      "title": "Tenth",
-      "school": "dkvnsd",
-      "percentage": "",
-      "year": "2009"
-    },
-    "twelth": {
-      "title": "Intermediate/Diploma",
-      "type": "Intermediate",
-      "college": "hl.,h",
-      "percentage": "",
-      "year": "2011"
-    },
-    "degree": {
-      "title": "Under Graduation",
-      "degreeName": "vbnmvf",
-      "specialization": "gjftrj",
-      "percentage": "",
-      "college": "klfgfdjnzs",
-      "university": "mghcf",
-      "year": "2013"
-    },
-    "pg": {
-      "title": "Post Graduation",
-      "course": "fbmrfxd",
-      "specialization": "mgh,g",
-      "percentage": "",
-      "college": "gfjmxf",
-      "university": "fgkmcd",
-      "year": "2009"
-    },
-    "phd": [
-      {
-        "specialization": "cv nfgnfs",
-        "under_the_proffessor": "",
-        "department": "dsdfbga",
-        "University": "dfbarb",
-        "year": "2023"
-      },
-      {
-        "specialization": "gmmx",
-        "under_the_proffessor": "",
-        "department": "sdgfsdh",
-        "University": "fmsfghmsf",
-        "year": "2023"
-      },
-      {
-        "specialization": "fddns",
-        "under_the_proffessor": "sfrnmfgns",
-        "department": "fdhsdhfd",
-        "University": "radhafdbz",
-        "year": "2000"
-      }
-    ],
-    "postdoc": [
-      {
-        "specialization": "AI/ML",
-        "under_the_proffessor": "Sukumar",
-        "University": "KL University",
-        "year": "2020"
-      },
-      {
-        "specialization": "Deep Learning",
-        "under_the_proffessor": "Surya",
-        "University": "AKNU",
-        "year": "2022"
-      }
-    ]
-  }
   const [personalData, setpersonalData] = useState({
     name: "",
     avatar: null,
@@ -199,22 +128,11 @@ export default function Register() {
   const test = async () => {
     const obj1 = {
       "loginData": {
-        "email": "vi2@gmail.com",
+        "email": "vi92@gmail.com",
         "password": "1234567890",
-        "phone": "1234567999"
+        "phone": "1234567995"
       },
-      "personalData": {
-        "DOB": "1985-06-15",
-        "college": "University College of Engineering",
-        "department": "Computer Science",
-        "designation": "Associate Professor",
-        "father": "Ramesh Kumar",
-        "gender": "Male",
-
-        "marital": "Married",
-        "name": "Dr. Harish Kumar",
-        "profile": "A dedicated educator with 15 years of teaching and research experience."
-      },
+      "personalData":personalData,
       "education": {
         "tenth": {
           "percentage": "88%",
@@ -323,7 +241,6 @@ export default function Register() {
         }
       ]
     }
-    console.log("final object is : ", obj1);
     await register(obj1)
       .then(console.log("user saved succesfully !")
       )
@@ -1625,7 +1542,7 @@ export default function Register() {
 
               {/* The form container maintains the vertical spacing and centering */}
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
                   const newErrors = validateOAS();
                   setErrors(newErrors);
@@ -1640,7 +1557,7 @@ export default function Register() {
                       otherAdministrativeService: otherAdministrativeService,
                     };
                     console.log("final object is:", obj1);
-                    register(obj1).then(() => navigate("/"));
+                    await register(obj1).then(() => navigate("/"));
                   }
                 }}
                 className="flex flex-col space-y-6"
@@ -1810,9 +1727,6 @@ export default function Register() {
                   </button>
                   <button
                     type="submit"
-                    onClick={() => (
-                      test()
-                    )}
                     className="cursor-pointer bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
                   >
                     Finish Registration

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Personal } from "../core/Personal"
+import {API} from"../backend"
 import {
   Mail,
   Phone,
@@ -16,6 +17,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export default function ProfilePage() {
   const { profileId } = useParams()
+  const imageurl=API.replace("/api","")
   const navigate = useNavigate()
   const [newObj, setnewobj] = useState(
 
@@ -130,9 +132,6 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       const data = await Personal(profileId);  
-      console.log("Fetched profile data:", data);
-    
-      console.log("Profile ID:", profileId);
       if (data) setnewobj(data);
     } catch (error) {
       console.log("Fetch error:", error);
@@ -141,9 +140,7 @@ export default function ProfilePage() {
 
   loadProfile();
 }, []);
-
-
-  const viewer = "user"
+  const viewer = newObj.role
 
   // Static Profile Data
 
@@ -171,7 +168,7 @@ export default function ProfilePage() {
               <div className="text-center">
                 <img
                   draggable="false"
-                  src={newObj.personalData.avatar}
+                  src={`${imageurl}/uploads/${newObj.personalData.avatar}`}
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover mx-auto"
                 />

@@ -55,7 +55,6 @@ export default function App() {
             <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />
             <Route path='/pc/' element={<ForgotPassword />} />
             <Route path='/ofcChange' element={<ChangeIQACPassword />} />
-            <Route path='/ac' element={<AddCredentials />} />
             <Route path='/forgotpass' element={<Forgotiqac/>} />
           </Routes>
         </main>

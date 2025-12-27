@@ -1,4 +1,5 @@
 import {API} from "../backend"
+import {isAuthenticated} from "../core/auth"
 export const hodlogin=async user=>{
     return await fetch(`${API}/hod`,{
         method:"POST",
@@ -16,11 +17,7 @@ export const hodlogin=async user=>{
 
 
 export const HodDashBoard = async (id) => {
-  console.log("Fetching Dashboard data for ID:", id);
   const { user, token } = isAuthenticated();
-
- 
-
   try {
     const response = await fetch(`${API}/hod/${id}`, {
       method: "GET",
