@@ -16,7 +16,7 @@ export default function Header() {
 
       {/* Centered Text */}
       <div className="text-center space-y-1 md:space-y-2 px-4">
-        <h1 className="text-lg  lg:text-2xl font-bold">
+        <h1 className="text-base  lg:text-2xl font-bold">
           JAWAHARLAL NEHRU TECHNOLOGICAL UNIVERSITY GURAJADA VIZIANAGARAM
         </h1>
         <h2 className="text-xs lg:text-lg">

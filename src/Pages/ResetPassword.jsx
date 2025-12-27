@@ -11,6 +11,7 @@ export default function ResetPassword() {
         newPass: "",
         Cpass: ""
     });
+
     const [admin,setadmin] = React.useState({
         currentpassKey: "",
         newPassKey: "",
@@ -59,7 +60,7 @@ export default function ResetPassword() {
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
                     {userdetails.map(child=>
-                        <div>
+                        <div key={child}>
                             <InputField
                             label={child}
                             type="text"
@@ -67,7 +68,9 @@ export default function ResetPassword() {
                             id={child}
                             placeholder={`Enter  ${child}`}
                             onChange={handleChange}
-                            error={errors.email}>
+                            error={errors.email}
+                            required 
+                            >
                             </InputField>
                         </div>
                     )}
@@ -80,7 +83,7 @@ export default function ResetPassword() {
                     >
                         Reset
                     </button>
-                    <p onClick={()=>navigate('/pc')} className='text-end text-blue-700 hover:underline'>forgot Password</p>
+                    <p onClick={()=>navigate('/fp')} className='text-end text-blue-700 hover:underline cursor-pointer'>forgot Password</p>
                 </form>
             </div>
         </div>

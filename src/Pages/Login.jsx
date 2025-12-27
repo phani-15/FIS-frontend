@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {login,authenticate,isAuthenticated} from "../core/auth"
 
 export default function Login() {
 
 	const [formData, setFormData] = useState({
-		username: "",
-		password: "",
+		username: "vi2@gmail.com",
+		password: "1234567890",
 	});
 
 	const handleChange = (e) => {
@@ -21,7 +22,7 @@ export default function Login() {
 
 	const navigate = useNavigate()
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!formData.username) {
 			document.getElementById("emptyusername").innerHTML = "<p class='text-red-600 text-sm'>Username is required</p>";
@@ -42,10 +43,23 @@ export default function Login() {
 			return;
 		}
 
-		console.log(formData);
+		console.log("formdata is :",formData);
+		let data="";
 		// 🚀 You can send formData to your backend API here
-		navigate('/profile')
-
+		await login({
+			email:formData.username,
+			password:formData.password
+		})
+		.then(Data=>data=Data
+		)
+		console.log("login returned data:",data);
+		
+		authenticate(formData,()=>{
+			setFormData({
+				...formData
+			})
+		})
+		navigate(`/profile/`)
 	};
 
 	return (
@@ -99,7 +113,7 @@ export default function Login() {
 						>
 							Password
 						</label>
-						<p onClick={()=>navigate('/pc')} className="cursor-pointer hover:underline text-violet-800 font-normal">Forgot Password?</p>
+						<p onClick={()=>navigate('/fp')} className="cursor-pointer hover:underline text-violet-800 font-normal">Forgot Password?</p>
 						</div>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">
@@ -115,7 +129,6 @@ export default function Login() {
 							<div id="emptypassword"></div>
 						</div>
 					</div>
-
 					{/* Submit Button */}
 					<button
 						type="submit"

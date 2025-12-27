@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
+import { col } from "framer-motion/client";
 
 export default function HODLogin() {
   const navigate = useNavigate()
@@ -9,6 +10,25 @@ export default function HODLogin() {
     password: "",
   });
 
+  const [college , setCollege] = useState("");
+
+  const departments = {
+    ucev : [
+      { name: "Civil Engineering", code: "civil" },
+      { name: "Computer Science & Engineering", code: "cse" },
+      { name: "Electronics & Communication Engineering", code: "ece" },
+      { name: "Electrical & Electronics Engineering", code: "eee" },
+      { name: "Information Technology", code: "it" },
+      { name: "Mechanical Engineering", code: "mech" },
+      { name: "Metallurgical Engineering", code: "met" },
+      {name: "BS & HSS", code: "bshss" },
+      { name: "Master's in Business Administration", code: "mba" },
+    ],
+    pharma  : [
+      { name: "Pharmaceutical Sciences", code: "pharma" },
+    ],
+  }
+  
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -51,6 +71,24 @@ export default function HODLogin() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
+          <div>
+            <div className="relative">
+              <label className="block mb-1 text-sm font-medium text-gray-700">College</label>
+              <select
+                name="college"
+                id="college"
+                value={college}
+                onChange={(e)=>setCollege(e.target.value)}
+                className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500"
+                required
+              >
+                <option value="">Select College</option>
+                <option value="ucev">University College of Engineering</option>
+                <option value="pharma">College of Pharmaceutical Sciences</option>
+              </select>
+            </div>
+            <div id="emptyCollege"></div>
+          </div>
           {/* Username */}
           <div>
             <div className="relative">
@@ -64,15 +102,9 @@ export default function HODLogin() {
                 required
               >
                 <option value="">Select Department</option>
-                <option value="bshss">BS & HSS</option>
-                <option value="cse">Computer Science & Engineering</option>
-                <option value="ece">Electronics & Communication Engineering</option>
-                <option value="eee">Electrical & Electronics Engineering</option>
-                <option value="civil">Civil Engineering</option>
-                <option value="it">Inforamtion Technology</option>
-                <option value="met">Metallurgical Engineering</option>
-                <option value="mech">Mechanical Engineering</option>
-                <option value="mech">Master's in Business Administration</option>
+                {college && departments[college].map((dept) => (
+                  <option key={dept.code} value={dept.code}>{dept.name}</option>
+                ))}
               </select>
             </div>
             <div id="emptydepartment"></div>
@@ -100,7 +132,7 @@ export default function HODLogin() {
             </div>
             <div id="emptypassword"></div>
           </div>
-          <p onClick={()=>navigate('/resetHODpassword')} className="text-end text-blue-800 hover:underline cursor-pointer">Reset Password</p>
+          
 
           {/* Submit Button */}
           <button
@@ -110,6 +142,8 @@ export default function HODLogin() {
             Login
             <LogIn className="w-5 h-5" />
           </button>
+            <p onClick={() => navigate('/resetHODpassword')} className="text-end text-blue-800 hover:underline cursor-pointer ">Reset/Forgot Password</p>
+          
         </form>
 
         {/* Footer */}
