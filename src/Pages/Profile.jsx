@@ -140,6 +140,8 @@ export default function ProfilePage() {
 
   loadProfile();
 }, []);
+console.log(newObj);
+
   const viewer = newObj.role
 
   // Static Profile Data
@@ -221,7 +223,7 @@ export default function ProfilePage() {
                   <div className="flex flex-col  gap-3">
                     {viewer == "user" &&
                       <button
-                        onClick={() => navigate('/ac')}
+                        onClick={() => navigate(`/ac/${newObj.user._id}/${newObj.credentials}`)}
                         className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
                     }
                     <button
@@ -244,7 +246,7 @@ export default function ProfilePage() {
                   </div>
                   {newObj.personalData.phone && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Phone size={16} className="text-green-500" />
-                    {newObj.user.phone}
+                    {newObj.personalData.phone}
                   </div>}
 
                   <div className="flex items-center gap-3 text-sm text-gray-700">

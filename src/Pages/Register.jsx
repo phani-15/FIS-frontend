@@ -11,27 +11,40 @@ export default function Register() {
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
+  // const [personalData, setpersonalData] = useState({
+  //   name: "",
+  //   avatar: null,
+  //   father: "",
+  //   gender: "",
+  //   DOB: "",
+  //   marital: "",
+  //   phone: "",
+  //   area:"",
+  //   city:"",
+  //   designation: "",
+  //   department: "",
+  //   college: "",
+  //   date_of_join: new Date().toISOString().slice(0, 7), // current year-month
+  // });
   const [personalData, setpersonalData] = useState({
-    name: "",
+    name: "Srinivas Rao polavarapu",
     avatar: null,
-    father: "",
-    gender: "",
+    father: "nothing",
+    gender: "female",
     DOB: "",
-    marital: "",
-    phone: "",
-    address: "",
-    area:"",
-    city:"",
-    designation: "",
-    department: "",
-    college: "",
+    marital: "married",
+    phone: "1234567896",
+    area:"kukatpallyground",
+    city:"hyderabadcity",
+    designation: "professor",
+    department: "cse",
+    college: "JNTUGV-CEV",
     date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   });
 
   const [loginData, setLoginData] = useState({
     password: "",
     email: "",
-    phone: "",
     cPassword: ""
   })
 
@@ -131,9 +144,8 @@ export default function Register() {
   const test = async () => {
     const obj1 = {
       "loginData": {
-        "email": "vi92@gmail.com",
+        "email": "srinu478@gmail.com",
         "password": "1234567890",
-        "phone": "1234567995"
       },
       "personalData":personalData,
       "education": {
@@ -344,6 +356,9 @@ export default function Register() {
     (e) => {
       e.preventDefault();
       setErrors({});
+      console.log(personalData);
+      
+      test()
       setStep("education");
     }, [personalData]
   );

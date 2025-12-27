@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
 import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
-import { label } from 'framer-motion/client';
-import { values } from 'pdf-lib';
+import {useParams} from "react-router-dom"
 
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
@@ -103,6 +102,7 @@ const directFieldGroups = {
 };
 
 const AddCredentials = () => {
+  const {userId,credId}=useParams
   const [group, setGroup] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [formData, setFormData] = useState({});
