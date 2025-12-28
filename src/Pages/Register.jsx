@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef} from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
@@ -6,12 +6,13 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
 import { departments } from '../assets/Data.jsx';
 import ProfilePictureCropper from "../components/ProfilePictureCropper";
+import { area } from "framer-motion/client";
 
 export default function Register() {
   const navigate = useNavigate()
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
-  const [haveOAS, setHaveOAS] = useState(true);
+  const [haveOAS, setHaveOAS] = useState(true); 
 
   // Profile picture states
   const [showCropper, setShowCropper] = useState(false);
@@ -35,6 +36,78 @@ export default function Register() {
   //   college: "",
   //   date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   // });
+
+  const obj = {
+    "tenth": {
+      "title": "Tenth",
+      "school": "dkvnsd",
+      "percentage": "",
+      "year": "2009"
+    },
+    "twelth": {
+      "title": "Intermediate/Diploma",
+      "type": "Intermediate",
+      "college": "hl.,h",
+      "percentage": "",
+      "year": "2011"
+    },
+    "degree": {
+      "title": "Under Graduation",
+      "degreeName": "vbnmvf",
+      "specialization": "gjftrj",
+      "percentage": "",
+      "college": "klfgfdjnzs",
+      "university": "mghcf",
+      "year": "2013"
+    },
+    "pg": {
+      "title": "Post Graduation",
+      "course": "fbmrfxd",
+      "specialization": "mgh,g",
+      "percentage": "",
+      "college": "gfjmxf",
+      "university": "fgkmcd",
+      "year": "2009"
+    },
+    "phd": [
+      {
+        "specialization": "cv nfgnfs",
+        "under_the_proffessor": "",
+        "department": "dsdfbga",
+        "University": "dfbarb",
+        "year": "2023"
+      },
+      {
+        "specialization": "gmmx",
+        "under_the_proffessor": "",
+        "department": "sdgfsdh",
+        "University": "fmsfghmsf",
+        "year": "2023"
+      },
+      {
+        "specialization": "fddns",
+        "under_the_proffessor": "sfrnmfgns",
+        "department": "fdhsdhfd",
+        "University": "radhafdbz",
+        "year": "2000"
+      }
+    ],
+    "postdoc": [
+      {
+        "specialization": "AI/ML",
+        "under_the_proffessor": "Sukumar",
+        "University": "KL University",
+        "year": "2020"
+      },
+      {
+        "specialization": "Deep Learning",
+        "under_the_proffessor": "Surya",
+        "University": "AKNU",
+        "year": "2022"
+      }
+    ]
+  }
+
   const [personalData, setpersonalData] = useState({
     name: "Srinivas Rao polavarapu",
     avatar: null,
@@ -54,6 +127,7 @@ export default function Register() {
   const [loginData, setLoginData] = useState({
     password: "",
     email: "",
+    phone: "",
     cPassword: ""
   })
 
@@ -118,60 +192,6 @@ export default function Register() {
       }
     });
     return newErrors;
-  };
-
-  // Handle file selection
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size should be less than 5MB');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setProfileImageSrc(event.target.result);
-      setShowCropper(true);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // Handle crop completion
-  const handleCropComplete = async (croppedBlob) => {
-    if (!croppedBlob) return;
-
-    // Create a File object from the blob
-    const croppedFile = new File([croppedBlob], 'profile-picture.jpg', {
-      type: 'image/jpeg'
-    });
-
-    // Create preview URL
-    const previewUrl = URL.createObjectURL(croppedBlob);
-
-    setCroppedImage(croppedFile);
-    setCroppedPreview(previewUrl);
-    setShowCropper(false);
-
-    // Also update personalData with the file
-    setpersonalData(prev => ({ ...prev, avatar: croppedFile }));
-  };
-
-  // Handle crop cancel
-  const handleCropCancel = () => {
-    setShowCropper(false);
-    setProfileImageSrc(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
 
   const handleExperienceChange = useCallback((index, e) => {
@@ -665,7 +685,7 @@ export default function Register() {
               inputMode="numeric"
               placeholder="Enter phone number"
               error={errors.phone}
-              required={true}
+              required
             />
 
             <InputField
@@ -770,37 +790,42 @@ export default function Register() {
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  required={!croppedPreview}
+                  required
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    setpersonalData((prev) => ({ ...prev, avatar: file }));
+
+                    if (file) {
+                      // Generate preview URL
+                      const url = URL.createObjectURL(file);
+                      setPreviewUrl(url);
+                    } else {
+                      setPreviewUrl(null);
+                    }
+                  }}
                 />
+                {/* Cropper Modal */}
+      {showCropper && profileImageSrc && (
+        <ProfilePictureCropper
+          image={profileImageSrc}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
 
-                {/* Upload button (only shown when no image is selected) */}
-                {!croppedPreview && (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
-                  >
-                    Choose File
-                  </button>
+                {previewUrl && (
+                  <div>
+                    <button
+                      type="button"
+                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 relative xl:ml-0 ml-55 "
+                      onClick={() => {
+                        // Open in new tab or show modal — here we just log; you can enhance
+                        window.open(previewUrl, '_blank');
+                      }}>
+                      View
+                    </button>
+                  </div>
                 )}
-
-                {/* Instructions */}
-                <div className="text-left text-sm text-gray-600 space-y-1">
-                  <p className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                    Maximum file size: 5MB
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                    Supported formats: JPG, PNG
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                    You'll be able to crop and select the best part
-                  </p>
-                </div>
               </div>
             </div>
 
