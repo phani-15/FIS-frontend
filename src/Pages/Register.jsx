@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef} from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
@@ -12,7 +12,7 @@ export default function Register() {
   const navigate = useNavigate()
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
-  const [haveOAS, setHaveOAS] = useState(true); 
+  const [haveOAS, setHaveOAS] = useState(true);
 
   // Profile picture states
   const [showCropper, setShowCropper] = useState(false);
@@ -412,6 +412,60 @@ export default function Register() {
     });
   }, []);
 
+  // Handle file selection
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setProfileImageSrc(event.target.result);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle crop completion
+  const handleCropComplete = async (croppedBlob) => {
+    if (!croppedBlob) return;
+
+    // Create a File object from the blob
+    const croppedFile = new File([croppedBlob], 'profile-picture.jpg', {
+      type: 'image/jpeg'
+    });
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(croppedBlob);
+
+    setCroppedImage(croppedFile);
+    setCroppedPreview(previewUrl);
+    setShowCropper(false);
+
+    // Also update personalData with the file
+    setpersonalData(prev => ({ ...prev, avatar: croppedFile }));
+  };
+
+  // Handle crop cancel
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setProfileImageSrc(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleOASChange = useCallback((index, e) => {
     const { name, value } = e.target;
     setOtherAdministrativeService(prev => {
@@ -720,114 +774,12 @@ export default function Register() {
           </form>
         </div>
       )}
-      {/* Cropper Modal */}
-      {showCropper && profileImageSrc && (
-        <ProfilePictureCropper
-          image={profileImageSrc}
-          onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
-        />
-      )}
       {step === "personal" && (
         <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            <div className="mb-6">
-              <label className="block text-left mb-3 font-medium text-gray-700">
-                Profile Picture <span className="text-red-500">*</span>
-              </label>
-
-              <div className="flex flex-col items-center space-y-4">
-                {/* Preview */}
-                {croppedPreview ? (
-                  <div className="relative group">
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                      <img
-                        src={croppedPreview}
-                        alt="Profile Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    {/* Hover overlay with actions */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30"
-                      >
-                        Change
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleRemoveProfilePicture}
-                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <div className="text-center">
-                      <div className="text-gray-400 mb-1">
-                        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </div>
-                      <p className="text-sm text-gray-500">Click to upload</p>
-                      <p className="text-xs text-gray-400 mt-1">1:1 ratio recommended</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Hidden file input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  required
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    setpersonalData((prev) => ({ ...prev, avatar: file }));
-
-                    if (file) {
-                      // Generate preview URL
-                      const url = URL.createObjectURL(file);
-                      setPreviewUrl(url);
-                    } else {
-                      setPreviewUrl(null);
-                    }
-                  }}
-                />
-                {/* Cropper Modal */}
-      {showCropper && profileImageSrc && (
-        <ProfilePictureCropper
-          image={profileImageSrc}
-          onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
-        />
-      )}
-
-                {previewUrl && (
-                  <div>
-                    <button
-                      type="button"
-                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 relative xl:ml-0 ml-55 "
-                      onClick={() => {
-                        // Open in new tab or show modal — here we just log; you can enhance
-                        window.open(previewUrl, '_blank');
-                      }}>
-                      View
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
+            
 
             <InputField label="Full Name" name="name" placeholder="enter your name" value={personalData.name} onChange={handleChange} required />
             <InputField label="Father's Name" name="father" placeholder="enter your father name" value={personalData.father} onChange={handleChange} required />
@@ -957,8 +909,8 @@ export default function Register() {
                 >
                   <option value="">Select your option</option>
                   {departments.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
               </div>
             }
