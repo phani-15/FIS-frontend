@@ -1,6 +1,6 @@
 import {API} from "../backend"
-import {isAuthenticated} from "../core/auth"
-export const iqaclogin=async user=>{
+import {isAuthenticated} from "./auth"
+export const ofclogin=async user=>{
     return await fetch(`${API}/ofc`,{
         method:"POST",
         headers:{
@@ -16,14 +16,12 @@ export const iqaclogin=async user=>{
 }
 
 
-export const HodDashBoard = async (id) => {
-  const { user, token } = isAuthenticated();
+export const ofcDashBoard = async (id) => {
+  const {token } = isAuthenticated();
   try {
     const response = await fetch(`${API}/ofc/${id}`, {
       method: "GET",
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });

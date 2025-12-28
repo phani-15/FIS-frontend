@@ -29,8 +29,7 @@ export default function App() {
     <div className='flex flex-col min-h-screen'>
       <BrowserRouter>
         <Header />
-        <main className='grow'>
-          <Routes>
+        <main className='grow'><Routes>
             <Route path='/' element={<Login />} />
             <Route path='/fp/' element={<ForgotPassword />} />
             <Route path='/register' element={<Register />} />

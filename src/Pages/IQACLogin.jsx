@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {ofclogin} from "../core/ofc"
+import {authenticate} from "../core/auth"
 
 export default function IQACLogin() {
-  const [passCode, setPassCode] = useState("");
-  const [data, setData] = useState({ role: "" });      
+  const [passCode, setPassCode] = useState("123456");
+  const [data, setData] = useState({ role: "iqac_coordinator" });      
 
   const navigate = useNavigate();
 
@@ -18,7 +20,7 @@ export default function IQACLogin() {
     setFalse(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!data.role) {
@@ -30,14 +32,20 @@ export default function IQACLogin() {
       setEmpty(true);
       return;
     }
-
-    const validPassCode = "JntuIqac2025";
-
-    if (passCode === validPassCode) {
-      navigate("/ofcDashboard");
-    } else {
-      setFalse(true);
-    }
+    await ofclogin({passcode:passCode,role:data.role})
+    .then(data=>{
+        authenticate(data,()=>{
+          setData("")
+          setPassCode("")
+        })
+        navigate(`/ofcDashboard/${data.Iqac.id}`)
+    })
+    .catch(err=>{console.log(err);})
+    // if (passCode === validPassCode) {
+    //   navigate("/ofcDashboard");
+    // } else {
+    //   setFalse(true);
+    // }
   };
 
   return (
@@ -69,11 +77,11 @@ export default function IQACLogin() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
             >
               <option value="">Select</option>
-              <option value="Vice Principal">Vice Principal</option>
-              <option value="Principal">Principal</option>
-              <option value="IQAC Coordinator">IQAC Coordinator</option>
-              <option value="IQAC Director">IQAC Director</option>
-              <option value="R&D Director">R&D Director</option>
+              <option value="vice_principal">Vice Principal</option>
+              <option value="principal">Principal</option>
+              <option value="iqac_coordinator">IQAC Coordinator</option>
+              <option value="iqac_director">IQAC Director</option>
+              <option value="r&d_director">R&D Director</option>
             </select>
 
             {roleError && (

@@ -502,7 +502,6 @@ export default function Register() {
 
   const validateSignUp = useCallback(() => {
     const newErrors = {};
-    if (loginData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
     if (loginData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
     if (loginData.password != loginData.cPassword) newErrors.Cpassword = "Passwords do not match";
     setErrors(newErrors);
@@ -512,6 +511,17 @@ export default function Register() {
   const handleSubmitPersonal = useCallback(
     (e) => {
       e.preventDefault();
+      const newErrors = {};
+      Object.entries(personalData).forEach(([field,val])=>{
+        if(val==="" || val === null){
+          newErrors[field] = `${field} is required` 
+        }
+      })
+      if(Object.keys(newErrors).length > 0){
+        setErrors(newErrors)
+        console.log(errors)
+        return
+      }
       setErrors({});
       console.log(personalData);
 
@@ -729,19 +739,7 @@ export default function Register() {
           <form onSubmit={handleSubmitSignUp} className="flex flex-col">
 
             <InputField label="Email" placeholder="enter mail addresss" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
-
-            {/* specific handler for phone to keep digits-only and stable string */}
-            <InputField
-              label="Phone Number (10 digits)"
-              name="phone"
-              value={loginData.phone}
-              onChange={handlePhoneChange}
-              inputMode="numeric"
-              placeholder="Enter phone number"
-              error={errors.phone}
-              required
-            />
-
+      
             <InputField
               label="Password"
               name="password"
