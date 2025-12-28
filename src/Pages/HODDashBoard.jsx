@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Search, X, User, ChevronDown, ShieldCheck, XCircle, ChevronUp, FileText, Download } from "lucide-react";
-import { useNavigate ,useParams} from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { schemas, yearFields, certifications,facultyList } from '../assets/Data'
+import { schemas, yearFields, certifications } from '../assets/Data'
+import { HodDashBoard } from "../core/hod"
+import axios from "axios";
 
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
+  const [filteredFaculty, setFacultyList] = useState([
+    {
+      "personalData": {
+        "designation": " Professor",
+        "name": "Polavarrapu Srrinivas"
+      },
+      "user": {
+        "email": "srinu@gmail.com"
+      }
+    }
+  ])
   const navigate = useNavigate();
-  const {userId}=useParams()
+  const { userId } = useParams()
   // --- State for report modal ---
   const [showExtractModal, setShowExtractModal] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -21,9 +34,20 @@ export default function HODDashBoard() {
   const getAllAttributesForType = (typeKey) => {
     return getSchemaForType(typeKey).attributes.map(a => a.key);
   };
-  useEffect(async ()=>{
-    
-  },[])
+  useEffect(() => {
+    const filterTheFaculty = async () => {
+      try {
+        const filteredFaculty = await HodDashBoard(userId)
+        if (filteredFaculty) {
+          setFacultyList(filteredFaculty.faculties);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    filterTheFaculty()
+
+  }, [])
 
   // Helper: Define schema per type (label + attributes)
   const getSchemaForType = (typeKey) => {
@@ -186,9 +210,8 @@ export default function HODDashBoard() {
   };
 
   // Filter faculty list by search term
-  const filteredFaculty = facultyList.filter((f) =>
-    f.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
-  );
+  // const filteredFaculty = facultyList
+
 
   // Highlight search term in names
   const highlightMatch = (name) => {
@@ -328,11 +351,11 @@ export default function HODDashBoard() {
                     className="odd:bg-white even:bg-gray-50 hover:bg-purple-50 transition"
                   >
                     <td className="px-4 py-2">{idx + 1}</td>
-                    <td className="px-4 py-2">{highlightMatch(faculty.name)}</td>
-                    <td className="px-4 py-2">{faculty.role}</td>
+                    <td className="px-4 py-2">{highlightMatch(faculty.personalData.name)}</td>
+                    <td className="px-4 py-2">{faculty.personalData.designation}</td>
                     <td>
                       <button
-                        onClick={() => navigate('/profile')}
+                        onClick={() => navigate(`/profile/${faculty.user._id}`)}
                         className="inline-flex items-center gap-1.5 px-2 py-1 text-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition shadow-sm"
                       >
                         <User size={14} />

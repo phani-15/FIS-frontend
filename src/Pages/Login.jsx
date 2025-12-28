@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {login,authenticate,isAuthenticated} from "../core/auth"
-import { error, values } from "pdf-lib";
 
 export default function Login() {
 
 	const [formData, setFormData] = useState({
-		username: "vi2@gmail.com",
+		username: "srinu478@gmail.com",
 		password: "1234567890",
 	});
-
 	const handleChange = (e) => {
 		const { id, value } = e.target;
 		setFormData((prev) => ({
@@ -55,9 +53,7 @@ export default function Login() {
 			})
 		})
 		navigate(`/profile/${data.user.id}`)
-		}	)
-		// console.log("login returned data:",data);
-		
+		})
 	};
 
 	return (

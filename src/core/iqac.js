@@ -1,7 +1,7 @@
 import {API} from "../backend"
 import {isAuthenticated} from "../core/auth"
-export const hodlogin=async user=>{
-    return await fetch(`${API}/hod`,{
+export const iqaclogin=async user=>{
+    return await fetch(`${API}/ofc`,{
         method:"POST",
         headers:{
             Accept:"application/json",
@@ -19,7 +19,7 @@ export const hodlogin=async user=>{
 export const HodDashBoard = async (id) => {
   const { user, token } = isAuthenticated();
   try {
-    const response = await fetch(`${API}/hod/${id}`, {
+    const response = await fetch(`${API}/ofc/${id}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -35,4 +35,4 @@ export const HodDashBoard = async (id) => {
 };
 
 
-//need to use useeffect in hodDashboard.jsx in order to display the data FACULTYLIST
+//need to use useeffect in OfcDashboard.jsx in order to display the data FACULTYLIST

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Personal } from "../core/Personal"
+import {API} from"../backend"
 import {
   Mail,
   Phone,
@@ -16,6 +17,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export default function ProfilePage() {
   const { profileId } = useParams()
+  const imageurl=API.replace("/api","")
   const navigate = useNavigate()
   const [newObj, setnewobj] = useState(
 
@@ -130,9 +132,6 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       const data = await Personal(profileId);  
-      console.log("Fetched profile data:", data);
-    
-      console.log("Profile ID:", profileId);
       if (data) setnewobj(data);
     } catch (error) {
       console.log("Fetch error:", error);
@@ -142,8 +141,7 @@ export default function ProfilePage() {
   loadProfile();
 }, []);
 
-
-  const viewer = "user"
+  const viewer = newObj.role
 
   // Static Profile Data
 
@@ -171,7 +169,7 @@ export default function ProfilePage() {
               <div className="text-center">
                 <img
                   draggable="false"
-                  src={newObj.personalData.avatar}
+                  src={`${imageurl}/uploads/${newObj.personalData.avatar}`}
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover mx-auto"
                 />
@@ -224,11 +222,11 @@ export default function ProfilePage() {
                   <div className="flex flex-col  gap-3">
                     {viewer == "user" &&
                       <button
-                        onClick={() => navigate('/ac')}
+                        onClick={() => navigate(`/ac/${newObj.user._id}/${newObj.credentials}`)}
                         className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
                     }
                     <button
-                      onClick={() => navigate('/vc')}
+                      onClick={() => navigate(`/vc/${newObj.user._id}/${newObj.credentials}`)}
                       className="bg-linear-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Credentials</button>
                   </div>
                 </div>
@@ -247,7 +245,7 @@ export default function ProfilePage() {
                   </div>
                   {newObj.personalData.phone && <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Phone size={16} className="text-green-500" />
-                    {newObj.user.phone}
+                    {newObj.personalData.phone}
                   </div>}
 
                   <div className="flex items-center gap-3 text-sm text-gray-700">

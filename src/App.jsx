@@ -34,7 +34,7 @@ export default function App() {
             <Route path='/' element={<Login />} />
             <Route path='/fp/' element={<ForgotPassword />} />
             <Route path='/register' element={<Register />} />
-            <Route path='/rp' element={<ResetPassword />} />
+            <Route path='/rp' element={<ResetPassword/>} />
             
             <Route path='/profile/:profileId' element={<Profile />} />
             <Route path='/ea' element={<EditAdmin />} />

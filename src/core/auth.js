@@ -1,14 +1,11 @@
 import {API} from "../backend"
-
+import {objectToFormData} from "../utils/formDataConverter"
 export const register=async user=>{
+    const fromdata=objectToFormData(user)
     return await fetch(`${API}/register`,{
         method:"POST",
-        headers:{
-            Accept:"application/json",
-            "Content-Type":"application/json"
-        },
-         credentials: "include",
-        body:JSON.stringify(user)
+        cedentials: "include",
+        body:fromdata
     })
     .then(res=>{
         return res.json()
