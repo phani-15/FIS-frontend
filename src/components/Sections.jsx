@@ -8,7 +8,7 @@ export default function Section({ title, name, children, expanded, toggleExpand 
     <div className="mb-6 border border-gray-200 rounded-xl overflow-hidden shadow-sm">
       <button
         onClick={() => toggleExpand(name)}
-        className="w-full flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-3 text-left font-medium text-gray-700 hover:from-blue-100 hover:to-indigo-100 transition"
+        className="w-full flex justify-between items-center bg-linear-to-r from-blue-50 to-indigo-50 px-5 py-3 text-left font-medium text-gray-700 hover:from-blue-100 hover:to-indigo-100 transition"
       >
         <div className="flex items-center gap-3">
           <div className="w-2 h-8 rounded bg-blue-400" />
