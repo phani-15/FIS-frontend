@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { PDFDocument } from "pdf-lib";
 
 export default function AddDetails() {
    const Structure = {

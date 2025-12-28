@@ -1,9 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
 import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
-import { label } from 'framer-motion/client';
-import { values } from 'pdf-lib';
-import { div } from 'framer-motion/m';
 
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [

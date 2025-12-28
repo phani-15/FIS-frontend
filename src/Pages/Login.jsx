@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { User, Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {login,authenticate,isAuthenticated} from "../core/auth"
-import { error, values } from "pdf-lib";
 
 export default function Login() {
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import { KeyRound } from "lucide-react";
 import InputField from '../components/inputField';
-import { error } from 'pdf-lib';
 
 export default function PasswordChange() {
 
