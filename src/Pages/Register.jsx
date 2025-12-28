@@ -6,7 +6,6 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
 import { departments } from '../assets/Data.jsx';
 import ProfilePictureCropper from "../components/ProfilePictureCropper";
-import { area } from "framer-motion/client";
 
 export default function Register() {
   const navigate = useNavigate()
@@ -512,12 +511,12 @@ export default function Register() {
     (e) => {
       e.preventDefault();
       const newErrors = {};
-      Object.entries(personalData).forEach(([field,val])=>{
-        if(val==="" || val === null){
-          newErrors[field] = `${field} is required` 
+      Object.entries(personalData).forEach(([field, val]) => {
+        if (val === "" || val === null) {
+          newErrors[field] = `${field} is required`
         }
       })
-      if(Object.keys(newErrors).length > 0){
+      if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors)
         console.log(errors)
         return
@@ -739,7 +738,7 @@ export default function Register() {
           <form onSubmit={handleSubmitSignUp} className="flex flex-col">
 
             <InputField label="Email" placeholder="enter mail addresss" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
-      
+
             <InputField
               label="Password"
               name="password"
@@ -777,8 +776,105 @@ export default function Register() {
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            
 
+            <div className="mb-6">
+              <label className="block text-left mb-3 font-medium text-gray-700">
+                Profile Picture <span className="text-red-500">*</span>
+              </label>
+
+              <div className="flex flex-col items-center space-y-4">
+                {/* Preview */}
+                {croppedPreview ? (
+                  <div className="relative group">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                      <img
+                        src={croppedPreview}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {/* Hover overlay with actions */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30"
+                      >
+                        Change
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRemoveProfilePicture}
+                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className="text-center">
+                      <div className="text-gray-400 mb-1">
+                        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-sm text-gray-500">Click to upload</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+
+                {/* Upload button (only shown when no image is selected) */}
+                {!croppedPreview && (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                  >
+                    Choose File
+                  </button>
+                )}
+
+                {/* Instructions */}
+                <div className="text-left text-sm text-gray-600 space-y-1">
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Maximum file size: 5MB
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Supported formats: JPG, PNG
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    You'll be able to crop and select the best part
+                  </p>
+                </div>
+              </div>
+              {errors.avatar && <small className="text-red-600 text-sm">{errors.avatar}</small>}
+            </div>
+
+            {/* Cropper Modal - Only show when needed */}
+            {showCropper && profileImageSrc && (
+              <ProfilePictureCropper
+                image={profileImageSrc}
+                onCropComplete={handleCropComplete}
+                onCancel={handleCropCancel}
+              />
+            )}
             <InputField label="Full Name" name="name" placeholder="enter your name" value={personalData.name} onChange={handleChange} required />
             <InputField label="Father's Name" name="father" placeholder="enter your father name" value={personalData.father} onChange={handleChange} required />
 
