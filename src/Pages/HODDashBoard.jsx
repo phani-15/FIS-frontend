@@ -26,8 +26,8 @@ export default function HODDashBoard() {
   const [showExtractModal, setShowExtractModal] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedAttributes, setSelectedAttributes] = useState({});
-  const [yearFrom, setYearFrom] = useState("");
-  const [yearTo, setYearTo] = useState("");
+  const [dateFrom, setdateFrom] = useState("");
+  const [dateTo, setdateTo] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Helper: Get full list of attribute keys for a type
@@ -118,13 +118,13 @@ export default function HODDashBoard() {
           if (faculty.data && faculty.data[typeKey]) {
             faculty.data[typeKey].forEach(record => {
               // Apply year filter if specified
-              if (yearFrom || yearTo) {
+              if (dateFrom || dateTo) {
                 const recordYear = extractYearFromRecord(record, typeKey);
 
-                if (yearFrom && recordYear && recordYear < parseInt(yearFrom)) {
+                if (dateFrom && recordYear && recordYear < parseInt(dateFrom)) {
                   return; // Skip if before start year
                 }
-                if (yearTo && recordYear && recordYear > parseInt(yearTo)) {
+                if (dateTo && recordYear && recordYear > parseInt(dateTo)) {
                   return; // Skip if after end year
                 }
               }
@@ -564,14 +564,14 @@ export default function HODDashBoard() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-1">
-                          From Year
+                          From 
                         </label>
                         <input
-                          type="number"
-                          placeholder="2018"
+                          type="date"
+                          placeholder="01-01-2015"
                           className="w-full border rounded-lg p-2"
-                          value={yearFrom}
-                          onChange={(e) => setYearFrom(e.target.value)}
+                          value={dateFrom}
+                          onChange={(e) => setdateFrom(e.target.value)}
                           min="1950"
                           max={new Date().getFullYear()}
                         />
@@ -579,15 +579,15 @@ export default function HODDashBoard() {
 
                       <div>
                         <label className="block text-sm font-medium mb-1">
-                          To Year
+                          To 
                         </label>
                         <input
-                          type="number"
-                          placeholder="2025"
+                          type="date"
+                          placeholder="01-01-2025"
                           className="w-full border rounded-lg p-2"
-                          value={yearTo}
-                          onChange={(e) => setYearTo(e.target.value)}
-                          min={yearFrom}
+                          value={dateTo}
+                          onChange={(e) => setdateTo(e.target.value)}
+                          min={dateFrom}
                           max={new Date().getFullYear()}
                         />
                       </div>
