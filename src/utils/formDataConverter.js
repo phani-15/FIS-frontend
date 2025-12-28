@@ -35,3 +35,14 @@ export const objectToFormData = (
   formData.append(parentKey, obj);
   return formData;
 };
+
+export const credConverter=(obj)=>{
+  const fd=new FormData()
+  fd.append("group",obj.group)
+  fd.append("subcategory",obj.subcategory ?? "")
+  fd.append("formdata",JSON.stringify(obj.formData))
+  if(obj.files?.Document){
+      fd.append("Document",obj.files.Document)
+  }
+  return fd;
+}

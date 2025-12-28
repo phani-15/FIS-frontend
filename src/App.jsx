@@ -46,10 +46,10 @@ export default function App() {
             <Route path='/hodDashboard/:userId' element={<HodDashboard />} />
             <Route path='/adminPage' element={<Admin />} />
             <Route path='/admin' element={<AdminLogin />} />
-            <Route path='/vc' element={<ViewCertificaion />} />
+            <Route path='/vc/:userId/:credId' element={<ViewCertificaion />} />
             <Route path='/ea' element={<EditAdmin />} />
             <Route path='/fp/' element={<ForgotPassword />} />
-            <Route path='/ac/:userId/:credId' element={<AddCredentials />} />
+            <Route path='/ac/' element={<AddCredentials />} />
             <Route path='/rp' element={<ResetPassword />} />
             <Route path='/resetHODpassword' element={<ResetHODPassword />} />
             <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />
