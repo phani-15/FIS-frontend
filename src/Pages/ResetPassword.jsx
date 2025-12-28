@@ -24,8 +24,6 @@ export default function ResetPassword() {
         CpassKey: ""
     });
     const userdetails=["Email","Old Password","New Password ","confirm new  password"]
-    const admindetails=["Present pass Code","new Passcode","Confirm new passCode"]
-    const hoddetails=["department","present passKey ","newPasskey ","Confirm new passKey"]
     const [errors, setErrors] = React.useState({});
     const navigate = useNavigate();
     const handleSubmit = (e) => {

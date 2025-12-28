@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
 import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
+import { PDFDocument } from "pdf-lib";
+import { Info } from 'lucide-react';
+
 import { label } from 'framer-motion/client';
 import { values } from 'pdf-lib';
 import { div } from 'framer-motion/m';
@@ -105,6 +108,7 @@ const directFieldGroups = {
 };
 
 const AddCredentials = () => {
+  // const { userId, credId } = useParams
   const {userId,credId}=useParams()
   const [group, setGroup] = useState('');
   const [subcategory, setSubcategory] = useState('');
@@ -475,14 +479,6 @@ const AddCredentials = () => {
       return;
     }
 
-    // 🔹 Step 4: ✅ Build structured payload
-    // const moocs = [];
-    // for (let i = 0; i < numMOOCs; i++) {
-    //   moocs.push({
-    //     title: formData[`Title of the MOOC__${i}`] || '',
-    //     monthYear: formData[`Month & Year__${i}`] || ''
-    //   });
-    // }
     const eContents = [];
     for (let i = 0; i < numMOOCs; i++) {
       eContents.push({
@@ -999,26 +995,57 @@ const AddCredentials = () => {
                                 {!isFile && <span className="text-red-500 ml-1">*</span>}
                               </label>
                               {isFile ? (
-                                <div className="mt-1 flex items-center">
-                                  <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                                    <span className="text-sm text-blue-600 font-medium">
-                                      {value || 'Choose file'}
-                                    </span>
-                                    <input
-                                      type="file"
-                                      className="hidden"
-                                      onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                      accept=".pdf,.jpg,.jpeg,.png"
-                                    />
-                                  </label>
-                                  {value && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleFileChange(name, null)}
-                                      className="ml-2 text-xs text-red-500 hover:text-red-700"
-                                    >
-                                      ✕ Clear
-                                    </button>
+                                <div className="space-y-2">
+                                  <input
+                                    type="file"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0] || null;
+                                      const fieldName = name; // e.g., "Document", "Sanctioning Order"
+
+                                      if (file) {
+                                        // Revoke old URL if exists
+                                        const oldUrl = formData[`${fieldName}_url`];
+                                        if (oldUrl?.startsWith('blob:')) {
+                                          URL.revokeObjectURL(oldUrl);
+                                        }
+
+                                        const url = URL.createObjectURL(file);
+                                        handleFileChange(fieldName, file); // → stores in fileMap[fieldName]
+                                        setFormData(prev => ({
+                                          ...prev,
+                                          [`${fieldName}_url`]: url
+                                        }));
+                                      } else {
+                                        // File cleared
+                                        const oldUrl = formData[`${fieldName}_url`];
+                                        if (oldUrl?.startsWith('blob:')) URL.revokeObjectURL(oldUrl);
+                                        setFormData(prev => ({
+                                          ...prev,
+                                          [`${fieldName}_url`]: ''
+                                        }));
+                                        handleFileChange(fieldName, null);
+                                      }
+                                    }}
+                                    className="block w-full text-sm text-gray-500
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-md file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-blue-50 file:text-blue-700
+                                          hover:file:bg-blue-100"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                  />
+
+                                  {/* ✅ View Button — identical to e_content */}
+                                  {formData[`${name}_url`] && (
+                                    <div className="flex justify-end">
+                                      <button
+                                        type="button"
+                                        onClick={() => window.open(formData[`${name}_url`], '_blank')}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                                      >
+                                        View {cleanLabel.toLowerCase().includes('certificate') ? 'Certificate' : 'Document'}
+                                      </button>
+                                    </div>
                                   )}
                                 </div>
                               ) :
@@ -1064,7 +1091,7 @@ const AddCredentials = () => {
                     <div className="mt-6">
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-4 py-2 text-white rounded-md bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800"
                       >
                         Submit
                       </button>
@@ -1127,38 +1154,49 @@ const AddCredentials = () => {
                                   {cleanLabel} <span className="text-red-500 ml-1">*</span>
                                 </label>
 
+                                {/* ✅ Standardized File Input (like e_content) */}
                                 {isFile ? (
                                   <div className="space-y-2">
-                                    {/* File Input */}
                                     <input
                                       type="file"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0] || null;
+                                        const fieldName = name; // e.g., "Document", "Sanctioning Order"
+
                                         if (file) {
+                                          // Revoke old URL if exists
+                                          const oldUrl = formData[`${fieldName}_url`];
+                                          if (oldUrl?.startsWith('blob:')) {
+                                            URL.revokeObjectURL(oldUrl);
+                                          }
+
                                           const url = URL.createObjectURL(file);
-                                          handleFileChange(name, file);
-                                          // Also store preview URL in formData (like AddDetails does)
+                                          handleFileChange(fieldName, file); // → stores in fileMap[fieldName]
                                           setFormData(prev => ({
                                             ...prev,
-                                            [`${name}_url`]: url  // ← key: "Title__0_url"
+                                            [`${fieldName}_url`]: url
                                           }));
                                         } else {
+                                          // File cleared
+                                          const oldUrl = formData[`${fieldName}_url`];
+                                          if (oldUrl?.startsWith('blob:')) URL.revokeObjectURL(oldUrl);
                                           setFormData(prev => ({
                                             ...prev,
-                                            [`${name}_url`]: ''
+                                            [`${fieldName}_url`]: ''
                                           }));
+                                          handleFileChange(fieldName, null);
                                         }
                                       }}
                                       className="block w-full text-sm text-gray-500
-                                                  file:mr-4 file:py-2 file:px-4
-                                                  file:rounded-md file:border-0
-                                                  file:text-sm file:font-semibold
-                                                  file:bg-blue-50 file:text-blue-700
-                                                  hover:file:bg-blue-100"
-                                      accept=".pdf,.doc,.docx,.jpg,.png"
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-md file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-blue-50 file:text-blue-700
+                                          hover:file:bg-blue-100"
+                                      accept=".pdf,.jpg,.jpeg,.png"
                                     />
 
-                                    {/* ✅ View Button — identical to AddDetails style */}
+                                    {/* ✅ View Button — identical to e_content */}
                                     {formData[`${name}_url`] && (
                                       <div className="flex justify-end">
                                         <button
@@ -1166,7 +1204,7 @@ const AddCredentials = () => {
                                           onClick={() => window.open(formData[`${name}_url`], '_blank')}
                                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
                                         >
-                                          View {cleanLabel.includes('certificate') ? 'Certificate' : 'Document'}
+                                          View {cleanLabel.toLowerCase().includes('certificate') ? 'Certificate' : 'Document'}
                                         </button>
                                       </div>
                                     )}
@@ -1192,10 +1230,10 @@ const AddCredentials = () => {
                         </div>
                       ))}
 
-                      <div className="mt-6">
+                      <div className="mt-6 flex justify-end">
                         <button
                           type="submit"
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="px-4 py-2 bg-linear-to-r from-purple-600 to-indigo-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           Submit
                         </button>
@@ -1248,26 +1286,80 @@ const AddCredentials = () => {
                             {MOOC_fields.map((label, idx) => {
                               const name = `${label}__${i}`;
                               const cleanLabel = label.trim();
-                              const isMonth = cleanLabel.includes('month');
                               const value = formData[name] || '';
+                              const isFile = isFileField(cleanLabel)
                               return (
                                 <div key={name} className="mb-4">
                                   <label className="block text-sm font-medium text-gray-700 mb-1">
                                     {cleanLabel} <span className="text-red-500 ml-1">*</span>
                                   </label>
 
-                                  {/* { add isFile input type} */}
-                                  <input
-                                    type={isMonth ? "month" : "text"}
-                                    value={value}
-                                    onChange={(e) => handleInputChange(name, e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                      } `}
-                                    placeholder={`Enter ${cleanLabel}`}
-                                    required={true}
-                                    min={isMonth ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
-                                    step={isMonth ? "1" : undefined}
-                                  />
+                                  {isFile ? (
+
+                                    <div className="space-y-2">
+                                      <input
+                                        type="file"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0] || null;
+                                          const fieldName = name; // e.g., "Document", "Sanctioning Order"
+
+                                          if (file) {
+                                            // Revoke old URL if exists
+                                            const oldUrl = formData[`${fieldName}_url`];
+                                            if (oldUrl?.startsWith('blob:')) {
+                                              URL.revokeObjectURL(oldUrl);
+                                            }
+
+                                            const url = URL.createObjectURL(file);
+                                            handleFileChange(fieldName, file); // → stores in fileMap[fieldName]
+                                            setFormData(prev => ({
+                                              ...prev,
+                                              [`${fieldName}_url`]: url
+                                            }));
+                                          } else {
+                                            // File cleared
+                                            const oldUrl = formData[`${fieldName}_url`];
+                                            if (oldUrl?.startsWith('blob:')) URL.revokeObjectURL(oldUrl);
+                                            setFormData(prev => ({
+                                              ...prev,
+                                              [`${fieldName}_url`]: ''
+                                            }));
+                                            handleFileChange(fieldName, null);
+                                          }
+                                        }}
+                                        className="block w-full text-sm text-gray-500
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-md file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-blue-50 file:text-blue-700
+                                          hover:file:bg-blue-100"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                      />
+
+                                      {/* ✅ View Button — identical to e_content */}
+                                      {formData[`${name}_url`] && (
+                                        <div className="flex justify-end">
+                                          <button
+                                            type="button"
+                                            onClick={() => window.open(formData[`${name}_url`], '_blank')}
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                                          >
+                                            View {cleanLabel.toLowerCase().includes('certificate') ? 'Certificate' : 'Document'}
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>)
+                                    : (
+                                      <input
+                                        type={cleanLabel.toLowerCase().includes('month') ? "month" : "text"}
+                                        value={value}
+                                        onChange={(e) => handleInputChange(name, e.target.value)}
+                                        className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                          }`}
+                                        placeholder={`Enter ${cleanLabel}`}
+                                        required
+                                      />
+                                    )}
 
                                   {errors[name] && (
                                     <p className="mt-1 text-sm text-red-600 font-medium">{errors[name]}</p>
@@ -1281,7 +1373,7 @@ const AddCredentials = () => {
                         <div className="mt-6">
                           <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-4 py-2  text-white rounded-md bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800"
                           >
                             Submit
                           </button>
@@ -1332,26 +1424,57 @@ const AddCredentials = () => {
                                       {!isFile && <span className="text-red-500 ml-1">*</span>}
                                     </label>
                                     {isFile ? (
-                                      <div className="mt-1 flex items-center">
-                                        <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                                          <span className="text-sm text-blue-600 font-medium">
-                                            {value || 'Choose file'}
-                                          </span>
-                                          <input
-                                            type="file"
-                                            className="hidden"
-                                            onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                            accept=".pdf,.jpg,.jpeg,.png"
-                                          />
-                                        </label>
-                                        {value && (
-                                          <button
-                                            type="button"
-                                            onClick={() => handleFileChange(name, null)}
-                                            className="ml-2 text-xs text-red-500 hover:text-red-700"
-                                          >
-                                            ✕ Clear
-                                          </button>
+                                      <div className="space-y-2">
+                                        <input
+                                          type="file"
+                                          onChange={(e) => {
+                                            const file = e.target.files?.[0] || null;
+                                            const fieldName = name; // e.g., "Document", "Sanctioning Order"
+
+                                            if (file) {
+                                              // Revoke old URL if exists
+                                              const oldUrl = formData[`${fieldName}_url`];
+                                              if (oldUrl?.startsWith('blob:')) {
+                                                URL.revokeObjectURL(oldUrl);
+                                              }
+
+                                              const url = URL.createObjectURL(file);
+                                              handleFileChange(fieldName, file); // → stores in fileMap[fieldName]
+                                              setFormData(prev => ({
+                                                ...prev,
+                                                [`${fieldName}_url`]: url
+                                              }));
+                                            } else {
+                                              // File cleared
+                                              const oldUrl = formData[`${fieldName}_url`];
+                                              if (oldUrl?.startsWith('blob:')) URL.revokeObjectURL(oldUrl);
+                                              setFormData(prev => ({
+                                                ...prev,
+                                                [`${fieldName}_url`]: ''
+                                              }));
+                                              handleFileChange(fieldName, null);
+                                            }
+                                          }}
+                                          className="block w-full text-sm text-gray-500
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-md file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-blue-50 file:text-blue-700
+                                          hover:file:bg-blue-100"
+                                          accept=".pdf,.jpg,.jpeg,.png"
+                                        />
+
+                                        {/* ✅ View Button — identical to e_content */}
+                                        {formData[`${name}_url`] && (
+                                          <div className="flex justify-end">
+                                            <button
+                                              type="button"
+                                              onClick={() => window.open(formData[`${name}_url`], '_blank')}
+                                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                                            >
+                                              View {cleanLabel.toLowerCase().includes('certificate') ? 'Certificate' : 'Document'}
+                                            </button>
+                                          </div>
                                         )}
                                       </div>
                                     ) : (
@@ -1379,7 +1502,7 @@ const AddCredentials = () => {
                           <div className="mt-6">
                             <button
                               type="submit"
-                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="px-4 py-2 bg-linear-to-r from-blue-800 to-purple-700 cursor-pointer hover:from-blue-800 hover:to-purple-800 text-white rounded-md "
                             >
                               Submit
                             </button>
@@ -1523,27 +1646,111 @@ const AddCredentials = () => {
                                     </div>
                                   ) :
                                     isFile ? (
-                                      <div className="mt-1 flex items-center">
-                                        <label className="flex flex-col items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition">
-                                          <span className="text-sm text-blue-600 font-medium">
-                                            {value || 'Choose file'}
-                                          </span>
-                                          <input
-                                            type="file"
-                                            className="hidden"
-                                            onChange={(e) => handleFileChange(name, e.target.files?.[0] || null)}
-                                            accept=".pdf,.jpg,.jpeg,.png"
-                                          />
-                                        </label>
-                                        {value && (
-                                          <button
-                                            type="button"
-                                            onClick={() => handleFileChange(name, null)}
-                                            className="ml-2 text-xs text-red-500 hover:text-red-700"
-                                          >
-                                            ✕ Clear
-                                          </button>
+                                      <div className="space-y-2">
+                                        <input
+                                          type="file"
+                                          onChange={async (e) => {
+                                            const file = e.target.files?.[0] || null;
+                                            const fieldName = name;
+
+                                            // Revoke old URL (if any)
+                                            const oldUrl = formData[`${fieldName}_url`];
+                                            if (oldUrl?.startsWith('blob:')) {
+                                              URL.revokeObjectURL(oldUrl);
+                                            }
+
+                                            if (!file) {
+                                              // Clear file
+                                              setFormData(prev => ({ ...prev, [`${fieldName}_url`]: '' }));
+                                              handleFileChange(fieldName, null);
+                                              return;
+                                            }
+
+                                            // Handle Publications → PDF → trim to 1 page
+                                            if (group === 'Publications' && file.type === 'application/pdf') {
+                                              try {
+                                                const arrayBuffer = await file.arrayBuffer();
+                                                const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+
+                                                if (pdfDoc.getPageCount() < 1) {
+                                                  throw new Error('PDF has no pages');
+                                                }
+
+                                                // Create new doc with only first page
+                                                const newPdf = await PDFDocument.create();
+                                                const [copiedPage] = await newPdf.copyPages(pdfDoc, [0]);
+                                                newPdf.addPage(copiedPage);
+
+                                                const pdfBytes = await newPdf.save();
+                                                const trimmedFile = new File(
+                                                  [pdfBytes],
+                                                  file.name.replace(/(\.pdf)?$/i, '_page1.pdf'),
+                                                  { type: 'application/pdf' }
+                                                );
+
+                                                const fileURL = URL.createObjectURL(trimmedFile);
+
+                                                // ✅ Store TRIMMED file + URL
+                                                setFormData(prev => ({
+                                                  ...prev,
+                                                  [fieldName]: trimmedFile.name, // optional: just store name in formData
+                                                  [`${fieldName}_url`]: fileURL
+                                                }));
+                                                handleFileChange(fieldName, trimmedFile); // ← key: store trimmed File in fileMap
+                                                setErrors(prev => ({ ...prev, [fieldName]: '' }));
+
+                                              } catch (err) {
+                                                console.error('PDF trimming failed:', err);
+                                                setErrors(prev => ({
+                                                  ...prev,
+                                                  [fieldName]: 'Failed to process PDF (ensure it is not encrypted or corrupted)'
+                                                }));
+                                                // Still allow upload of original? Or reject?
+                                                // Here: reject upload on failure
+                                                e.target.value = ''; // reset input
+                                              }
+                                            } else {
+                                              // Non-Publications or non-PDF: upload as-is
+                                              const fileURL = URL.createObjectURL(file);
+                                              setFormData(prev => ({
+                                                ...prev,
+                                                [fieldName]: file.name,
+                                                [`${fieldName}_url`]: fileURL
+                                              }));
+                                              handleFileChange(fieldName, file);
+                                              setErrors(prev => ({ ...prev, [fieldName]: '' }));
+                                            }
+                                          }}
+                                          className="block w-full text-sm text-gray-500
+                                              file:mr-4 file:py-2 file:px-4
+                                              file:rounded-md file:border-0
+                                              file:text-sm file:font-semibold
+                                              file:bg-blue-50 file:text-blue-700
+                                              hover:file:bg-blue-100"
+                                          accept=".pdf,.jpg,.jpeg,.png"
+                                        />
+                                        {/* ✅ View Button — identical to e_content */}
+                                        {formData[`${name}_url`] && (
+                                          <div className="flex justify-end">
+                                            <button
+                                              type="button"
+                                              onClick={() => window.open(formData[`${name}_url`], '_blank')}
+                                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                                            >
+                                              View {cleanLabel.toLowerCase().includes('certificate') ? 'Certificate' : 'Document'}
+                                            </button>
+                                          </div>
                                         )}
+
+                                        {group === "Publications" &&
+                                      
+            (<div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
+              <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-blue-800">
+                <strong className="mr-2">Note: </strong>We extract and store only the first page of the document
+              </p>
+            </div>)}
+                                        
                                       </div>
                                     ) :
                                       (

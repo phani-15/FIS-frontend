@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect, useRef} from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
-import { area } from "framer-motion/client";
+import { departments } from '../assets/Data.jsx';
 import ProfilePictureCropper from "../components/ProfilePictureCropper";
 
 export default function Register() {
@@ -12,6 +12,14 @@ export default function Register() {
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
+
+  // Profile picture states
+  const [showCropper, setShowCropper] = useState(false);
+  const [profileImageSrc, setProfileImageSrc] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [croppedPreview, setCroppedPreview] = useState(null);
+  const fileInputRef = useRef(null);
+
   // const [personalData, setpersonalData] = useState({
   //   name: "",
   //   avatar: null,
@@ -35,8 +43,8 @@ export default function Register() {
     DOB: "",
     marital: "married",
     phone: "1234567896",
-    area:"kukatpallyground",
-    city:"hyderabadcity",
+    area: "kukatpallyground",
+    city: "hyderabadcity",
     designation: "professor",
     department: "cse",
     college: "JNTUGV-CEV",
@@ -113,7 +121,7 @@ export default function Register() {
   };
 
   // Handle file selection
-const handleFileSelect = (e) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -137,7 +145,7 @@ const handleFileSelect = (e) => {
     reader.readAsDataURL(file);
   };
 
-   // Handle crop completion
+  // Handle crop completion
   const handleCropComplete = async (croppedBlob) => {
     if (!croppedBlob) return;
 
@@ -152,12 +160,12 @@ const handleFileSelect = (e) => {
     setCroppedImage(croppedFile);
     setCroppedPreview(previewUrl);
     setShowCropper(false);
-    
+
     // Also update personalData with the file
     setpersonalData(prev => ({ ...prev, avatar: croppedFile }));
   };
 
-   // Handle crop cancel
+  // Handle crop cancel
   const handleCropCancel = () => {
     setShowCropper(false);
     setProfileImageSrc(null);
@@ -222,7 +230,7 @@ const handleFileSelect = (e) => {
         "email": "srinu478@gmail.com",
         "password": "1234567890",
       },
-      "personalData":personalData,
+      "personalData": personalData,
       "education": {
         "tenth": {
           "percentage": "88%",
@@ -432,7 +440,7 @@ const handleFileSelect = (e) => {
       e.preventDefault();
       setErrors({});
       console.log(personalData);
-      
+
       test()
       setStep("education");
     }, [personalData]
@@ -657,7 +665,7 @@ const handleFileSelect = (e) => {
               inputMode="numeric"
               placeholder="Enter phone number"
               error={errors.phone}
-              required = {true}
+              required={true}
             />
 
             <InputField
@@ -692,34 +700,7 @@ const handleFileSelect = (e) => {
           </form>
         </div>
       )}
-      {step === "personal" && (
-        <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
-
-          <form onSubmit={handleSubmitPersonal} className="flex flex-col">
-            <div className="flex flex-col mb-0 ">
-              <label className="text-left my-2  ">Profile Picture</label>
-              <div className="flex gap-4 flex-col md:flex-row">
-                <input
-                  className="p-2 text-sm border rounded-md mb-0 border-gray-300"
-                  name="avatar"
-                  type="file"
-                  accept="image/*"
-                  required
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    setpersonalData((prev) => ({ ...prev, avatar: file }));
-
-                    if (file) {
-                      // Generate preview URL
-                      const url = URL.createObjectURL(file);
-                      setPreviewUrl(url);
-                    } else {
-                      setPreviewUrl(null);
-                    }
-                  }}
-                />
-                {/* Cropper Modal */}
+      {/* Cropper Modal */}
       {showCropper && profileImageSrc && (
         <ProfilePictureCropper
           image={profileImageSrc}
@@ -727,20 +708,99 @@ const handleFileSelect = (e) => {
           onCancel={handleCropCancel}
         />
       )}
+      {step === "personal" && (
+        <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
+          <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
-                {previewUrl && (
-                  <div>
-                    <button
-                      type="button"
-                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 relative xl:ml-0 ml-55 "
-                      onClick={() => {
-                        // Open in new tab or show modal — here we just log; you can enhance
-                        window.open(previewUrl, '_blank');
-                      }}>
-                      View
-                    </button>
+          <form onSubmit={handleSubmitPersonal} className="flex flex-col">
+            <div className="mb-6">
+              <label className="block text-left mb-3 font-medium text-gray-700">
+                Profile Picture <span className="text-red-500">*</span>
+              </label>
+
+              <div className="flex flex-col items-center space-y-4">
+                {/* Preview */}
+                {croppedPreview ? (
+                  <div className="relative group">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                      <img
+                        src={croppedPreview}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {/* Hover overlay with actions */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30"
+                      >
+                        Change
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRemoveProfilePicture}
+                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className="text-center">
+                      <div className="text-gray-400 mb-1">
+                        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-sm text-gray-500">Click to upload</p>
+                      <p className="text-xs text-gray-400 mt-1">1:1 ratio recommended</p>
+                    </div>
                   </div>
                 )}
+
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  required={!croppedPreview}
+                />
+
+                {/* Upload button (only shown when no image is selected) */}
+                {!croppedPreview && (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                  >
+                    Choose File
+                  </button>
+                )}
+
+                {/* Instructions */}
+                <div className="text-left text-sm text-gray-600 space-y-1">
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Maximum file size: 5MB
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Supported formats: JPG, PNG
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    You'll be able to crop and select the best part
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -774,15 +834,6 @@ const handleFileSelect = (e) => {
                 {errors.DOB && <small className="text-red-600 text-sm">{errors.DOB}</small>}
 
               </div>
-              {/* <InputField
-                label="Date of Birth"
-                name="DOB"
-                type="date"
-                value={personalData.DOB}
-                onChange={handleChange}
-                required
-                className="mr-18"
-              /> */}
             </div>
 
             <div className="flex flex-col text-left space-y-2 mt-4">
@@ -832,7 +883,6 @@ const handleFileSelect = (e) => {
                     }`}
                 />
 
-
                 <input
                   type="text"
                   name="city"
@@ -852,8 +902,6 @@ const handleFileSelect = (e) => {
                 <small className="text-red-600 text-sm">{errors.city}</small>
               )}
             </div>
-
-
 
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label>College</label>
@@ -883,15 +931,9 @@ const handleFileSelect = (e) => {
                   required
                 >
                   <option value="">Select your option</option>
-                  <option value="bshss">BS & HSS</option>
-                  <option value="cse">Computer Science & Engineering</option>
-                  <option value="ece">Electronics & Communication Engineering</option>
-                  <option value="eee">Electrical & Electronics Engineering</option>
-                  <option value="civil">Civil Engineering</option>
-                  <option value="it">Inforamtion Technology</option>
-                  <option value="met">Metallurgical Engineering</option>
-                  <option value="mech">Mechanical Engineering</option>
-                  <option value="mech">Master's in Business Administration</option>
+                  {departments.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
                 </select>
               </div>
             }
@@ -927,14 +969,6 @@ const handleFileSelect = (e) => {
 
               {errors.date_of_join && <small className="text-red-600 text-sm">{errors.date_of_join}</small>}
             </div>
-
-
-
-            {/* Submit Button */}
-            {/* <div className="flex items-start gap-8 p-3 mt-6 bg-blue-50 border border-blue-300  text-blue-800 rounded-md text-sm">
-              <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 ml-3" />
-              <p className="">You can have access to change your details within 7 days </p>
-            </div> */}
 
             {/* Edit Window Notice */}
             <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
@@ -1475,21 +1509,21 @@ const handleFileSelect = (e) => {
                       <div className="flex space-x-6 mt-1">
                         {["Departmental", "College", "University"].map((level) => (
                           <label key={level} className="flex items-center cursor-pointer">
-                          <input
-                            type="radio"
-                            name={`level-${index}`}
-                            value={level.toLowerCase()}
-                            checked={as.level === level.toLowerCase()}
-                            onChange={() =>
-                              handleASChange(index, {
-                                target: { name: "level", value: level.toLowerCase() }
-                              })
-                            }
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                            required
-                          />
-                          <span className={`ml-2 ${as.level === level.toLowerCase() ? 'font-semibold text-gray-900' : 'text-gray-700'}`}> {level}</span>
-                        </label>))}
+                            <input
+                              type="radio"
+                              name={`level-${index}`}
+                              value={level.toLowerCase()}
+                              checked={as.level === level.toLowerCase()}
+                              onChange={() =>
+                                handleASChange(index, {
+                                  target: { name: "level", value: level.toLowerCase() }
+                                })
+                              }
+                              className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                              required
+                            />
+                            <span className={`ml-2 ${as.level === level.toLowerCase() ? 'font-semibold text-gray-900' : 'text-gray-700'}`}> {level}</span>
+                          </label>))}
 
                       </div>
                     </div>
@@ -1840,7 +1874,6 @@ const handleFileSelect = (e) => {
           </div>
         )
       }
-
     </div>
   )
 }

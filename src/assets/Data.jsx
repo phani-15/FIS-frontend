@@ -1731,4 +1731,16 @@ const AtKeys = [
   { key: "repository", label: "Repository Contributions" },
 ]
 
-export { schemas, yearFields, facultyList, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, AtKeys };
+const departments = [
+  "BS & HSS",
+  "Computer Science and Engineering",
+  "Electrical and Electronics Engineering",
+  "Electronics and Communication Engineering",
+  "Civil Engineering",
+  "Information Technology",
+  "Metallurgical Engineering",
+  "Mechanical Engineering",
+  "Master's in Business Administration"
+]
+
+export { schemas, yearFields, facultyList, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, AtKeys,departments };
