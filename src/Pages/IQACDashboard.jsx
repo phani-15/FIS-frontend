@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Search, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
-import { schemas, yearFields, certifications, facultyList, AtKeys } from '../assets/Data';
+import { schemas, yearFields, certifications, AtKeys } from '../assets/Data';
+import {useParams} from "react-router-dom"
+import {ofcDashBoard} from "../core/ofc"
 
 export default function IQACDashboard() {
+  const {ofcId}=useParams()
   const [filters, setFilters] = useState({
     department: "All",
     searchTerm: "",
   });
-
+  const [facultyList,setfacultyList]=useState([
+  {
+    name: "Dr. John Doe",
+    department: "Computer Science and Engineering",
+    role: "Professor",
+    email: "john.doe@yourcollege.edu"
+  },
+  {
+    name: "Dr. Jane Smith",
+    department: "Electrical and Electronics Engineering",
+    role: "Associate Professor",
+    email: "jane.smith@yourcollege.edu"
+  },])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showExtractModal, setShowExtractModal] = useState(false);
@@ -33,6 +48,16 @@ export default function IQACDashboard() {
     "MBA",
   ];
 
+  useEffect(()=>{
+    const getData=async ()=>{
+      const data=await ofcDashBoard(ofcId)
+      if(data){
+        console.log(data);
+        setfacultyList(data)
+      }
+    }
+    getData()
+  },[ofcId])
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
     return getSchemaForType(typeKey).attributes.map(a => a.key);

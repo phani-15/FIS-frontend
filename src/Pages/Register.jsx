@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef} from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
@@ -6,12 +6,13 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
 import { departments } from '../assets/Data.jsx';
 import ProfilePictureCropper from "../components/ProfilePictureCropper";
+import { area } from "framer-motion/client";
 
 export default function Register() {
   const navigate = useNavigate()
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
-  const [haveOAS, setHaveOAS] = useState(true);
+  const [haveOAS, setHaveOAS] = useState(true); 
 
   // Profile picture states
   const [showCropper, setShowCropper] = useState(false);
@@ -35,6 +36,78 @@ export default function Register() {
   //   college: "",
   //   date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   // });
+
+  const obj = {
+    "tenth": {
+      "title": "Tenth",
+      "school": "dkvnsd",
+      "percentage": "",
+      "year": "2009"
+    },
+    "twelth": {
+      "title": "Intermediate/Diploma",
+      "type": "Intermediate",
+      "college": "hl.,h",
+      "percentage": "",
+      "year": "2011"
+    },
+    "degree": {
+      "title": "Under Graduation",
+      "degreeName": "vbnmvf",
+      "specialization": "gjftrj",
+      "percentage": "",
+      "college": "klfgfdjnzs",
+      "university": "mghcf",
+      "year": "2013"
+    },
+    "pg": {
+      "title": "Post Graduation",
+      "course": "fbmrfxd",
+      "specialization": "mgh,g",
+      "percentage": "",
+      "college": "gfjmxf",
+      "university": "fgkmcd",
+      "year": "2009"
+    },
+    "phd": [
+      {
+        "specialization": "cv nfgnfs",
+        "under_the_proffessor": "",
+        "department": "dsdfbga",
+        "University": "dfbarb",
+        "year": "2023"
+      },
+      {
+        "specialization": "gmmx",
+        "under_the_proffessor": "",
+        "department": "sdgfsdh",
+        "University": "fmsfghmsf",
+        "year": "2023"
+      },
+      {
+        "specialization": "fddns",
+        "under_the_proffessor": "sfrnmfgns",
+        "department": "fdhsdhfd",
+        "University": "radhafdbz",
+        "year": "2000"
+      }
+    ],
+    "postdoc": [
+      {
+        "specialization": "AI/ML",
+        "under_the_proffessor": "Sukumar",
+        "University": "KL University",
+        "year": "2020"
+      },
+      {
+        "specialization": "Deep Learning",
+        "under_the_proffessor": "Surya",
+        "University": "AKNU",
+        "year": "2022"
+      }
+    ]
+  }
+
   const [personalData, setpersonalData] = useState({
     name: "Srinivas Rao polavarapu",
     avatar: null,
@@ -54,6 +127,7 @@ export default function Register() {
   const [loginData, setLoginData] = useState({
     password: "",
     email: "",
+    phone: "",
     cPassword: ""
   })
 
@@ -118,60 +192,6 @@ export default function Register() {
       }
     });
     return newErrors;
-  };
-
-  // Handle file selection
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size should be less than 5MB');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setProfileImageSrc(event.target.result);
-      setShowCropper(true);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // Handle crop completion
-  const handleCropComplete = async (croppedBlob) => {
-    if (!croppedBlob) return;
-
-    // Create a File object from the blob
-    const croppedFile = new File([croppedBlob], 'profile-picture.jpg', {
-      type: 'image/jpeg'
-    });
-
-    // Create preview URL
-    const previewUrl = URL.createObjectURL(croppedBlob);
-
-    setCroppedImage(croppedFile);
-    setCroppedPreview(previewUrl);
-    setShowCropper(false);
-
-    // Also update personalData with the file
-    setpersonalData(prev => ({ ...prev, avatar: croppedFile }));
-  };
-
-  // Handle crop cancel
-  const handleCropCancel = () => {
-    setShowCropper(false);
-    setProfileImageSrc(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
 
   const handleExperienceChange = useCallback((index, e) => {
@@ -665,7 +685,7 @@ export default function Register() {
           <form onSubmit={handleSubmitSignUp} className="flex flex-col">
 
             <InputField label="Email" placeholder="enter mail addresss" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
-
+      
             <InputField
               label="Password"
               name="password"
@@ -769,9 +789,19 @@ export default function Register() {
                   type="file"
                   accept="image/*"
                   name="avatar"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  required={!croppedPreview}
+                  required
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    setpersonalData((prev) => ({ ...prev, avatar: file }));
+
+                    if (file) {
+                      // Generate preview URL
+                      const url = URL.createObjectURL(file);
+                      setPreviewUrl(url);
+                    } else {
+                      setPreviewUrl(null);
+                    }
+                  }}
                 />
 
                 {/* Upload button (only shown when no image is selected) */}
