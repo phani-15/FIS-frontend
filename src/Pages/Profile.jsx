@@ -140,7 +140,6 @@ export default function ProfilePage() {
 
   loadProfile();
 }, []);
-console.log(newObj);
 
   const viewer = newObj.role
 
@@ -227,7 +226,7 @@ console.log(newObj);
                         className="bg-linear-to-r  from-violet-600 to-blue-600 hover:from-violet-700 px-6 py-2 rounded-full hover:to-blue-700 text-white">Add Credentials</button>
                     }
                     <button
-                      onClick={() => navigate('/vc')}
+                      onClick={() => navigate(`/vc/${newObj.user._id}/${newObj.credentials}`)}
                       className="bg-linear-to-r  from-blue-600 to-violet-600 px-6 py-2 rounded-full hover:from-blue-900 hover:to-purple-700 text-white">view Credentials</button>
                   </div>
                 </div>

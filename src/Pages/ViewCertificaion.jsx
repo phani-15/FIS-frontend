@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { X, SquarePen, Download } from 'lucide-react';
-import { names, map, initialData } from '../assets/CertificationData';
+import { names, map, } from '../assets/CertificationData';
 import { fields } from '../assets/Data';
+import {useParams} from "react-router-dom"
+import {getDetails} from "../core/addDetails"
 // --- Helper: Add IDs to initial data ---
 const addIdsToData = (data) => {
   return Object.fromEntries(
@@ -337,7 +339,8 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
 
 // --- Main Component ---
 const ViewCertificaion = () => {
-
+  const {userId,credId}=useParams()
+  const [initialData,setinitialData]=useState({})
   const [certificationsData, setCertificationsData] = useState(() => addIdsToData(initialData));
   const [expandedItems, setExpandedItems] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -350,7 +353,23 @@ const ViewCertificaion = () => {
   const openReportModal = () => {
     setIsReportModalOpen(true);
   };
+  useEffect(()=>{
+    const getfunction=async()=>{
+      const data=await getDetails(userId,credId);
+      console.log(data);
+      
+      if(data){
+        setinitialData(data)
+      }
+    }
+    getfunction();
+  },[userId,credId])
 
+ useEffect(() => {
+  if(initialData && Object.keys(initialData).length > 0) {
+    setCertificationsData(addIdsToData(initialData));
+  }
+}, [initialData]);
   const closeReportModal = () => {
     setIsReportModalOpen(false);
   };

@@ -4,18 +4,19 @@ import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields }
 import { label } from 'framer-motion/client';
 import { values } from 'pdf-lib';
 import { div } from 'framer-motion/m';
-
+import {useParams} from "react-router-dom"
+import {addDetails} from "../core/addDetails.js"
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
   'Publications',
-  'Patents',
-  'Foreign Visits',
+  'patents',
+  'foreign_visits',
   'Academic Enrichment Programs',
   'Projects',
   'Certifications',
   'Content Development',
   'External Academic Engagements',
-  'Awards and Recognitions',
+  'awards_and_recognitions',
   'Memberships in Professional Bodies',
   'Research Guidance',
   'Transmission works'
@@ -99,12 +100,12 @@ const subcategories = {
 
 const directFieldGroups = {
   'Patents': 'patents',
-  'Awards and Recognitions': 'award_title',
+  'awards_and_recognitions': 'award_title',
   'Foreign Visits': 'foreign_visits',
 };
 
 const AddCredentials = () => {
-  const {userId,credId}=useParams
+  const {userId,credId}=useParams()
   const [group, setGroup] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [formData, setFormData] = useState({});
@@ -831,7 +832,7 @@ const AddCredentials = () => {
     setErrors({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate all fields
@@ -887,9 +888,14 @@ const AddCredentials = () => {
       formData: snakeCaseFormData,
       files: fileMap
     };
-
+    await addDetails(payload,userId,credId)
+    .then(data=>{
+      console.log("data was : ",data);
+    })
+    .catch(err=>{console.log(err);
+    })
     console.log('✅ Submitted:', payload);
-    alert(`✅ ${group}${hasSubcategories ? ` - ${subcategory}` : ''} added!`);
+    alert(` ${group}${hasSubcategories ? ` - ${subcategory}` : ''} added!`);
 
     // Reset
     setGroup('');
@@ -897,6 +903,7 @@ const AddCredentials = () => {
     setFormData({});
     setFileMap({});
     setErrors({});
+    
   };
 
   return (
