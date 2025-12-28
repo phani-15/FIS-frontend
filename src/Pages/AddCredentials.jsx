@@ -4,6 +4,7 @@ import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields }
 import { label } from 'framer-motion/client';
 import { values } from 'pdf-lib';
 import { div } from 'framer-motion/m';
+import {useParams} from "react-router-dom"
 
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [

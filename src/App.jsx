@@ -37,7 +37,7 @@ export default function App() {
             <Route path='/register' element={<Register />} />
 
             <Route path='/profile/:profileId' element={<Profile />} />
-            <Route path='/ofcDashboard' element={<IqacDashboard />} />
+            <Route path='/ofcDashboard/:ofcId' element={<IqacDashboard />} />
 
             <Route path='/profile/' element={<Profile />} />
             <Route path='/iqacDashboard' element={<IqacDashboard />} />
