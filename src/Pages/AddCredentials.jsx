@@ -1,14 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
 import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
-import { PDFDocument } from "pdf-lib";
-import { Info } from 'lucide-react';
-
 import { label } from 'framer-motion/client';
 import { values } from 'pdf-lib';
 import { div } from 'framer-motion/m';
-import {useParams} from "react-router-dom"
-import {addDetails} from "../core/addDetails.js"
+
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
   'Publications',
