@@ -5,6 +5,7 @@ import { label } from 'framer-motion/client';
 import { values } from 'pdf-lib';
 import { div } from 'framer-motion/m';
 import {useParams} from "react-router-dom"
+import {addDetails} from "../core/addDetails.js"
 
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
@@ -882,9 +883,6 @@ const AddCredentials = () => {
       files: fileMap
     };
     await addDetails(payload,userId,credId)
-    .then(data=>{
-      console.log("data was : ",data);
-    })
     .catch(err=>{console.log(err);
     })
     console.log('✅ Submitted:', payload);

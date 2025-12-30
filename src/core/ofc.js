@@ -32,5 +32,32 @@ export const ofcDashBoard = async (id) => {
   }
 };
 
+export const getRefFaculty=async (obj,id)=>{
+  const {token}=isAuthenticated()
+  const response=await fetch(`${API}/ofcgfr/${id}`,{
+    method:"POST",
+    headers:{
+      Accept:"application/json",
+      "Content-Type":"application/json",
+      Authorization:`Bearer ${token}`
+    },
+    body:JSON.stringify(obj)
+  })
+  return response.json()
+}
+export const getReports=async (obj,id)=>{
+  const {token}=isAuthenticated()
+  const response=await fetch(`${API}/ofcreport/${id}`,{
+    method:"POST",
+    headers:{
+      Accept:"application/json",
+      "Content-Type":"application/json",
+      Authorization:`Bearer ${token}`
+    },
+    body:JSON.stringify(obj)
+  })
+  return response.json()
+}
+
 
 //need to use useeffect in OfcDashboard.jsx in order to display the data FACULTYLIST

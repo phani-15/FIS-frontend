@@ -66,12 +66,6 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
   const allKeys = fields[sectionKey] || Object.keys(item);
 
   // --- Helper: Get non-file fields for a section ---
-const getNonFileFields = (section) => {
-  const allFields = fields[section] || [];
-  return allFields.filter(field => 
-    !['document', 'certificate', 'Document'].includes(field)
-  );
-};
 
   const fieldsToEdit = allKeys
     .filter(key => !['id'].includes(key))
@@ -163,6 +157,12 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
     }
   }, [isOpen, certificationsData]);
 
+  const getNonFileFields = (section) => {
+  const allFields = fields[section] || [];
+  return allFields.filter(field => 
+    !['document', 'certificate', 'Document'].includes(field)
+  );
+};
   const toggleSection = (section) => {
     setSelectedSections(prev => ({
       ...prev,

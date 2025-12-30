@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { X, Search, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
-import { schemas, yearFields, certifications, AtKeys } from '../assets/Data';
+import { schemas, yearFields,  AtKeys } from '../assets/Data';
 import {useParams} from "react-router-dom"
-import {ofcDashBoard} from "../core/ofc"
+import {getRefFaculty, getReports, ofcDashBoard} from "../core/ofc"
 
 export default function IQACDashboard() {
   const {ofcId}=useParams()
@@ -25,6 +25,39 @@ export default function IQACDashboard() {
     role: "Associate Professor",
     email: "jane.smith@yourcollege.edu"
   },])
+  const [certifications,setCertifications]=useState([
+  {
+    name: "Dr. Aarti Rao",
+    role: "Professor",
+    dept: "Computer Science and Engineering",
+    data: {
+      patents: [
+        {
+          "Patent Number": "IN2021A000101",
+          "Title of the Patent": "Neural Compression for Edge Devices",
+          "Published/Granted": "Granted",
+          "Year of Published/Granted": "2021",
+          "Scope": "International",
+          "Document": "aarti_rao_patent.pdf"
+        }
+      ],
+      journal: [
+        {
+          "Title of the Paper": "Efficient Models for On-Device AI",
+          "Name of the Journal": "Journal of Edge AI",
+          "Page Number": "12-25",
+          "Year of Publication": "2021",
+          "Impact Factor": "3.2",
+          "National/International": "International",
+          "ISBN Number": "2345-6789",
+          "Indexing Platform": "Scopus",
+          "H-index": "15",
+          "Document": "aarti_rao_journal.pdf"
+        }
+      ]
+    }
+  },
+  ])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showExtractModal, setShowExtractModal] = useState(false);
@@ -34,8 +67,7 @@ export default function IQACDashboard() {
   const [DateTo, setDateTo] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [selectedMembers, setSelectedMembers] = useState({});
-
+  const [selectedMembers, setSelectedMembers] = useState([]);  
   const departments = [
     "Computer Science and Engineering",
     "Electronics and Communication Engineering",
@@ -52,42 +84,59 @@ export default function IQACDashboard() {
     const getData=async ()=>{
       const data=await ofcDashBoard(ofcId)
       if(data){
-        console.log(data);
         setfacultyList(data)
       }
     }
     getData()
   },[ofcId])
+
+  //report extraction useEffects
+  useEffect(()=>{   
+    const obj={
+        branch:selectedDepartments,
+        fields:selectedTypes
+    }    
+    const getFacultyOnchange=async ()=>{
+      const data=await getRefFaculty(obj,ofcId)
+      setCertifications(data)
+      console.log("certification data :",certifications);
+    }
+    selectedDepartments.length>0 && getFacultyOnchange()
+  },[selectedAttributes,selectedTypes,selectedDepartments])
+
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
     return getSchemaForType(typeKey).attributes.map(a => a.key);
   };
+  
 
   // Helper: Define schema per type (label + attributes)
   const getSchemaForType = (typeKey) => {
     return schemas[typeKey] || { label: typeKey, attributes: [] };
   };
 
-  const handleFacultyToggle = (dept, facultyName) => {
-    setSelectedMembers(prev => {
-      const currentSelected = prev[dept] || [];
-      let newSelected;
+  const handleFacultyToggle = (facultyName) => {
+  setSelectedMembers((prevIds) => {
+    console.log("prevIds: ",prevIds);
+    
+    // 1. Find the user object in certifications that matches the name
+    const targetUser = certifications.find(user => user.name === facultyName);
 
-      if (currentSelected.includes(facultyName)) {
-        // Remove faculty member
-        newSelected = currentSelected.filter(name => name !== facultyName);
-      } else {
-        // Add faculty member
-        newSelected = [...currentSelected, facultyName];
-      }
+    // Safety check: if name doesn't exist in certifications, do nothing
+    if (!targetUser) return prevIds;
 
-      // Return the updated state object
-      return {
-        ...prev,
-        [dept]: newSelected,
-      };
-    });
-  };
+    const targetId = targetUser.id;
+
+    // 2. Check if the ID is already in our selection array
+    if (prevIds.includes(targetId)) {
+      // 3. REMOVE: Filter out the ID if it exi`sts
+      return prevIds.filter(id => id !== targetId);
+    } else {
+      // 4. ADD: Push the new ID into the array
+      return [...prevIds, targetId];
+    }
+  });
+};
 
   const handleSelectAllForDept = (dept, facultyList) => {
     setSelectedMembers(prev => {
@@ -165,19 +214,13 @@ export default function IQACDashboard() {
 
     // Get all faculty from the department
     const facultyInDept = certifications
-      .filter(faculty => faculty.dept === dept)
+      .filter(faculty => (faculty.dept === dept))
       .map(faculty => faculty.name);
-
     if (selectedCredTypes.length === 0) {
       return facultyInDept;
-    }
-
+    }  
     // Filter based on having data for selected types
     return certifications
-      .filter(faculty => {
-        if (faculty.dept !== dept) return false;
-        return selectedCredTypes.some(type => faculty.data && faculty.data[type]);
-      })
       .map(faculty => faculty.name);
   };
 
@@ -385,13 +428,24 @@ export default function IQACDashboard() {
   // Handle form submission
   const handleExtractReports = async (e) => {
     e.preventDefault();
-
+    console.log("handleexcelreport was called");
     // Prevent form submission if required fields are empty
     if (!DateFrom || !DateTo) {
       alert("Please select both From Date and To Date.");
       return;
     }
-
+    const obj={
+      fields:selectedTypes,
+      subfields:selectedAttributes,
+      ids:selectedMembers
+    }
+    console.log("date from :",DateFrom);
+    console.log("date to :",DateTo);
+    
+    const data=await getReports(obj,ofcId)
+    console.log("reports data was :",data); 
+    setCertifications(data)
+    console.log(certifications);
     await generateExcelReport();
   };
 
@@ -858,7 +912,6 @@ export default function IQACDashboard() {
                           // Get faculty for the current department based on selected credential types
                           const facultyInDept = getFacultyForDepartmentAndCredentials(dept, selectedTypes);
                           const selectedInDept = selectedMembers[dept] || [];
-
                           return (
                             <div key={dept} className="mb-4 border rounded-lg p-4 bg-gray-50">
                               <div className="font-medium text-indigo-700 mb-3 flex items-center gap-2">
@@ -889,7 +942,7 @@ export default function IQACDashboard() {
                                       <input
                                         type="checkbox"
                                         checked={selectedInDept.includes(facultyName)}
-                                        onChange={() => handleFacultyToggle(dept, facultyName)}
+                                        onChange={() => handleFacultyToggle( facultyName)}
                                         className="mt-1 rounded text-indigo-600 focus:ring-indigo-500"
                                       />
                                       <span className="text-sm">{facultyName}</span>

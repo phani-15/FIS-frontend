@@ -119,7 +119,7 @@ export default function Register() {
     area: "kukatpallyground",
     city: "hyderabadcity",
     designation: "professor",
-    department: "cse",
+    department: "Computer Science and Engineering",
     college: "JNTUGV-CEV",
     date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   });
@@ -247,7 +247,7 @@ export default function Register() {
   const test = async () => {
     const obj1 = {
       "loginData": {
-        "email": "srinu478@gmail.com",
+        "email": "srinu477@gmail.com",
         "password": "1234567890",
       },
       "personalData": personalData,

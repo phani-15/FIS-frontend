@@ -38,8 +38,8 @@ export default function App() {
             
             <Route path='/profile/:profileId' element={<Profile />} />
             <Route path='/ea' element={<EditAdmin />} />
-            <Route path='/vc' element={<ViewCertificaion />} />
-            <Route path='/ac' element={<AddCredentials />} />
+            <Route path='/vc/:userId/:credId' element={<ViewCertificaion />} />
+            <Route path='/ac/:userId/:credId' element={<AddCredentials />} />
 
             <Route path='/hod' element={<HODLogin />} />
             <Route path='/hodDashboard/:userId' element={<HodDashboard />} />
@@ -47,7 +47,7 @@ export default function App() {
             <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />
 
             <Route path='/ofc' element={<IQACLogin />} />
-            <Route path='/ofcDashboard' element={<IqacDashboard />} />
+            <Route path='/ofcDashboard/:ofcId' element={<IqacDashboard />} />
             <Route path='/ofcChange' element={<ChangeIQACPassword />} />
             <Route path='/forgotpass' element={<Forgotiqac/>} />
 

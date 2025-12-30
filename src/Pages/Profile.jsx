@@ -169,7 +169,7 @@ export default function ProfilePage() {
               <div className="text-center">
                 <img
                   draggable="false"
-                  src={`${imageurl}/uploads/${newObj.personalData.avatar}`}
+                  src={`${imageurl}/uploads/profiles/${newObj.personalData.avatar}`}
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover mx-auto"
                 />
