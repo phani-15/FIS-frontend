@@ -437,11 +437,11 @@ export default function IQACDashboard() {
     const obj={
       fields:selectedTypes,
       subfields:selectedAttributes,
-      ids:selectedMembers
+      ids:selectedMembers,
+      from_date:DateFrom,
+      to_date:DateTo
     }
-    console.log("date from :",DateFrom);
-    console.log("date to :",DateTo);
-    
+    console.log("object that was sending to backend was this :",obj);
     const data=await getReports(obj,ofcId)
     console.log("reports data was :",data); 
     setCertifications(data)
