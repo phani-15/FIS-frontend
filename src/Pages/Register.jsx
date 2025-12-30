@@ -1,18 +1,20 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import InputField from "../components/inputField";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useParams} from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
 import { departments } from '../assets/Data.jsx';
 import ProfilePictureCropper from "../components/ProfilePictureCropper";
+import { jwtDecode } from "jwt-decode";
 
 export default function Register() {
+  const {token}=useParams()
   const navigate = useNavigate()
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
-
+  const Data=jwtDecode(token)
   // Profile picture states
   const [showCropper, setShowCropper] = useState(false);
   const [profileImageSrc, setProfileImageSrc] = useState(null);
@@ -173,8 +175,7 @@ export default function Register() {
   const test = async () => {
     const obj1 = {
       "loginData": {
-        "email": "srinu497@gmail.com",
-        "password": "1234567890",
+        "email": `${Data.email}`,
       },
       "personalData": personalData,
       "education": {

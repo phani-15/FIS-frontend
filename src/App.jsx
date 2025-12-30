@@ -23,6 +23,7 @@ import ForgotHODPassword from "./Pages/ForgotHODpassword"
 import ChangeIQACPassword from './Pages/ChangeIQACPassword';
 import Forgotiqac from './Pages/Forgotiqac';
 import AdminFP from './Pages/AdminFP';
+import PrivateRoutes from './components/PrivateRoutes';
 
 export default function App() {
   return (
@@ -32,7 +33,7 @@ export default function App() {
         <main className='grow'><Routes>
             <Route path='/' element={<Login />} />
             <Route path='/fp/' element={<ForgotPassword />} />
-            <Route path='/register' element={<Register />} />
+            <Route path='/register/:token' element={<Register />} />
             <Route path='/rp' element={<ResetPassword/>} />
             
             <Route path='/profile/:profileId' element={<Profile />} />
@@ -50,7 +51,7 @@ export default function App() {
             <Route path='/ofcChange' element={<ChangeIQACPassword />} />
             <Route path='/forgotpass' element={<Forgotiqac/>} />
 
-            <Route path='/adminPage' element={<Admin />} />
+            <Route path='/adminPage' element={<PrivateRoutes><Admin /></PrivateRoutes>} />
             <Route path='/admin' element={<AdminLogin />} />
             <Route path='/adminfp/' element={<AdminFP />} />
             
