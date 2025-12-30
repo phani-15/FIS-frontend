@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef} from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
@@ -6,13 +6,12 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
 import { departments } from '../assets/Data.jsx';
 import ProfilePictureCropper from "../components/ProfilePictureCropper";
-import { area } from "framer-motion/client";
 
 export default function Register() {
   const navigate = useNavigate()
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
-  const [haveOAS, setHaveOAS] = useState(true); 
+  const [haveOAS, setHaveOAS] = useState(true);
 
   // Profile picture states
   const [showCropper, setShowCropper] = useState(false);
@@ -412,6 +411,60 @@ export default function Register() {
     });
   }, []);
 
+  // Handle file selection
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setProfileImageSrc(event.target.result);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle crop completion
+  const handleCropComplete = async (croppedBlob) => {
+    if (!croppedBlob) return;
+
+    // Create a File object from the blob
+    const croppedFile = new File([croppedBlob], 'profile-picture.jpg', {
+      type: 'image/jpeg'
+    });
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(croppedBlob);
+
+    setCroppedImage(croppedFile);
+    setCroppedPreview(previewUrl);
+    setShowCropper(false);
+
+    // Also update personalData with the file
+    setpersonalData(prev => ({ ...prev, avatar: croppedFile }));
+  };
+
+  // Handle crop cancel
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setProfileImageSrc(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleOASChange = useCallback((index, e) => {
     const { name, value } = e.target;
     setOtherAdministrativeService(prev => {
@@ -448,7 +501,6 @@ export default function Register() {
 
   const validateSignUp = useCallback(() => {
     const newErrors = {};
-    if (loginData.phone.length !== 10) newErrors.phone = "Phone number must be 10 digits";
     if (loginData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
     if (loginData.password != loginData.cPassword) newErrors.Cpassword = "Passwords do not match";
     setErrors(newErrors);
@@ -458,6 +510,17 @@ export default function Register() {
   const handleSubmitPersonal = useCallback(
     (e) => {
       e.preventDefault();
+      const newErrors = {};
+      Object.entries(personalData).forEach(([field, val]) => {
+        if (val === "" || val === null) {
+          newErrors[field] = `${field} is required`
+        }
+      })
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors)
+        console.log(errors)
+        return
+      }
       setErrors({});
       console.log(personalData);
 
@@ -676,18 +739,6 @@ export default function Register() {
 
             <InputField label="Email" placeholder="enter mail addresss" name="email" type="email" value={loginData.email} onChange={handleLoginChange} required />
 
-            {/* specific handler for phone to keep digits-only and stable string */}
-            <InputField
-              label="Phone Number (10 digits)"
-              name="phone"
-              value={loginData.phone}
-              onChange={handlePhoneChange}
-              inputMode="numeric"
-              placeholder="Enter phone number"
-              error={errors.phone}
-              required
-            />
-
             <InputField
               label="Password"
               name="password"
@@ -720,19 +771,12 @@ export default function Register() {
           </form>
         </div>
       )}
-      {/* Cropper Modal */}
-      {showCropper && profileImageSrc && (
-        <ProfilePictureCropper
-          image={profileImageSrc}
-          onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
-        />
-      )}
       {step === "personal" && (
         <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
           <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: "Times New Roman, serif" }}>Personal Details</h1>
 
           <form onSubmit={handleSubmitPersonal} className="flex flex-col">
+
             <div className="mb-6">
               <label className="block text-left mb-3 font-medium text-gray-700">
                 Profile Picture <span className="text-red-500">*</span>
@@ -780,7 +824,6 @@ export default function Register() {
                         </svg>
                       </div>
                       <p className="text-sm text-gray-500">Click to upload</p>
-                      <p className="text-xs text-gray-400 mt-1">1:1 ratio recommended</p>
                     </div>
                   </div>
                 )}
@@ -790,45 +833,48 @@ export default function Register() {
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  required
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    setpersonalData((prev) => ({ ...prev, avatar: file }));
-
-                    if (file) {
-                      // Generate preview URL
-                      const url = URL.createObjectURL(file);
-                      setPreviewUrl(url);
-                    } else {
-                      setPreviewUrl(null);
-                    }
-                  }}
+                  onChange={handleFileSelect}
+                  className="hidden"
                 />
-                {/* Cropper Modal */}
-      {showCropper && profileImageSrc && (
-        <ProfilePictureCropper
-          image={profileImageSrc}
-          onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
-        />
-      )}
 
-                {previewUrl && (
-                  <div>
-                    <button
-                      type="button"
-                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 relative xl:ml-0 ml-55 "
-                      onClick={() => {
-                        // Open in new tab or show modal — here we just log; you can enhance
-                        window.open(previewUrl, '_blank');
-                      }}>
-                      View
-                    </button>
-                  </div>
+                {/* Upload button (only shown when no image is selected) */}
+                {!croppedPreview && (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                  >
+                    Choose File
+                  </button>
                 )}
+
+                {/* Instructions */}
+                <div className="text-left text-sm text-gray-600 space-y-1">
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Maximum file size: 5MB
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Supported formats: JPG, PNG
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    You'll be able to crop and select the best part
+                  </p>
+                </div>
               </div>
+              {errors.avatar && <small className="text-red-600 text-sm">{errors.avatar}</small>}
             </div>
 
+            {/* Cropper Modal - Only show when needed */}
+            {showCropper && profileImageSrc && (
+              <ProfilePictureCropper
+                image={profileImageSrc}
+                onCropComplete={handleCropComplete}
+                onCancel={handleCropCancel}
+              />
+            )}
             <InputField label="Full Name" name="name" placeholder="enter your name" value={personalData.name} onChange={handleChange} required />
             <InputField label="Father's Name" name="father" placeholder="enter your father name" value={personalData.father} onChange={handleChange} required />
 
@@ -957,8 +1003,8 @@ export default function Register() {
                 >
                   <option value="">Select your option</option>
                   {departments.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
               </div>
             }
