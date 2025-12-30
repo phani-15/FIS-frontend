@@ -35,86 +35,14 @@ export default function Register() {
   //   college: "",
   //   date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   // });
-
-  const obj = {
-    "tenth": {
-      "title": "Tenth",
-      "school": "dkvnsd",
-      "percentage": "",
-      "year": "2009"
-    },
-    "twelth": {
-      "title": "Intermediate/Diploma",
-      "type": "Intermediate",
-      "college": "hl.,h",
-      "percentage": "",
-      "year": "2011"
-    },
-    "degree": {
-      "title": "Under Graduation",
-      "degreeName": "vbnmvf",
-      "specialization": "gjftrj",
-      "percentage": "",
-      "college": "klfgfdjnzs",
-      "university": "mghcf",
-      "year": "2013"
-    },
-    "pg": {
-      "title": "Post Graduation",
-      "course": "fbmrfxd",
-      "specialization": "mgh,g",
-      "percentage": "",
-      "college": "gfjmxf",
-      "university": "fgkmcd",
-      "year": "2009"
-    },
-    "phd": [
-      {
-        "specialization": "cv nfgnfs",
-        "under_the_proffessor": "",
-        "department": "dsdfbga",
-        "University": "dfbarb",
-        "year": "2023"
-      },
-      {
-        "specialization": "gmmx",
-        "under_the_proffessor": "",
-        "department": "sdgfsdh",
-        "University": "fmsfghmsf",
-        "year": "2023"
-      },
-      {
-        "specialization": "fddns",
-        "under_the_proffessor": "sfrnmfgns",
-        "department": "fdhsdhfd",
-        "University": "radhafdbz",
-        "year": "2000"
-      }
-    ],
-    "postdoc": [
-      {
-        "specialization": "AI/ML",
-        "under_the_proffessor": "Sukumar",
-        "University": "KL University",
-        "year": "2020"
-      },
-      {
-        "specialization": "Deep Learning",
-        "under_the_proffessor": "Surya",
-        "University": "AKNU",
-        "year": "2022"
-      }
-    ]
-  }
-
-  const [personalData, setpersonalData] = useState({
+    const [personalData, setpersonalData] = useState({
     name: "Srinivas Rao polavarapu",
     avatar: null,
     father: "nothing",
     gender: "female",
     DOB: "",
     marital: "married",
-    phone: "1234567896",
+    phone: "1234566677",
     area: "kukatpallyground",
     city: "hyderabadcity",
     designation: "professor",
@@ -122,7 +50,6 @@ export default function Register() {
     college: "JNTUGV-CEV",
     date_of_join: new Date().toISOString().slice(0, 7), // current year-month
   });
-
   const [loginData, setLoginData] = useState({
     password: "",
     email: "",
@@ -246,7 +173,7 @@ export default function Register() {
   const test = async () => {
     const obj1 = {
       "loginData": {
-        "email": "srinu477@gmail.com",
+        "email": "srinu497@gmail.com",
         "password": "1234567890",
       },
       "personalData": personalData,
@@ -337,7 +264,7 @@ export default function Register() {
           "to": 2020
         }
       ],
-      "otheradministrativeervice": [
+      "otherAdministrativeService": [
         {
           "designation": "Research Committee Member",
           "institute": "ABC Institute",

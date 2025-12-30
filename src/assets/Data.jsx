@@ -1653,7 +1653,7 @@ const MOOC_fields = ['Title of the MOOC', 'Month & Year', 'Document'];
 const e_content_fields = ['Title of the e-Content', 'Month & Year', 'Module is being used by Organization', 'Document'];
 
 const fields = {
-  foreign_visits: ['Purpose of Visit', 'Nature of Visit', 'Name of Conference/Event', 'Academic Year', 'Name of Host Organization', 'Country Visited', 'Start Date', 'End Date', 'Duration (in days)', 'Role of Faculty', 'Title of the Paper/Talk', 'Sponsoring Agency', 'Amount Sanctioned', 'Travel Grant Recieved', 'document'],
+  foreign_visits: ['Purpose of Visit', 'Nature of Visit', 'Name of Conference/Event', 'Academic Year', 'Name of Host Organization', 'Country Visited', 'Start Date', 'End Date', 'Duration (in days)', 'Role of Faculty', 'Title of the Paper/Talk', 'Sponsoring Agency', 'Amount Sanctioned', 'Travel Grant Recieved', 'Document'],
   patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope', 'Document'],
   book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
   book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],

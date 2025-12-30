@@ -4,6 +4,8 @@ import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields }
 import { label } from 'framer-motion/client';
 import { values } from 'pdf-lib';
 import { div } from 'framer-motion/m';
+import {PDFDocument} from "pdf-lib"
+import {Info} from "lucide-react"
 import {useParams} from "react-router-dom"
 import {addDetails} from "../core/addDetails.js"
 
@@ -302,7 +304,7 @@ const AddCredentials = () => {
     return group && subcategories[group] && subcategories[group].length > 0;
   }, [group]);
 
-  const handlemoocSubmit = (e) => {
+  const handlemoocSubmit = async (e) => {
     e.preventDefault();
     console.log("🚀 MOOC SUBMIT triggered");
 
@@ -397,12 +399,12 @@ const AddCredentials = () => {
       // Optional: include files if any were uploaded (e.g., certificates, links, docs)
       files: { ...fileMap } // currently unused in MOOC, but safe to keep
     };
-
+    await addDetails(payload,userId,credId)
     console.log('✅ MOOC Submission Payload:', payload);
     alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
   }
 
-  const handleESubmit = (e) => {
+  const handleESubmit =async  (e) => {
     e.preventDefault();
     console.log("🚀 e-Content SUBMIT triggered");
 
@@ -496,7 +498,7 @@ const AddCredentials = () => {
       // Optional: include files if any were uploaded (e.g., certificates, links, docs)
       files: { ...fileMap } // currently unused in MOOC, but safe to keep
     };
-
+        await addDetails(payload,userId,credId)
     console.log('✅ MOOC Submission Payload:', payload);
     alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
   }
@@ -649,7 +651,7 @@ const AddCredentials = () => {
     return roleValue === 'Organized';
   }
 
-  const handlePhdjoinedSubmit = (e) => {
+  const handlePhdjoinedSubmit = async (e) => {
     e.preventDefault();
     console.log("🚀 PhD (Ongoing) Submit triggered");
 
@@ -718,7 +720,7 @@ const AddCredentials = () => {
       },
       files: { ...fileMap }
     };
-
+        await addDetails(payload,userId,credId)
     console.log('✅ PhD (Ongoing) Payload:', payload);
     alert(`✅ Successfully submitted ${numPhd} PhD student(s)!`);
 
@@ -730,7 +732,7 @@ const AddCredentials = () => {
     setErrors({});
   };
 
-  const handlePhdSubmit = (e) => {
+  const handlePhdSubmit = async (e) => {
     e.preventDefault();
     console.log("🚀 PhD (Awarded) Submit triggered");
 
@@ -814,6 +816,7 @@ const AddCredentials = () => {
       },
       files: { ...fileMap }
     };
+        await addDetails(payload,userId,credId)
 
     console.log('✅ PhD (Awarded) Payload:', payload);
     alert(`✅ Successfully recorded ${numPhd} PhD award(s)!`);

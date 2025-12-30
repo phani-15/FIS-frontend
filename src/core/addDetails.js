@@ -13,6 +13,7 @@ export const addDetails=async (data,userId,credId)=>{
         body:Newdata
     })    
 }
+
 export const getDetails=async (userId,credId)=>{
     const {token}=isAuthenticated()
     const response=await fetch(`${API}/vc/${userId}/${credId}`,{
