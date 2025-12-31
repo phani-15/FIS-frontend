@@ -3,7 +3,7 @@ import { Search, X, User, ChevronDown, ShieldCheck, XCircle, ChevronUp, FileText
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { schemas, yearFields, certifications } from '../assets/Data'
+import { schemas, yearFields,  } from '../assets/Data'
 import { HodDashBoard } from "../core/hod"
 import axios from "axios";
 
