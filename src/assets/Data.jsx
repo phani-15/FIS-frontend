@@ -1,3 +1,5 @@
+import { label } from "framer-motion/client";
+
 const yearFields = {
   patents: "Year of Published/Granted",
   journal: "Year of Publication",
@@ -140,6 +142,7 @@ const schemas = {
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -153,6 +156,7 @@ const schemas = {
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -166,6 +170,7 @@ const schemas = {
       { key: "Mode", label: "Mode", required: false },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -179,6 +184,7 @@ const schemas = {
       { key: "Mode", label: "Mode", required: false },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -192,6 +198,7 @@ const schemas = {
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -205,6 +212,7 @@ const schemas = {
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -218,6 +226,7 @@ const schemas = {
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
       { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -439,7 +448,7 @@ const fields = {
     'Title Of The Paper Talk',
     'Sponsoring Agency',
     'Amount Sanctioned',
-    'Travel Grant Recieved',
+    'Travel/grant/recieved',
     'Document'
   ],
   patents: [
@@ -454,7 +463,7 @@ const fields = {
     'Title Of The Book Chapter',
     'Name Of The Publisher',
     'Year Of Publication',
-    'National International',
+    'National/international',
     'Isbn Number',
     'No Of Authors',
     'Document'
@@ -463,7 +472,7 @@ const fields = {
     'Title Of The Book',
     'Name Of The Publisher',
     'Year Of Publication',
-    'National International',
+    'National/international',
     'Isbn Number',
     'Document'
   ],
@@ -474,7 +483,7 @@ const fields = {
     'Year Of Publication',
     'Volume Number',
     'Impact Factor Thomson Reuters',
-    'National International',
+    'National/international',
     'Issn Number',
     'No Of Authors',
     'Author',
@@ -487,45 +496,45 @@ const fields = {
     'Title Of The Conference',
     'Date Of Publication',
     'Organized By',
-    'National International',
+    'National/international',
     'Document'
   ],
   nptel: [
     'Name Of Certification Course',
     'Type Of Certification',
     'Duration In Weeks',
-    'Certificate'
+    'Document'
   ],
   swayam: [
     'Name Of Certification Course',
     'Type Of Certification',
     'Duration In Weeks',
-    'Certificate'
+    'Document'
   ],
   coursera: [
     'Name Of Certification Course',
     'Type Of Certification',
     'Duration In Weeks',
-    'Certificate'
+    'Document'
   ],
   infosysspringboard: [
     'Name Of Certification Course',
     'Type Of Certification',
     'Duration In Weeks',
-    'Certificate'
+    'Document'
   ],
   edx: [
     'Name Of Certification Course',
     'Type Of Certification',
     'Duration In Weeks',
-    'Certificate'
+    'Document'
   ],
   other: [
     'Name Of Certification Course',
     'Type Of Certification',
     'Organized By',
     'Duration In Weeks',
-    'Certificate'
+    'Document'
   ],
   sponsored: [
     'Project Title',
@@ -559,7 +568,7 @@ const fields = {
     'Are You',
     'Status',
     'Sanctioning Order',
-    'Utilization Certificate Final Year'
+    'Utilization Certificate of Final Year'
   ],
   fdp: [
     'Program Title',
@@ -569,8 +578,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   sttp: [
     'Program Title',
@@ -580,8 +590,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   conference: [
     'Program Title',
@@ -591,8 +602,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   workshop: [
     'Program Title',
@@ -602,8 +614,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   seminar: [
     'Program Title',
@@ -613,8 +626,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   webinar: [
     'Program Title',
@@ -624,8 +638,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   rc: [
     'Program Title',
@@ -635,8 +650,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   oc: [
     'Program Title',
@@ -646,8 +662,9 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended Organized',
-    'Role'
+    'Attended/organized',
+    'Role',
+    'Document'
   ],
   talk: [
     'Event Title',
@@ -715,7 +732,7 @@ const fields = {
     'Pedagogy Is Being Used By Organization',
     'Document'
   ],
-  award_title: [
+  award_ttle: [
     'Award Recognition Title',
     'Granting Organization Institution',
     'Scope',
@@ -772,10 +789,10 @@ const fields = {
     'Certificate'
   ],
   book_book_chapter: [
-    'Title Of The Book Book Chapter',
+    'Title Of The Book/Book Chapter',
     'Name Of The Publisher',
     'Month Year Of Publication',
-    'Isbn Issn Number',
+    'Isbn/Issn Number',
     'No Of Chapters Translated',
     'No Of Books Translated',
     'Document'

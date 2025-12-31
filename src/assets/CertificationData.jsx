@@ -24,7 +24,7 @@ const names = {
     OC: 'Orientation Courses',
     talk: 'Invited Talks',
     keynote: 'Keynote Addresses',
-    chair: 'Session Chairing',
+    chair: 'Session Chair',
     lecture: 'Guest Lectures',
     resource_person: 'Resource Person',
     innovative_pedagogy: 'Innovative Pedagogy',

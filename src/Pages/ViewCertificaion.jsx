@@ -114,7 +114,8 @@ const normalizeBackendData = (backendData) => {
       // Map backend keys (lowercase_with_underscores) to expected field names (Space Separated)
       Object.entries(item).forEach(([backendKey, value]) => {
         // Skip file/document fields if they're not in the expected fields
-        if (['document', 'certificate', 'Document'].includes(backendKey)) {
+        if (backendKey.includes('certificate') || backendKey.includes('Certificate') || backendKey.includes('document')|| backendKey.includes('Document') || backendKey.includes('Order')||backendKey.includes('Proceeding'))
+       {
           normalizedItem[backendKey] = value;
           return;
         }
@@ -168,7 +169,8 @@ const normalizeSectionKey = (section) => {
 
 // --- Helper: Format label ---
 const formatFieldLabel = (label) => {
-  if (!label || ['document', 'certificate', 'Document'].includes(label)) return null;
+  if (!label || label.includes('certificate') || label.includes('Certificate') || (label.includes('Number') && label.includes('Students')) || label.includes('document')|| label.includes('Document') || label.includes('Order')||label.includes('Proceeding'))
+      return null;
   return label
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (l) => l.toUpperCase());
@@ -251,7 +253,8 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
           {fieldsToEdit.map(({ key, label, value }) => {
-            const isFile = ['document', 'certificate', 'Document'].includes(key);
+            const isFile = key.includes('certificate') || key.includes('Certificate') || key.includes('document')|| key.includes('Document') || key.includes('Order')||key.includes('Proceeding')
+      
             const isPlaceField = key === 'Place';
             const modeValue = item['Mode'] || item['mode'];
 
@@ -316,8 +319,9 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
   const getNonFileFields = (section) => {
     const normalizedKey = normalizeSectionKey(section);
     const allFields = fields[normalizedKey] || [];
-    return allFields.filter(field =>
-      !['document', 'certificate', 'Document'].includes(field)
+    return allFields.filter(f =>
+      !(f.includes('certificate') || f.includes('Certificate') || f.includes('document')|| f.includes('Document') || f.includes('Order')||f.includes('Proceeding'))
+      
     );
   };
 
@@ -354,7 +358,7 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
 
       const items = certificationsData[section];
       let selectedFields = config.selectedFields.filter(f =>
-        !['document', 'certificate', 'Document'].includes(f)
+        !(f.includes('certificate') || f.includes('Certificate') || f.includes('document')|| f.includes('Document') || f.includes('Order')||f.includes('Proceeding'))
       );
 
       if (selectedFields.length === 0) return;
@@ -602,7 +606,7 @@ const ViewCertificaion = () => {
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
-    const hasDoc = item.document || item.certificate || item.Document;
+    const hasDoc = item.document || item.certificate || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;
 
     return (
       <div
@@ -637,7 +641,7 @@ const ViewCertificaion = () => {
               </button>
               {hasDoc && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
-                  onClick={() => viewDocument(item.document || item.certificate || item.Document)}
+                  onClick={() => viewDocument(item.document || item.certificate || item.Document || item.sanctioning_order || item.utilization_certificate_of_final_year)}
                 >
                   View Document
                 </button>

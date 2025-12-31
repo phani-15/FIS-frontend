@@ -75,7 +75,6 @@ const subcategories = {
     { label: 'Keynote Address', value: 'keynote' },
     { label: 'Session Chair', value: 'chair' },
     { label: 'Guest Lecture', value: 'lecture' },
-    { label: 'Expert Committee Member', value: 'committee' },
     { label: 'Resource Person', value: 'resource_person' },
   ],
   'Content Development': [
@@ -160,7 +159,7 @@ const AddCredentials = () => {
     if (isUtilCertificate(label) && formData['Status'] === 'Ongoing') {
       return { isValid: true };
     }
-    if (cleanLabel === 'role' && formData['Attended/Organized'] !== 'Organized') {
+    if (cleanLabel === 'role' && formData['Attended/organized'] !== 'Organized') {
       return { isValid: true };
     }
 
@@ -263,15 +262,18 @@ const AddCredentials = () => {
     if (cleanLabel.includes('isbn') || cleanLabel.includes('issn')) {
       if (!valStr) return { isValid: false, message: `${label} is required` };
       const isbnIssnRegex = /^[\d\-]+$/;
-      if (!isbnIssnRegex.test(valStr)) {
+      if (!isbnIssnRegex.test(valStr)  ) {
         return { isValid: false, message: `${label} must contain only digits and hyphens` };
       }
       const digitsOnly = valStr.replace(/-/g, '');
-      if (cleanLabel.includes('isbn') && digitsOnly.length !== 10 && digitsOnly.length !== 13) {
+      if (cleanLabel.includes('isbn') && digitsOnly.length !== 10 && digitsOnly.length !== 13 && !cleanLabel.includes('issn')) {
         return { isValid: false, message: 'ISBN must be 10 or 13 digits (hyphens allowed)' };
       }
-      if (cleanLabel.includes('issn') && digitsOnly.length !== 8) {
+      if (cleanLabel.includes('issn') && digitsOnly.length !== 8 && !cleanLabel.includes('isbn')) {
         return { isValid: false, message: 'ISSN must be 8 digits (e.g., 1234-5678)' };
+      }
+      if(cleanLabel.includes('issn') && cleanLabel.includes('isbn') && digitsOnly.length !== 8 && digitsOnly.length !== 10 && digitsOnly.length !== 13){
+        return { isValid: false, message: 'ISSN/ISBN must be 8 or 10 or 13 digits (hyphens allowed)' };
       }
       return { isValid: true };
     }
@@ -644,7 +646,7 @@ const AddCredentials = () => {
   }
 
   const isOrganized = () => {
-    const roleValue = formData['Attended/Organized'] || '';
+    const roleValue = formData['Attended/organized'] || '';
     return roleValue === 'Organized';
   }
 
@@ -707,17 +709,40 @@ const AddCredentials = () => {
       topLevelData[key] = formData[label] || '';
     });
 
-    // ✅ Final payload
-    const payload = {
-      group,
-      subcategory,
-      formData: {
-        ...topLevelData,
-        phd_students: phdStudents // ← clean array
-      },
-      files: { ...fileMap }
-    };
-    await addDetails(payload, userId, credId)
+    try {
+      for (let i = 0; i < numPhd; i++) {
+
+        // Build single student object
+        const student = {};
+        phd_joining_fields.forEach(label => {
+          const key = toSnakeCase(label);
+          student[key] = formData[`${label}__${i}`]?.trim() || '';
+        });
+
+        // Build payload per student
+        const payload = {
+          group,
+          subcategory,
+          formData: {
+            ...student,
+            number_of_phd_joined: numPhd
+          },
+          files: { ...fileMap }
+        };
+
+        // 🔹 One backend entry per student
+        await addDetails(payload, userId, credId);
+
+        console.log(`✅ Submitted PhD student ${i + 1}`, payload);
+      }
+
+      alert(`✅ Successfully submitted ${numPhd} PhD student(s)!`);
+
+    } catch (error) {
+      console.error('❌ PhD submission failed:', error);
+      alert('❌ Submission failed. Please try again.');
+    }
+
     console.log('✅ PhD (Ongoing) Payload:', payload);
     alert(`✅ Successfully submitted ${numPhd} PhD student(s)!`);
 
@@ -787,35 +812,39 @@ const AddCredentials = () => {
       return;
     }
 
-    // 🔹 Build structured data
-    const awardedPhds = [];
-    for (let i = 0; i < numPhd; i++) {
-      const phd = {};
-      phd_awarded_fields.forEach(label => {
-        const key = toSnakeCase(label);
-        phd[key] = formData[`${label}__${i}`]?.trim() || '';
-      });
-      awardedPhds.push(phd);
+    try {
+      for (let i = 0; i < numPhd; i++) {
+
+        // Build single student object
+        const student = {};
+        phd_awarded_fields.forEach(label => {
+          const key = toSnakeCase(label);
+          student[key] = formData[`${label}__${i}`]?.trim() || '';
+        });
+
+        // Build payload per student
+        const payload = {
+          group,
+          subcategory,
+          formData: student,
+          files: { ...fileMap }
+        };
+
+        // 🔹 One backend entry per student
+        await addDetails(payload, userId, credId);
+
+        console.log(`✅ Submitted PhD student ${i + 1}`, payload);
+      }
+
+      alert(`✅ Successfully submitted ${numPhd} PhD student(s)!`);
+
+    } catch (error) {
+      console.error('❌ PhD submission failed:', error);
+      alert('❌ Submission failed. Please try again.');
     }
 
-    // Top-level metadata
-    const topLevel = {
-      number_of_phd_awarded: numPhd
-    };
 
-    // ✅ Final payload
-    const payload = {
-      group,
-      subcategory,
-      formData: {
-        ...topLevel,
-        awarded_phds: awardedPhds // ← clean, typed, scalable
-      },
-      files: { ...fileMap }
-    };
-    await addDetails(payload, userId, credId)
-
-    console.log('✅ PhD (Awarded) Payload:', payload);
+    // console.log('✅ PhD (Awarded) Payload:', payload);
     alert(`✅ Successfully recorded ${numPhd} PhD award(s)!`);
 
     // Reset form
@@ -850,7 +879,7 @@ const AddCredentials = () => {
       }
 
       // 🚫 Skip Role when not Organized
-      if (clean === 'role' && formData['Attended/Organized'] !== 'Organized') {
+      if (clean === 'role' && formData['Attended/organized'] !== 'Organized') {
         return;
       }
 
@@ -1081,7 +1110,7 @@ const AddCredentials = () => {
                                         className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
                                           } `}
                                         placeholder={`Enter ${cleanLabel}`}
-                                        required={!isFile}
+                                        required={true}
                                         min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
                                         step={isNum ? "1" : undefined}
                                       />
@@ -1496,7 +1525,7 @@ const AddCredentials = () => {
                                           className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
                                             } `}
                                           placeholder={`Enter ${cleanLabel}`}
-                                          required={!isFile}
+                                          required
                                           min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
                                           step={isNum ? "1" : undefined}
                                         />
@@ -1779,7 +1808,7 @@ const AddCredentials = () => {
                                             className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
                                               } `}
                                             placeholder={`Enter ${cleanLabel}`}
-                                            required={!isFile && cleanLabel !== 'validity period (if applicable)'}
+                                            required={cleanLabel !== 'validity period (if applicable)'}
                                             min={isNum ? (cleanLabel.includes('year') ? "1900" : "0") : undefined}
                                             step={isNum ? "1" : undefined}
                                           />
