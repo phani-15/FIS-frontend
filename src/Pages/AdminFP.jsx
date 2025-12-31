@@ -5,7 +5,6 @@ import InputField from '../components/inputField';
 export default function PasswordChange() {
 
 	const [data, setData] = React.useState({
-		mail: "",
 		OTP: "",
 		password: "",
 		confirmPassword: ""
@@ -26,7 +25,7 @@ export default function PasswordChange() {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const newErrors = {}
-		if (data.password.length < 8) newErrors.password = "Password must be at least 8 characters";
+		if (data.password.length < 10) newErrors.password = "Password must be at least 10 characters";
 		if (data.password !== data.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
 		setError(newErrors);
 		if(Object.keys(newErrors).length > 0) return;
@@ -49,18 +48,6 @@ export default function PasswordChange() {
 
 				{/* Form */}
 				<form className="mt-8 space-y-5 text-left">
-					{/* Prompting email */}
-					 <div>
-						<InputField
-							label="e-mail Address"
-							type="email"
-							value={data.mail}
-							id="mail"
-							placeholder="Enter your registered email"	
-							onChange={handleChange}
-							error={error.mail}
-						/>
-					</div>
 
 					{/* Submit Button */}
 					{!clicked &&

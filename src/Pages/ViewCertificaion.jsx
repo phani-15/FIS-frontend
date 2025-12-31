@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { X, SquarePen, Download } from 'lucide-react';
 import { names, map } from '../assets/CertificationData';
 import { fields } from '../assets/Data';
-import { useParams ,useNavigate} from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { getDetails } from "../core/addDetails"
 import { API } from '../backend';
+import {ArrowLeft} from 'lucide-react'
 
 // --- NORMALIZATION FUNCTION ---
 const normalizeBackendData = (backendData) => {
@@ -102,7 +103,7 @@ const normalizeBackendData = (backendData) => {
   Object.entries(backendData).forEach(([backendSection, items]) => {
     // Get normalized section key (e.g., "PATENTS" → "patents")
     const normalizedSection = sectionMap[backendSection] || backendSection.toLowerCase().replace(/\s+/g, '_');
-    
+
     if (!Array.isArray(items)) return;
 
     // Process each item in the section
@@ -177,7 +178,7 @@ const formatFieldLabel = (label) => {
 const getTopRelevantFields = (section, item) => {
   const normalizedKey = normalizeSectionKey(section);
   const keys = fields[normalizedKey] || Object.keys(item).filter(k => k !== 'id');
-  
+
   return keys
     .slice(0, 3)
     .map((key) => {
@@ -188,7 +189,7 @@ const getTopRelevantFields = (section, item) => {
         );
         value = matchingKey ? item[matchingKey] : undefined;
       }
-      
+
       return {
         label: formatFieldLabel(key),
         value: value || 'Not specified',
@@ -315,7 +316,7 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
   const getNonFileFields = (section) => {
     const normalizedKey = normalizeSectionKey(section);
     const allFields = fields[normalizedKey] || [];
-    return allFields.filter(field => 
+    return allFields.filter(field =>
       !['document', 'certificate', 'Document'].includes(field)
     );
   };
@@ -352,7 +353,7 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
       if (!config.checked || certificationsData[section].length === 0) return;
 
       const items = certificationsData[section];
-      let selectedFields = config.selectedFields.filter(f => 
+      let selectedFields = config.selectedFields.filter(f =>
         !['document', 'certificate', 'Document'].includes(f)
       );
 
@@ -509,17 +510,17 @@ const ViewCertificaion = () => {
       try {
         const backendData = await getDetails(userId, credId);
         console.log("Backend data:", backendData);
-        
+
         // Normalize the backend data
         const normalizedData = normalizeBackendData(backendData);
         console.log("Normalized data:", normalizedData);
-        
+
         setinitialData(normalizedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    
+
     getfunction();
   }, [userId, credId]);
 
@@ -576,7 +577,7 @@ const ViewCertificaion = () => {
   const getAllFields = (item, section) => {
     const normalizedKey = normalizeSectionKey(section);
     const keys = fields[normalizedKey] || Object.keys(item).filter(k => k !== 'id');
-    
+
     return keys
       .filter((key) => !['id'].includes(key))
       .map((key) => {
@@ -587,7 +588,7 @@ const ViewCertificaion = () => {
           );
           value = matchingKey ? item[matchingKey] : undefined;
         }
-        
+
         return {
           label: formatFieldLabel(key),
           value: value || 'Not specified',
@@ -597,7 +598,7 @@ const ViewCertificaion = () => {
   };
 
   const renderCertificateItem = (section, item) => {
-    const documentUrl=API.replace("/api","")
+    const documentUrl = API.replace("/api", "")
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
@@ -636,7 +637,7 @@ const ViewCertificaion = () => {
               </button>
               {hasDoc && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
-                onClick={() => viewDocument(item.document || item.certificate || item.Document)}
+                  onClick={() => viewDocument(item.document || item.certificate || item.Document)}
                 >
                   View Document
                 </button>
@@ -669,6 +670,12 @@ const ViewCertificaion = () => {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8">
+      <button
+        onClick={() => navigate(`/profile/${userId}`)}
+        className='left-7 flex ml-4 px-3.5 py-3 cursor-pointer rounded-3xl text-white gap-2 bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700'>
+        <ArrowLeft size={22} strokeWidth={3} />
+      </button>
+
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
@@ -677,6 +684,7 @@ const ViewCertificaion = () => {
         </div>
 
         <div className="space-y-8">
+          {console.log("certifications data : ", certificationsData)}
           {Object.entries(certificationsData)
             .filter(([, items]) => items.length > 0)
             .map(([section, items]) => (
