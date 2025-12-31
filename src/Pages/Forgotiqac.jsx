@@ -113,6 +113,7 @@ export default function Forgotiqac() {
               <InputField
                 label="OTP"
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 value={data.OTP}
                 id="OTP"
                 placeholder="Enter OTP"

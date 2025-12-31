@@ -10,7 +10,7 @@ export default function PasswordChange() {
 		confirmPassword: ""
 	})
 
-	const handleChange = (e) => {		
+	const handleChange = (e) => {
 		const { id, value } = e.target;
 		setData((prevData) => ({
 			...prevData,
@@ -28,7 +28,7 @@ export default function PasswordChange() {
 		if (data.password.length < 10) newErrors.password = "Password must be at least 10 characters";
 		if (data.password !== data.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
 		setError(newErrors);
-		if(Object.keys(newErrors).length > 0) return;
+		if (Object.keys(newErrors).length > 0) return;
 		alert("Password changed successfully!")
 	}
 
@@ -67,12 +67,13 @@ export default function PasswordChange() {
 								<InputField
 									label="OTP"
 									type="number"
+									onWheel={(e) => e.target.blur()}
 									value={data.OTP}
 									id="OTP"
 									placeholder="Enter OTP"
 									onChange={handleChange}
 									error={error.OTP}
-								/>	
+								/>
 							</div>
 							{!otpVerified &&
 								<button

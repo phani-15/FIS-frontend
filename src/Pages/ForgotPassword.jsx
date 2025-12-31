@@ -11,7 +11,7 @@ export default function PasswordChange() {
 		confirmPassword: ""
 	})
 
-	const handleChange = (e) => {		
+	const handleChange = (e) => {
 		const { id, value } = e.target;
 		setData((prevData) => ({
 			...prevData,
@@ -29,7 +29,7 @@ export default function PasswordChange() {
 		if (data.password.length < 8) newErrors.password = "Password must be at least 8 characters";
 		if (data.password !== data.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
 		setError(newErrors);
-		if(Object.keys(newErrors).length > 0) return;
+		if (Object.keys(newErrors).length > 0) return;
 		alert("Password changed successfully!")
 	}
 
@@ -50,13 +50,13 @@ export default function PasswordChange() {
 				{/* Form */}
 				<form className="mt-8 space-y-5 text-left">
 					{/* Prompting email */}
-					 <div>
+					<div>
 						<InputField
 							label="e-mail Address"
 							type="email"
 							value={data.mail}
 							id="mail"
-							placeholder="Enter your registered email"	
+							placeholder="Enter your registered email"
 							onChange={handleChange}
 							error={error.mail}
 						/>
@@ -80,12 +80,13 @@ export default function PasswordChange() {
 								<InputField
 									label="OTP"
 									type="number"
+									onWheel={(e) => e.target.blur()}
 									value={data.OTP}
 									id="OTP"
 									placeholder="Enter OTP"
 									onChange={handleChange}
 									error={error.OTP}
-								/>	
+								/>
 							</div>
 							{!otpVerified &&
 								<button

@@ -884,7 +884,7 @@ const AddCredentials = () => {
     };
 
     console.log(payload)
-    
+
     await addDetails(payload, userId, credId)
       .catch(err => {
         console.log(err);
@@ -970,6 +970,7 @@ const AddCredentials = () => {
                       </label>
                       <input
                         type="number"
+                        onWheel={(e) => e.target.blur()}
                         value={formData['Number of Ph.D. Awarded'] || ''}
                         onChange={(e) => handleInputChange('Number of Ph.D. Awarded', e.target.value)}
                         className={`w-full px-3 py-2 border rounded-md ${errors['Number of Ph.D. Awarded'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
@@ -1074,6 +1075,7 @@ const AddCredentials = () => {
                                     (
                                       <input
                                         type={isNum ? "number" : isDate ? "date" : "text"}
+                                        onWheel={(e) => e.target.blur()}
                                         value={value}
                                         onChange={(e) => handleInputChange(name, e.target.value)}
                                         className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
@@ -1131,6 +1133,7 @@ const AddCredentials = () => {
                         </label>
                         <input
                           type="number"
+                          onWheel={(e) => e.target.blur()}
                           value={formData['Number of e-Contents'] || ''}
                           onChange={(e) => handleInputChange('Number of e-Contents', e.target.value)}
                           className={`w-full px-3 py-2 border rounded-md ${errors['Number of e-Contents'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
@@ -1273,6 +1276,7 @@ const AddCredentials = () => {
                           </label>
                           <input
                             type="number"
+                            onWheel={(e) => e.target.blur()}
                             value={formData['Number of MOOCs'] || ''}
                             onChange={(e) => handleInputChange('Number of MOOCs', e.target.value)}
                             className={`w-full px-3 py-2 border rounded-md ${errors['Number of MOOCs'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
@@ -1400,6 +1404,7 @@ const AddCredentials = () => {
                             </label>
                             <input
                               type="number"
+                              onWheel={(e) => e.target.blur()}
                               value={formData['Number of Ph.D. joined'] || ''}
                               onChange={(e) => handleInputChange('Number of Ph.D. joined', e.target.value)}
                               className={`w-full px-3 py-2 border rounded-md ${errors['Number of Ph.D. joined'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
@@ -1485,6 +1490,7 @@ const AddCredentials = () => {
                                       ) : (
                                         <input
                                           type={isNum ? "number" : isDate ? "date" : "text"}
+                                          onWheel={(e) => e.target.blur()}
                                           value={value}
                                           onChange={(e) => handleInputChange(name, e.target.value)}
                                           className={`w-full px-3 py-2 border rounded-md ${errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
@@ -1761,6 +1767,7 @@ const AddCredentials = () => {
                                         (
                                           <input
                                             type={isNum || label === "No. of Authors" ? "number" : isDate ? "date" : "text"}
+                                            onWheel={(e) => e.target.blur()}
                                             value={value}
                                             onChange={(e) => handleInputChange(name, e.target.value)}
                                             onBlur={() => {

@@ -511,6 +511,7 @@ export default function Register() {
           onChange={handleEducationChange}
           // keep year as text + inputMode numeric to avoid number->string conversions
           type={f === "year" ? "number" : "text"}
+          onWheel={(e) => e.target.blur()}
           min={f === " year" ? 1900 : undefined}
           max={f === " year" ? new Date().getFullYear() : undefined}
           error={errors[`${levelKey}.${f}`]}
@@ -949,6 +950,7 @@ export default function Register() {
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.year`]}
                           type="number"
+                          onWheel={(e) => e.target.blur()}
                           inputMode="numeric"
                           required
                         />
@@ -1051,6 +1053,7 @@ export default function Register() {
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.year`]}
                           type="number"
+                          onWheel={(e) => e.target.blur()}
                           inputMode="numeric"
                           required
                         />
