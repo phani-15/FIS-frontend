@@ -151,96 +151,89 @@ export default function PasswordChange() {
         {/* Title */}
         <h2 className="text-2xl font-bold text-gray-900">Forgot Password</h2>
 
-        {/* Form */}
-        <form onSubmit={passwordreset} className="mt-8 space-y-5 text-left">
-          {/* Prompting email */}
-          <div>
-            <InputField
-              label="e-mail Address"
-              type="email"
-              value={data.mail}
-              id="mail"
-              placeholder="Enter your registered email"
-              onChange={handleChange}
-              error={error.mail}
-            />
-          </div>
+				{/* Form */}
+				<form className="mt-8 space-y-5 text-left">
+					{/* Prompting email */}
+					 <div>
+						<InputField
+							label="e-mail Address"
+							type="email"
+							value={data.mail}
+							id="mail"
+							placeholder="Enter your registered email"	
+							onChange={handleChange}
+							error={error.mail}
+						/>
+					</div>
 
-          {/* Submit Button */}
-          {!clicked && (
-            <button
-              type="button"
-              onClick={handleGenerateOTP}
-              className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
-            >
-              {(isgenerating && !message.error) ? "Generating..." : " Generate OTP"}
-            </button>
-          )}
-          {clicked && (
-            <div>
-              <div>
-                <InputField
-                  label="OTP"
-                  type="number"
-                  value={data.OTP}
-                  id="OTP"
-                  placeholder="Enter OTP"
-                  onChange={handleChange}
-                  error={error.OTP}
-                />
-              </div>
-              {!otpVerified && (
-                <button
-                  type="button"
-                  onClick={handleVerifyOTP}
-                  className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
-                >
-                  Verify OTP
-                </button>
-              )}
-              {otpVerified && (
-                <div>
-                  <InputField
-                    label="New Password"
-                    type="password"
-                    value={data.password}
-                    id="password"
-                    placeholder="Choose new password"
-                    onChange={handleChange}
-                    error={error.password}
-                  />
-                  <InputField
-                    label="Confirm New Password"
-                    type="password"
-                    value={data.confirmPassword}
-                    id="confirmPassword"
-                    placeholder="Re-Enter new password"
-                    onChange={handleChange}
-                    error={error.confirmPassword}
-                  />
-                  <button
-                    type="submit"
-                    className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
-                  >
-                    Update Password
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-          {message && (
-            <div>
-              {message.error && (
-                <p className="text-sm text-red-500">{message.error}</p>
-              )}
-              {message.success && (
-                <p className="text-sm text-green-600">{message.success}</p>
-              )}
-            </div>
-          )}
-        </form>
-      </div>
-      <button type="submit" onClick={()=>navigate('/')}>Back</button>
-    </div>
-  );
+					{/* Submit Button */}
+					{!clicked &&
+						<button
+							onClick={() => {
+								setClicked(true)
+								// send an Email containing OTP from backend or frontend
+							}}
+							className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+						>
+							Generate OTP
+						</button>
+					}
+					{clicked &&
+						<div>
+							<div>
+								<InputField
+									label="OTP"
+									type="number"
+									value={data.OTP}
+									id="OTP"
+									placeholder="Enter OTP"
+									onChange={handleChange}
+									error={error.OTP}
+								/>	
+							</div>
+							{!otpVerified &&
+								<button
+									onClick={() => {
+										setOtpVerified(true)
+										// verify the otp in the backend
+									}}
+									className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+								>
+									Verify OTP
+								</button>
+							}
+							{otpVerified &&
+								<div>
+									<InputField
+										label="New Password"
+										type="password"
+										value={data.password}
+										id="password"
+										placeholder="Choose new password"
+										onChange={handleChange}
+										error={error.password}
+									/>
+									<InputField
+										label="Confirm New Password"
+										type="password"
+										value={data.confirmPassword}
+										id="confirmPassword"
+										placeholder="Re-Enter new password"
+										onChange={handleChange}
+										error={error.confirmPassword}
+									/>
+									<button
+										onClick={handleSubmit}
+										className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+									>
+										Update Password
+									</button>
+								</div>
+							}
+						</div>
+					}
+				</form>
+			</div>
+		</div>
+	)
 }

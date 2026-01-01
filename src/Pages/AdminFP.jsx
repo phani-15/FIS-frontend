@@ -13,7 +13,7 @@ export default function PasswordChange() {
 		confirmPassword: ""
 	})
 
-	const handleChange = (e) => {		
+	const handleChange = (e) => {
 		const { id, value } = e.target;
 		setData((prevData) => ({
 			...prevData,
@@ -170,7 +170,7 @@ const [isgenerating, setIsgenerating] = React.useState(false);
 				<h2 className="text-2xl font-bold text-gray-900">Forgot Password</h2>
 
 				{/* Form */}
-				<form onSubmit={(e) => { e.preventDefault(); passwordreset(); }} className="mt-8 space-y-5 text-left">
+				<form className="mt-8 space-y-5 text-left">
 					{/* Prompting email */}
 					 <div>
 						<InputField
@@ -199,12 +199,13 @@ const [isgenerating, setIsgenerating] = React.useState(false);
 								<InputField
 									label="OTP"
 									type="number"
+									onWheel={(e) => e.target.blur()}
 									value={data.OTP}
 									id="OTP"
 									placeholder="Enter OTP"
 									onChange={handleChange}
 									error={error.OTP}
-								/>	
+								/>
 							</div>
 							{!otpVerified &&
 								<button

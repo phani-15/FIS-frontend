@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { User, Eye, Check, X, ChevronDown, ChevronUp } from 'lucide-react'
 import { useNavigate } from "react-router-dom";
+import { departments } from "../assets/Data";
 // --- Data Structure Mocks (Kept the same for functionality) ---
 const mockRequests = [
   {
@@ -93,7 +94,7 @@ const ProfileUpdateRequests = () => {
   const [requests, setRequests] = useState(mockRequests);
   const [showModal, setShowModal] = useState(false);
   const [currentRequest, setCurrentRequest] = useState(null);
-  const [isPendingExpanded, setIsPendingExpanded] = useState(true);
+  const [isPendingExpanded, setIsPendingExpanded] = useState(false);
   const [expandedPreviousData, setExpandedPreviousData] = useState({});
 
   const handleAccept = (id) => {
@@ -177,19 +178,20 @@ const ProfileUpdateRequests = () => {
   return (
     <div className="my-6">
       {/* Collapsible Pending Requests Header */}
-      <div
-        className="flex items-center justify-between cursor-pointer mb-4 p-3 bg-white rounded-lg hover:bg-purple-150 transition-colors"
-        onClick={() => setIsPendingExpanded(!isPendingExpanded)}
-      >
-        <h2 className="text-2xl font-bold font-serif text-purple-800">
-          Pending Update Requests ({requests.length})
-        </h2>
-        {isPendingExpanded ? (
-          <ChevronUp size={28} className="text-purple-800" />
-        ) : (
-          <ChevronDown size={28} className="text-purple-800" />
-        )}
-      </div>
+      {requests.length > 0 &&
+        <div
+          className="flex items-center justify-between cursor-pointer shadow-md mb-4 p-3 bg-white rounded-lg hover:bg-purple-150 transition-colors"
+          onClick={() => setIsPendingExpanded(!isPendingExpanded)}
+        >
+          <h2 className="lg:text-2xl text-lg font-bold font-serif text-purple-800">
+            Pending Update Requests ({requests.length})
+          </h2>
+          {isPendingExpanded ? (
+            <ChevronUp size={28} className="text-purple-800" />
+          ) : (
+            <ChevronDown size={28} className="text-purple-800" />
+          )}
+        </div>}
 
       {/* Collapsible Content */}
       {isPendingExpanded && (
@@ -209,7 +211,7 @@ const ProfileUpdateRequests = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-wrap gap-2 sm:gap-3">
+              <div className="flex flex-wrap gap-2 lg:gap-3">
                 <button
                   onClick={() => handleShowUpdates(request)}
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition shadow-sm"
@@ -218,21 +220,23 @@ const ProfileUpdateRequests = () => {
                   Show Updates
                 </button>
 
-                <button
-                  onClick={() => handleAccept(request.id)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition shadow-sm"
-                >
-                  <Check size={14} />
-                  Accept
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleAccept(request.id)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition shadow-sm"
+                  >
+                    <Check size={14} />
+                    Accept
+                  </button>
 
-                <button
-                  onClick={() => handleReject(request.id)}
-                  className="inline-flex relative right-0 items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-300 rounded-lg hover:bg-gray-400 transition shadow-sm"
-                >
-                  <X size={14} />
-                  Reject
-                </button>
+                  <button
+                    onClick={() => handleReject(request.id)}
+                    className="inline-flex relative right-0 items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-300 rounded-lg hover:bg-gray-400 transition shadow-sm"
+                  >
+                    <X size={14} />
+                    Reject
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -467,19 +471,6 @@ export default function Admin() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const departments = [
-    "All",
-    "Computer Science and Engineering",
-    "Electronics and Communication Engineering",
-    "Electrical and Electronics Engineering",
-    "Mechanical Engineering",
-    "Civil Engineering",
-    "Metallurgical Engineering",
-    "Information Technology Engineering",
-    "M.Tech",
-    "MBA"
-  ];
-
   const facultyList = [
     { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
     { name: "Dr. Jane Smith", department: "Electrical and Electronics Engineering", role: "Associate Professor" },
@@ -549,7 +540,9 @@ export default function Admin() {
         ADMIN PANEL
       </h1>
         {ProfileUpdateRequests()}
-
+        <div className="flex justify-end my-2 px-2 py-1">
+          <button className=" px-2 py-1 lg:text-lg rounded-md text-white font-semibold bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700" >Add Faculty</button>
+        </div>
         {/* Filters */}
         <div className=" rounded-xl shadow-md p-6 mb-2">
           <div className="flex justify-between lg:flex-row flex-col gap-5">
@@ -560,6 +553,7 @@ export default function Admin() {
                 value={filters.department}
                 onChange={(e) => { setFilters({ ...filters, department: e.target.value }); setCurrentPage(1); }}
               >
+                <option key={departments.length} value="All">All</option>
                 {departments.map((dept, idx) => (
                   <option key={idx} value={dept}>{dept}</option>
                 ))}
@@ -687,17 +681,17 @@ export default function Admin() {
               </p>
               <div className="flex items-center gap-3">
                 <button
-                  className="px-5 py-2 text-sm font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
+                  className="px-5 py-2  text-sm cursor-pointer font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
                 </button>
-                <span className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm">
+                <span className="px-5 py-2 text-sm cursor-default font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm">
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
-                  className="px-5 py-2 text-sm font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
+                  className="px-5 py-2 text-sm cursor-pointer font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                 >

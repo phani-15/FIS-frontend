@@ -211,6 +211,7 @@ const [isgenerating, setIsgenerating] = React.useState(false);
               <InputField
                 label="OTP"
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 value={data.OTP}
                 id="OTP"
                 placeholder="Enter OTP"

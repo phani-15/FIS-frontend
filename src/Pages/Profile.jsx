@@ -170,7 +170,7 @@ export default function ProfilePage() {
 
       const line = (label, value) => {
         page.drawText(label, { x: left, y, size: 11, font: bold });
-        page.drawText(String(value || "—"), { x: left + 190, y, size: 11, font });
+        page.drawText(String(value || "—"), { x: left + 135, y, size: 11, font });
         y -= 18;
       };
 
@@ -499,11 +499,11 @@ export default function ProfilePage() {
 
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar size={16} className="text-purple-500" />
-                    Joined: <span className="font-semibold"> {newObj.personalData.date_of_join}</span>
+                    Joined: <span className="font-semibold"> {new Date(newObj.personalData.date_of_join).toLocaleDateString("en-GB")}</span>
                   </div>
-                  {newObj.personalData.location && <div className="flex items-center gap-3 text-sm text-gray-700">
-                    <MapPin size={16} className="text-green-500" />
-                    {newObj.personalData.location}
+                  {newObj.personalData.city && <div className="flex items-center gap-3 text-sm text-gray-700">
+                    <MapPin size={16} className="text-red-500" />
+                    {newObj.personalData.area},{newObj.personalData.city}
                   </div>
                   }
                 </div>

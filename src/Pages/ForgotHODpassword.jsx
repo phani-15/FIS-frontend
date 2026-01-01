@@ -227,6 +227,7 @@ const [isgenerating, setIsgenerating] = React.useState(false);
                                     label="OTP"
                                     type="number"
                                     value={data.OTP}
+                                    onWheel={(e) => e.target.blur()}
                                     id="OTP"
                                     placeholder="Enter OTP"
                                     onChange={handleChange}
