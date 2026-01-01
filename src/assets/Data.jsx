@@ -833,7 +833,7 @@ const fields = {
     'Pedagogy Is Being Used By Organization',
     'Document'
   ],
-  award_ttle: [
+  awards_and_recognitions: [
     'Award Recognition Title',
     'Granting Organization Institution',
     'Scope',
@@ -978,4 +978,4 @@ const departments = [
   "Master's in Business Administration"
 ]
 
-export { schemas, yearFields, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, AtKeys,departments };
+export { schemas, yearFields, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, AtKeys, departments };

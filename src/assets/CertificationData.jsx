@@ -35,8 +35,8 @@ const names = {
     ie: 'IE Membership',
     iete: 'IETE Membership',
     other_bodies: 'Other Professional Bodies',
-    any_moocs_course: 'MOOCs (Any Platform)',
-    book_book_chapter: 'Books / Book Chapters (Translated)',
+    any_moocs_course: 'Transmission works(any moocs)',
+    book_book_chapter: 'Transmission works(Book/Book Chapters)',
   };
 
   const map = {

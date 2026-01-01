@@ -306,55 +306,45 @@ const AddCredentials = () => {
 
   const handlemoocSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 MOOC SUBMIT triggered");
+    console.log("🚀 MOOC Submit triggered");
 
     const newErrors = {};
     let isValid = true;
 
-    // 🔹 Step 1: Validate global fields
+    // 🔹 Global fields
     const contribution = formData['Contribution in MOOC']?.trim();
     const numMOOCsStr = formData['Number of MOOCs']?.trim();
     const numMOOCs = Number(numMOOCsStr);
 
-    // Contribution is required
     if (!contribution) {
       newErrors['Contribution in MOOC'] = 'Contribution in MOOC is required';
       isValid = false;
     }
 
-    // Number of MOOCs validation
     if (!numMOOCsStr) {
       newErrors['Number of MOOCs'] = 'Number of MOOCs is required';
       isValid = false;
-    } else if (isNaN(numMOOCs)) {
-      newErrors['Number of MOOCs'] = 'Must be a valid number';
-      isValid = false;
-    } else if (!Number.isInteger(numMOOCs) || numMOOCs < 1) {
-      newErrors['Number of MOOCs'] = 'Must be a whole number ≥ 1';
+    } else if (isNaN(numMOOCs) || !Number.isInteger(numMOOCs) || numMOOCs < 0) {
+      newErrors['Number of MOOCs'] = 'Must be a whole number ≥ 0';
       isValid = false;
     }
 
-    // 🔹 Step 2: Validate each MOOC instance (only if numMOOCs ≥ 1 and no prior errors)
+    // 🔹 Per-MOOC validation
     if (isValid && numMOOCs > 0) {
-      const moocInstanceFields = ['Title of the MOOC', 'Month & Year']; // ← use only per-MOOC fields
-
       for (let i = 0; i < numMOOCs; i++) {
-        moocInstanceFields.forEach((label) => {
+        MOOC_fields.forEach(label => {
           const name = `${label}__${i}`;
           const value = (formData[name] || '').trim();
-
-          // Special: Month & Year is a `type="month"` input → format "YYYY-MM"
           if (label === 'Month & Year') {
             if (!value) {
               newErrors[name] = 'Month & Year is required';
               isValid = false;
             } else if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
-              newErrors[name] = 'Invalid format. Use YYYY-MM (e.g., 2024-08)';
+              newErrors[name] = 'Invalid format. Use YYYY-MM';
               isValid = false;
             } else {
               const inputDate = new Date(`${value}-01`);
               const today = new Date();
-              // Normalize to first of month for fair comparison
               today.setDate(1);
               if (inputDate > today) {
                 newErrors[name] = 'Month & Year must be in the past';
@@ -362,7 +352,6 @@ const AddCredentials = () => {
               }
             }
           } else {
-            // 'Title of the MOOC' — non-empty string
             if (!value) {
               newErrors[name] = `${label} is required`;
               isValid = false;
@@ -372,89 +361,110 @@ const AddCredentials = () => {
       }
     }
 
-    // 🔹 Step 3: Update UI & exit if invalid
-    setErrors(newErrors);
     if (!isValid) {
+      setErrors(newErrors);
       console.warn('❌ MOOC validation failed:', newErrors);
       return;
     }
 
-    // 🔹 Step 4: ✅ Build structured payload
+    // 🔹 Build array of MOOC objects
     const moocs = [];
     for (let i = 0; i < numMOOCs; i++) {
-      moocs.push({
-        title: formData[`Title of the MOOC__${i}`] || '',
-        monthYear: formData[`Month & Year__${i}`] || ''
+      const mooc = {};
+      MOOC_fields.forEach(label => {
+        const key = toSnakeCase(label); // e.g., title_of_the_mooc
+        mooc[key] = formData[`${label}__${i}`]?.trim() || '';
       });
+      moocs.push(mooc);
     }
 
-    const payload = {
-      group,
-      subcategory,
-      formData: {
-        contributionInMOOC: contribution,
-        numberOfMOOCs: numMOOCs,
-        moocs
-      },
-      // Optional: include files if any were uploaded (e.g., certificates, links, docs)
-      files: { ...fileMap } // currently unused in MOOC, but safe to keep
-    };
-    await addDetails(payload, userId, credId)
-    console.log('✅ MOOC Submission Payload:', payload);
-    alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
-  }
+    try {
+      // 🔹 Submit one API call per MOOC (like PhD)
+      for (let i = 0; i < moocs.length; i++) {
+        const moocData = moocs[i];
+
+        // Extract files for this MOOC (if any)
+        const moocFiles = {};
+        MOOC_fields.forEach(label => {
+          if (isFileField(label)) {
+            const fieldName = `${label}__${i}`;
+            if (fileMap[fieldName]) {
+              moocFiles[fieldName] = fileMap[fieldName];
+            }
+          }
+        });
+
+        const payload = {
+          group,
+          subcategory,
+          formData: {
+            contribution_in_mooc: contribution,
+            number_of_moocs: numMOOCs,
+            ...moocData, // all per-MOOC fields flattened here
+          },
+          files: moocFiles,
+        };
+
+        await addDetails(payload, userId, credId);
+        console.log(`✅ Submitted MOOC ${i + 1}`, payload);
+      }
+
+      alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
+
+      // 🔁 Reset
+      setGroup('');
+      setSubcategory('');
+      setFormData({});
+      setFileMap({});
+      setErrors({});
+
+    } catch (error) {
+      console.error('❌ MOOC submission failed:', error);
+      alert('❌ Submission failed. Please try again.');
+    }
+  };
 
   const handleESubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 e-Content SUBMIT triggered");
+    console.log("🚀 e-Content Submit triggered");
 
     const newErrors = {};
     let isValid = true;
 
-    // 🔹 Step 1: Validate global fields
+    // 🔹 Global fields
     const contribution = formData['Contribution in e-Content']?.trim();
-    const numMOOCsStr = formData['Number of e-Contents']?.trim();
-    const numMOOCs = Number(numMOOCsStr);
+    const numEContentsStr = formData['Number of e-Contents']?.trim();
+    const numEContents = Number(numEContentsStr);
 
-    // Contribution is required
     if (!contribution) {
       newErrors['Contribution in e-Content'] = 'Contribution in e-Content is required';
       isValid = false;
     }
-
-    // Number of e-Contents validation
-    if (!numMOOCsStr) {
+    if (!numEContentsStr) {
       newErrors['Number of e-Contents'] = 'Number of e-Contents is required';
       isValid = false;
-    } else if (isNaN(numMOOCs)) {
-      newErrors['Number of e-Contents'] = 'Must be a valid number';
-      isValid = false;
-    } else if (!Number.isInteger(numMOOCs) || numMOOCs < 1) {
+    } else if (isNaN(numEContents) || !Number.isInteger(numEContents) || numEContents < 1) {
       newErrors['Number of e-Contents'] = 'Must be a whole number ≥ 1';
       isValid = false;
     }
 
-    // 🔹 Step 2: Validate each e-Content instance (only if numMOOCs ≥ 1 and no prior errors)
-    if (isValid && numMOOCs > 0) {
-      const moocInstanceFields = ['Title of the e-Content', 'Month & Year']; // ← use only per-MOOC fields
-
-      for (let i = 0; i < numMOOCs; i++) {
-        moocInstanceFields.forEach((label) => {
+    // 🔹 Per e-Content validation
+    if (isValid && numEContents > 0) {
+      for (let i = 0; i < numEContents; i++) {
+        e_content_fields.forEach(label => {
           const name = `${label}__${i}`;
           const value = (formData[name] || '').trim();
 
-          // Special: Month & Year is a `type="month"` input → format "YYYY-MM"
           if (label === 'Month & Year') {
             if (!value) {
               newErrors[name] = 'Month & Year is required';
               isValid = false;
             } else if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
-              newErrors[name] = 'Invalid format. Use YYYY-MM (e.g., 2024-08)';
+              newErrors[name] = 'Invalid format. Use YYYY-MM';
               isValid = false;
             } else {
               const inputDate = new Date(`${value}-01`);
               const today = new Date();
-              // Normalize to first of month for fair comparison
               today.setDate(1);
               if (inputDate > today) {
                 newErrors[name] = 'Month & Year must be in the past';
@@ -462,7 +472,6 @@ const AddCredentials = () => {
               }
             }
           } else {
-            // 'Title of the MOOC' — non-empty string
             if (!value) {
               newErrors[name] = `${label} is required`;
               isValid = false;
@@ -472,36 +481,68 @@ const AddCredentials = () => {
       }
     }
 
-    // 🔹 Step 3: Update UI & exit if invalid
-    setErrors(newErrors);
     if (!isValid) {
-      console.warn('❌ MOOC validation failed:', newErrors);
+      setErrors(newErrors);
+      console.warn('❌ e-Content validation failed:', newErrors);
       return;
     }
 
+    // 🔹 Build array of e-Content objects
     const eContents = [];
-    for (let i = 0; i < numMOOCs; i++) {
-      eContents.push({
-        title: formData[`Title of the e-Content__${i}`]?.trim() || '',
-        monthYear: formData[`Month & Year__${i}`] || ''
+    for (let i = 0; i < numEContents; i++) {
+      const ec = {};
+      e_content_fields.forEach(label => {
+        const key = toSnakeCase(label);
+        ec[key] = formData[`${label}__${i}`]?.trim() || '';
       });
+      eContents.push(ec);
     }
 
-    const payload = {
-      group,
-      subcategory,
-      formData: {
-        contributionInEContent: contribution,
-        numberOfEContents: numMOOCs,
-        eContents
-      },
-      // Optional: include files if any were uploaded (e.g., certificates, links, docs)
-      files: { ...fileMap } // currently unused in MOOC, but safe to keep
-    };
-    await addDetails(payload, userId, credId)
-    console.log('✅ MOOC Submission Payload:', payload);
-    alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
-  }
+    try {
+      // 🔹 Submit one API call per e-Content (like PhD)
+      for (let i = 0; i < eContents.length; i++) {
+        const ecData = eContents[i];
+
+        // Extract files for this e-Content
+        const ecFiles = {};
+        e_content_fields.forEach(label => {
+          if (isFileField(label)) {
+            const fieldName = `${label}__${i}`;
+            if (fileMap[fieldName]) {
+              ecFiles[fieldName] = fileMap[fieldName];
+            }
+          }
+        });
+
+        const payload = {
+          group,
+          subcategory,
+          formData: {
+            contribution_in_e_content: contribution,
+            number_of_e_contents: numEContents,
+            ...ecData,
+          },
+          files: ecFiles,
+        };
+
+        await addDetails(payload, userId, credId);
+        console.log(`✅ Submitted e-Content ${i + 1}`, payload);
+      }
+
+      alert(`✅ Successfully submitted ${numEContents} e-Content(s)!`);
+
+      // 🔁 Reset
+      setGroup('');
+      setSubcategory('');
+      setFormData({});
+      setFileMap({});
+      setErrors({});
+
+    } catch (error) {
+      console.error('❌ e-Content submission failed:', error);
+      alert('❌ Submission failed. Please try again.');
+    }
+  };
 
   const currentFieldKeys = useMemo(() => {
     if (!group) return [];

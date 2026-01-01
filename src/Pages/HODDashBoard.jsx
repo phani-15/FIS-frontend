@@ -13,8 +13,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { AtKeys, schemas, yearFields } from "../assets/Data";
-import { HodDashBoard } from "../core/hod";
+import { AtKeys, schemas, yearFields,  } from '../assets/Data'
+import { HodDashBoard } from "../core/hod"
 import axios from "axios";
 import { getHodReports } from "../core/hod";
 
@@ -256,7 +256,7 @@ const generateExcelReport = ({
       const headers = ["S.No", "Faculty Name", "Email", "Designation"];
 
       // Prepare data rows
-      const rows = facultyList.map((faculty, index) => [
+      const rows = filteredFaculty.map((faculty, index) => [
         index + 1,
         faculty.personalData.name,
         faculty.personalData.mail || "", // Use email if available, otherwise empty string
@@ -453,10 +453,7 @@ const generateExcelReport = ({
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
                         {AtKeys.map((type) => (
-                          <label
-                            key={type.key}
-                            className="flex items-center gap-2"
-                          >
+                          <label key={type.key} className="flex items-center gap-2">
                             <input
                               type="checkbox"
                               checked={selectedTypes.includes(type.key)}
