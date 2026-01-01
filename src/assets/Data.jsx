@@ -60,16 +60,19 @@ const schemas = {
   journal: {
     label: "Journal Publications",
     attributes: [
-      { key: "Title of the Paper", label: "Paper Title", required: true },
-      { key: "Name of the Journal", label: "Journal Name", required: true },
-      { key: "Page Number", label: "Page Number", required: false },
-      { key: "Year of Publication", label: "Year", required: true },
-      { key: "ISBN Number", label: "ISBN", required: false },
-      { key: "National/international", label: "Scope", required: true },
-      { key: "Impact Factor", label: "Impact Factor", required: false },
-      { key: "ISSN Number", label: "ISSN", required: false },
-      { key: "Indexing Platform", label: "Indexing", required: false },
-      { key: "H-index", label: "H-index", required: false },
+      { key: "Title Of The Paper", label: "Title Of The Paper", required: true },
+      { key: "Name Of The Journal", label: "Name Of The Journal", required: true },
+      { key: "Page Number", label: "Page Number(s)", required: false },
+      { key: "Year Of Publication", label: "Year Of Publication", required: true },
+      { key: "Volume Number", label: "Volume Number", required: false },
+      { key: "Impact Factor Thomson Reuters", label: "Impact Factor (Thomson Reuters)", required: false },
+      { key: "National/international", label: "National / International", required: true },
+      { key: "Issn Number", label: "ISSN Number", required: true },
+      { key: "No Of Authors", label: "Number Of Authors", required: false },
+      { key: "Author", label: "Author(s)", required: true },
+      { key: "Indexing Platform", label: "Indexing Platform", required: false },
+      { key: "H Index", label: "H-Index", required: false },
+      { key: "Document", label: "Supporting Document", required: false },
     ],
   },
 
@@ -94,141 +97,165 @@ const schemas = {
     ],
   },
 
-  sponsored: {
-    label: "Sponsored Projects",
-    attributes: [
-      { key: "Project Title", label: "Title", required: true },
-      { key: "Funding Agency", label: "Funding Agency", required: true },
-      { key: "Amount (in INR)", label: "Amount (₹)", required: true },
-      { key: "Duration (in months)", label: "Duration (Months)", required: false },
-      { key: "Status", label: "Status", required: true },
-      { key: "Academic Year", label: "Academic Year", required: false },
-    ],
-  },
+sponsored: {
+  label: "Sponsored Projects",
+  attributes: [
+    { key: "Project Title", label: "Project Title", required: true },
+    { key: "Funding Agency", label: "Funding Agency", required: true },
+    { key: "Amount In Inr", label: "Amount (INR)", required: true },
+    { key: "Duration In Months", label: "Duration (Months)", required: true },
+    { key: "Academic Year", label: "Academic Year", required: true },
+    { key: "Are You", label: "Role (PI / Co-PI)", required: true },
+    { key: "Status", label: "Project Status", required: true },
+  ],
+},
 
-  research: {
-    label: "Research Projects",
-    attributes: [
-      { key: "Project Title", label: "Title", required: true },
-      { key: "Year of Sanction", label: "Sanction Year", required: true },
-      { key: "Duration (in months)", label: "Duration (Months)", required: false },
-      { key: "Funding Agency", label: "Funding Agency", required: true },
-      { key: "Fund Received (in INR)", label: "Amount (₹)", required: false },
-      { key: "Are you", label: "Role (PI/Co-PI)", required: false },
-      { key: "Status", label: "Status", required: true },
-    ],
-  },
+research: {
+  label: "Research Projects",
+  attributes: [
+    { key: "Project Title", label: "Project Title", required: true },
+    { key: "Year Of Sanction", label: "Year Of Sanction", required: true },
+    { key: "Duration", label: "Duration", required: true },
+    { key: "Funding Agency", label: "Funding Agency", required: true },
+    { key: "Sanctioned Amount", label: "Sanctioned Amount", required: true },
+    { key: "Recieved Amount Utilized", label: "Received Amount Utilized", required: false },
+    { key: "Are You", label: "Role (PI / Co-PI)", required: true },
+    { key: "Status", label: "Project Status", required: true },
+  ],
+},
 
-  consultancy: {
-    label: "Consultancy Projects",
-    attributes: [
-      { key: "Project Title", label: "Title", required: true },
-      { key: "Year of Sanction", label: "Sanction Year", required: true },
-      { key: "Duration (in months)", label: "Duration (Months)", required: false },
-      { key: "Name of Funding Agency", label: "Funding Agency", required: true },
-      { key: "Amount (in INR)", label: "Amount (₹)", required: true },
-      { key: "Are you ", label: "Role", required: false },
-      { key: "Status", label: " Status", required: true }
-    ],
-  },
+consultancy: {
+  label: "Consultancy Projects",
+  attributes: [
+    { key: "Project Title", label: "Project Title", required: true },
+    { key: "Year Of Sanction", label: "Year Of Sanction", required: true },
+    { key: "Duration", label: "Duration", required: true },
+    { key: "Funding Agency", label: "Funding Agency", required: true },
+    { key: "Amount In Inr", label: "Amount (INR)", required: true },
+    { key: "Are You", label: "Role (PI / Co-PI)", required: true },
+    { key: "Status", label: "Project Status", required: true },
+  ],
+},
 
-  fdp: {
-    label: "FDP",
-    attributes: [
-      { key: "Program Title", label: "Program Title", required: true },
-      { key: "Year", label: "Year", required: true },
-      { key: "Scope", label: "Scope", required: false },
-      { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode", label: "Mode", required: true },
-      { key: "Place", label: "Place", required: false },
-      { key: "Attended/organized", label: "Role", required: true },
-      { key: "Role", label : "Role" , required:true}
-    ],
-  },
+fdp: {
+  label: "Faculty Development Program (FDP)",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
 
-  sttp: {
-    label: "STTP",
-    attributes: [
-      { key: "Program Title", label: "Program Title", required: true },
-      { key: "Year", label: "Year", required: true },
-      { key: "Scope", label: "Scope", required: false },
-      { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode", label: "Mode", required: true },
-      { key: "Place", label: "Place", required: false },
-      { key: "Attended/organized", label: "Role", required: true },
-      { key: "Role", label : "Role" , required:true}
-    ],
-  },
+sttp: {
+  label: "Short Term Training Program (STTP)",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
 
-  workshop: {
-    label: "Workshops",
-    attributes: [
-      { key: "Program Title", label: "Program Title", required: true },
-      { key: "Year", label: "Year", required: true },
-      { key: "Scope", label: "Scope", required: false },
-      { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode", label: "Mode", required: false },
-      { key: "Place", label: "Place", required: false },
-      { key: "Attended/organized", label: "Role", required: true },
-      { key: "Role", label : "Role" , required:true}
-    ],
-  },
+conference: {
+  label: "Conference",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
 
-  seminar: {
-    label: "Seminars",
-    attributes: [
-      { key: "Program Title", label: "Program Title", required: true },
-      { key: "Year", label: "Year", required: true },
-      { key: "Scope", label: "Scope", required: false },
-      { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode", label: "Mode", required: false },
-      { key: "Place", label: "Place", required: false },
-      { key: "Attended/organized", label: "Role", required: true },
-      { key: "Role", label : "Role" , required:true}
-    ],
-  },
+workshop: {
+  label: "Workshop",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
 
-  webinar: {
-    label: "Webinars",
-    attributes: [
-      { key: "Program Title", label: "Program Title", required: true },
-      { key: "Year", label: "Year", required: true },
-      { key: "Scope", label: "Scope", required: false },
-      { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode", label: "Mode", required: true },
-      { key: "Place", label: "Place", required: false },
-      { key: "Attended/organized", label: "Role", required: true },
-      { key: "Role", label : "Role" , required:true}
-    ],
-  },
+seminar: {
+  label: "Seminar",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
 
-  RC: {
-    label: "Refresher Courses",
-    attributes: [
-      { key: "Program Title", label: "Program Title", required: true },
-      { key: "Year", label: "Year", required: true },
-      { key: "Scope", label: "Scope", required: false },
-      { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode", label: "Mode", required: true },
-      { key: "Place", label: "Place", required: false },
-      { key: "Attended/organized", label: "Role", required: true },
-      { key: "Role", label : "Role" , required:true}
-    ],
-  },
+webinar: {
+  label: "Webinar",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
 
-  OC: {
-    label: "Orientation Courses",
-    attributes: [
-      { key: "Program Title", label: "Program Title", required: true },
-      { key: "Year", label: "Year", required: true },
-      { key: "Scope", label: "Scope", required: false },
-      { key: "Organizing Body", label: "Organizer", required: true },
-      { key: "Mode", label: "Mode", required: true },
-      { key: "Place", label: "Place", required: false },
-      { key: "Attended/organized", label: "Role", required: true },
-      { key: "Role", label : "Role" , required:true}
-    ],
-  },
+rc: {
+  label: "Refresher Course (RC)",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
+
+oc: {
+  label: "Orientation Course (OC)",
+  attributes: [
+    { key: "Program Title", label: "Program Title", required: true },
+    { key: "Starting Date", label: "Start Date", required: true },
+    { key: "Ending Date", label: "End Date", required: true },
+    { key: "Scope", label: "Scope", required: true },
+    { key: "Organizing Body", label: "Organizing Body", required: true },
+    { key: "Mode", label: "Mode (Online / Offline / Hybrid)", required: true },
+    { key: "Place", label: "Place", required: false },
+    { key: "Attended/organized", label: "Attended / Organized", required: true },
+    { key: "Role", label: "Role", required: false },
+  ],
+},
 
   talk: {
     label: "Expert Talks",
@@ -330,8 +357,8 @@ const schemas = {
     ],
   },
 
-  award_title: {
-    label: "Awards & Recognitions",
+  awards_and_recognitions: {
+    label: "Awards And Recognitions",
     attributes: [
       { key: "Award / Recognition Title", label: "Award Title", required: true },
       { key: "Granting Organization / Institution", label: "Institution", required: true },
@@ -348,6 +375,80 @@ const schemas = {
       { key: "Validity Period (if applicable)", label: "Validity", required: false },
     ],
   },
+  foreign_visits: {
+    label: "Foreign Visits",
+    attributes: [
+      { key: "Purpose Of Visit", label: "Purpose Of Visit", required: true },
+      { key: "Nature Of Visit", label: "Nature Of Visit", required: true },
+      { key: "Name Of Conference Event", label: "Name Of Conference / Event", required: false },
+      { key: "Academic Year", label: "Academic Year", required: true },
+      { key: "Name Of Host Organization", label: "Host Organization", required: true },
+      { key: "Country Visited", label: "Country Visited", required: true },
+      { key: "Start Date", label: "Start Date", required: true },
+      { key: "End Date", label: "End Date", required: true },
+      { key: "Duration In Days", label: "Duration (Days)", required: false },
+      { key: "Role Of Faculty", label: "Role Of Faculty", required: false },
+      { key: "Title Of The Paper Talk", label: "Title Of Paper / Talk", required: false },
+      { key: "Sponsoring Agency", label: "Sponsoring Agency", required: false },
+      { key: "Amount Sanctioned", label: "Amount Sanctioned", required: false },
+      { key: "Travel/grant/received", label: "Travel / Grant Received", required: false },
+    ],
+  },
+  
+  nptel: {
+  label: "NPTEL Certifications",
+  attributes: [
+    { key: "Name Of Certification Course", label: "Course Name", required: true },
+    { key: "Type Of Certification", label: "Type Of Certification", required: true },
+    { key: "Duration In Weeks", label: "Duration (Weeks)", required: false },
+  ],
+},
+swayam: {
+  label: "SWAYAM Certifications",
+  attributes: [
+    { key: "Name Of Certification Course", label: "Course Name", required: true },
+    { key: "Type Of Certification", label: "Type Of Certification", required: true },
+    { key: "Duration In Weeks", label: "Duration (Weeks)", required: false },
+  ],
+},
+
+coursera: {
+  label: "Coursera Certifications",
+  attributes: [
+    { key: "Name Of Certification Course", label: "Course Name", required: true },
+    { key: "Type Of Certification", label: "Type Of Certification", required: true },
+    { key: "Duration In Weeks", label: "Duration (Weeks)", required: false },
+  ],
+},
+
+infosysspringboard: {
+  label: "Infosys Springboard Certifications",
+  attributes: [
+    { key: "Name Of Certification Course", label: "Course Name", required: true },
+    { key: "Type Of Certification", label: "Type Of Certification", required: true },
+    { key: "Duration In Weeks", label: "Duration (Weeks)", required: false },
+  ],
+},
+
+edx: {
+  label: "edX Certifications",
+  attributes: [
+    { key: "Name Of Certification Course", label: "Course Name", required: true },
+    { key: "Type Of Certification", label: "Type Of Certification", required: true },
+    { key: "Duration In Weeks", label: "Duration (Weeks)", required: false },
+  ],
+},
+
+other: {
+  label: "Other Certifications",
+  attributes: [
+    { key: "Name Of Certification Course", label: "Course Name", required: true },
+    { key: "Type Of Certification", label: "Type Of Certification", required: true },
+    { key: "Organized By", label: "Organized By", required: true },
+    { key: "Duration In Weeks", label: "Duration (Weeks)", required: false },
+  ],
+},
+
 
   acm: {
     label: "ACM Membership",
@@ -813,27 +914,57 @@ const fields = {
 
 const AtKeys = [
   { key: "patents", label: "Patents" },
+
   { key: "journal", label: "Journal Publications" },
+  { key: "conference_paper", label: "Conference Papers" },
+
   { key: "book", label: "Books" },
   { key: "book_chapter", label: "Book Chapters" },
+
   { key: "conference", label: "Conferences" },
   { key: "seminar", label: "Seminars" },
   { key: "workshop", label: "Workshops" },
-  { key: "fdp", label: "FDP / STTP" },
+  { key: "fdp", label: "Faculty Development Programs (FDP)" },
+  { key: "sttp", label: "Short Term Training Programs (STTP)" },
   { key: "webinar", label: "Webinars" },
-  { key: "OC", label: "Orientation Courses" },
-  { key: "keynote", label: "Keynote Talks" },
+  { key: "rc", label: "Refresher Courses (RC)" },
+  { key: "oc", label: "Orientation Courses (OC)" },
+
   { key: "talk", label: "Expert Talks" },
-  { key: "certifications", label: "Certifications" },
-  { key: "award_title", label: "Awards & Recognitions" },
+  { key: "keynote", label: "Keynote Addresses" },
+  { key: "chair", label: "Session Chair" },
+  { key: "lecture", label: "Guest Lectures" },
+  { key: "resource_person", label: "Resource Person" },
+
+  { key: "certifications", label: "Certifications (General)" },
+  { key: "nptel", label: "NPTEL Certifications" },
+  { key: "swayam", label: "SWAYAM Certifications" },
+  { key: "coursera", label: "Coursera Certifications" },
+  { key: "infosysspringboard", label: "Infosys Springboard Certifications" },
+  { key: "edx", label: "edX Certifications" },
+  { key: "other", label: "Other Certifications" },
+
+  { key: "awards_and_recognitions", label: "Awards & Recognitions" },
+
   { key: "research", label: "Research Projects" },
   { key: "sponsored", label: "Sponsored Projects" },
-  { key: "consultancy", label: "Consultancy" },
-  { key: "phd_awarded", label: "PhD Students Awarded" },
+  { key: "consultancy", label: "Consultancy Projects" },
+
+  { key: "foreign_visits", label: "Foreign Visits" },
+
+  { key: "mooc_content", label: "MOOC Content" },
+  { key: "eContent", label: "e-Content" },
+  { key: "course_content", label: "Course Content" },
+
   { key: "ieee", label: "IEEE Membership" },
+  { key: "acm", label: "ACM Membership" },
   { key: "csi", label: "CSI Membership" },
-  { key: "repository", label: "Repository Contributions" },
-]
+
+  { key: "phd_awarded", label: "PhD Students Awarded" },
+  { key: "phd_ongoing", label: "PhD Students Ongoing" },
+  { key: "mtech", label: "M.Tech Students" },
+  { key: "mphilmba", label: "MPhil / MBA Students" },
+];
 
 const departments = [
   "BS & HSS",
