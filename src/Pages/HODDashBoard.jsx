@@ -3,9 +3,10 @@ import { Search, X, User, ChevronDown, ShieldCheck, XCircle, ChevronUp, FileText
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { schemas, yearFields, certifications } from '../assets/Data'
+import { schemas, yearFields,  } from '../assets/Data'
 import { HodDashBoard } from "../core/hod"
 import axios from "axios";
+import { getHodReports } from "../core/hod";
 
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
@@ -202,12 +203,68 @@ export default function HODDashBoard() {
       setIsGenerating(false);
     }
   };
+  const generateExcelFromBackend = (data) => {
+  const wb = XLSX.utils.book_new();
 
-  // Handle form submission
-  const handleExtractReports = async (e) => {
-    e.preventDefault();
-    await generateExcelReport();
-  };
+  Object.keys(data[0].reports).forEach((type) => {
+    const rows = [];
+    const headers = ["Faculty Name", "Designation", "Email"];
+
+    // dynamic fields
+    const sample = data[0].reports[type][0];
+    Object.keys(sample).forEach((k) => headers.push(k));
+
+    rows.push(headers);
+
+    data.forEach((faculty) => {
+      faculty.reports[type]?.forEach((record) => {
+        rows.push([
+          faculty.facultyName,
+          faculty.designation,
+          faculty.email,
+          ...Object.values(record),
+        ]);
+      });
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, type.substring(0, 31));
+  });
+
+  XLSX.writeFile(wb, `HOD_Report_${Date.now()}.xlsx`);
+};
+
+
+const handleExtractReports = async (e) => {
+  e.preventDefault();
+
+  setIsGenerating(true);
+
+  try {
+    const payload = {
+      types: selectedTypes,
+      fields: selectedAttributes,
+      dateFrom,
+      dateTo,
+    };
+
+    const response = await getHodReports(payload, userId); 
+
+    if (!response.success) {
+      alert(response.message || "Failed to extract reports");
+      return;
+    }
+    
+    generateExcelFromBackend(response.data); 
+    setShowExtractModal(false);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to generate report");
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
 
   // Filter faculty list by search term
   // const filteredFaculty = facultyList

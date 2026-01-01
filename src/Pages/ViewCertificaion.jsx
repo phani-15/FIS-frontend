@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { X, SquarePen, Download } from 'lucide-react';
 import { names, map } from '../assets/CertificationData';
 import { fields } from '../assets/Data';
-import { useParams ,useNavigate} from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { getDetails } from "../core/addDetails"
 import { API } from '../backend';
+import {ArrowLeft} from 'lucide-react'
 
 // --- NORMALIZATION FUNCTION ---
 const normalizeBackendData = (backendData) => {
@@ -102,7 +103,7 @@ const normalizeBackendData = (backendData) => {
   Object.entries(backendData).forEach(([backendSection, items]) => {
     // Get normalized section key (e.g., "PATENTS" → "patents")
     const normalizedSection = sectionMap[backendSection] || backendSection.toLowerCase().replace(/\s+/g, '_');
-    
+
     if (!Array.isArray(items)) return;
 
     // Process each item in the section
@@ -113,7 +114,8 @@ const normalizeBackendData = (backendData) => {
       // Map backend keys (lowercase_with_underscores) to expected field names (Space Separated)
       Object.entries(item).forEach(([backendKey, value]) => {
         // Skip file/document fields if they're not in the expected fields
-        if (['document', 'certificate', 'Document'].includes(backendKey)) {
+        if (backendKey.includes('certificate') || backendKey.includes('Certificate') || backendKey.includes('document')|| backendKey.includes('Document') || backendKey.includes('Order')||backendKey.includes('Proceeding'))
+       {
           normalizedItem[backendKey] = value;
           return;
         }
@@ -167,7 +169,8 @@ const normalizeSectionKey = (section) => {
 
 // --- Helper: Format label ---
 const formatFieldLabel = (label) => {
-  if (!label || ['document', 'certificate', 'Document'].includes(label)) return null;
+  if (!label || label.includes('certificate') || label.includes('Certificate') || (label.includes('Number') && label.includes('Students')) || label.includes('document')|| label.includes('Document') || label.includes('Order')||label.includes('Proceeding'))
+      return null;
   return label
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (l) => l.toUpperCase());
@@ -177,7 +180,7 @@ const formatFieldLabel = (label) => {
 const getTopRelevantFields = (section, item) => {
   const normalizedKey = normalizeSectionKey(section);
   const keys = fields[normalizedKey] || Object.keys(item).filter(k => k !== 'id');
-  
+
   return keys
     .slice(0, 3)
     .map((key) => {
@@ -188,7 +191,7 @@ const getTopRelevantFields = (section, item) => {
         );
         value = matchingKey ? item[matchingKey] : undefined;
       }
-      
+
       return {
         label: formatFieldLabel(key),
         value: value || 'Not specified',
@@ -250,7 +253,8 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
           {fieldsToEdit.map(({ key, label, value }) => {
-            const isFile = ['document', 'certificate', 'Document'].includes(key);
+            const isFile = key.includes('certificate') || key.includes('Certificate') || key.includes('document')|| key.includes('Document') || key.includes('Order')||key.includes('Proceeding')
+      
             const isPlaceField = key === 'Place';
             const modeValue = item['Mode'] || item['mode'];
 
@@ -315,8 +319,9 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
   const getNonFileFields = (section) => {
     const normalizedKey = normalizeSectionKey(section);
     const allFields = fields[normalizedKey] || [];
-    return allFields.filter(field => 
-      !['document', 'certificate', 'Document'].includes(field)
+    return allFields.filter(f =>
+      !(f.includes('certificate') || f.includes('Certificate') || f.includes('document')|| f.includes('Document') || f.includes('Order')||f.includes('Proceeding'))
+      
     );
   };
 
@@ -352,8 +357,8 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
       if (!config.checked || certificationsData[section].length === 0) return;
 
       const items = certificationsData[section];
-      let selectedFields = config.selectedFields.filter(f => 
-        !['document', 'certificate', 'Document'].includes(f)
+      let selectedFields = config.selectedFields.filter(f =>
+        !(f.includes('certificate') || f.includes('Certificate') || f.includes('document')|| f.includes('Document') || f.includes('Order')||f.includes('Proceeding'))
       );
 
       if (selectedFields.length === 0) return;
@@ -509,17 +514,17 @@ const ViewCertificaion = () => {
       try {
         const backendData = await getDetails(userId, credId);
         console.log("Backend data:", backendData);
-        
+
         // Normalize the backend data
         const normalizedData = normalizeBackendData(backendData);
         console.log("Normalized data:", normalizedData);
-        
+
         setinitialData(normalizedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    
+
     getfunction();
   }, [userId, credId]);
 
@@ -576,7 +581,7 @@ const ViewCertificaion = () => {
   const getAllFields = (item, section) => {
     const normalizedKey = normalizeSectionKey(section);
     const keys = fields[normalizedKey] || Object.keys(item).filter(k => k !== 'id');
-    
+
     return keys
       .filter((key) => !['id'].includes(key))
       .map((key) => {
@@ -587,7 +592,7 @@ const ViewCertificaion = () => {
           );
           value = matchingKey ? item[matchingKey] : undefined;
         }
-        
+
         return {
           label: formatFieldLabel(key),
           value: value || 'Not specified',
@@ -597,11 +602,11 @@ const ViewCertificaion = () => {
   };
 
   const renderCertificateItem = (section, item) => {
-    const documentUrl=API.replace("/api","")
+    const documentUrl = API.replace("/api", "")
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
-    const hasDoc = item.document || item.certificate || item.Document;
+    const hasDoc = item.document || item.certificate || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;
 
     return (
       <div
@@ -636,7 +641,7 @@ const ViewCertificaion = () => {
               </button>
               {hasDoc && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
-                onClick={() => viewDocument(item.document || item.certificate || item.Document)}
+                  onClick={() => viewDocument(item.document || item.certificate || item.Document || item.sanctioning_order || item.utilization_certificate_of_final_year)}
                 >
                   View Document
                 </button>
@@ -669,6 +674,12 @@ const ViewCertificaion = () => {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8">
+      <button
+        onClick={() => navigate(`/profile/${userId}`)}
+        className='left-7 flex ml-4 px-3.5 py-3 cursor-pointer rounded-3xl text-white gap-2 bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700'>
+        <ArrowLeft size={22} strokeWidth={3} />
+      </button>
+
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
@@ -677,6 +688,7 @@ const ViewCertificaion = () => {
         </div>
 
         <div className="space-y-8">
+          {console.log("certifications data : ", certificationsData)}
           {Object.entries(certificationsData)
             .filter(([, items]) => items.length > 0)
             .map(([section, items]) => (

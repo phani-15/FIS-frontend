@@ -38,7 +38,7 @@ export const objectToFormData = (
 
 export const credConverter=(obj)=>{
   const fd=new FormData()
-  const data=Object.fromEntries(Object.entries(obj.formData).map(([key,value])=>[key.toLowerCase().replace(/[^\w]/g, "_"),value]))
+  const data=Object.fromEntries(Object.entries(obj.formData).map(([key,value])=>[key.toLowerCase(),value]))
   fd.append("group",obj.group)
   fd.append("subcategory",obj.subcategory ?? "")
   fd.append("formdata",JSON.stringify(data))

@@ -9,6 +9,8 @@ export default function Login() {
 		username: "srinu478@gmail.com",
 		password: "1234567890",
 	});
+	const [serverError, setServerError] = useState("");
+
 	const handleChange = (e) => {
 		const { id, value } = e.target;
 		setFormData((prev) => ({
@@ -17,6 +19,7 @@ export default function Login() {
 		}));
 
 		document.getElementById("empty"+id).innerHTML = "";
+		setServerError("");
 	};
 
 	const navigate = useNavigate()
@@ -42,18 +45,30 @@ export default function Login() {
 			return;
 		}
 		// 🚀 You can send formData to your backend API here
-		await login({
-			email:formData.username,
-			password:formData.password
-		})
-		.then(data=>{
-			authenticate(data,()=>{
-			setFormData({
-				...formData
-			})
-		})
-		navigate(`/profile/${data.user.id}`)
-		})
+		try {
+			const data = await login({
+				email: formData.username,
+				password: formData.password,
+			});
+
+			if (data?.error) {
+				
+				if (/password.*didn/i.test(data.error)) {
+					setServerError("incorrect message");
+				} else {
+					setServerError(data.error);
+				}
+				return;
+			}
+
+			authenticate(data, () => {
+				setFormData({ ...formData });
+			});
+			navigate(`/profile/${data.user.id}`);
+		} catch (err) {
+			console.error("Login error:", err);
+			setServerError("Login failed, please try again");
+		}
 	};
 
 	return (
@@ -107,7 +122,6 @@ export default function Login() {
 						>
 							Password
 						</label>
-						<p onClick={()=>navigate('/fp')} className="cursor-pointer hover:underline text-violet-800 font-normal">Forgot Password?</p>
 						</div>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-gray-400">

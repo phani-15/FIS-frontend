@@ -1,3 +1,5 @@
+import { label } from "framer-motion/client";
+
 const yearFields = {
   patents: "Year of Published/Granted",
   journal: "Year of Publication",
@@ -20,1073 +22,14 @@ const yearFields = {
   csi: "Year Joined",
 };
 
-export const certifications = [
-  {
-    name: "Dr. Aarti Rao",
-    role: "Professor",
-    dept: "Computer Science and Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2021A000101",
-          "Title of the Patent": "Neural Compression for Edge Devices",
-          "Published/Granted": "Granted",
-          "Year of Published/Granted": "2021",
-          "Scope": "International",
-          "Document": "aarti_rao_patent.pdf"
-        }
-      ],
-      journal: [
-        {
-          "Title of the Paper": "Efficient Models for On-Device AI",
-          "Name of the Journal": "Journal of Edge AI",
-          "Page Number": "12-25",
-          "Year of Publication": "2021",
-          "Impact Factor": "3.2",
-          "National/International": "International",
-          "ISBN Number": "2345-6789",
-          "Indexing Platform": "Scopus",
-          "H-index": "15",
-          "Document": "aarti_rao_journal.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Ramesh Gupta",
-    role: "Associate Professor",
-    dept: "Electronics and Communication Engineering",
-    data: {
-      conference: [
-        {
-          "Title of the Paper": "Low-Power RF Design for IoT",
-          "Title of the Conference": "IEEE ICC 2022",
-          "Date of Publication": "2022-06-15",
-          "Organized by": "IEEE",
-          "National/International": "International",
-          "Document": "ramesh_gupta_conf.pdf"
-        }
-      ],
-      book_chapter: [
-        {
-          "Title of the Book Chapter": "RF Front-End Techniques",
-          "Name of the Publisher": "Springer",
-          "Year of Publication": "2022",
-          "National/International": "International",
-          "ISBN Number": "978-81-32222-33-1",
-          "No. of Authors": "2",
-          "Document": "ramesh_gupta_chapter.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Leela Menon",
-    role: "Assistant Professor",
-    dept: "Information Technology Engineering",
-    data: {
-      certifications: [
-        {
-          "Name of Certification Course": "Full Stack Web Development",
-          "Type of Certification": "Professional",
-          "Organized by": "Coursera",
-          "Duration (in days)": "30"
-        }
-      ],
-      workshop: [
-        {
-          "Program Title": "Modern JavaScript Frameworks",
-          "Year": "2023",
-          "Scope": "National",
-          "Organizing Body": "IIIT Bangalore",
-          "Mode": "Online",
-          "Place": "Virtual",
-          "Attended/Organized": "Attended"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Vikram Singh",
-    role: "Professor",
-    dept: "Electrical and Electronics Engineering",
-    data: {
-      sponsored: [
-        {
-          "Project Title": "Smart Grid Stability Analysis",
-          "Funding Agency": "DST",
-          "Amount (in INR)": "3200000",
-          "Duration (in months)": "36",
-          "Status": "Ongoing",
-          "Academic Year": "2023-24",
-          "Document": "vikram_singh_sponsored.pdf"
-        }
-      ],
-      journal: [
-        {
-          "Title of the Paper": "Stability Control for Renewable-Rich Grids",
-          "Name of the Journal": "International Journal of Power Systems",
-          "Page Number": "101-118",
-          "Year of Publication": "2022",
-          "Impact Factor": "4.1",
-          "National/International": "International",
-          "ISBN Number": "0976-4518",
-          "Indexing Platform": "SCI",
-          "H-index": "28",
-          "Document": "vikram_singh_journal.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Priya Nair",
-    role: "Lecturer",
-    dept: "Mechanical Engineering",
-    data: {
-      fdp: [
-        {
-          "Program Title": "Finite Element Methods — Advanced",
-          "Year": "2022",
-          "Scope": "National",
-          "Organizing Body": "IIT Madras",
-          "Mode": "Online",
-          "Place": "Virtual",
-          "Attended/Organized": "Attended"
-        }
-      ],
-      talk: [
-        {
-          "Event Title": "Sustainable Manufacturing",
-          "Name of the Event": "Industry-Academia Conclave",
-          "Date": "2023-03-10",
-          "Topic / Title of Talk": "Lean Manufacturing for SMEs",
-          "Scope": "National",
-          "Mode": "Offline",
-          "Place": "Mumbai",
-          "Document": "priya_nair_talk.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Manoj Kumar",
-    role: "Associate Professor",
-    dept: "Civil Engineering",
-    data: {
-      research: [
-        {
-          "Project Title": "Resilient Coastal Structures",
-          "Year of Sanction": "2021",
-          "Duration (in months)": "30",
-          "Funding Agency": "MoES",
-          "Fund Received (in INR)": "1800000",
-          "Are you": "PI",
-          "Status": "Ongoing",
-          "Document": "manoj_kumar_research.pdf"
-        }
-      ],
-      conference: [
-        {
-          "Title of the Paper": "Wave Interaction with Breakwaters",
-          "Title of the Conference": "International Coastal Engineering 2022",
-          "Date of Publication": "2022-11-20",
-          "Organized by": "ICCE",
-          "National/International": "International",
-          "Document": "manoj_kumar_conf.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Meera Iyer",
-    role: "Professor",
-    dept: "Metallurgical Engineering",
-    data: {
-      book: [
-        {
-          "Title of the Book": "Advanced Metallurgy and Materials",
-          "Name of the Publisher": "Elsevier",
-          "Year of Publication": "2020",
-          "National/International": "international",
-          "ISBN Number": "978-0-12-345678-9",
-          "Document": "meera_iyer_book.pdf"
-        }
-      ],
-      award_title: [
-        {
-          "Award / Recognition Title": "Lifetime Contribution to Metallurgy",
-          "Granting Organization / Institution": "Indian Metallurgical Society",
-          "Year": "2023",
-          "Document": "meera_iyer_award.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Sandeep Reddy",
-    role: "Assistant Professor",
-    dept: "Information Technology Engineering",
-    data: {
-      journal: [
-        {
-          "Title of the Paper": "Blockchain Performance for Supply Chains",
-          "Name of the Journal": "Journal of Distributed Systems",
-          "Page Number": "88-102",
-          "Year of Publication": "2023",
-          "Impact Factor": "2.4",
-          "National/International": "International",
-          "ISBN Number": "2233-4455",
-          "Indexing Platform": "Scopus",
-          "H-index": "10",
-          "Document": "sandeep_reddy_journal.pdf"
-        }
-      ],
-      certifications: [
-        {
-          "Name of Certification Course": "Blockchain Developer Professional",
-          "Type of Certification": "Professional",
-          "Organized by": "EdX",
-          "Duration (in days)": "14"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Kavita Shah",
-    role: "Lecturer",
-    dept: "MBA",
-    data: {
-      workshop: [
-        {
-          "Program Title": "Business Analytics with Python",
-          "Year": "2023",
-          "Scope": "National",
-          "Organizing Body": "IIM Bangalore",
-          "Mode": "Online",
-          "Place": "Virtual",
-          "Attended/Organized": "Attended"
-        }
-      ],
-      consultancy: [
-        {
-          "Project Title": "Market Research for SME Cluster",
-          "Year of Sanction": "2022",
-          "Duration (in months)": "4",
-          "Name of Funding Agency": "State Industry Dept",
-          "Amount (in INR)": "150000",
-          "Are you ": "Consultant",
-          "Status": "Completed",
-          "Document": "kavita_shah_consultancy.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Arjun Desai",
-    role: "Professor",
-    dept: "Computer Science and Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2020A009001",
-          "Title of the Patent": "Adaptive Query Optimizer for NoSQL",
-          "Published/Granted": "Granted",
-          "Year of Published/Granted": "2020",
-          "Scope": "International",
-          "Document": "arjun_desai_patent.pdf"
-        }
-      ],
-      sponsored: [
-        {
-          "Project Title": "AI for Smart Cities",
-          "Funding Agency": "AICTE",
-          "Amount (in INR)": "2000000",
-          "Duration (in months)": "24",
-          "Status": "Completed",
-          "Academic Year": "2021-22",
-          "Document": "arjun_desai_sponsored.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Neha Kulkarni",
-    role: "Assistant Professor",
-    dept: "Electronics and Communication Engineering",
-    data: {
-      phd_awarded: [
-        {
-          "Year of Awarding": "2022",
-          "Number of Students": "2"
-        }
-      ],
-      webinar: [
-        {
-          "Program Title": "5G Antenna Design Trends",
-          "Year": "2024",
-          "Scope": "National",
-          "Organizing Body": "IEEE MTT",
-          "Mode": "Online",
-          "Place": "Virtual",
-          "Attended/Organized": "Attended"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Rohit Verma",
-    role: "Researcher",
-    dept: "Mechanical Engineering",
-    data: {
-      research: [
-        {
-          "Project Title": "Heat Transfer in Microchannels",
-          "Year of Sanction": "2022",
-          "Duration (in months)": "18",
-          "Funding Agency": "SERB",
-          "Fund Received (in INR)": "900000",
-          "Are you": "Co-PI",
-          "Status": "Ongoing",
-          "Document": "rohit_verma_research.pdf"
-        }
-      ],
-      talk: [
-        {
-          "Event Title": "Microfluidics Symposium",
-          "Name of the Event": "ICMF 2023",
-          "Date": "2023-08-05",
-          "Topic / Title of Talk": "Two-Phase Flow Modelling",
-          "Scope": "International",
-          "Mode": "Offline",
-          "Place": "Chennai",
-          "Document": "rohit_verma_talk.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Sonia Patel",
-    role: "Associate Professor",
-    dept: "Civil Engineering",
-    data: {
-      publications: [
-        {
-          "Title": "Urban Infrastructure Resilience",
-          "Name of the Journal": "Journal of Urban Planning",
-          "Page Number": "200-216",
-          "Year of Publication": "2021",
-          "Impact Factor": "2.2",
-          "Scope": "International",
-          "ISSN Number": "1456-7788",
-          "Indexing Platform": "Scopus",
-          "H-index": "12",
-          "Document": "sonia_patel_journal.pdf"
-        }
-      ],
-      fdp: [
-        {
-          "Program Title": "Remote Sensing for Civil Engineers",
-          "Year": "2022",
-          "Scope": "National",
-          "Organizing Body": "IIT Bombay",
-          "Mode": "Online",
-          "Place": "Virtual",
-          "Attended/Organized": "Attended"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Kiran Rao",
-    role: "Professor",
-    dept: "Metallurgical Engineering",
-    data: {
-      book_chapter: [
-        {
-          "Title of the Book Chapter": "Nanoalloys and Properties",
-          "Name of the Publisher": "Wiley",
-          "Year of Publication": "2019",
-          "Scope": "International",
-          "ISBN Number": "978-81-22111-00-3",
-          "No. of Authors": "3",
-          "Document": "kiran_rao_chapter.pdf"
-        }
-      ],
-      award_title: [
-        {
-          "Award / Recognition Title": "Young Metallurgist Award",
-          "Granting Organization / Institution": "Indian Metallurgical Society",
-          "Year": "2020",
-          "Document": "kiran_rao_award.pdf"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Sima Bose",
-    role: "Assistant Professor",
-    dept: "Information Technology Engineering",
-    data: {
-      certifications: [
-        {
-          "Name of Certification Course": "Data Science Professional",
-          "Type of Certification": "Professional",
-          "Organized by": "IBM",
-          "Duration (in days)": "45"
-        }
-      ],
-    }
-  },
-
-  {
-    name: "Dr. Arvind Kulkar",
-    role: "Lecturer",
-    dept: "M.Tech",
-    data: {
-      phd_ongoing: [
-        {
-          "Year of Awarding": "2023",
-          "Number of Students": "2"
-        }
-      ],
-      workshop: [
-        {
-          "Program Title": "Advanced CFD Applications",
-          "Year": "2022",
-          "Scope": "Institutional",
-          "Organizing Body": "NIT Warangal",
-          "Mode": "Offline",
-          "Place": "NIT Warangal",
-          "Attended/Organized": "Attended"
-        }
-      ]
-    }
-  },
-
-  {
-    name: "Dr. Mehul Shah",
-    role: "Professor",
-    dept: "Electrical and Electronics Engineering",
-    data: {
-      ieee: [
-        {
-          "Membership ID": "IEEE7654321",
-          "Membership Type (Life/Annual/Student)": "Life",
-          "Year Joined": "2015",
-          "Validity Period (if applicable)": "Life",
-          "Document": "mehul_shah_ieee.pdf"
-        }
-      ],
-      consultancy: [
-        {
-          "Project Title": "Power Quality Assessment for Industry",
-          "Year of Sanction": "2021",
-          "Duration (in months)": "6",
-          "Name of Funding Agency": "ABC Industries",
-          "Amount (in INR)": "200000",
-          "Are you ": "Consultant",
-          "Status": "Completed",
-          "Document": "mehul_shah_consultancy.pdf"
-        }
-      ]
-    }
-  },
-  // Part 1 ends here: objects 1–20
-  // 1
-  {
-    name: "Dr. John Carter",
-    role: "Professor",
-    dept: "Computer Science and Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2024A000101",
-          "Title of the Patent": "AI-Based Traffic Prediction System",
-          "Published/Granted": "Published",
-          "Scope": "International",
-          "Year of Published/Granted": "2020",
-          "Application Number": "AIPTS001"
-        }
-      ],
-      conference: [
-        {
-          "Title of the Paper": "Deep Learning Advances",
-          "Title of the Conference": "ICML 2024",
-          "National/International": "International",
-          "Organized by": "IEEE Quantum",
-          "Date of Publication": "2024-03-10",
-          "Location": "Hyderabad"
-        }
-      ],
-      certifications: [
-        {
-          "Name of Certification Course": "Google Professional Cloud Architect",
-          "Year": "2023",
-          "Type of Certification": "Professional",
-          "Organized by": "Google",
-          "Duration (in days)": "45"
-        }
-      ]
-    }
-  },
-
-  // 2
-  {
-    name: "Dr. Emma Robinson",
-    role: "Associate Professor",
-    dept: "Information Technology Engineering",
-    data: {
-      journal: [
-        {
-          "Title": "Blockchain Security Framework",
-          "Journal Name": "IEEE Access",
-          "ISSN": "2169-3536",
-          "Impact Factor": "4.5",
-          "Year": "2023"
-        }
-      ],
-      book: [
-        {
-          "Title of the Book": "Modern Cryptography Essentials",
-          "Name of the Publisher": "Pearson",
-          "National/International": "international",
-          "ISBN": "978-1-23456-789-7",
-          "Year of Publication": "2022"
-        }
-      ]
-    }
-  },
-
-  // 3
-  {
-    name: "Dr. Michael Adams",
-    role: "Assistant Professor",
-    dept: "Electronics and Communication Engineering",
-    data: {
-      conference: [
-        {
-          "Title of the Paper": "5G mmWave Spectrum Optimization",
-          "Title of the Conference": "ICC 2024",
-          "Date of Publication": "2024-04-12",
-          "Organized by": "IEEE Quantum",
-          "National/International": "International",
-          "Location": "Delhi"
-        }
-      ],
-      fdps: [
-        {
-          "Title": "Advanced Wireless Systems",
-          "Conducted By": "IIT Delhi",
-          "Duration": "5 Days",
-          "Year": "2023"
-        }
-      ]
-    }
-  },
-
-  // 4
-  {
-    name: "Dr. Sophia Patel",
-    role: "Lecturer",
-    dept: "Civil Engineering",
-    data: {
-      journal: [
-        {
-          "Title": "Soil Reinforcement Techniques",
-          "Journal Name": "Springer GeoTech",
-          "ISSN": "1866-8774",
-          "Impact Factor": "3.2",
-          "Year": "2024"
-        }
-      ],
-      conference: [
-        {
-          "Title of the Paper": "Urban Planning Innovations",
-          "Title of the Conference": "ICCE 2024",
-          "Date of Publication": "2024-05-06",
-          "Organized by": "IEEE Quantum",
-          "National/International": "International",
-          "Location": "Mumbai"
-        }
-      ]
-    }
-  },
-
-  // 5
-  {
-    name: "Dr. Liam Thompson",
-    role: "Professor",
-    dept: "Mechanical Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2024A000202",
-          "Title of the Patent": "Hybrid Turbine Efficiency Enhancer",
-          "Year of Published/Granted": "2024",
-          "Published/Granted": "Filed",
-          "Issue Date": "2024-01-28",
-          "Scope": "International",
-          "Application Number": "HTE002"
-        }
-      ],
-      book: [
-        {
-          "Title of the Book": "Thermodynamics Simplified",
-          "National/International": "International",
-          "Name of the Publisher": "McGraw Hill",
-          "ISBN": "978-0-12345-678-9",
-          "Year of Publication": "2021"
-        }
-      ],
-      fdps: [
-        {
-          "Title": "Industrial Fluid Mechanics",
-          "Conducted By": "NIT Trichy",
-          "Duration": "7 Days",
-          "Year": "2023"
-        }
-      ]
-    }
-  },
-
-  // 6
-  {
-    name: "Dr. Olivia Baker",
-    role: "Assistant Professor",
-    dept: "MBA",
-    data: {
-      journal: [
-        {
-          "Title": "Behavioral Finance Patterns",
-          "Journal Name": "Elsevier Finance",
-          "ISSN": "1234-5678",
-          "Impact Factor": "2.1",
-          "Year": "2023"
-        }
-      ],
-      certifications: [
-        {
-          "Organized by": "Coursera",
-          "Year": "2022",
-          "Name of Certification Course": "Financial Modelling Expert",
-          "Type of Certification": "Professional",
-          "Duration (in days)": "45"
-        }
-      ]
-    }
-  },
-
-  // 7
-  {
-    name: "Dr. Noah Williams",
-    role: "Researcher",
-    dept: "Metallurgical Engineering",
-    data: {
-      conference: [
-        {
-          "Title of the Paper": "Metal Alloy Innovations",
-          "Title of the Conference": "ICMME 2024",
-          "Date of Publication": "2024-06-14",
-          "National/International": " International",
-          "Organized by": "IEEE Quantum",
-          "Location": "Chennai"
-        }
-      ],
-      journal: [
-        {
-          "Title": "Corrosion Resistance Analysis",
-          "Journal Name": "Elsevier Materials",
-          "ISSN": "0921-5093",
-          "Impact Factor": "5.2",
-          "Year": "2024"
-        }
-      ]
-    }
-  },
-
-  // 8
-  {
-    name: "Dr. Ava Mitchell",
-    role: "Lecturer",
-    dept: "Electrical and Electronics Engineering",
-    data: {
-      fdps: [
-        {
-          "Title": "Smart Grid Technologies",
-          "Conducted By": "IIT Bombay",
-          "Duration": "6 Days",
-          "Year": "2024"
-        }
-      ],
-      conference: [
-        {
-          "Title of the Paper": "Power System Optimization",
-          "Title of the Conference": "IEEMA 2023",
-          "Date of Publication": "2023-11-09",
-          "Organized by": "IEEE Quantum",
-          "National/International": "International",
-          "Location": "Bangalore"
-        }
-      ]
-    }
-  },
-
-  // 9
-  {
-    name: "Dr. Ethan Garcia",
-    role: "Professor",
-    dept: "Computer Science and Engineering",
-    data: {
-      book: [
-        {
-          "Title of the Book": "Data Structures Deep Dive",
-          "Name of the Publisher": "Wiley",
-          "ISBN": "978-1-90876-543-2",
-          "National/International": "International",
-          "Year of Publication": "2020"
-        }
-      ],
-      journal: [
-        {
-          "Title": "AI Optimization in NLP",
-          "Journal Name": "ACM Computing Surveys",
-          "ISSN": "0360-0300",
-          "Impact Factor": "14.3",
-          "Year": "2024"
-        }
-      ]
-    }
-  },
-
-  // 10
-  {
-    name: "Dr. Isabella Shah",
-    role: "Assistant Professor",
-    dept: "Mechanical Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2024A000333",
-          "Title of the Patent": "Energy Efficient Cooling Blade",
-          "Published/Granted": "Published",
-          "Year of Published/Granted": "2024",
-          "Issue Date": "2024-03-16",
-          "Scope": "International",
-          "Application Number": "ECB003"
-        }
-      ],
-      fdps: [
-        {
-          "Title": "Advanced CAD Techniques",
-          "Conducted By": "IIT Madras",
-          "Duration": "5 Days",
-          "Year": "2023"
-        }
-      ]
-    }
-  },
-
-  // 11
-  {
-    name: "Dr. Lucas Brown",
-    role: "Researcher",
-    dept: "Civil Engineering",
-    data: {
-      conference: [
-        {
-          "Title of the Paper": "Bridge Load Testing Methods",
-          "Title of the Conference": "ICBE 2024",
-          "Date of Publication": "2024-07-10",
-          "Organized by": "IEEE Quantum",
-          "National/International": "International",
-          "Location": "Kolkata"
-        }
-      ],
-      certifications: [
-        {
-          "Name of Certification Course": "AutoCAD Civil Expert",
-          "Year": "2023",
-          "Type of Certification": "Professional",
-          "Organized by": "Autodesk",
-          "Duration (in days)": "45"
-        }
-      ]
-    }
-  },
-
-  // 12
-  {
-    name: "Dr. Mia Edwards",
-    role: "Professor",
-    dept: "MBA",
-    data: {
-      book: [
-        {
-          "Title of the Book": "Leadership Psychology",
-          "Name of the Publisher": "Oxford",
-          "ISBN": "978-0-19234-567-8",
-          "National/International": "International",
-          "Year of Publication": "2019"
-        }
-      ],
-      journal: [
-        {
-          "Title": "Human Resource Analytics",
-          "Journal Name": "Springer HRM",
-          "ISSN": "0933-7998",
-          "Impact Factor": "3.8",
-          "Year": "2022"
-        }
-      ]
-    }
-  },
-
-  // 13
-  {
-    name: "Dr. Elijah Turner",
-    role: "Assistant Professor",
-    dept: "Electrical and Electronics Engineering",
-    data: {
-      conference: [
-        {
-          "Title of the Paper": "EV Charging Architecture",
-          "Title of the Conference": "EVCon 2024",
-          "Date of Publication": "2024-03-19",
-          "National/International": "International",
-          "Organized by": "IEEE Quantum",
-          "Location": "Delhi"
-        }
-      ],
-      patents: [
-        {
-          "Patent Number": "IN2023A000403",
-          "Title of the Patent": "Fast Charging Converter System",
-          "Published/Granted": "Filed",
-          "Year of Published/Granted": "2024",
-          "Issue Date": "2023-12-10",
-          "Scope": "International",
-          "Application Number": "FCC004"
-        }
-      ]
-    }
-  },
-
-  // 14
-  {
-    name: "Dr. Charlotte White",
-    role: "Lecturer",
-    dept: "Information Technology Engineering",
-    data: {
-      journal: [
-        {
-          "Title": "Cyber Security Threat Modeling",
-          "Journal Name": "Elsevier Computers & Security",
-          "ISSN": "0167-4048",
-          "Impact Factor": "6.2",
-          "Year": "2022"
-        }
-      ],
-      certifications: [
-        {
-          "Organized by": "EC-Council",
-          "Year": "2023",
-          "Name of Certification Course": "Ethical Hacking",
-          "Type of Certification": "Professional",
-          "Duration (in days)": "45"
-        }
-      ]
-    }
-  },
-
-  // 15
-  {
-    name: "Dr. William Harris",
-    role: "Professor",
-    dept: "Metallurgical Engineering",
-    data: {
-      book: [
-        {
-          "Title of the Book": "Advanced Metallurgy",
-          "National/International": "International",
-          "Name of the Publisher": "CRC Press",
-          "ISBN": "978-1-23411-445-1",
-          "Year of Publication": "2020"
-        }
-      ],
-      journal: [
-        {
-          "Title": "Nano Grain Structure Control",
-          "Journal Name": "Materialia",
-          "ISSN": "2589-1529",
-          "Impact Factor": "4.9",
-          "Year": "2023"
-        }
-      ]
-    }
-  },
-
-  // 16
-  {
-    name: "Dr. Harper Foster",
-    role: "Assistant Professor",
-    dept: "Electronics and Communication Engineering",
-    data: {
-      fdps: [
-        {
-          "Title": "Antenna Theory",
-          "Conducted By": "IIT Kanpur",
-          "Duration": "3 Days",
-          "Year": "2024"
-        }
-      ],
-      conference: [
-        {
-          "Title of the Paper": "IoT-Based Communication Systems",
-          "Title of the Conference": "IoTCon 2023",
-          "Date of Publication": "2023-12-08",
-          "National/International": "International",
-          "Organized by": "IEEE Quantum",
-          "Location": "Pune"
-        }
-      ]
-    }
-  },
-
-  // 17
-  {
-    name: "Dr. Henry Collins",
-    role: "Lecturer",
-    dept: "Civil Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2024A000599",
-          "Title of the Patent": "Eco-Friendly Cement Binder",
-          "Published/Granted": "Published",
-          "Year of Published/Granted": "2024",
-          "Scope": "International",
-          "Issue Date": "2024-02-22",
-          "Application Number": "ECB005"
-        }
-      ],
-      journal: [
-        {
-          "Title": "Sustainable Construction",
-          "Journal Name": "Elsevier Construction & Building Materials",
-          "ISSN": "0950-0618",
-          "Impact Factor": "7.5",
-          "Year": "2023"
-        }
-      ]
-    }
-  },
-
-  // 18
-  {
-    name: "Dr. Amelia Ross",
-    role: "Researcher",
-    dept: "Computer Science and Engineering",
-    data: {
-      conference: [
-        {
-          "Title of the Paper": "Quantum Machine Learning Models",
-          "Title of the Conference": "QML Summit 2024",
-          "National/International": "International",
-          "Date of Publication": "2024-05-18",
-          "Organized by": "IEEE Quantum",
-          "Location": "Bangalore"
-        }
-      ],
-      certifications: [
-        {
-          "Year": "2023",
-          "Name of Certification Course": "AWS Machine Learning Specialty",
-          "Type of Certification": "Professional",
-          "Organized by": "IBM",
-          "Duration (in days)": "45"
-        }
-      ]
-    }
-  },
-
-  // 19
-  {
-    name: "Dr. Daniel Wright",
-    role: "Associate Professor",
-    dept: "Information Technology Engineering",
-    data: {
-      book: [
-        {
-          "Title of the Book": "Cloud Native Development",
-          "National/International": "International",
-          "Name of the Publisher": "O'Reilly",
-          "ISBN": "978-1-33733-881-0",
-          "Year of Publication": "2020"
-        }
-      ],
-      fdps: [
-        {
-          "Title": "DevOps Automation",
-          "Conducted By": "IIT Hyderabad",
-          "Duration": "4 Days",
-          "Year": "2023"
-        }
-      ]
-    }
-  },
-
-  // 20
-  {
-    name: "Dr. Victoria Allen",
-    role: "Professor",
-    dept: "Mechanical Engineering",
-    data: {
-      journal: [
-        {
-          "Title": "Heat Transfer Optimization",
-          "Journal Name": "ASME Thermal Science",
-          "ISSN": "1528-8943",
-          "Impact Factor": "3.6",
-          "Year": "2024"
-        }
-      ],
-      patents: [
-        {
-          "Patent Number": "IN2024A000699",
-          "Title of the Patent": "Zero-Friction Composite Material",
-          "Published/Granted": "Filed",
-          "Year of Published/Granted": "2024",
-          "Scope": "International",
-          "Issue Date": "2024-03-01",
-          "Application Number": "ZFC006"
-        }
-      ]
-    }
-  }
-];
-
 const schemas = {
   patents: {
     label: "Patents",
     attributes: [
       { key: "Patent Number", label: "Patent Number", required: true },
       { key: "Title of the Patent", label: "Title", required: true },
-      { key: "Published/Granted", label: "Published/Granted", required: true },
-      { key: "Year of Published/Granted", label: "Year", required: true },
+      { key: "Published/granted", label: "Published/granted", required: true },
+      { key: "Year of Published/granted", label: "Year", required: true },
       { key: "Scope", label: "Scope", required: true },
     ],
   },
@@ -1097,7 +40,7 @@ const schemas = {
       { key: "Title of the Book Chapter", label: "Chapter Title", required: true },
       { key: "Name of the Publisher", label: "Publisher", required: true },
       { key: "Year of Publication", label: "Year", required: true },
-      { key: "National/International", label: "Scope", required: false },
+      { key: "National/international", label: "Scope", required: false },
       { key: "ISBN Number", label: "ISBN", required: false },
       { key: "No. of Authors", label: "Authors Count", required: false },
     ],
@@ -1109,7 +52,7 @@ const schemas = {
       { key: "Title of the Book", label: "Book Title", required: true },
       { key: "Name of the Publisher", label: "Publisher", required: true },
       { key: "Year of Publication", label: "Year", required: true },
-      { key: "National/International", label: "Scope", required: false },
+      { key: "National/international", label: "Scope", required: false },
       { key: "ISBN Number", label: "ISBN", required: false },
     ],
   },
@@ -1122,7 +65,7 @@ const schemas = {
       { key: "Page Number", label: "Page Number", required: false },
       { key: "Year of Publication", label: "Year", required: true },
       { key: "ISBN Number", label: "ISBN", required: false },
-      { key: "National/International", label: "Scope", required: true },
+      { key: "National/international", label: "Scope", required: true },
       { key: "Impact Factor", label: "Impact Factor", required: false },
       { key: "ISSN Number", label: "ISSN", required: false },
       { key: "Indexing Platform", label: "Indexing", required: false },
@@ -1137,7 +80,7 @@ const schemas = {
       { key: "Title of the Conference", label: "Conference Title", required: true },
       { key: "Date of Publication", label: "Date", required: false },
       { key: "Organized by", label: "Organizer", required: true },
-      { key: "National/International", label: "Scope", required: false },
+      { key: "National/international", label: "Scope", required: false },
     ],
   },
 
@@ -1198,7 +141,8 @@ const schemas = {
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
-      { key: "Attended/Organized", label: "Role", required: true },
+      { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -1211,7 +155,8 @@ const schemas = {
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
-      { key: "Attended/Organized", label: "Role", required: true },
+      { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -1224,7 +169,8 @@ const schemas = {
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode", label: "Mode", required: false },
       { key: "Place", label: "Place", required: false },
-      { key: "Attended/Organized", label: "Role", required: true },
+      { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -1237,7 +183,8 @@ const schemas = {
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode", label: "Mode", required: false },
       { key: "Place", label: "Place", required: false },
-      { key: "Attended/Organized", label: "Role", required: true },
+      { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -1250,7 +197,8 @@ const schemas = {
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
-      { key: "Attended/Organized", label: "Role", required: true },
+      { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -1263,7 +211,8 @@ const schemas = {
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
-      { key: "Attended/Organized", label: "Role", required: true },
+      { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -1276,7 +225,8 @@ const schemas = {
       { key: "Organizing Body", label: "Organizer", required: true },
       { key: "Mode", label: "Mode", required: true },
       { key: "Place", label: "Place", required: false },
-      { key: "Attended/Organized", label: "Role", required: true },
+      { key: "Attended/organized", label: "Role", required: true },
+      { key: "Role", label : "Role" , required:true}
     ],
   },
 
@@ -1452,259 +402,413 @@ const schemas = {
   },
 };
 
-const facultyList = [
-  {
-    name: "Dr. John Doe",
-    department: "Computer Science and Engineering",
-    role: "Professor",
-    email: "john.doe@yourcollege.edu"
-  },
-  {
-    name: "Dr. Jane Smith",
-    department: "Electrical and Electronics Engineering",
-    role: "Associate Professor",
-    email: "jane.smith@yourcollege.edu"
-  },
-  {
-    name: "Dr. Mike Johnson",
-    department: "Mechanical Engineering",
-    role: "Assistant Professor",
-    email: "mike.johnson@yourcollege.edu"
-  },
-  {
-    name: "Dr. Emily Davis",
-    department: "MBA",
-    role: "Lecturer",
-    email: "emily.davis@yourcollege.edu"
-  },
-  {
-    name: "Dr. William Brown",
-    department: "Computer Science and Engineering",
-    role: "Professor",
-    email: "william.brown@yourcollege.edu"
-  },
-  {
-    name: "Dr. Olivia Wilson",
-    department: "Civil Engineering",
-    role: "Assistant Professor",
-    email: "olivia.wilson@yourcollege.edu"
-  },
-  {
-    name: "Dr. Henry Taylor",
-    department: "Electronics and Communication Engineering",
-    role: "Lecturer",
-    email: "henry.taylor@yourcollege.edu"
-  },
-  {
-    name: "Dr. Sophia Martinez",
-    department: "Information Technology Engineering",
-    role: "Researcher",
-    email: "sophia.martinez@yourcollege.edu"
-  },
-  {
-    name: "Dr. Daniel Anderson",
-    department: "Metallurgical Engineering",
-    role: "Professor",
-    email: "daniel.anderson@yourcollege.edu"
-  },
-  {
-    name: "Dr. Grace Lee",
-    department: "Computer Science and Engineering",
-    role: "Assistant Professor",
-    email: "grace.lee@yourcollege.edu"
-  },
-  {
-    name: "Dr. Benjamin Harris",
-    department: "MBA",
-    role: "Lecturer",
-    email: "benjamin.harris@yourcollege.edu"
-  },
-  {
-    name: "Dr. Alice Walker",
-    department: "Civil Engineering",
-    role: "Professor",
-    email: "alice.walker@yourcollege.edu"
-  },
-  {
-    name: "Dr. Christopher Young",
-    department: "Computer Science and Engineering",
-    role: "Assistant Professor",
-    email: "christopher.young@yourcollege.edu"
-  },
-  {
-    name: "Dr. Rachel Green",
-    department: "Electrical and Electronics Engineering",
-    role: "Professor",
-    email: "rachel.green@yourcollege.edu"
-  },
-  {
-    name: "Dr. Steven Hall",
-    department: "Mechanical Engineering",
-    role: "Associate Professor",
-    email: "steven.hall@yourcollege.edu"
-  },
-  {
-    name: "Dr. Monica Clark",
-    department: "MBA",
-    role: "Assistant Professor",
-    email: "monica.clark@yourcollege.edu"
-  },
-  {
-    name: "Dr. Kevin Lewis",
-    department: "Information Technology Engineering",
-    role: "Professor",
-    email: "kevin.lewis@yourcollege.edu"
-  },
-  {
-    name: "Dr. Laura Robinson",
-    department: "Civil Engineering",
-    role: "Lecturer",
-    email: "laura.robinson@yourcollege.edu"
-  },
-  {
-    name: "Dr. Patrick Walker",
-    department: "Metallurgical Engineering",
-    role: "Assistant Professor",
-    email: "patrick.walker@yourcollege.edu"
-  },
-  {
-    name: "Dr. Kimberly Scott",
-    department: "M.Tech",
-    role: "Researcher",
-    email: "kimberly.scott@yourcollege.edu"
-  },
-  {
-    name: "Dr. Anthony King",
-    department: "Computer Science and Engineering",
-    role: "Lecturer",
-    email: "anthony.king@yourcollege.edu"
-  },
-  {
-    name: "Dr. Stephanie Adams",
-    department: "Electrical and Electronics Engineering",
-    role: "Assistant Professor",
-    email: "stephanie.adams@yourcollege.edu"
-  },
-  {
-    name: "Dr. Brian Mitchell",
-    department: "Mechanical Engineering",
-    role: "Professor",
-    email: "brian.mitchell@yourcollege.edu"
-  },
-  {
-    name: "Dr. Jennifer Phillips",
-    department: "MBA",
-    role: "Professor",
-    email: "jennifer.phillips@yourcollege.edu"
-  },
-  {
-    name: "Dr. Eric Campbell",
-    department: "Information Technology Engineering",
-    role: "Lecturer",
-    email: "eric.campbell@yourcollege.edu"
-  },
-  {
-    name: "Dr. Melissa Parker",
-    department: "Civil Engineering",
-    role: "Associate Professor",
-    email: "melissa.parker@yourcollege.edu"
-  },
-  {
-    name: "Dr. Joshua Rivera",
-    department: "Computer Science and Engineering",
-    role: "Researcher",
-    email: "joshua.rivera@yourcollege.edu"
-  },
-  {
-    name: "Dr. Angela Brooks",
-    department: "Electrical and Electronics Engineering",
-    role: "Lecturer",
-    email: "angela.brooks@yourcollege.edu"
-  },
-  {
-    name: "Dr. Ryan Morris",
-    department: "Mechanical Engineering",
-    role: "Assistant Professor",
-    email: "ryan.morris@yourcollege.edu"
-  },
-  {
-    name: "Dr. Samantha Price",
-    department: "MBA",
-    role: "Assistant Professor",
-    email: "samantha.price@yourcollege.edu"
-  },
-  {
-    name: "Dr. Nicholas Cox",
-    department: "Information Technology Engineering",
-    role: "Associate Professor",
-    email: "nicholas.cox@yourcollege.edu"
-  },
-  {
-    name: "Dr. Olivia Foster",
-    department: "Civil Engineering",
-    role: "Lecturer",
-    email: "olivia.foster@yourcollege.edu"
-  }
+const phd_awarded_fields = [
+  'Title Of The Thesis',
+  'Name Of The Scholar',
+  'Reg No',
+  'Role Of Scholar',
+  'Year Of Awarding',
+  'Proceeding'
 ];
 
-const phd_awarded_fields = ['Title of the Thesis', 'Name of the Scholar', 'Reg No.', 'Role of Scholar', 'Year of Awarding', 'Proceeding'];
-const phd_joining_fields = ['Title of the Thesis', 'Name of the Scholar', 'Reg No.', 'Role of Scholar', 'Year of Joining', 'Allotment order'];
-const MOOC_fields = ['Title of the MOOC', 'Month & Year', 'Document'];
-const e_content_fields = ['Title of the e-Content', 'Month & Year', 'Module is being used by Organization', 'Document'];
+const phd_joining_fields = [
+  'Title Of The Thesis',
+  'Name Of The Scholar',
+  'Reg No',
+  'Role Of Scholar',
+  'Year Of Joining',
+  'Allotment Order'
+];
+
+const MOOC_fields = [
+  'Title Of The Mooc',
+  'Month Year',
+  'Document'
+];
+
+const e_content_fields = [
+  'Title Of The E Content',
+  'Month Year',
+  'Module Is Being Used By Organization',
+  'Document'
+];
 
 const fields = {
-  foreign_visits: ['Purpose of Visit', 'Nature of Visit', 'Name of Conference/Event', 'Academic Year', 'Name of Host Organization', 'Country Visited', 'Start Date', 'End Date', 'Duration (in days)', 'Role of Faculty', 'Title of the Paper/Talk', 'Sponsoring Agency', 'Amount Sanctioned', 'Travel Grant Recieved', 'Document'],
-  patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope', 'Document'],
-  book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors', 'Document'],
-  book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'Document'],
-  journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication', 'Volume Number', 'Impact Factor (Thomson Reuters)', 'National/International', 'ISSN Number', 'No.of Authors', 'Author', 'Indexing Platform', 'H-index', 'Document'],
-  conference_paper: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International', 'Document'],
-
-  nptel: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
-  swayam: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
-  coursera: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
-  infosysspringboard: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
-  edx: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)', 'certificate'],
-  other: ['Name of Certification Course', 'Type of Certification', 'Organized by', 'Duration (in weeks)', 'certificate'],
-
-  sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration (in months)', 'Academic Year', 'Are you', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
-  research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Sanctioned Amount', 'Recieved Amount (utilized)', 'Are you', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
-  consultancy: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Amount (in INR)', 'Are you ', 'Status', 'Sanctioning Order', 'Utilization Certificate (final year)'],
-
-  fdp: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-  sttp: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-  conference: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-  workshop: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-  seminar: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-  webinar: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-  RC: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-  OC: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-
-  talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
-  keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
-  chair: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
-  lecture: ['Organizing Institution', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
-  resource_person: ['Event Title', 'Organizing Institution', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place', 'Document'],
-
-  mooc_content: ['Contribution in MOOC', 'Number of MOOCs', ...MOOC_fields],
-  e_content: ['Contribution in e-Content', 'Number of e-Contents', ...e_content_fields],
-  innovative_pedagogy: ['Title of the Pedagogical Innovation', 'Nature of Pedagogical Innovation', 'Year of development', 'Pedagogy is being used by Organization', 'Document'],
-
-  award_title: ['Award / Recognition Title', 'Granting Organization / Institution', 'Scope', 'Year', 'Document'],
-
-  ieee: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  acm: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  csi: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  ie: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  iete: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-  other_bodies: ['Name of the Professional Body', 'Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)', 'Document'],
-
-  any_moocs_course: ['Name of Certification Course', 'Duration', 'Transmitted language', 'certificate'],
-  book_book_chapter: ['Title of the Book/Book Chapter', 'Name of the Publisher', 'Month & year of Publication', 'ISBN/ISSN Number', 'No. of Chapters translated', 'No. of books translated', 'Document'],
-
-  phd_awarded: ['Number of Students', ...phd_awarded_fields],
-  phd_ongoing: ['Number of Students', ...phd_joining_fields],
-  mtech: ['Year of Awarding', 'Number of Students'],
+  foreign_visits: [
+    'Purpose Of Visit',
+    'Nature Of Visit',
+    'Name Of Conference Event',
+    'Academic Year',
+    'Name Of Host Organization',
+    'Country Visited',
+    'Start Date',
+    'End Date',
+    'Duration In Days',
+    'Role Of Faculty',
+    'Title Of The Paper Talk',
+    'Sponsoring Agency',
+    'Amount Sanctioned',
+    'Travel/grant/received',
+    'Document'
+  ],
+  patents: [
+    'Patent Number',
+    'Title Of The Patent',
+    'Published/granted',
+    'Year Of Published/granted',
+    'Scope',
+    'Document'
+  ],
+  book_chapter: [
+    'Title Of The Book Chapter',
+    'Name Of The Publisher',
+    'Year Of Publication',
+    'National/international',
+    'Isbn Number',
+    'No Of Authors',
+    'Document'
+  ],
+  book: [
+    'Title Of The Book',
+    'Name Of The Publisher',
+    'Year Of Publication',
+    'National/international',
+    'Isbn Number',
+    'Document'
+  ],
+  journal: [
+    'Title Of The Paper',
+    'Name Of The Journal',
+    'Page Number',
+    'Year Of Publication',
+    'Volume Number',
+    'Impact Factor Thomson Reuters',
+    'National/international',
+    'Issn Number',
+    'No Of Authors',
+    'Author',
+    'Indexing Platform',
+    'H Index',
+    'Document'
+  ],
+  conference_paper: [
+    'Title Of The Paper',
+    'Title Of The Conference',
+    'Date Of Publication',
+    'Organized By',
+    'National/international',
+    'Document'
+  ],
+  nptel: [
+    'Name Of Certification Course',
+    'Type Of Certification',
+    'Duration In Weeks',
+    'Document'
+  ],
+  swayam: [
+    'Name Of Certification Course',
+    'Type Of Certification',
+    'Duration In Weeks',
+    'Document'
+  ],
+  coursera: [
+    'Name Of Certification Course',
+    'Type Of Certification',
+    'Duration In Weeks',
+    'Document'
+  ],
+  infosysspringboard: [
+    'Name Of Certification Course',
+    'Type Of Certification',
+    'Duration In Weeks',
+    'Document'
+  ],
+  edx: [
+    'Name Of Certification Course',
+    'Type Of Certification',
+    'Duration In Weeks',
+    'Document'
+  ],
+  other: [
+    'Name Of Certification Course',
+    'Type Of Certification',
+    'Organized By',
+    'Duration In Weeks',
+    'Document'
+  ],
+  sponsored: [
+    'Project Title',
+    'Funding Agency',
+    'Amount In Inr',
+    'Duration In Months',
+    'Academic Year',
+    'Are You',
+    'Status',
+    'Sanctioning Order',
+    'Utilization Certificate Final Year'
+  ],
+  research: [
+    'Project Title',
+    'Year Of Sanction',
+    'Duration',
+    'Funding Agency',
+    'Sanctioned Amount',
+    'Recieved Amount Utilized',
+    'Are You',
+    'Status',
+    'Sanctioning Order',
+    'Utilization Certificate Final Year'
+  ],
+  consultancy: [
+    'Project Title',
+    'Year Of Sanction',
+    'Duration',
+    'Funding Agency',
+    'Amount In Inr',
+    'Are You',
+    'Status',
+    'Sanctioning Order',
+    'Utilization Certificate of Final Year'
+  ],
+  fdp: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  sttp: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  conference: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  workshop: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  seminar: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  webinar: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  rc: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  oc: [
+    'Program Title',
+    'Starting Date',
+    'Ending Date',
+    'Scope',
+    'Organizing Body',
+    'Mode',
+    'Place',
+    'Attended/organized',
+    'Role',
+    'Document'
+  ],
+  talk: [
+    'Event Title',
+    'Name Of The Event',
+    'Date',
+    'Topic Title Of Talk',
+    'Scope',
+    'Mode',
+    'Place',
+    'Document'
+  ],
+  keynote: [
+    'Conference Title',
+    'Name Of The Event',
+    'Date',
+    'Topic Title Of Talk',
+    'Scope',
+    'Mode',
+    'Place',
+    'Document'
+  ],
+  chair: [
+    'Conference Title',
+    'Name Of The Event',
+    'Date',
+    'Topic Title Of Talk',
+    'Scope',
+    'Mode',
+    'Place',
+    'Document'
+  ],
+  lecture: [
+    'Organizing Institution',
+    'Date',
+    'Topic Title Of Talk',
+    'Scope',
+    'Mode',
+    'Place',
+    'Document'
+  ],
+  resource_person: [
+    'Event Title',
+    'Organizing Institution',
+    'Date',
+    'Topic Title Of Talk',
+    'Scope',
+    'Mode',
+    'Place',
+    'Document'
+  ],
+  mooc_content: [
+    'Contribution In Mooc',
+    'Number Of Moocs',
+    ...MOOC_fields  // ← now uses the Title Case version above
+  ],
+  e_content: [
+    'Contribution In E Content',
+    'Number Of E Contents',
+    ...e_content_fields  // ← uses Title Case version above
+  ],
+  innovative_pedagogy: [
+    'Title Of The Pedagogical Innovation',
+    'Nature Of Pedagogical Innovation',
+    'Year Of Development',
+    'Pedagogy Is Being Used By Organization',
+    'Document'
+  ],
+  award_ttle: [
+    'Award Recognition Title',
+    'Granting Organization Institution',
+    'Scope',
+    'Year',
+    'Document'
+  ],
+  ieee: [
+    'Membership Id',
+    'Membership Type',
+    'Year Joined',
+    'Validity Period If Applicable',
+    'Document'
+  ],
+  acm: [
+    'Membership Id',
+    'Membership Type',
+    'Year Joined',
+    'Validity Period If Applicable',
+    'Document'
+  ],
+  csi: [
+    'Membership Id',
+    'Membership Type',
+    'Year Joined',
+    'Validity Period If Applicable',
+    'Document'
+  ],
+  ie: [
+    'Membership Id',
+    'Membership Type',
+    'Year Joined',
+    'Validity Period If Applicable',
+    'Document'
+  ],
+  iete: [
+    'Membership Id',
+    'Membership Type',
+    'Year Joined',
+    'Validity Period If Applicable',
+    'Document'
+  ],
+  other_bodies: [
+    'Name Of The Professional Body',
+    'Membership Id',
+    'Membership Type',
+    'Year Joined',
+    'Validity Period If Applicable',
+    'Document'
+  ],
+  any_moocs_course: [
+    'Name Of Certification Course',
+    'Duration',
+    'Transmitted Language',
+    'Certificate'
+  ],
+  book_book_chapter: [
+    'Title Of The Book/Book Chapter',
+    'Name Of The Publisher',
+    'Month Year Of Publication',
+    'Isbn/Issn Number',
+    'No Of Chapters Translated',
+    'No Of Books Translated',
+    'Document'
+  ],
+  phd_awarded: [
+    'Number Of Students',
+    ...phd_awarded_fields  // ← Title Case version above
+  ],
+  phd_ongoing: [
+    'Number Of Students',
+    ...phd_joining_fields  // ← Title Case version above
+  ],
+  mtech: [
+    'Year Of Awarding',
+    'Number Of Students'
+  ]
 };
 
 const AtKeys = [
@@ -1743,4 +847,4 @@ const departments = [
   "Master's in Business Administration"
 ]
 
-export { schemas, yearFields, facultyList, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, AtKeys,departments };
+export { schemas, yearFields, fields, phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields, AtKeys,departments };

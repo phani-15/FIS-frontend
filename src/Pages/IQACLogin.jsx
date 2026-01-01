@@ -77,11 +77,11 @@ export default function IQACLogin() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
             >
               <option value="">Select</option>
-              <option value="vice_principal">Vice Principal</option>
-              <option value="principal">Principal</option>
-              <option value="iqac_coordinator">IQAC Coordinator</option>
-              <option value="iqac_director">IQAC Director</option>
-              <option value="r&d_director">R&D Director</option>
+              <option value="Vice Principal">Vice Principal</option>
+              <option value="Principal">Principal</option>
+              <option value="IQAC Coordinator">IQAC Coordinator</option>
+              <option value="IQAC Director">IQAC Director</option>
+              <option value="R&D Director">R&D Director</option>
             </select>
 
             {roleError && (

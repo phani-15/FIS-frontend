@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { adminlogin } from "../core/admin";
 
 export default function AdminLogin() {
   const [passCode, setPassCode] = useState("");  // ✅ Correct destructuring
@@ -16,23 +16,36 @@ export default function AdminLogin() {
     if (isEmpty) setEmpty(false);
     if (isFalse) setFalse(false);
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  if (!passCode.trim()) {
+    setEmpty(true);
+    return;
+  }
 
-    if (!passCode.trim()) {
-      setEmpty(true);
+  try {
+    const data = await adminlogin({ passCode: passCode.trim() });
+    console.log("LOGIN RESPONSE:", data);
+
+    if (data.error) {
+      setFalse(true);
       return;
     }
 
-    const validPassCode = "AdminFaculty";
+    if (data.token) {
+      localStorage.setItem("jwt", JSON.stringify(data));
+      console.log("admin id is", data.admin._id);
+navigate(`/admin/${data.admin._id}`);
 
-    if (passCode === validPassCode) {
-      navigate("/adminPage");
-    } else {
-      setFalse(true);
+
     }
-  };
+
+  } catch (err) {
+    console.error("Login failed:", err);
+    setFalse(true);
+  }
+};
 
   return (
     <div className="flex justify-center items-center p-4 ">

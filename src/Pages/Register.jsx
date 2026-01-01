@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import InputField from "../components/inputField";
-import { useNavigate ,useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Trash2, Info } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { register } from "../core/auth"
@@ -9,12 +9,12 @@ import ProfilePictureCropper from "../components/ProfilePictureCropper";
 import { jwtDecode } from "jwt-decode";
 
 export default function Register() {
-  const {token}=useParams()
+  const { token } = useParams()
   const navigate = useNavigate()
   const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
-  const Data=jwtDecode(token)
+  const Data = jwtDecode(token)
   // Profile picture states
   const [showCropper, setShowCropper] = useState(false);
   const [profileImageSrc, setProfileImageSrc] = useState(null);
@@ -22,22 +22,7 @@ export default function Register() {
   const [croppedPreview, setCroppedPreview] = useState(null);
   const fileInputRef = useRef(null);
 
-  // const [personalData, setpersonalData] = useState({
-  //   name: "",
-  //   avatar: null,
-  //   father: "",
-  //   gender: "",
-  //   DOB: "",
-  //   marital: "",
-  //   phone: "",
-  //   area:"",
-  //   city:"",
-  //   designation: "",
-  //   department: "",
-  //   college: "",
-  //   date_of_join: new Date().toISOString().slice(0, 7), // current year-month
-  // });
-    const [personalData, setpersonalData] = useState({
+  const [personalData, setpersonalData] = useState({
     name: "Srinivas Rao polavarapu",
     avatar: null,
     father: "nothing",
@@ -50,7 +35,7 @@ export default function Register() {
     designation: "professor",
     department: "Computer Science and Engineering",
     college: "JNTUGV-CEV",
-    date_of_join: new Date().toISOString().slice(0, 7), // current year-month
+    date_of_join: new Date().toISOString(), // current year-month
   });
   const [loginData, setLoginData] = useState({
     password: "",
@@ -171,127 +156,6 @@ export default function Register() {
     });
     return newErrors;
   };
-
-  const test = async () => {
-    const obj1 = {
-      "loginData": {
-        "email": `${Data.email}`,
-      },
-      "personalData": personalData,
-      "education": {
-        "tenth": {
-          "percentage": "88%",
-          "school": "St. John's High School",
-          "year": "2001"
-        },
-        "twelth": {
-          "college": "Narayana Junior College",
-          "percentage": "92%",
-          "type": "Intermediate",
-          "year": "2003"
-        },
-        "degree": {
-          "college": "ABC Degree College",
-          "degreeName": "B.Tech",
-          "percentage": "75%",
-          "specialization": "Computer Science",
-          "title": "Graduate in Computer Science",
-          "university": "JNTU Hyderabad",
-          "year": "2007"
-        },
-        "pg": {
-          "college": "XYZ College of Engineering",
-          "course": "M.Tech",
-          "percentage": "82%",
-          "specialization": "Software Engineering",
-          "university": "Osmania University",
-          "year": "2009"
-        },
-        "phd": [
-          {
-            "University": "IIT Bombay",
-            "department": "Computer Science",
-            "specialization": "Machine Learning",
-            "under_the_proffessor": "Dr. S. Raman",
-            "year": 2015
-          },
-          {
-            "University": "IISC Bangalore",
-            "department": "Artificial Intelligence",
-            "specialization": "Deep Learning",
-            "under_the_proffessor": "Dr. Anita Verma",
-            "year": 2018
-          }
-        ],
-        "postdoc": [
-          {
-            "University": "MIT",
-            "specialization": "Neural Networks",
-            "under_the_proffessor": "Dr. John Doe",
-            "year": 2020
-          }
-        ]
-      },
-      "experience": [
-        {
-          "designation": "Assistant Professor",
-          "institute": "XYZ Engineering College",
-          "from": 2010,
-          "to": 2015
-        },
-        {
-          "designation": "Senior Assistant Professor",
-          "institute": "ABC Institute of Technology",
-          "from": 2015,
-          "to": 2019
-        },
-        {
-          "designation": "Associate Professor",
-          "institute": "University College of Engineering",
-          "from": 2019,
-          "to": 2024
-        }
-      ],
-      "administrativeService": [
-        {
-          "designation": "Department Coordinator",
-          "level": "University level",
-          "from": 2016,
-          "to": 2018
-        },
-        {
-          "designation": "Training & Placement Officer",
-          "from": 2018,
-          "to": 2020
-        }
-      ],
-      "otherAdministrativeService": [
-        {
-          "designation": "Research Committee Member",
-          "institute": "ABC Institute",
-          "from": 2015,
-          "to": "2017"
-        },
-        {
-          "designation": "Library Committee Chair",
-          "institute": "XYZ Engineering College",
-          "from": 2017,
-          "to": "2019"
-        },
-        {
-          "designation": "Cultural Event Coordinator",
-          "institute": "University College of Engineering",
-          "from": 2020,
-          "to": "2023"
-        }
-      ]
-    }
-    await register(obj1)
-      .then(console.log("user saved succesfully !")
-      )
-    navigate("/");
-  }
-
 
   // Add new experience row
   const addExperience = useCallback(() => {
@@ -452,7 +316,7 @@ export default function Register() {
       setErrors({});
       console.log(personalData);
 
-      test()
+      // test()
       setStep("education");
     }, [personalData]
   );
@@ -526,7 +390,7 @@ export default function Register() {
   const addPostDoc = useCallback(() => {
     setPostDocs(prev => [
       ...prev,
-      { specialization: "", under_the_proffessor: "", country: "", University: "", duration: "", year: "" }
+      { specialization: "", under_the_proffessor: "", University: "", year: "" }
     ]);
   }, []);
 
@@ -647,6 +511,7 @@ export default function Register() {
           onChange={handleEducationChange}
           // keep year as text + inputMode numeric to avoid number->string conversions
           type={f === "year" ? "number" : "text"}
+          onWheel={(e) => e.target.blur()}
           min={f === " year" ? 1900 : undefined}
           max={f === " year" ? new Date().getFullYear() : undefined}
           error={errors[`${levelKey}.${f}`]}
@@ -956,7 +821,7 @@ export default function Register() {
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label htmlFor="date_of_join">Date of Join</label>
               <input
-                type="month"
+                type="date"
                 id="date_of_join"
                 name="date_of_join"
                 value={personalData.date_of_join}
@@ -1085,6 +950,7 @@ export default function Register() {
                           onChange={(e) => handlePhDChange(index, e)}
                           error={errors[`phd.${index}.year`]}
                           type="number"
+                          onWheel={(e) => e.target.blur()}
                           inputMode="numeric"
                           required
                         />
@@ -1187,6 +1053,7 @@ export default function Register() {
                           onChange={(e) => handlePostDocChange(index, e)}
                           error={errors[`postdoc.${index}.year`]}
                           type="number"
+                          onWheel={(e) => e.target.blur()}
                           inputMode="numeric"
                           required
                         />
@@ -1217,7 +1084,7 @@ export default function Register() {
                   </div>
                 )}
               </div>
-              {Object.keys(errors).length > 0 && (
+              {Object.keys(errors).length > 0 && console.log(errors) && (
                 <div className="text-red-500 text-sm text-left">
                   Please fix the above errors before proceeding.
                 </div>
@@ -1466,202 +1333,200 @@ export default function Register() {
 
       {
         step == "as" && (
-          <div className=" flex flex-col justify-center items-center">
-            <div className="w-full lg:min-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center">
-              <h1
-                className="text-2xl font-semibold mb-6"
-                style={{ fontFamily: "Times New Roman, serif" }}
-              >
-                Administrative Service/Additional Duties in this Institute
-              </h1>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const newErrors = validateAS();
-                  setErrors(newErrors);
-                  if (Object.keys(newErrors).length === 0) {
-                    console.log("Administrative Service Data:", administrativeService);
-                    setStep("oas");
-                  }
-                }}
-                className="flex flex-col space-y-6"
-              >
-                {administrativeService.map((as, index) => (
-                  <div
-                    key={index}
-                    className="p-4 border border-gray-200 rounded-lg relative space-y-4 text-left"
-                  >
-                    <h2 className="text-lg text-center font-medium mb-3 pb-2">
-                      Service {index + 1}
-                    </h2>
+          <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h1
+              className="text-2xl font-semibold mb-6"
+              style={{ fontFamily: "Times New Roman, serif" }}
+            >
+              Administrative Service/Additional Duties in this Institute
+            </h1>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const newErrors = validateAS();
+                setErrors(newErrors);
+                if (Object.keys(newErrors).length === 0) {
+                  console.log("Administrative Service Data:", administrativeService);
+                  setStep("oas");
+                }
+              }}
+              className="flex flex-col space-y-6"
+            >
+              {administrativeService.map((as, index) => (
+                <div
+                  key={index}
+                  className="p-4 border border-gray-200 rounded-lg relative space-y-4 text-left"
+                >
+                  <h2 className="text-lg text-center font-medium mb-3 pb-2">
+                    Service {index + 1}
+                  </h2>
 
-                    {/* InputField is assumed to be a custom component that handles its own label and input styling */}
-                    <InputField
-                      label="Designation"
-                      name="designation"
-                      value={as.designation}
-                      onChange={(e) => handleASChange(index, e)}
-                      required
-                    />
-                    <div className="flex flex-col text-left space-y-2 mt-4">
-                      <label>Level of Service:</label>
-                      <div className="flex space-x-6 mt-1">
-                        {["Departmental", "College", "University"].map((level) => (
-                          <label key={level} className="flex items-center cursor-pointer">
-                            <input
-                              type="radio"
-                              name={`level-${index}`}
-                              value={level.toLowerCase()}
-                              checked={as.level === level.toLowerCase()}
-                              onChange={() =>
-                                handleASChange(index, {
-                                  target: { name: "level", value: level.toLowerCase() }
-                                })
-                              }
-                              className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                              required
-                            />
-                            <span className={`ml-2 ${as.level === level.toLowerCase() ? 'font-semibold text-gray-900' : 'text-gray-700'}`}> {level}</span>
-                          </label>))}
+                  {/* InputField is assumed to be a custom component that handles its own label and input styling */}
+                  <InputField
+                    label="Designation"
+                    name="designation"
+                    value={as.designation}
+                    onChange={(e) => handleASChange(index, e)}
+                    required
+                  />
+                  <div className="flex flex-col text-left space-y-2 mt-4">
+                    <label>Level of Service:</label>
+                    <div className="flex flex-wrap space-x-6 mt-1">
+                      {["Departmental", "College", "University"].map((level) => (
+                        <label key={level} className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name={`level-${index}`}
+                            value={level.toLowerCase()}
+                            checked={as.level === level.toLowerCase()}
+                            onChange={() =>
+                              handleASChange(index, {
+                                target: { name: "level", value: level.toLowerCase() }
+                              })
+                            }
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                            required
+                          />
+                          <span className={`ml-2 ${as.level === level.toLowerCase() ? 'font-semibold text-gray-900' : 'text-gray-700'}`}> {level}</span>
+                        </label>))}
 
-                      </div>
                     </div>
+                  </div>
 
-                    {/* Group for From and To years */}
-                    <div className="grid grid-cols-2 gap-4">
-                      {/* FROM Field - Corrected to use a mapped array for year generation */}
-                      <div className="flex flex-col space-y-2">
-                        <label htmlFor={`as-from-${index}`} className="text-sm font-medium text-gray-700">
-                          From
-                        </label>
-                        <select
-                          name="from"
-                          id={`as-from-${index}`}
-                          value={String(as.from)} // Ensure value is a string for select element
-                          onChange={(e) =>
-                            // Pass the change event to the handler
-                            handleASChange(index, {
-                              target: {
-                                name: e.target.name,
-                                // Parse the value back to a number, or keep it empty/0
-                                value: parseInt(e.target.value, 10) || 0
-                              }
-                            })
-                          }
-                          className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
-                          required
-                        >
-                          <option value="0">Select Year</option>
-                          {/* Generates years from current year down to 2007 */}
-                          {Array.from({ length: new Date().getFullYear() - 2007 + 1 }, (_, i) => {
-                            const year = new Date().getFullYear() - i;
-                            return (
-                              <option key={year} value={String(year)}>
-                                {year}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-
-                      {/* TO Field - Added for completeness and matching the previous component's grid layout */}
-                      <div className="flex flex-col space-y-2">
-                        <label htmlFor={`as-to-${index}`} className="text-sm font-medium text-gray-700">
-                          To
-                        </label>
-                        <select
-                          name="to"
-                          id={`as-to-${index}`}
-                          value={String(as.to)}
-                          onChange={(e) =>
-                            handleASChange(index, {
-                              target: {
-                                name: e.target.name,
-                                value: e.target.value === "" ? "" : e.target.value === "Present" ? "Present" : parseInt(e.target.value, 10),
-                              },
-                            })
-                          }
-                          className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
-                          required
-                        >
-                          <option value="">Select Year</option>
-                          <option value="Present">Present</option>
-                          {Array.from({ length: new Date().getFullYear() - 2008 }, (_, i) => {
-                            const year = new Date().getFullYear() - i - 1;
-                            return (
-                              <option key={year} value={String(year)}>
-                                {year}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                      {errors[`administrativeService.${index}.to`] && (
-                        <div className="text-red-500 text-sm col-span-2 text-left">
-                          {errors[`administrativeService.${index}.to`]}
-                        </div>
-                      )}
-                    </div>
-                    {administrativeService.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeAS(index)}
-                        className="absolute top-2 right-2 text-slate-600 group p-1 rounded hover:bg-red-50"
-                        aria-label={`Remove Service ${index + 1}`}
+                  {/* Group for From and To years */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* FROM Field - Corrected to use a mapped array for year generation */}
+                    <div className="flex flex-col space-y-2">
+                      <label htmlFor={`as-from-${index}`} className="text-sm font-medium text-gray-700">
+                        From
+                      </label>
+                      <select
+                        name="from"
+                        id={`as-from-${index}`}
+                        value={String(as.from)} // Ensure value is a string for select element
+                        onChange={(e) =>
+                          // Pass the change event to the handler
+                          handleASChange(index, {
+                            target: {
+                              name: e.target.name,
+                              // Parse the value back to a number, or keep it empty/0
+                              value: parseInt(e.target.value, 10) || 0
+                            }
+                          })
+                        }
+                        className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                        required
                       >
-                        <Trash2 size={18} />
-                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                          Remove
-                        </span>
-                      </button>
+                        <option value="0">Select Year</option>
+                        {/* Generates years from current year down to 2007 */}
+                        {Array.from({ length: new Date().getFullYear() - 2007 + 1 }, (_, i) => {
+                          const year = new Date().getFullYear() - i;
+                          return (
+                            <option key={year} value={String(year)}>
+                              {year}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+
+                    {/* TO Field - Added for completeness and matching the previous component's grid layout */}
+                    <div className="flex flex-col space-y-2">
+                      <label htmlFor={`as-to-${index}`} className="text-sm font-medium text-gray-700">
+                        To
+                      </label>
+                      <select
+                        name="to"
+                        id={`as-to-${index}`}
+                        value={String(as.to)}
+                        onChange={(e) =>
+                          handleASChange(index, {
+                            target: {
+                              name: e.target.name,
+                              value: e.target.value === "" ? "" : e.target.value === "Present" ? "Present" : parseInt(e.target.value, 10),
+                            },
+                          })
+                        }
+                        className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                        required
+                      >
+                        <option value="">Select Year</option>
+                        <option value="Present">Present</option>
+                        {Array.from({ length: new Date().getFullYear() - 2008 }, (_, i) => {
+                          const year = new Date().getFullYear() - i - 1;
+                          return (
+                            <option key={year} value={String(year)}>
+                              {year}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    {errors[`administrativeService.${index}.to`] && (
+                      <div className="text-red-500 text-sm col-span-2 text-left">
+                        {errors[`administrativeService.${index}.to`]}
+                      </div>
                     )}
                   </div>
-                ))}
-
-                {/* Action Buttons Section */}
-                <div className="pt-4 space-y-4">
-                  {/* Add More and Skip buttons */}
-                  <div className="flex justify-between items-center">
+                  {administrativeService.length > 1 && (
                     <button
                       type="button"
-                      onClick={addAS}
-                      className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium"
+                      onClick={() => removeAS(index)}
+                      className="absolute top-2 right-2 text-slate-600 group p-1 rounded hover:bg-red-50"
+                      aria-label={`Remove Service ${index + 1}`}
                     >
-                      <span className="text-xl ">+</span> Add More
+                      <Trash2 size={18} />
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                        Remove
+                      </span>
                     </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAdministrativeService([]);
-                        setStep("oas");
-                      }}
-                      className="text-sm font-medium text-gray-500 hover:text-gray-700 pl-15 -ml-[6]"
-                    >
-                      Skip
-                    </button>
-                  </div>
-
-                  {/* Back and Next buttons */}
-                  <div className="flex gap-4 justify-end border-t pt-6">
-                    <button
-                      type="button"
-                      onClick={() => setStep("experience")}
-                      className="py-2 px-4 rounded-lg border border-gray-400 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
-                    >
-                      <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
-                    </button>
-
-                    <button
-                      type="submit"
-                      className="cursor-pointer flex items-center gap-0.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
-                    >
-                      Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 " />
-                    </button>
-                  </div>
+                  )}
                 </div>
-              </form>
-            </div>
+              ))}
+
+              {/* Action Buttons Section */}
+              <div className="pt-4 space-y-4">
+                {/* Add More and Skip buttons */}
+                <div className="flex justify-between items-center">
+                  <button
+                    type="button"
+                    onClick={addAS}
+                    className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium"
+                  >
+                    <span className="text-xl ">+</span> Add More
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAdministrativeService([]);
+                      setStep("oas");
+                    }}
+                    className="text-sm font-medium text-gray-500 hover:text-gray-700 pl-15 -ml-[6]"
+                  >
+                    Skip
+                  </button>
+                </div>
+
+                {/* Back and Next buttons */}
+                <div className="flex gap-4 justify-end border-t pt-6">
+                  <button
+                    type="button"
+                    onClick={() => setStep("experience")}
+                    className="py-2 px-4 rounded-lg border border-gray-400 cursor-pointer  hover:bg-slate-200 bg-slate-100 transition flex items-center gap-0.5"
+                  >
+                    <ArrowLeft size={22} strokeWidth={3} className="text-blue-600" />Back
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="cursor-pointer flex items-center gap-0.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition"
+                  >
+                    Next<ArrowRight size={22} strokeWidth={3} className="text-white-600 " />
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         )
       }
@@ -1686,7 +1551,9 @@ export default function Register() {
                     // Submit final data
                     const obj1 = {
                       personalData: personalData,
-                      loginData: loginData,
+                      "loginData": {
+                        "email": `${Data.email}`,
+                      },
                       education: education,
                       experience: experience,
                       administrativeService: administrativeService,
