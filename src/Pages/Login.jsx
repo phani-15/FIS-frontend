@@ -6,7 +6,7 @@ import {login,authenticate,isAuthenticated} from "../core/auth"
 export default function Login() {
 
 	const [formData, setFormData] = useState({
-		username: "srinu497@gmail.com",
+		username: "srinu478@gmail.com",
 		password: "1234567890",
 	});
 	const handleChange = (e) => {
