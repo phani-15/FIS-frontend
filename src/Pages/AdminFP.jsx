@@ -1,11 +1,13 @@
 import React from 'react'
 import { KeyRound } from "lucide-react";
 import InputField from '../components/inputField';
+import { forgotPassword,verifyOtp,resetPassword } from '../core/forgotPassword';
+import { useNavigate } from 'react-router-dom';
 
 export default function PasswordChange() {
 
 	const [data, setData] = React.useState({
-		mail: "",
+		role:"admin",
 		OTP: "",
 		password: "",
 		confirmPassword: ""
@@ -22,17 +24,137 @@ export default function PasswordChange() {
 	const [clicked, setClicked] = React.useState(false)
 	const [otpVerified, setOtpVerified] = React.useState(false)
 	const [error, setError] = React.useState({})
+	  const [otpToken, setOtpToken] = React.useState(false);
+  const [message, setMessage] = React.useState({});
+  const navigate = useNavigate();
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		const newErrors = {}
-		if (data.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-		if (data.password !== data.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
-		setError(newErrors);
-		if(Object.keys(newErrors).length > 0) return;
-		alert("Password changed successfully!")
+
+
+const [isgenerating, setIsgenerating] = React.useState(false);
+  const handleSubmit = (e) => {
+	e.preventDefault();
+	const newErrors = {};
+
+	if (data.password.length < 8) {
+	  newErrors.password = "Password must be atleast 8 characters";
 	}
 
+	if (data.password !== data.confirmPassword) {
+	  newErrors.confirmPassword = "Passwords do not match";
+	}
+
+	setError(newErrors);
+
+	if (Object.keys(newErrors).length > 0) return;
+
+	alert("Password Updated Successfully");
+	navigate("/admin");
+  };
+  const handleGenerateOTP = async () => {
+	  setIsgenerating(true);
+	  const response = await forgotPassword(data.role,"admin");
+	  console.log(response);
+	  if (response?.error) {
+		  setMessage({})
+		setMessage((prev) => ({
+		  ...prev,
+		  error: response.error,
+		}));
+		return;
+	  }
+  
+	  if (!response.otpToken) {
+		  setMessage({})
+		setMessage(prev =>({
+		...prev,
+		error : "Address not found"
+	  }))
+		return;
+	  }
+  
+	  setOtpToken(response.otpToken);
+	  setClicked(true);
+		  setMessage({})
+	  setMessage((prev) => ({
+		...prev,
+		success: "OTP sent successfully",
+	  }));
+	};
+	const handleVerifyOTP = async () => {
+	  const response = await verifyOtp(otpToken, data.OTP);
+  
+	  if (response.error) {
+		  setMessage({})
+		setMessage((prev) => ({
+		  ...prev,
+		  error: response.error,
+		}));
+		return;
+	  }
+		  setMessage({})
+  
+	  setMessage((prev) => ({
+		...prev,
+		success: "OTP verified successfully",
+	  }));
+	  setOtpVerified(true);
+	};
+	const passwordreset = async () => {
+	  if (!otpVerified) {
+		  setMessage({})
+		setMessage((prev) => ({
+		  ...prev,
+		  error: "OTP not verrified",
+		}));
+		return;
+	  }
+  
+	  if (data.password.length < 8) {
+		  setMessage({})
+		setMessage((prev) => ({
+		  ...prev,
+		  error: "Password must be atleast 8 characters",
+		}));
+		return;
+	  }
+  
+	  if (data.password !== data.confirmPassword) {
+		  setMessage({})
+		setMessage((prev) => ({
+		  ...prev,
+		  error: "Confirm Password must be same as new Password",
+		}));
+		return;
+	  }
+  
+	  try {
+		const response = await resetPassword(otpToken, data.password);
+  
+		if (response.error) {
+		  setMessage({})
+		  setMessage((prev) => ({
+			...prev,
+			error: response.error,
+		  }));
+		  // navigate("/");
+		  return;
+		}
+  
+		
+		alert("Password reset successful");
+		navigate('/admin');
+	  } catch (err) {
+		  console.log(err)
+		  setMessage({})
+		setMessage((prev) => ({
+		  ...prev,
+		  error:err.msg
+		}));
+	  
+	  }
+	};
+   
+  
 	return (
 		<div className="flex justify-center items-center p-4">
 			<div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
@@ -48,7 +170,7 @@ export default function PasswordChange() {
 				<h2 className="text-2xl font-bold text-gray-900">Forgot Password</h2>
 
 				{/* Form */}
-				<form className="mt-8 space-y-5 text-left">
+				<form onSubmit={(e) => { e.preventDefault(); passwordreset(); }} className="mt-8 space-y-5 text-left">
 					{/* Prompting email */}
 					 <div>
 						<InputField
@@ -65,10 +187,7 @@ export default function PasswordChange() {
 					{/* Submit Button */}
 					{!clicked &&
 						<button
-							onClick={() => {
-								setClicked(true)
-								// send an Email containing OTP from backend or frontend
-							}}
+							onClick={handleGenerateOTP}
 							className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
 						>
 							Generate OTP
@@ -89,10 +208,7 @@ export default function PasswordChange() {
 							</div>
 							{!otpVerified &&
 								<button
-									onClick={() => {
-										setOtpVerified(true)
-										// verify the otp in the backend
-									}}
+									onClick={handleVerifyOTP}
 									className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
 								>
 									Verify OTP
@@ -119,7 +235,7 @@ export default function PasswordChange() {
 										error={error.confirmPassword}
 									/>
 									<button
-										onClick={handleSubmit}
+										type="submit"
 										className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
 									>
 										Update Password

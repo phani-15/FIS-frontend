@@ -2,21 +2,21 @@ import React, { useState } from "react";
 import { RotateCcwKey } from "lucide-react";
 import InputField from "../components/inputField";
 import { useNavigate } from "react-router-dom";
-
+import { passwordchange } from '../core/forgotPassword';
 export default function ChangeIQACPassword() {
   const [data, setData] = useState({
     role: "",
     pass: "",
     newPass: "",
   });
-
+  const [message, setMessage] = React.useState({});
   const [cPass, setCPass] = useState("");
   const [errors, setErrors] = useState({});
   const [roleError, setRoleError] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -32,8 +32,20 @@ export default function ChangeIQACPassword() {
     if (Object.keys(newErrors).length > 0) return;
 
     console.log(data);
-
-    navigate("/hod");
+    try {
+                        const response = await passwordchange(data.role, data.pass, data.newPass,"iqac");
+                        if (response?.error) {
+                            setMessage((prev) => ({ ...prev, error: response.error }));
+                            return;
+                        }
+                        setMessage((prev) => ({ ...prev, success: "Password reset successful" }));
+                        alert("Password reset successful")
+                        navigate("/ofc");
+                    } catch (err) {
+                        setMessage((prev) => ({ ...prev, error: "Failed to change password" }));
+                    }
+                   
+  
   };
 
   const handleChange = (e) => {

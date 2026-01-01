@@ -5,6 +5,7 @@ import { col } from "framer-motion/client";
 import {authenticate} from "../core/auth"
 import axios from "axios"
 import { hodlogin } from "../core/hod";
+import { departments } from "../assets/Data";
 
 export default function HODLogin() {
   const navigate = useNavigate()
@@ -15,18 +16,8 @@ export default function HODLogin() {
 
   const [college , setCollege] = useState("");
 
-  const departments = {
-    ucev : [
-      { name: "Civil Engineering", code: "civil" },
-      { name: "Computer Science & Engineering", code: "cse" },
-      { name: "Electronics & Communication Engineering", code: "ece" },
-      { name: "Electrical & Electronics Engineering", code: "eee" },
-      { name: "Information Technology", code: "it" },
-      { name: "Mechanical Engineering", code: "mech" },
-      { name: "Metallurgical Engineering", code: "met" },
-      {name: "BS & HSS", code: "bshss" },
-      { name: "Master's in Business Administration", code: "mba" },
-    ],
+  const depts = {
+    ucev : departments,
     pharma  : [
       { name: "Pharmaceutical Sciences", code: "pharma" },
     ],
@@ -118,8 +109,8 @@ export default function HODLogin() {
                 required
               >
                 <option value="">Select Department</option>
-                {college && departments[college].map((dept) => (
-                  <option key={dept.code} value={dept.code}>{dept.name}</option>
+                {college && depts[college].map((dept) => (
+                  <option key={dept} value={dept}>{dept}</option>
                 ))}
               </select>
             </div>
