@@ -3,10 +3,14 @@ import { X, Search, FileText, Download,User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import { schemas, yearFields, AtKeys } from '../assets/Data';
-import { useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
 
 export default function IQACDashboard() {
+  const location = useLocation()
+
+const queryParams = new URLSearchParams(location.search);
+const role = queryParams.get("role");
   const { ofcId } = useParams()
   const [filters, setFilters] = useState({
     department: "All",
@@ -467,7 +471,6 @@ export default function IQACDashboard() {
     }
   };
 
-
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
     const matchesSearch = f.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
@@ -492,7 +495,7 @@ export default function IQACDashboard() {
     <div className="p-4 sm:p-8 mx-2 lg:mx-auto max-w-7xl bg-gray-50 rounded-3xl shadow-xl space-y-6 font-[Inter]">
       {/* Title */}
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-center bg-purple-800 text-transparent bg-clip-text tracking-wide">
-        IQAC DASHBOARD
+        {role ? role : 'Officials'} DashBoard
       </h1>
       {/* Styled Extract Reports Button */}
       <div className="flex justify-start pr-2 mt-10 md:pr-0">

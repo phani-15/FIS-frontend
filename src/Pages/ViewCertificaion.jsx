@@ -194,7 +194,7 @@ const getTopRelevantFields = (section, item) => {
 
       return {
         label: formatFieldLabel(key),
-        value: value || 'Not specified',
+        value: value || '--',
       };
     })
     .filter(f => f.label);
@@ -606,7 +606,7 @@ const ViewCertificaion = () => {
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
-    const hasDoc = item.document || item.certificate || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;
+    const hasDoc = item.document || item.certificate || item.Proceeding  || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;
 
     return (
       <div
@@ -641,7 +641,7 @@ const ViewCertificaion = () => {
               </button>
               {hasDoc && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
-                  onClick={() => viewDocument(item.document || item.certificate || item.Document || item.sanctioning_order || item.utilization_certificate_of_final_year)}
+                  onClick={() => viewDocument(item.document || item.Certificate || item.Document || item.Proceeding || item.Sanctioning_Order || item.Utilization_Certificate_Of_Final_Year)}
                 >
                   View Document
                 </button>

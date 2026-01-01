@@ -914,27 +914,57 @@ const fields = {
 
 const AtKeys = [
   { key: "patents", label: "Patents" },
+
   { key: "journal", label: "Journal Publications" },
+  { key: "conference_paper", label: "Conference Papers" },
+
   { key: "book", label: "Books" },
   { key: "book_chapter", label: "Book Chapters" },
+
   { key: "conference", label: "Conferences" },
   { key: "seminar", label: "Seminars" },
   { key: "workshop", label: "Workshops" },
-  { key: "fdp", label: "FDP / STTP" },
+  { key: "fdp", label: "Faculty Development Programs (FDP)" },
+  { key: "sttp", label: "Short Term Training Programs (STTP)" },
   { key: "webinar", label: "Webinars" },
-  { key: "OC", label: "Orientation Courses" },
-  { key: "keynote", label: "Keynote Talks" },
+  { key: "rc", label: "Refresher Courses (RC)" },
+  { key: "oc", label: "Orientation Courses (OC)" },
+
   { key: "talk", label: "Expert Talks" },
-  { key: "certifications", label: "Certifications" },
+  { key: "keynote", label: "Keynote Addresses" },
+  { key: "chair", label: "Session Chair" },
+  { key: "lecture", label: "Guest Lectures" },
+  { key: "resource_person", label: "Resource Person" },
+
+  { key: "certifications", label: "Certifications (General)" },
+  { key: "nptel", label: "NPTEL Certifications" },
+  { key: "swayam", label: "SWAYAM Certifications" },
+  { key: "coursera", label: "Coursera Certifications" },
+  { key: "infosysspringboard", label: "Infosys Springboard Certifications" },
+  { key: "edx", label: "edX Certifications" },
+  { key: "other", label: "Other Certifications" },
+
   { key: "awards_and_recognitions", label: "Awards & Recognitions" },
+
   { key: "research", label: "Research Projects" },
   { key: "sponsored", label: "Sponsored Projects" },
-  { key: "consultancy", label: "Consultancy" },
-  { key: "phd_awarded", label: "PhD Students Awarded" },
+  { key: "consultancy", label: "Consultancy Projects" },
+
+  { key: "foreign_visits", label: "Foreign Visits" },
+
+  { key: "mooc_content", label: "MOOC Content" },
+  { key: "eContent", label: "e-Content" },
+  { key: "course_content", label: "Course Content" },
+
   { key: "ieee", label: "IEEE Membership" },
+  { key: "acm", label: "ACM Membership" },
   { key: "csi", label: "CSI Membership" },
-  { key: "repository", label: "Repository Contributions" },
-]
+
+  { key: "phd_awarded", label: "PhD Students Awarded" },
+  { key: "phd_ongoing", label: "PhD Students Ongoing" },
+  { key: "mtech", label: "M.Tech Students" },
+  { key: "mphilmba", label: "MPhil / MBA Students" },
+];
 
 const departments = [
   "BS & HSS",

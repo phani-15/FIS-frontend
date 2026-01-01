@@ -8,7 +8,7 @@ export default function IQACLogin() {
   const [passCode, setPassCode] = useState("");
   const [role, setRole] = useState(""); // ✅ simpler than `data`
   const [errors, setErrors] = useState({});
-  
+
   const navigate = useNavigate();
 
   const handleRoleChange = (e) => {
@@ -57,7 +57,7 @@ export default function IQACLogin() {
         setRole("IQAC Coordinator"); // reset to default
       });
 
-      navigate(`/ofcDashboard/${data.Iqac.id}`);
+      navigate(`/ofcDashboard/${data.Iqac.id}?role=${role}`);
     } catch (error) {
       console.error("OFC Login error:", error);
 
@@ -138,7 +138,7 @@ export default function IQACLogin() {
 
           <button
             type="submit"
-            className="w-full mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-2.5 rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+            className="w-full mt-4 flex items-center justify-center gap-2 bg-linear-to-r from-purple-600 to-indigo-600 text-white font-medium py-2.5 rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
           >
             <LogIn className="w-5 h-5" />
             Login
