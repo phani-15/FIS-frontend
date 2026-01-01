@@ -3,7 +3,7 @@ import { Search, X, User, ChevronDown, ShieldCheck, XCircle, ChevronUp, FileText
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { schemas, yearFields,  } from '../assets/Data'
+import { AtKeys, schemas, yearFields,  } from '../assets/Data'
 import { HodDashBoard } from "../core/hod"
 import axios from "axios";
 
@@ -237,11 +237,11 @@ export default function HODDashBoard() {
       const headers = ["S.No", "Faculty Name", "Email", "Designation"];
 
       // Prepare data rows
-      const rows = facultyList.map((faculty, index) => [
+      const rows = filteredFaculty.map((faculty, index) => [
         index + 1,
-        faculty.name,
-        faculty.mail || "", // Use email if available, otherwise empty string
-        faculty.role
+        faculty.personalData.name,
+        faculty.user.email || "", // Use email if available, otherwise empty string
+        faculty.personalData.designation
       ]);
 
       // Combine headers and data
@@ -426,29 +426,7 @@ export default function HODDashBoard() {
                         Select Report Types
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                        {[
-                          { key: "patents", label: "Patents" },
-                          { key: "journal", label: "Journal Publications" },
-                          { key: "book", label: "Books" },
-                          { key: "book_chapter", label: "Book Chapters" },
-                          { key: "conference", label: "Conferences" },
-                          { key: "seminar", label: "Seminars" },
-                          { key: "workshop", label: "Workshops" },
-                          { key: "fdp", label: "FDP / STTP" },
-                          { key: "webinar", label: "Webinars" },
-                          { key: "OC", label: "Orientation Courses" },
-                          { key: "keynote", label: "Keynote Talks" },
-                          { key: "talk", label: "Expert Talks" },
-                          { key: "certifications", label: "Certifications" },
-                          { key: "award_title", label: "Awards & Recognitions" },
-                          { key: "research", label: "Research Projects" },
-                          { key: "sponsored", label: "Sponsored Projects" },
-                          { key: "consultancy", label: "Consultancy" },
-                          { key: "phd_awarded", label: "PhD Students Awarded" },
-                          { key: "ieee", label: "IEEE Membership" },
-                          { key: "csi", label: "CSI Membership" },
-                          { key: "repository", label: "Repository Contributions" },
-                        ].map((type) => (
+                        {AtKeys.map((type) => (
                           <label key={type.key} className="flex items-center gap-2">
                             <input
                               type="checkbox"

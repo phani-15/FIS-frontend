@@ -1,63 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { X, Search, FileText, Download } from "lucide-react";
+import { X, Search, FileText, Download,User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
-import { schemas, yearFields,  AtKeys } from '../assets/Data';
-import {useParams} from "react-router-dom"
-import {getRefFaculty, getReports, ofcDashBoard} from "../core/ofc"
+import { schemas, yearFields, AtKeys } from '../assets/Data';
+import { useNavigate, useParams } from "react-router-dom"
+import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
 
 export default function IQACDashboard() {
-  const {ofcId}=useParams()
+  const { ofcId } = useParams()
   const [filters, setFilters] = useState({
     department: "All",
     searchTerm: "",
   });
-  const [facultyList,setfacultyList]=useState([
-  {
-    name: "Dr. John Doe",
-    department: "Computer Science and Engineering",
-    role: "Professor",
-    email: "john.doe@yourcollege.edu"
-  },
-  {
-    name: "Dr. Jane Smith",
-    department: "Electrical and Electronics Engineering",
-    role: "Associate Professor",
-    email: "jane.smith@yourcollege.edu"
-  },])
-  const [certifications,setCertifications]=useState([
-  {
-    name: "Dr. Aarti Rao",
-    role: "Professor",
-    dept: "Computer Science and Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2021A000101",
-          "Title of the Patent": "Neural Compression for Edge Devices",
-          "Published/Granted": "Granted",
-          "Year of Published/Granted": "2021",
-          "Scope": "International",
-          "Document": "aarti_rao_patent.pdf"
-        }
-      ],
-      journal: [
-        {
-          "Title of the Paper": "Efficient Models for On-Device AI",
-          "Name of the Journal": "Journal of Edge AI",
-          "Page Number": "12-25",
-          "Year of Publication": "2021",
-          "Impact Factor": "3.2",
-          "National/International": "International",
-          "ISBN Number": "2345-6789",
-          "Indexing Platform": "Scopus",
-          "H-index": "15",
-          "Document": "aarti_rao_journal.pdf"
-        }
-      ]
-    }
-  },
-  ])
+  const [facultyList, setfacultyList] = useState([])
+  const [certifications, setCertifications] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showExtractModal, setShowExtractModal] = useState(false);
@@ -67,7 +23,7 @@ export default function IQACDashboard() {
   const [DateTo, setDateTo] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [selectedMembers, setSelectedMembers] = useState([]);  
+  const [selectedMembers, setSelectedMembers] = useState([]);
   const departments = [
     "Computer Science and Engineering",
     "Electronics and Communication Engineering",
@@ -80,35 +36,37 @@ export default function IQACDashboard() {
     "MBA",
   ];
 
-  useEffect(()=>{
-    const getData=async ()=>{
-      const data=await ofcDashBoard(ofcId)
-      if(data){
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = await ofcDashBoard(ofcId)
+      if (data) {
         setfacultyList(data)
       }
     }
     getData()
-  },[ofcId])
+  }, [ofcId])
 
   //report extraction useEffects
-  useEffect(()=>{   
-    const obj={
-        branch:selectedDepartments,
-        fields:selectedTypes
-    }    
-    const getFacultyOnchange=async ()=>{
-      const data=await getRefFaculty(obj,ofcId)
-      setCertifications(data)
-      console.log("certification data :",certifications);
+  useEffect(() => {
+    const obj = {
+      branch: selectedDepartments,
+      fields: selectedTypes
     }
-    selectedDepartments.length>0 && getFacultyOnchange()
-  },[selectedAttributes,selectedTypes,selectedDepartments])
+    const getFacultyOnchange = async () => {
+      const data = await getRefFaculty(obj, ofcId)
+      setCertifications(data)
+      console.log("certification data :", certifications);
+    }
+    selectedDepartments.length > 0 && getFacultyOnchange()
+  }, [selectedAttributes, selectedTypes, selectedDepartments])
 
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
     return getSchemaForType(typeKey).attributes.map(a => a.key);
   };
-  
+
 
   // Helper: Define schema per type (label + attributes)
   const getSchemaForType = (typeKey) => {
@@ -116,27 +74,27 @@ export default function IQACDashboard() {
   };
 
   const handleFacultyToggle = (facultyName) => {
-  setSelectedMembers((prevIds) => {
-    console.log("prevIds: ",prevIds);
-    
-    // 1. Find the user object in certifications that matches the name
-    const targetUser = certifications.find(user => user.name === facultyName);
+    setSelectedMembers((prevIds) => {
+      console.log("prevIds: ", prevIds);
 
-    // Safety check: if name doesn't exist in certifications, do nothing
-    if (!targetUser) return prevIds;
+      // 1. Find the user object in certifications that matches the name
+      const targetUser = certifications.find(user => user.name === facultyName);
 
-    const targetId = targetUser.id;
+      // Safety check: if name doesn't exist in certifications, do nothing
+      if (!targetUser) return prevIds;
 
-    // 2. Check if the ID is already in our selection array
-    if (prevIds.includes(targetId)) {
-      // 3. REMOVE: Filter out the ID if it exi`sts
-      return prevIds.filter(id => id !== targetId);
-    } else {
-      // 4. ADD: Push the new ID into the array
-      return [...prevIds, targetId];
-    }
-  });
-};
+      const targetId = targetUser.id;
+
+      // 2. Check if the ID is already in our selection array
+      if (prevIds.includes(targetId)) {
+        // 3. REMOVE: Filter out the ID if it exi`sts
+        return prevIds.filter(id => id !== targetId);
+      } else {
+        // 4. ADD: Push the new ID into the array
+        return [...prevIds, targetId];
+      }
+    });
+  };
 
   const handleSelectAllForDept = (dept, facultyList) => {
     setSelectedMembers(prev => {
@@ -218,7 +176,7 @@ export default function IQACDashboard() {
       .map(faculty => faculty.name);
     if (selectedCredTypes.length === 0) {
       return facultyInDept;
-    }  
+    }
     // Filter based on having data for selected types
     return certifications
       .map(faculty => faculty.name);
@@ -434,16 +392,16 @@ export default function IQACDashboard() {
       alert("Please select both From Date and To Date.");
       return;
     }
-    const obj={
-      fields:selectedTypes,
-      subfields:selectedAttributes,
-      ids:selectedMembers,
-      from_date:DateFrom,
-      to_date:DateTo
+    const obj = {
+      fields: selectedTypes,
+      subfields: selectedAttributes,
+      ids: selectedMembers,
+      from_date: DateFrom,
+      to_date: DateTo
     }
-    console.log("object that was sending to backend was this :",obj);
-    const data=await getReports(obj,ofcId)
-    console.log("reports data was :",data); 
+    console.log("object that was sending to backend was this :", obj);
+    const data = await getReports(obj, ofcId)
+    console.log("reports data was :", data);
     setCertifications(data)
     console.log(certifications);
     await generateExcelReport();
@@ -634,6 +592,7 @@ export default function IQACDashboard() {
               <th className="px-4 py-3 text-left font-semibold">Name</th>
               <th className="px-4 py-3 text-left font-semibold">Department</th>
               <th className="px-4 py-3 text-left font-semibold">Role</th>
+              {/* <th className="px-4 py-3 text-left font-semibold"></th> */}
             </tr>
           </thead>
           <tbody>
@@ -643,7 +602,15 @@ export default function IQACDashboard() {
                   <td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
                   <td className="px-4 py-2">{highlightMatch(f.name)}</td>
                   <td className="px-4 py-2">{f.department}</td>
-                  <td className="px-4 py-2">{f.role}</td>
+                  <td className="px-4 py-2">{f.role}</td><td>
+                    {/* <button
+                      onClick={() => navigate(`/profile/${f._id}`)}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 text-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition shadow-sm"
+                    >
+                      <User size={14} />
+                      view
+                    </button> */}
+                  </td>
                 </tr>
               ))
             ) : (
@@ -687,6 +654,11 @@ export default function IQACDashboard() {
           </div>
         </>
       )}
+          <div className="flex justify-end ">
+            <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
+              <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
+            </div>
+          </div>
       <AnimatePresence>
         {showExtractModal && (
           <>
@@ -942,7 +914,7 @@ export default function IQACDashboard() {
                                       <input
                                         type="checkbox"
                                         checked={selectedInDept.includes(facultyName)}
-                                        onChange={() => handleFacultyToggle( facultyName)}
+                                        onChange={() => handleFacultyToggle(facultyName)}
                                         className="mt-1 rounded text-indigo-600 focus:ring-indigo-500"
                                       />
                                       <span className="text-sm">{facultyName}</span>
