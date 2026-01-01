@@ -448,7 +448,7 @@ const fields = {
     'Title Of The Paper Talk',
     'Sponsoring Agency',
     'Amount Sanctioned',
-    'Travel/grant/recieved',
+    'Travel/grant/received',
     'Document'
   ],
   patents: [

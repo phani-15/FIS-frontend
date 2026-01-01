@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { fields } from '../assets/Data.jsx';
 import { phd_awarded_fields, phd_joining_fields, MOOC_fields, e_content_fields } from '../assets/Data.jsx';
-import { PDFDocument } from "pdf-lib"
+import { PDFDocument, values } from "pdf-lib"
 import { Info, ArrowLeft } from "lucide-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { addDetails } from "../core/addDetails.js"
@@ -9,25 +9,25 @@ import { addDetails } from "../core/addDetails.js"
 // ✅ Data Structures (fixed syntax errors)
 const groupOptions = [
   'Publications',
-  'patents',
-  'foreign_visits',
+  'Patents',
+  'Foreign Visits',
   'Academic Enrichment Programs',
   'Projects',
   'Certifications',
   'Content Development',
   'External Academic Engagements',
-  'awards_and_recognitions',
+  'Awards and Recognitions',
   'Memberships in Professional Bodies',
   'Research Guidance',
   'Transmission works'
 ];
 
-const select_fields = ['Purpose of Visit', 'Nature of Visit', 'Contribution in MOOC', 'Role of Faculty', 'Scope', 'Membership Type', 'Role', 'Indexing Platform']
+const select_fields = ['Purpose Of Visit', 'Nature Of Visit', 'Contribution in MOOC', 'Role Of Faculty', 'Scope', 'Membership Type', 'Role', 'Indexing Platform']
 
 const select_options = {
-  'Purpose of Visit': ['Conference', 'Workshop', 'FDP', 'Research Collaboration', 'Invited Lecture', 'MoU Activity', 'Training', 'Others'],
-  'Nature of Visit': ['Official', 'Self-sponsored', 'Sponsored'],
-  'Role of Faculty': ['Presenter', 'Invited Speaker', 'Resource Person', 'Session Chair', 'Participant'],
+  'Purpose Of Visit': ['Conference', 'Workshop', 'FDP', 'Research Collaboration', 'Invited Lecture', 'MoU Activity', 'Training', 'Others'],
+  'Nature Of Visit': ['Official', 'Self-sponsored', 'Sponsored'],
+  'Role Of Faculty': ['Presenter', 'Invited Speaker', 'Resource Person', 'Session Chair', 'Participant'],
   'Scope': ['International (Abroad)', 'International (within India)', 'National Level', 'State Level', 'University Level'],
   'Membership Type': ['Life', 'Annual', 'Student'],
   'Role': ['Convenor', 'Co-Convenor', 'Coordinator', 'Co-Coordinator', 'Member'],
@@ -128,7 +128,8 @@ const AddCredentials = () => {
       clean === "author" ||
       clean === "type of certification" ||
       clean === "status" ||
-      clean === "role of scholar"
+      clean === "role of scholar" ||
+      clean === 'travel/grant/received'
   };
 
   const isUtilCertificate = (label) => {
@@ -262,7 +263,7 @@ const AddCredentials = () => {
     if (cleanLabel.includes('isbn') || cleanLabel.includes('issn')) {
       if (!valStr) return { isValid: false, message: `${label} is required` };
       const isbnIssnRegex = /^[\d\-]+$/;
-      if (!isbnIssnRegex.test(valStr)  ) {
+      if (!isbnIssnRegex.test(valStr)) {
         return { isValid: false, message: `${label} must contain only digits and hyphens` };
       }
       const digitsOnly = valStr.replace(/-/g, '');
@@ -272,7 +273,7 @@ const AddCredentials = () => {
       if (cleanLabel.includes('issn') && digitsOnly.length !== 8 && !cleanLabel.includes('isbn')) {
         return { isValid: false, message: 'ISSN must be 8 digits (e.g., 1234-5678)' };
       }
-      if(cleanLabel.includes('issn') && cleanLabel.includes('isbn') && digitsOnly.length !== 8 && digitsOnly.length !== 10 && digitsOnly.length !== 13){
+      if (cleanLabel.includes('issn') && cleanLabel.includes('isbn') && digitsOnly.length !== 8 && digitsOnly.length !== 10 && digitsOnly.length !== 13) {
         return { isValid: false, message: 'ISSN/ISBN must be 8 or 10 or 13 digits (hyphens allowed)' };
       }
       return { isValid: true };
@@ -615,6 +616,13 @@ const AddCredentials = () => {
         { value: "Co-Supervisor", label: "Co-Supervisor" }
       ]
     }
+    else if (clean === 'travel/grant/received') {
+      return [
+        { value: "Travel", label: "Travel" },
+        { value: "Grant", label: "Grant" },
+        { value: "Received", label: "Received" }
+      ]
+    }
     return [];
   };
 
@@ -907,7 +915,7 @@ const AddCredentials = () => {
     // ✅ Build payload
     const payload = {
       group,
-      subcategory: hasSubcategories ? subcategory : null,
+      subcategory: hasSubcategories ? subcategory : toSnakeCase(group).toLowerCase(),
       formData: snakeCaseFormData,
       files: fileMap
     };
@@ -1005,7 +1013,7 @@ const AddCredentials = () => {
                         className={`w-full px-3 py-2 border rounded-md ${errors['Number of Ph.D. Awarded'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
                           } `}
                         placeholder={`Enter Number of Ph.D. Awarded`}
-                        required
+                        required={true}
                         min="1"
                       />
                       {errors['Number of Ph.D. Awarded'] && (
@@ -1027,7 +1035,7 @@ const AddCredentials = () => {
                               <div key={name} className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                   {cleanLabel}
-                                  {!isFile && <span className="text-red-500 ml-1">*</span>}
+                                  && <span className="text-red-500 ml-1">*</span>
                                 </label>
                                 {isFile ? (
                                   <div className="space-y-2">
@@ -1168,7 +1176,7 @@ const AddCredentials = () => {
                           className={`w-full px-3 py-2 border rounded-md ${errors['Number of e-Contents'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
                             } `}
                           placeholder={`Enter Number of e-Contents`}
-                          required
+                          required={true}
                           min="1"
                         />
                         {errors['Number of e-Contents'] && (
@@ -1196,6 +1204,7 @@ const AddCredentials = () => {
                                     <div className="space-y-2">
                                       <input
                                         type="file"
+                                        required
                                         onChange={(e) => {
                                           const file = e.target.files?.[0] || null;
                                           const fieldName = name; // e.g., "Document", "Sanctioning Order"
@@ -1365,6 +1374,7 @@ const AddCredentials = () => {
                                               handleFileChange(fieldName, null);
                                             }
                                           }}
+                                          required
                                           className="block w-full text-sm text-gray-500
                                           file:mr-4 file:py-2 file:px-4
                                           file:rounded-md file:border-0
@@ -1460,7 +1470,7 @@ const AddCredentials = () => {
                                     <div key={name} className="mb-4">
                                       <label className="block text-sm font-medium text-gray-700 mb-1">
                                         {cleanLabel}
-                                        {!isFile && <span className="text-red-500 ml-1">*</span>}
+                                        <span className="text-red-500 ml-1">*</span>
                                       </label>
                                       {isFile ? (
                                         <div className="space-y-2">
@@ -1494,6 +1504,7 @@ const AddCredentials = () => {
                                                 handleFileChange(fieldName, null);
                                               }
                                             }}
+                                            required
                                             className="block w-full text-sm text-gray-500
                                           file:mr-4 file:py-2 file:px-4
                                           file:rounded-md file:border-0
@@ -1626,7 +1637,7 @@ const AddCredentials = () => {
                                 <div key={name}>
                                   <label className="block text-sm font-medium text-gray-700 mb-1">
                                     {cleanLabel}
-                                    {!isFile && !isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
+                                    {!isRadio && cleanLabel !== 'Scope' && <span className="text-red-500 ml-1">*</span>}
                                   </label>
 
                                   {isRadio ? (
@@ -1688,6 +1699,7 @@ const AddCredentials = () => {
                                       isFile ? (
                                         <div className="space-y-2">
                                           <input
+                                            required
                                             type="file"
                                             onChange={async (e) => {
                                               const file = e.target.files?.[0] || null;
