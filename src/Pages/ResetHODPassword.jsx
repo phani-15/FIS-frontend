@@ -2,6 +2,8 @@ import React from 'react'
 import { RotateCcwKey } from "lucide-react";
 import InputField from "../components/inputField";
 import { useNavigate } from 'react-router-dom';
+import { departments } from "../assets/Data";
+import { passwordchange } from '../core/forgotPassword';
 
 export default function ResetHODPassword() {
 
@@ -10,30 +12,26 @@ export default function ResetHODPassword() {
         pass: "",
         newPass: "",
     });
-
+     const [message, setMessage] = React.useState({});
+        const fields = [
+            { id: 'department', label: 'dept', type: 'text', placeholder: 'Enter your department' },
+            { id: 'pass', label: 'Old Password', type: 'password', placeholder: 'Enter your old password' },
+            { id: 'newPass', label: 'New Password', type: 'password', placeholder: 'Enter new password' },
+            { id: 'Cpass', label: 'Confirm New Password', type: 'password', placeholder: 'Re-enter new password' },
+        ];
     const [cPass, setCPass] = React.useState("");
     const [errors, setErrors] = React.useState({});
     const [college, setCollege] = React.useState("");
 
-    const departments = {
-    ucev : [
-      { name: "Civil Engineering", code: "civil" },
-      { name: "Computer Science & Engineering", code: "cse" },
-      { name: "Electronics & Communication Engineering", code: "ece" },
-      { name: "Electrical & Electronics Engineering", code: "eee" },
-      { name: "Information Technology", code: "it" },
-      { name: "Mechanical Engineering", code: "mech" },
-      { name: "Metallurgical Engineering", code: "met" },
-      {name: "BS & HSS", code: "bshss" },
-      { name: "Master's in Business Administration", code: "mba" },
-    ],
+    const depts = {
+    ucev :departments,
     pharma  : [
       { name: "Pharmaceutical Sciences", code: "pharma" },
     ],
   }
 
     const navigate = useNavigate();
-    const handleSubmit = (e) => {
+    const handleSubmit =async  (e) => {
         e.preventDefault();
         const newErrors = {};
         if (data.newPass.length < 8) newErrors.newPass = "Password must be at least 8 characters";
@@ -41,6 +39,18 @@ export default function ResetHODPassword() {
         setErrors(newErrors);
         if (Object.keys(newErrors).length > 0) return;
         console.log(data)
+         try {
+                    const response = await passwordchange(data.department, data.pass, data.newPass,"hod");
+                    if (response?.error) {
+                        setMessage((prev) => ({ ...prev, error: response.error }));
+                        return;
+                    }
+                    setMessage((prev) => ({ ...prev, success: "Password reset successful" }));
+                    navigate('/');
+                } catch (err) {
+                    setMessage((prev) => ({ ...prev, error: "Failed to change password" }));
+                }
+                setMessage({ success: "Password reset successful" });
         navigate('/hod');
     }
     const handleChange = (e) => {
@@ -97,8 +107,8 @@ export default function ResetHODPassword() {
                                 required
                             >
                                 <option value="">Select Department</option>
-                                {college && departments[college].map((dept) => (
-                                    <option key={dept.code} value={dept.code}>{dept.name}</option>
+                                {college && depts[college].map((dept) => (
+                                    <option key={dept} value={dept}>{dept}</option>
                                 ))}
                             </select>
                         </div>

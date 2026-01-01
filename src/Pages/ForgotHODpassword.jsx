@@ -1,57 +1,162 @@
 import React from 'react'
 import { KeyRound } from "lucide-react";
 import InputField from '../components/inputField';
-
+import { forgotPassword,verifyOtp,resetPassword } from '../core/forgotPassword';
+import { departments } from '../assets/Data';
+import { useNavigate } from 'react-router-dom';
 export default function ForgotHODpassword() {
 
     const [data, setData] = React.useState({
         department: "",
         OTP: "",
-        npassword: "",
-        cpassword: ""
+        password: "",
+        confirmPassword: ""
     })
 
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setData((prevData) => ({
-            ...prevData,
-            [id]: value,
-        }));
-    }
+   const navigate=useNavigate();
 
-    const [clicked, setClicked] = React.useState(false)
-    const [otpVerified, setOtpVerified] = React.useState(false)
-    const [error, setError] = React.useState({})
     const [college, setCollege] = React.useState("");
 
-    const departments = {
-        ucev: [
-            { name: "Civil Engineering", code: "civil" },
-            { name: "Computer Science & Engineering", code: "cse" },
-            { name: "Electronics & Communication Engineering", code: "ece" },
-            { name: "Electrical & Electronics Engineering", code: "eee" },
-            { name: "Information Technology", code: "it" },
-            { name: "Mechanical Engineering", code: "mech" },
-            { name: "Metallurgical Engineering", code: "met" },
-            { name: "BS & HSS", code: "bshss" },
-            { name: "Master's in Business Administration", code: "mba" },
-        ],
+    const depts = {
+        ucev: departments,
         pharma: [
-            { name: "Pharmaceutical Sciences", code: "pharma" },
+            "Pharmaceutical Sciences",
         ],
     }
+const [isgenerating, setIsgenerating] = React.useState(false);
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+    setMessage({});
+  };
 
-    const handleSubmit = (e) => {
-        console.log(data);
-
-        e.preventDefault();
-        const newErrors = {}
-        if (data.npassword.length < 8) newErrors.npassword = "password must be at least 8 characters";
-        if (data.npassword !== data.cpassword) newErrors.cpassword = "passwords do not match";
-        setError(newErrors);
-        if (Object.keys(newErrors).length > 0) return;
-        alert("password changed successfully!")
+  const [clicked, setClicked] = React.useState(false);
+  const [otpVerified, setOtpVerified] = React.useState(false);
+  const [error, setError] = React.useState({});
+  const [otpToken, setOtpToken] = React.useState(false);
+  const [message, setMessage] = React.useState({});
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = {};
+    if (data.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+    if (data.password !== data.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+    setError(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+        setMessage({})
+    setMessage((prev) => ({
+      ...prev,
+      success: "Password Changed Successfully",
+    }));
+  };
+  const handleGenerateOTP = async () => {
+    setIsgenerating(true);
+    const response = await forgotPassword(data.department,"hod");
+    console.log(response);
+    if (response?.error) {
+        setMessage({})
+      setMessage((prev) => ({
+        ...prev,
+        error: response.error,
+      }));
+      return;
     }
+
+    if (!response.otpToken) {
+        setMessage({})
+      setMessage(prev =>({
+      ...prev,
+      error : "Address not found"
+    }))
+      return;
+    }
+
+    setOtpToken(response.otpToken);
+    setClicked(true);
+        setMessage({})
+    setMessage((prev) => ({
+      ...prev,
+      success: "OTP sent successfully",
+    }));
+  };
+  const handleVerifyOTP = async () => {
+    const response = await verifyOtp(otpToken, data.OTP);
+
+    if (response.error) {
+        setMessage({})
+      setMessage((prev) => ({
+        ...prev,
+        error: response.error,
+      }));
+      return;
+    }
+        setMessage({})
+
+    setMessage((prev) => ({
+      ...prev,
+      success: "OTP verified successfully",
+    }));
+    setOtpVerified(true);
+  };
+  const passwordreset = async () => {
+    if (!otpVerified) {
+        setMessage({})
+      setMessage((prev) => ({
+        ...prev,
+        error: "OTP not verrified",
+      }));
+      return;
+    }
+
+    if (data.password.length < 8) {
+        setMessage({})
+      setMessage((prev) => ({
+        ...prev,
+        error: "Password must be atleast 8 characters",
+      }));
+      return;
+    }
+
+    if (data.password !== data.confirmPassword) {
+        setMessage({})
+      setMessage((prev) => ({
+        ...prev,
+        error: "Confirm Password must be same as new Password",
+      }));
+      return;
+    }
+
+    try {
+      const response = await resetPassword(otpToken, data.password);
+
+      if (response.error) {
+        setMessage({})
+        setMessage((prev) => ({
+          ...prev,
+          error: response.error,
+        }));
+        // navigate("/");
+        return;
+      }
+
+      
+      alert("Password reset successful");
+      navigate('/hod');
+    } catch (err) {
+        console.log(err)
+        setMessage({})
+      setMessage((prev) => ({
+        ...prev,
+        error:err.msg
+      }));
+    
+    }
+  };
+ 
 
     return (
         <div className="flex justify-center items-center p-4">
@@ -68,7 +173,8 @@ export default function ForgotHODpassword() {
                 <h2 className="text-2xl font-bold text-gray-900">Forgot password</h2>
 
                 {/* Form */}
-                <form className="mt-8 space-y-5 text-left">
+                <form onSubmit={(e) => { e.preventDefault(); passwordreset(); }} className="mt-8 space-y-5 text-left">
+
                     {/* Prompting email */}
                     <div>
                         <div className="relative">
@@ -99,24 +205,22 @@ export default function ForgotHODpassword() {
                             required
                         >
                             <option value="">Select Department</option>
-                            {college && departments[college].map((dept) => (
-                                <option key={dept.code} value={dept.code}>{dept.name}</option>
+                            {college && depts[college].map((dept) => (
+                                <option key={dept} value={dept}>{dept}</option>
                             ))}
                         </select>
                     </div>
                     {/* Submit Button */}
                     {!clicked &&
                         <button
-                            onClick={() => {
-                                setClicked(true)
-                                // send an Email containing OTP from backend or frontend
-                            }}
-                            className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
-                        >
-                            Generate OTP
-                        </button>
+              type="button"
+              onClick={handleGenerateOTP}
+              className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+            >
+              {(isgenerating && !message.error) ? "Generating..." : " Generate OTP"}
+            </button>
                     }
-                    {clicked &&
+                    {clicked && (
                         <div>
                             <div>
                                 <InputField
@@ -131,46 +235,55 @@ export default function ForgotHODpassword() {
                                 />
                             </div>
                             {!otpVerified &&
-                                <button
-                                    onClick={() => {
-                                        setOtpVerified(true)
-                                        // verify the otp in the backend
-                                    }}
-                                    className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
-                                >
-                                    Verify OTP
-                                </button>
+                                 <button
+                  type="button"
+                  onClick={handleVerifyOTP}
+                  className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+                >
+                  Verify OTP
+                </button>
                             }
-                            {otpVerified &&
+                            {otpVerified && (
                                 <div>
                                     <InputField
                                         label="New Password"
                                         type="password"
-                                        value={data.npassword}
-                                        id="npassword"
+                                        value={data.password}
+                                        id="password"
                                         placeholder="Choose new password"
                                         onChange={handleChange}
-                                        error={error.npassword}
+                                        error={error.password}
                                     />
                                     <InputField
                                         label="Confirm New Password"
                                         type="password"
-                                        value={data.cpassword}
-                                        id="cpassword"
+                                        value={data.confirmPassword}
+                                        id="confirmPassword"
                                         placeholder="Re-Enter new password"
                                         onChange={handleChange}
-                                        error={error.cpassword}
+                                        error={error.confirmPassword}
                                     />
                                     <button
-                                        onClick={handleSubmit}
+                                        
                                         className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
                                     >
                                         Update password
                                     </button>
                                 </div>
-                            }
+                            )}
                         </div>
+                    )
                     }
+                    {message && (
+            <div>
+              {message.error && (
+                <p className="text-sm text-red-500">{message.error}</p>
+              )}
+              {message.success && (
+                <p className="text-sm text-green-600">{message.success}</p>
+              )}
+            </div>
+          )}
                 </form>
             </div>
         </div>

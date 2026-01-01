@@ -35,4 +35,26 @@ export const HodDashBoard = async (id) => {
 };
 
 
-//need to use useeffect in hodDashboard.jsx in order to display the data FACULTYLIST
+export const getHodReports = async (payload, hodId) => {
+  const { token } = isAuthenticated();
+
+  try {
+    const response = await fetch(`${API}/hodreport/${hodId}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return await response.json();
+  } catch (err) {
+    console.error("HOD report fetch error:", err);
+    return { error: "Failed to fetch reports" };
+  }
+};
+
+
+//need to use useeffect in OfcDashboard.jsx in order to display the data FACULTYLIST

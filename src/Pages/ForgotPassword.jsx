@@ -1,62 +1,166 @@
-import React from 'react'
+import React from "react";
 import { KeyRound } from "lucide-react";
-import InputField from '../components/inputField';
-
+import InputField from "../components/inputField";
+import {
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
+} from "../core/forgotPassword";
+import { useNavigate } from "react-router-dom";
 export default function PasswordChange() {
+  const [data, setData] = React.useState({
+    mail: "",
+    OTP: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-	const [data, setData] = React.useState({
-		mail: "",
-		OTP: "",
-		password: "",
-		confirmPassword: ""
-	})
+  const navigate = useNavigate();
 
-	const handleChange = (e) => {
-		const { id, value } = e.target;
-		setData((prevData) => ({
-			...prevData,
-			[id]: value,
-		}));
-	}
+  const [isgenerating, setIsgenerating] = React.useState(false);
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+    setMessage({});
+  };
 
-	const [clicked, setClicked] = React.useState(false)
-	const [otpVerified, setOtpVerified] = React.useState(false)
-	const [error, setError] = React.useState({})
+  const [clicked, setClicked] = React.useState(false);
+  const [otpVerified, setOtpVerified] = React.useState(false);
+  const [error, setError] = React.useState({});
+  const [otpToken, setOtpToken] = React.useState(false);
+  const [message, setMessage] = React.useState({});
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = {};
+    if (data.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+    if (data.password !== data.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+    setError(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+    setMessage((prev) => ({
+      ...prev,
+      success: "Password Changed Successfully",
+    }));
+  };
+  const handleGenerateOTP = async () => {
+    setIsgenerating(true);
+    const response = await forgotPassword(data.mail,"faculty");
+    console.log(response);
+    if (response?.error) {
+      setMessage((prev) => ({
+        ...prev,
+        error: response.error,
+      }));
+      return;
+    }
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		const newErrors = {}
-		if (data.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-		if (data.password !== data.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
-		setError(newErrors);
-		if (Object.keys(newErrors).length > 0) return;
-		alert("Password changed successfully!")
-	}
+    if (!response.otpToken) {
+      setMessage(prev =>({
+      ...prev,
+      error : "Address not found"
+    }))
+      return;
+    }
 
-	return (
-		<div className="flex justify-center items-center p-4">
-			<div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+    setOtpToken(response.otpToken);
+    setClicked(true);
+    setMessage((prev) => ({
+      ...prev,
+      success: "OTP sent successfully",
+    }));
+  };
+  const handleVerifyOTP = async () => {
+    const response = await verifyOtp(otpToken, data.OTP);
 
-				{/* Top Icon */}
-				<div className="flex justify-center mb-6">
-					<div className="p-4 bg-purple-100 rounded-xl shadow-sm">
-						<KeyRound className="w-8 h-8 text-purple-600" />
-					</div>
-				</div>
+    if (response.error) {
+      setMessage((prev) => ({
+        ...prev,
+        error: response.error,
+      }));
+      return;
+    }
 
-				{/* Title */}
-				<h2 className="text-2xl font-bold text-gray-900">Forgot Password</h2>
+    setMessage((prev) => ({
+      ...prev,
+      success: "OTP verified successfully",
+    }));
+    setOtpVerified(true);
+  };
+  const passwordreset = async () => {
+    if (!otpVerified) {
+      setMessage((prev) => ({
+        ...prev,
+        error: "OTP not verrified",
+      }));
+      return;
+    }
+
+    if (data.password.length < 8) {
+      setMessage((prev) => ({
+        ...prev,
+        error: "Password must be atleast 8 characters",
+      }));
+      return;
+    }
+
+    if (data.password !== data.confirmPassword) {
+      setMessage((prev) => ({
+        ...prev,
+        error: "Confirm Password must be same as new Password",
+      }));
+      return;
+    }
+
+    try {
+      const response = await resetPassword(otpToken, data.password);
+
+      if (response.error) {
+        setMessage((prev) => ({
+          ...prev,
+          error: response.error,
+        }));
+        // navigate("/");
+        return;
+      }
+
+      navigate('/');
+      alert("Password reset successful");
+    } catch (err) { 
+      setMessage((prev) => ({
+        ...prev,
+        error: "something went wrong",
+      }));
+      // navigate("/");
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+        {/* Top Icon */}
+        <div className="flex justify-center mb-6">
+          <div className="p-4 bg-purple-100 rounded-xl shadow-sm">
+            <KeyRound className="w-8 h-8 text-purple-600" />
+          </div>
+        </div>
+
+        {/* Title */}
+        <h2 className="text-2xl font-bold text-gray-900">Forgot Password</h2>
 
 				{/* Form */}
 				<form className="mt-8 space-y-5 text-left">
 					{/* Prompting email */}
-					<div>
+					 <div>
 						<InputField
 							label="e-mail Address"
 							type="email"
 							value={data.mail}
 							id="mail"
-							placeholder="Enter your registered email"
+							placeholder="Enter your registered email"	
 							onChange={handleChange}
 							error={error.mail}
 						/>
@@ -80,13 +184,12 @@ export default function PasswordChange() {
 								<InputField
 									label="OTP"
 									type="number"
-									onWheel={(e) => e.target.blur()}
 									value={data.OTP}
 									id="OTP"
 									placeholder="Enter OTP"
 									onChange={handleChange}
 									error={error.OTP}
-								/>
+								/>	
 							</div>
 							{!otpVerified &&
 								<button
