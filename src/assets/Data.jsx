@@ -448,14 +448,14 @@ const fields = {
     'Title Of The Paper Talk',
     'Sponsoring Agency',
     'Amount Sanctioned',
-    'Travel/grant/received',
+    'Travel grant received',
     'Document'
   ],
   patents: [
     'Patent Number',
     'Title Of The Patent',
-    'Published/granted',
-    'Year Of Published/granted',
+    'Published granted',
+    'Year Of Published granted',
     'Scope',
     'Document'
   ],
@@ -463,7 +463,7 @@ const fields = {
     'Title Of The Book Chapter',
     'Name Of The Publisher',
     'Year Of Publication',
-    'National/international',
+    'National international',
     'Isbn Number',
     'No Of Authors',
     'Document'
@@ -472,7 +472,7 @@ const fields = {
     'Title Of The Book',
     'Name Of The Publisher',
     'Year Of Publication',
-    'National/international',
+    'National international',
     'Isbn Number',
     'Document'
   ],
@@ -483,7 +483,7 @@ const fields = {
     'Year Of Publication',
     'Volume Number',
     'Impact Factor Thomson Reuters',
-    'National/international',
+    'National international',
     'Issn Number',
     'No Of Authors',
     'Author',
@@ -496,7 +496,7 @@ const fields = {
     'Title Of The Conference',
     'Date Of Publication',
     'Organized By',
-    'National/international',
+    'National international',
     'Document'
   ],
   nptel: [
@@ -568,7 +568,7 @@ const fields = {
     'Are You',
     'Status',
     'Sanctioning Order',
-    'Utilization Certificate of Final Year'
+    'Utilization Certificate Final Year'
   ],
   fdp: [
     'Program Title',
@@ -578,7 +578,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -590,7 +590,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -602,7 +602,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -614,7 +614,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -626,7 +626,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -638,7 +638,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -650,7 +650,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -662,7 +662,7 @@ const fields = {
     'Organizing Body',
     'Mode',
     'Place',
-    'Attended/organized',
+    'Attended organized',
     'Role',
     'Document'
   ],
@@ -732,7 +732,7 @@ const fields = {
     'Pedagogy Is Being Used By Organization',
     'Document'
   ],
-  award_ttle: [
+  awards_and_recognitions: [
     'Award Recognition Title',
     'Granting Organization Institution',
     'Scope',
@@ -789,7 +789,7 @@ const fields = {
     'Certificate'
   ],
   book_book_chapter: [
-    'Title Of The Book/Book Chapter',
+    'Title Of The Book Book Chapter',
     'Name Of The Publisher',
     'Month Year Of Publication',
     'Isbn/Issn Number',

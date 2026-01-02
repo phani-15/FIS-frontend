@@ -34,7 +34,7 @@ export default function ProfilePage() {
         "department": "cse",
         "college": "University College of Engineering",
         "date_of_join": "15-09-2011",
-          "phone": "",
+        "phone": "1234567890",
         "location": ""
       },
       "user": {
@@ -138,11 +138,9 @@ export default function ProfilePage() {
       console.log("Fetch error:", error);
     }
   };
-
   loadProfile();
 }, []);
-
-  const viewer = newObj.role
+  const viewer = newObj.role==="user"?"user":"anyone"
 
   // Static Profile Data
 

@@ -293,12 +293,15 @@ const handleExtractReports = async (e) => {
       // Prepare headers
       const headers = ["S.No", "Faculty Name", "Email", "Designation"];
 
+      const facultyList=filteredFaculty
+      console.log(facultyList);
+      
       // Prepare data rows
       const rows = facultyList.map((faculty, index) => [
         index + 1,
-        faculty.name,
-        faculty.mail || "", // Use email if available, otherwise empty string
-        faculty.role
+        faculty.personalData.name,
+        faculty.user.email || "", // Use email if available, otherwise empty string
+        faculty.personalData.designation
       ]);
 
       // Combine headers and data

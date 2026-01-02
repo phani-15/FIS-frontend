@@ -5,8 +5,8 @@ import {ofclogin} from "../core/ofc"
 import {authenticate} from "../core/auth"
 
 export default function IQACLogin() {
-  const [passCode, setPassCode] = useState("123456");
-  const [data, setData] = useState({ role: "iqac_coordinator" });      
+  const [passCode, setPassCode] = useState("");
+  const [data, setData] = useState({ role: "" });      
 
   const navigate = useNavigate();
 

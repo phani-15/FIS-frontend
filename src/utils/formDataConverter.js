@@ -36,15 +36,17 @@ export const objectToFormData = (
   return formData;
 };
 
-export const credConverter=(obj)=>{
-  const fd=new FormData()
-  const data=Object.fromEntries(Object.entries(obj.formData).map(([key,value])=>[key.toLowerCase(),value]))
-  fd.append("group",obj.group)
-  fd.append("subcategory",obj.subcategory ?? "")
-  fd.append("formdata",JSON.stringify(data))
-  if (obj.files?.Document) {
-    fd.append("Document", obj.files.Document);
+export const credConverter = (obj) => {
+  const fd = new FormData()
+  const data = Object.fromEntries(Object.entries(obj.formData).map(([key, value]) => [key.toLowerCase().replace(/[^\w]/g,"_"), value]))
+  fd.append("group", obj.group)
+  fd.append("subcategory", obj.subcategory ?? "")
+  fd.append("formdata", JSON.stringify(data))
+  if (obj.files && Object.keys(obj.files).length > 0) {
+  for (const key of Object.keys(obj.files)) {
+    fd.append(key.toLowerCase().replace(/[^\w]/g,"_"), obj.files[key]);   
   }
+}
 
   return fd;
 }

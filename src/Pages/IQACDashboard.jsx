@@ -105,7 +105,7 @@ export default function IQACDashboard() {
       setCertifications(data)
     }
     selectedDepartments.length > 0 && getFacultyOnchange()
-  }, [selectedAttributes, selectedTypes, selectedDepartments])
+  }, [selectedAttributes, selectedTypes, selectedDepartments,DateFrom,DateTo])
 
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
@@ -298,6 +298,8 @@ export default function IQACDashboard() {
 
         // Group by department
         const departmentData = {};
+        console.log("certification data was :",certifications);
+        
         // First, filter certifications by selected departments AND selected faculty members
         const relevantFaculty = certifications.filter(faculty => {
           // Check if faculty's department is in selectedDepartments
@@ -328,6 +330,7 @@ export default function IQACDashboard() {
             });
           }
         });
+        console.log(relevantFaculty);
         // Check if any data was collected
         const hasDataForType = Object.values(departmentData).some(rows => rows.length > 0);
         if (!hasDataForType) return;
@@ -417,11 +420,13 @@ export default function IQACDashboard() {
     const obj = {
       fields: selectedTypes,
       subfields: selectedAttributes,
-      ids: selectedMembers,
+      ids:Array.isArray(selectedMembers) ? selectedMembers:Object.values(selectedMembers),
       from_date: DateFrom,
       to_date: DateTo
     }
     const data = await getReports(obj, ofcId)
+    console.log("data was :",data);
+    
     setCertifications(data)
     setIsGenerating(true)
   };

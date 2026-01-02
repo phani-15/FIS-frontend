@@ -99,7 +99,7 @@ const subcategories = {
 
 const directFieldGroups = {
   'Patents': 'patents',
-  'awards_and_recognitions': 'award_title',
+  'Awards and Recognitions': 'awards_and_recognitions',
   'Foreign Visits': 'foreign_visits',
 };
 

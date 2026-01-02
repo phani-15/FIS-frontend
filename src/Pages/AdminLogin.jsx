@@ -26,19 +26,13 @@ const handleSubmit = async (e) => {
 
   try {
     const data = await adminlogin({ passCode: passCode.trim() });
-    console.log("LOGIN RESPONSE:", data);
-
     if (data.error) {
       setFalse(true);
       return;
     }
-
     if (data.token) {
       localStorage.setItem("jwt", JSON.stringify(data));
-      console.log("admin id is", data.admin._id);
-navigate(`/admin/${data.admin._id}`);
-
-
+      navigate(`/adminPage/${data.admin._id}`);
     }
 
   } catch (err) {

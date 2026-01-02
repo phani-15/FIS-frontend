@@ -23,17 +23,17 @@ export default function Register() {
   const fileInputRef = useRef(null);
 
   const [personalData, setpersonalData] = useState({
-    name: "Srinivas Rao polavarapu",
+    name: "Ganesh Tamarapalli",
     avatar: null,
-    father: "nothing",
-    gender: "female",
+    father: "undertaker",
+    gender: "",
     DOB: "",
-    marital: "married",
-    phone: "1234566677",
+    marital: "",
+    phone: "1234566670",
     area: "kukatpallyground",
     city: "hyderabadcity",
-    designation: "professor",
-    department: "Computer Science and Engineering",
+    designation: "",
+    department: "",
     college: "JNTUGV-CEV",
     date_of_join: new Date().toISOString(), // current year-month
   });
@@ -72,7 +72,119 @@ export default function Register() {
   const [otherAdministrativeService, setOtherAdministrativeService] = useState([
     { institute: "", from: "", to: "", designation: "" }
   ])
-
+  const test = async () => {
+    const obj = {
+      personalData: personalData,
+      loginData: { "email": `${Data.email}` },
+      education: {
+        "tenth": {
+          "percentage": "88%",
+          "school": "St. John's High School",
+          "year": "2001"
+        },
+        "twelth": {
+          "college": "Narayana Junior College",
+          "percentage": "92%",
+          "type": "Intermediate",
+          "year": "2003"
+        },
+        "degree": {
+          "college": "ABC Degree College",
+          "degreeName": "B.Tech",
+          "percentage": "75%",
+          "specialization": "Computer Science",
+          "title": "Graduate in Computer Science",
+          "university": "JNTU Hyderabad",
+          "year": "2007"
+        },
+        "pg": {
+          "college": "XYZ College of Engineering",
+          "course": "M.Tech",
+          "percentage": "82%",
+          "specialization": "Software Engineering",
+          "university": "Osmania University",
+          "year": "2009"
+        },
+        "phd": [
+          {
+            "University": "IIT Bombay",
+            "department": "Computer Science",
+            "specialization": "Machine Learning",
+            "under_the_proffessor": "Dr. S. Raman",
+            "year": 2015
+          },
+          {
+            "University": "IISC Bangalore",
+            "department": "Artificial Intelligence",
+            "specialization": "Deep Learning",
+            "under_the_proffessor": "Dr. Anita Verma",
+            "year": 2018
+          }
+        ],
+        "postdoc": [
+          {
+            "University": "MIT",
+            "specialization": "Neural Networks",
+            "under_the_proffessor": "Dr. John Doe",
+            "year": 2020
+          }
+        ]
+      },
+      experience: [
+        {
+          "designation": "Assistant Professor",
+          "institute": "XYZ Engineering College",
+          "from": 2010,
+          "to": 2015
+        },
+        {
+          "designation": "Senior Assistant Professor",
+          "institute": "ABC Institute of Technology",
+          "from": 2015,
+          "to": 2019
+        },
+        {
+          "designation": "Associate Professor",
+          "institute": "University College of Engineering",
+          "from": 2019,
+          "to": 2024
+        }
+      ],
+      administrativeService: [
+        {
+          "designation": "Department Coordinator",
+          "from": 2016,
+          "to": 2018
+        },
+        {
+          "designation": "Training & Placement Officer",
+          "from": 2018,
+          "to": 2020
+        }
+      ],
+      otherAdministrativeService: [
+        {
+          "designation": "Research Committee Member",
+          "institute": "ABC Institute",
+          "from": 2015,
+          "to": "2017"
+        },
+        {
+          "designation": "Library Committee Chair",
+          "institute": "XYZ Engineering College",
+          "from": 2017,
+          "to": "2019"
+        },
+        {
+          "designation": "Cultural Event Coordinator",
+          "institute": "University College of Engineering",
+          "from": 2020,
+          "to": "2023"
+        }
+      ],
+    }
+    await register(obj).then(() => navigate("/"));
+  }
   useEffect(() => {
     if (personalData.college === "College of PharmaCeutical Sciences") {
       setpersonalData(prev => ({ ...prev, department: "Department of Pharmacy" }));
@@ -315,8 +427,7 @@ export default function Register() {
       }
       setErrors({});
       console.log(personalData);
-
-      // test()
+      test();
       setStep("education");
     }, [personalData]
   );
@@ -1551,9 +1662,7 @@ export default function Register() {
                     // Submit final data
                     const obj1 = {
                       personalData: personalData,
-                      "loginData": {
-                        "email": `${Data.email}`,
-                      },
+                      loginData: { "email": `${Data.email}` },
                       education: education,
                       experience: experience,
                       administrativeService: administrativeService,

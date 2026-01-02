@@ -492,6 +492,7 @@ const ViewCertificaion = () => {
   const { userId, credId } = useParams();
   const navigate = useNavigate();
   const [initialData, setinitialData] = useState({});
+  const [viewer, setviewer] = useState("");
   const [certificationsData, setCertificationsData] = useState({});
   const [expandedItems, setExpandedItems] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -513,12 +514,9 @@ const ViewCertificaion = () => {
     const getfunction = async () => {
       try {
         const backendData = await getDetails(userId, credId);
-        console.log("Backend data:", backendData);
-
+        setviewer(backendData.role)
         // Normalize the backend data
         const normalizedData = normalizeBackendData(backendData);
-        console.log("Normalized data:", normalizedData);
-
         setinitialData(normalizedData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -602,7 +600,6 @@ const ViewCertificaion = () => {
   };
 
   const renderCertificateItem = (section, item) => {
-    const documentUrl = API.replace("/api", "")
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
@@ -614,14 +611,14 @@ const ViewCertificaion = () => {
         className="rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
       >
         <div className="p-6 relative">
+          {viewer === "user" &&
           <button
             className="absolute top-2 right-2 text-gray-500 hover:text-blue-600"
             onClick={() => handleEditClick(section, item)}
             title="Edit"
           >
             <SquarePen size={18} />
-          </button>
-
+          </button> }
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div className="flex-1 space-y-2">
               {topFields.map((field, i) => (
@@ -639,7 +636,7 @@ const ViewCertificaion = () => {
               >
                 {isExpanded ? 'Hide Details' : 'View Details'}
               </button>
-              {hasDoc && (
+              {hasDoc && !viewer==="admin" && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
                   onClick={() => viewDocument(item.document || item.certificate || item.Document || item.sanctioning_order || item.utilization_certificate_of_final_year)}
                 >
@@ -688,7 +685,6 @@ const ViewCertificaion = () => {
         </div>
 
         <div className="space-y-8">
-          {console.log("certifications data : ", certificationsData)}
           {Object.entries(certificationsData)
             .filter(([, items]) => items.length > 0)
             .map(([section, items]) => (
