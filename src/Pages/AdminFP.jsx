@@ -170,19 +170,7 @@ const [isgenerating, setIsgenerating] = React.useState(false);
 				<h2 className="text-2xl font-bold text-gray-900">Forgot Password</h2>
 
 				{/* Form */}
-				<form className="mt-8 space-y-5 text-left">
-					{/* Prompting email */}
-					 <div>
-						<InputField
-							label="e-mail Address"
-							type="email"
-							value={data.mail}
-							id="mail"
-							placeholder="Enter your registered email"	
-							onChange={handleChange}
-							error={error.mail}
-						/>
-					</div>
+				<form onSubmit={(e) => { e.preventDefault(); passwordreset(); }} className="mt-8 space-y-5 text-left">
 
 					{/* Submit Button */}
 					{!clicked &&

@@ -1,62 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { X, Search, FileText, Download } from "lucide-react";
+import { X, Search, FileText, Download,User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
-import { schemas, yearFields, AtKeys } from '../assets/Data';
-import { useParams } from "react-router-dom"
-import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
+import { schemas, yearFields,  AtKeys } from '../assets/Data';
+import {useParams} from "react-router-dom"
+import {getRefFaculty, getReports, ofcDashBoard} from "../core/ofc"
 
 export default function IQACDashboard() {
-  const { ofcId } = useParams()
+  const {ofcId}=useParams()
   const [filters, setFilters] = useState({
     department: "All",
     searchTerm: "",
   });
-  const [facultyList, setfacultyList] = useState([
-    {
-      name: "Dr. John Doe",
-      department: "Computer Science and Engineering",
-      role: "Professor",
-      email: "john.doe@yourcollege.edu"
-    },
-    {
-      name: "Dr. Jane Smith",
-      department: "Electrical and Electronics Engineering",
-      role: "Associate Professor",
-      email: "jane.smith@yourcollege.edu"
-    },])
-  const [certifications, setCertifications] = useState([
-    {
-      name: "Dr. Aarti Rao",
-      role: "Professor",
-      dept: "Computer Science and Engineering",
-      data: {
-        patents: [
-          {
-            "Patent Number": "IN2021A000101",
-            "Title of the Patent": "Neural Compression for Edge Devices",
-            "Published/Granted": "Granted",
-            "Year of Published/Granted": "2021",
-            "Scope": "International",
-            "Document": "aarti_rao_patent.pdf"
-          }
-        ],
-        journal: [
-          {
-            "Title of the Paper": "Efficient Models for On-Device AI",
-            "Name of the Journal": "Journal of Edge AI",
-            "Page Number": "12-25",
-            "Year of Publication": "2021",
-            "Impact Factor": "3.2",
-            "National/International": "International",
-            "ISBN Number": "2345-6789",
-            "Indexing Platform": "Scopus",
-            "H-index": "15",
-            "Document": "aarti_rao_journal.pdf"
-          }
-        ]
-      }
-    },
+  const [facultyList,setfacultyList]=useState([
+  {
+    name: "Dr. John Doe",
+    department: "Computer Science and Engineering",
+    role: "Professor",
+    email: "john.doe@yourcollege.edu"
+  },
+  {
+    name: "Dr. Jane Smith",
+    department: "Electrical and Electronics Engineering",
+    role: "Associate Professor",
+    email: "jane.smith@yourcollege.edu"
+  },])
+  const [certifications,setCertifications]=useState([
+  {
+    name: "Dr. Aarti Rao",
+    role: "Professor",
+    dept: "Computer Science and Engineering",
+    data: {
+      patents: [
+        {
+          "Patent Number": "IN2021A000101",
+          "Title of the Patent": "Neural Compression for Edge Devices",
+          "Published/Granted": "Granted",
+          "Year of Published/Granted": "2021",
+          "Scope": "International",
+          "Document": "aarti_rao_patent.pdf"
+        }
+      ],
+      journal: [
+        {
+          "Title of the Paper": "Efficient Models for On-Device AI",
+          "Name of the Journal": "Journal of Edge AI",
+          "Page Number": "12-25",
+          "Year of Publication": "2021",
+          "Impact Factor": "3.2",
+          "National/International": "International",
+          "ISBN Number": "2345-6789",
+          "Indexing Platform": "Scopus",
+          "H-index": "15",
+          "Document": "aarti_rao_journal.pdf"
+        }
+      ]
+    }
+  },
   ])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -67,7 +67,7 @@ export default function IQACDashboard() {
   const [DateTo, setDateTo] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);  
   const departments = [
     "Computer Science and Engineering",
     "Electronics and Communication Engineering",
@@ -78,11 +78,12 @@ export default function IQACDashboard() {
     "Information Technology Engineering",
     "M.Tech",
     "MBA",
-  ];  
-  useEffect(() => {
-    const getData = async () => {
-      const data = await ofcDashBoard(ofcId)
-      if (data) {
+  ];
+
+  useEffect(()=>{
+    const getData=async ()=>{
+      const data=await ofcDashBoard(ofcId)
+      if(data){
         setfacultyList(data)
       }
     }
@@ -103,9 +104,10 @@ export default function IQACDashboard() {
     const getFacultyOnchange = async () => {
       const data = await getRefFaculty(obj, ofcId)
       setCertifications(data)
+      console.log("certification data :",certifications);
     }
-    selectedDepartments.length > 0 && getFacultyOnchange()
-  }, [selectedAttributes, selectedTypes, selectedDepartments,DateFrom,DateTo])
+    selectedDepartments.length>0 && getFacultyOnchange()
+  },[selectedAttributes,selectedTypes,selectedDepartments])
 
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
@@ -417,12 +419,12 @@ export default function IQACDashboard() {
       alert("Please select both From Date and To Date.");
       return;
     }
-    const obj = {
-      fields: selectedTypes,
-      subfields: selectedAttributes,
-      ids:Array.isArray(selectedMembers) ? selectedMembers:Object.values(selectedMembers),
-      from_date: DateFrom,
-      to_date: DateTo
+    const obj={
+      fields:selectedTypes,
+      subfields:selectedAttributes,
+      ids:selectedMembers,
+      from_date:DateFrom,
+      to_date:DateTo
     }
     const data = await getReports(obj, ofcId)
     console.log("data was :",data);
@@ -491,7 +493,6 @@ export default function IQACDashboard() {
     }
   };
 
-
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
     const matchesSearch = f.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
@@ -516,7 +517,7 @@ export default function IQACDashboard() {
     <div className="p-4 sm:p-8 mx-2 lg:mx-auto max-w-7xl bg-gray-50 rounded-3xl shadow-xl space-y-6 font-[Inter]">
       {/* Title */}
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-center bg-purple-800 text-transparent bg-clip-text tracking-wide">
-        IQAC DASHBOARD
+        {role ? role : 'Officials'} DashBoard
       </h1>
       {/* Styled Extract Reports Button */}
       <div className="flex justify-start pr-2 mt-10 md:pr-0">
@@ -616,6 +617,7 @@ export default function IQACDashboard() {
               <th className="px-4 py-3 text-left font-semibold">Name</th>
               <th className="px-4 py-3 text-left font-semibold">Department</th>
               <th className="px-4 py-3 text-left font-semibold">Role</th>
+              {/* <th className="px-4 py-3 text-left font-semibold"></th> */}
             </tr>
           </thead>
           <tbody>
@@ -625,7 +627,15 @@ export default function IQACDashboard() {
                   <td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
                   <td className="px-4 py-2">{highlightMatch(f.name)}</td>
                   <td className="px-4 py-2">{f.department}</td>
-                  <td className="px-4 py-2">{f.role}</td>
+                  <td className="px-4 py-2">{f.role}</td><td>
+                    {/* <button
+                      onClick={() => navigate(`/profile/${f._id}`)}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 text-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition shadow-sm"
+                    >
+                      <User size={14} />
+                      view
+                    </button> */}
+                  </td>
                 </tr>
               ))
             ) : (
@@ -669,6 +679,11 @@ export default function IQACDashboard() {
           </div>
         </>
       )}
+          <div className="flex justify-end ">
+            <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
+              <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
+            </div>
+          </div>
       <AnimatePresence>
         {showExtractModal && (
           <>

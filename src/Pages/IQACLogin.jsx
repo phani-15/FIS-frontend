@@ -1,59 +1,82 @@
 import React, { useState } from "react";
 import { Lock, LogIn, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {ofclogin} from "../core/ofc"
-import {authenticate} from "../core/auth"
+import { ofclogin } from "../core/ofc";
+import { authenticate } from "../core/auth";
 
 export default function IQACLogin() {
   const [passCode, setPassCode] = useState("");
-  const [data, setData] = useState({ role: "" });      
+  const [role, setRole] = useState(""); // ✅ simpler than `data`
+  const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
 
-  const [isEmpty, setEmpty] = useState(false);
-  const [isFalse, setFalse] = useState(false);
-  const [roleError, setRoleError] = useState(false);
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.role;
+      return newErrors;
+    });
+  };
 
-  const handleChange = (e) => {
+  const handlePassCodeChange = (e) => {
     setPassCode(e.target.value);
-    setEmpty(false);
-    setFalse(false);
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.passCode;
+      delete newErrors.submit;
+      return newErrors;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
-    if (!data.role) {
-      setRoleError(true);
-      return;
+    // ✅ Validation
+    if (!role) {
+      return setErrors({ role: "Please select a role" });
     }
-
     if (!passCode.trim()) {
-      setEmpty(true);
-      return;
+      return setErrors({ passCode: "PassCode is required" });
     }
-    await ofclogin({passcode:passCode,role:data.role})
-    .then(data=>{
-        authenticate(data,()=>{
-          setData("")
-          setPassCode("")
-        })
-        navigate(`/ofcDashboard/${data.Iqac.id}`)
-    })
-    .catch(err=>{console.log(err);})
-    // if (passCode === validPassCode) {
-    //   navigate("/ofcDashboard");
-    // } else {
-    //   setFalse(true);
-    // }
+
+    try {
+      const response = await ofclogin({ passcode: passCode, role });
+      const data = response.data || response;
+
+      // 🔒 SAFETY CHECK: Ensure Iqac and id exist
+      if (!data?.Iqac?.id) {
+        throw new Error("Invalid server response: missing Iqac ID");
+      }
+
+      // ✅ Success
+      authenticate(data, () => {
+        setPassCode("");
+        setRole("IQAC Coordinator"); // reset to default
+      });
+
+      navigate(`/ofcDashboard/${data.Iqac.id}?role=${role}`);
+    } catch (error) {
+      console.error("OFC Login error:", error);
+
+      // 🎯 Unified error message (security best practice)
+      const errorMsg =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Enter a valid password";
+
+      // Show under passcode (most intuitive for user)
+      setErrors({ passCode: errorMsg });
+    }
   };
 
   return (
-    <div className="flex justify-center items-center p-4 ">
+    <div className="flex justify-center items-center p-4 min-h-screen">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
-
         <div className="flex justify-center mb-6">
-          <div className="p-4 bg-purple-100 rounded-xl shadow-sm">
+          <div className="p-4 bg-purple-50 rounded-xl shadow-sm">
             <Lock className="w-8 h-8 text-purple-600" />
           </div>
         </div>
@@ -62,70 +85,63 @@ export default function IQACLogin() {
         <p className="text-gray-600 text-sm mt-1">Faculty Information System</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
-
           {/* Role Dropdown */}
           <div>
-            <label className="block mb-1 text-sm font-medium">Select your Role</label>
-
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Select your Role *
+            </label>
             <select
-              id="role"
-              value={data.role}
-              onChange={(e) => {
-                setData({ ...data, role: e.target.value });
-                setRoleError(false);
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
+              value={role}
+              onChange={handleRoleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
-              <option value="">Select</option>
+              <option value="">Select Role</option>
               <option value="Vice Principal">Vice Principal</option>
               <option value="Principal">Principal</option>
               <option value="IQAC Coordinator">IQAC Coordinator</option>
               <option value="IQAC Director">IQAC Director</option>
               <option value="R&D Director">R&D Director</option>
             </select>
-
-            {roleError && (
-              <p className="text-red-500 text-sm mt-1">Please select a role</p>
+            {errors.role && (
+              <p className="mt-1 text-sm text-red-500">{errors.role}</p>
             )}
           </div>
 
           {/* Passcode */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-700">
-              PassCode
+              PassCode *
             </label>
-
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-gray-400">
                 <KeyRound className="w-5 h-5" />
               </span>
-
               <input
                 type="password"
                 value={passCode}
-                onChange={handleChange}
-                placeholder="Enter your Passcode"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500"
+                onChange={handlePassCodeChange}
+                placeholder="••••••••"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
-
-            {isFalse && <p className="text-red-500 mt-1 text-sm">Please enter a valid Passcode</p>}
-            {isEmpty && <p className="text-red-500 mt-1 text-sm">Please enter the passcode</p>}
+            {errors.passCode && (
+              <p className="mt-1 text-sm text-red-500">{errors.passCode}</p>
+            )}
           </div>
 
           <p
             onClick={() => navigate("/ofcChange")}
-            className="text-blue-700 text-end mr-1 hover:underline mb-2 cursor-pointer"
+            className="text-sm text-violet-700 hover:underline cursor-pointer text-end"
           >
-            Change Password
+            Change Password?
           </p>
 
           <button
             type="submit"
-            className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
+            className="w-full mt-4 flex items-center justify-center gap-2 bg-linear-to-r from-purple-600 to-indigo-600 text-white font-medium py-2.5 rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
           >
-            Login
             <LogIn className="w-5 h-5" />
+            Login
           </button>
         </form>
 
