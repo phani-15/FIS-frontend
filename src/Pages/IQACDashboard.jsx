@@ -2,61 +2,63 @@ import React, { useEffect, useState } from "react";
 import { X, Search, FileText, Download,User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
-import { schemas, yearFields,  AtKeys } from '../assets/Data';
-import {useParams} from "react-router-dom"
-import {getRefFaculty, getReports, ofcDashBoard} from "../core/ofc"
+import { schemas, yearFields, AtKeys } from '../assets/Data';
+import { useParams,useSearchParams } from "react-router-dom"
+import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
 
 export default function IQACDashboard() {
-  const {ofcId}=useParams()
+  const { ofcId } = useParams()
+  const [ searchParams ]= useSearchParams()
+  const role = searchParams.get('role')
   const [filters, setFilters] = useState({
     department: "All",
     searchTerm: "",
   });
-  const [facultyList,setfacultyList]=useState([
-  {
-    name: "Dr. John Doe",
-    department: "Computer Science and Engineering",
-    role: "Professor",
-    email: "john.doe@yourcollege.edu"
-  },
-  {
-    name: "Dr. Jane Smith",
-    department: "Electrical and Electronics Engineering",
-    role: "Associate Professor",
-    email: "jane.smith@yourcollege.edu"
-  },])
-  const [certifications,setCertifications]=useState([
-  {
-    name: "Dr. Aarti Rao",
-    role: "Professor",
-    dept: "Computer Science and Engineering",
-    data: {
-      patents: [
-        {
-          "Patent Number": "IN2021A000101",
-          "Title of the Patent": "Neural Compression for Edge Devices",
-          "Published/Granted": "Granted",
-          "Year of Published/Granted": "2021",
-          "Scope": "International",
-          "Document": "aarti_rao_patent.pdf"
-        }
-      ],
-      journal: [
-        {
-          "Title of the Paper": "Efficient Models for On-Device AI",
-          "Name of the Journal": "Journal of Edge AI",
-          "Page Number": "12-25",
-          "Year of Publication": "2021",
-          "Impact Factor": "3.2",
-          "National/International": "International",
-          "ISBN Number": "2345-6789",
-          "Indexing Platform": "Scopus",
-          "H-index": "15",
-          "Document": "aarti_rao_journal.pdf"
-        }
-      ]
-    }
-  },
+  const [facultyList, setfacultyList] = useState([
+    {
+      name: "Dr. John Doe",
+      department: "Computer Science and Engineering",
+      role: "Professor",
+      email: "john.doe@yourcollege.edu"
+    },
+    {
+      name: "Dr. Jane Smith",
+      department: "Electrical and Electronics Engineering",
+      role: "Associate Professor",
+      email: "jane.smith@yourcollege.edu"
+    },])
+  const [certifications, setCertifications] = useState([
+    {
+      name: "Dr. Aarti Rao",
+      role: "Professor",
+      dept: "Computer Science and Engineering",
+      data: {
+        patents: [
+          {
+            "Patent Number": "IN2021A000101",
+            "Title of the Patent": "Neural Compression for Edge Devices",
+            "Published/Granted": "Granted",
+            "Year of Published/Granted": "2021",
+            "Scope": "International",
+            "Document": "aarti_rao_patent.pdf"
+          }
+        ],
+        journal: [
+          {
+            "Title of the Paper": "Efficient Models for On-Device AI",
+            "Name of the Journal": "Journal of Edge AI",
+            "Page Number": "12-25",
+            "Year of Publication": "2021",
+            "Impact Factor": "3.2",
+            "National/International": "International",
+            "ISBN Number": "2345-6789",
+            "Indexing Platform": "Scopus",
+            "H-index": "15",
+            "Document": "aarti_rao_journal.pdf"
+          }
+        ]
+      }
+    },
   ])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -78,12 +80,11 @@ export default function IQACDashboard() {
     "Information Technology Engineering",
     "M.Tech",
     "MBA",
-  ];
-
-  useEffect(()=>{
-    const getData=async ()=>{
-      const data=await ofcDashBoard(ofcId)
-      if(data){
+  ];  
+  useEffect(() => {
+    const getData = async () => {
+      const data = await ofcDashBoard(ofcId)
+      if (data) {
         setfacultyList(data)
       }
     }
@@ -104,15 +105,15 @@ export default function IQACDashboard() {
     const getFacultyOnchange = async () => {
       const data = await getRefFaculty(obj, ofcId)
       setCertifications(data)
-      console.log("certification data :",certifications);
     }
-    selectedDepartments.length>0 && getFacultyOnchange()
-  },[selectedAttributes,selectedTypes,selectedDepartments])
+    selectedDepartments.length > 0 && getFacultyOnchange()
+  }, [selectedAttributes, selectedTypes, selectedDepartments,DateFrom,DateTo])
 
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
     return getSchemaForType(typeKey).attributes.map(a => a.key);
   };
+
 
 
   // Helper: Define schema per type (label + attributes)
@@ -419,12 +420,12 @@ export default function IQACDashboard() {
       alert("Please select both From Date and To Date.");
       return;
     }
-    const obj={
-      fields:selectedTypes,
-      subfields:selectedAttributes,
-      ids:selectedMembers,
-      from_date:DateFrom,
-      to_date:DateTo
+    const obj = {
+      fields: selectedTypes,
+      subfields: selectedAttributes,
+      ids:Array.isArray(selectedMembers) ? selectedMembers:Object.values(selectedMembers),
+      from_date: DateFrom,
+      to_date: DateTo
     }
     const data = await getReports(obj, ofcId)
     console.log("data was :",data);
@@ -1009,5 +1010,4 @@ export default function IQACDashboard() {
         )}
       </AnimatePresence>
     </div>
-  );
-}
+  );}

@@ -498,8 +498,7 @@ const ViewCertificaion = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState(null);
   const [sectionKey, setSectionKey] = useState(null);
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);    
   const viewDocument = (docPath) => {
     if (!docPath) {
       alert('No document available');
@@ -603,8 +602,7 @@ const ViewCertificaion = () => {
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
-    const hasDoc = item.document || item.certificate || item.Proceeding  || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;
-
+    const hasDoc = item.document || item.certificate || item.Proceeding  || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;    
     return (
       <div
         key={item.id}
@@ -636,7 +634,7 @@ const ViewCertificaion = () => {
               >
                 {isExpanded ? 'Hide Details' : 'View Details'}
               </button>
-              {hasDoc && !viewer==="admin" && (
+              {(hasDoc && viewer!=="admin") && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
                   onClick={() => viewDocument(item.document || item.Certificate || item.Document || item.Proceeding || item.Sanctioning_Order || item.Utilization_Certificate_Of_Final_Year)}
                 >
