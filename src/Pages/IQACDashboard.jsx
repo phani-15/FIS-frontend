@@ -1,23 +1,63 @@
 import React, { useEffect, useState } from "react";
-import { X, Search, FileText, Download,User } from "lucide-react";
+import { X, Search, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import { schemas, yearFields, AtKeys } from '../assets/Data';
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
 
 export default function IQACDashboard() {
-  const location = useLocation()
-
-const queryParams = new URLSearchParams(location.search);
-const role = queryParams.get("role");
   const { ofcId } = useParams()
   const [filters, setFilters] = useState({
     department: "All",
     searchTerm: "",
   });
-  const [facultyList, setfacultyList] = useState([])
-  const [certifications, setCertifications] = useState([])
+  const [facultyList, setfacultyList] = useState([
+    {
+      name: "Dr. John Doe",
+      department: "Computer Science and Engineering",
+      role: "Professor",
+      email: "john.doe@yourcollege.edu"
+    },
+    {
+      name: "Dr. Jane Smith",
+      department: "Electrical and Electronics Engineering",
+      role: "Associate Professor",
+      email: "jane.smith@yourcollege.edu"
+    },])
+  const [certifications, setCertifications] = useState([
+    {
+      name: "Dr. Aarti Rao",
+      role: "Professor",
+      dept: "Computer Science and Engineering",
+      data: {
+        patents: [
+          {
+            "Patent Number": "IN2021A000101",
+            "Title of the Patent": "Neural Compression for Edge Devices",
+            "Published/Granted": "Granted",
+            "Year of Published/Granted": "2021",
+            "Scope": "International",
+            "Document": "aarti_rao_patent.pdf"
+          }
+        ],
+        journal: [
+          {
+            "Title of the Paper": "Efficient Models for On-Device AI",
+            "Name of the Journal": "Journal of Edge AI",
+            "Page Number": "12-25",
+            "Year of Publication": "2021",
+            "Impact Factor": "3.2",
+            "National/International": "International",
+            "ISBN Number": "2345-6789",
+            "Indexing Platform": "Scopus",
+            "H-index": "15",
+            "Document": "aarti_rao_journal.pdf"
+          }
+        ]
+      }
+    },
+  ])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showExtractModal, setShowExtractModal] = useState(false);
@@ -38,10 +78,7 @@ const role = queryParams.get("role");
     "Information Technology Engineering",
     "M.Tech",
     "MBA",
-  ];
-
-  const navigate = useNavigate();
-
+  ];  
   useEffect(() => {
     const getData = async () => {
       const data = await ofcDashBoard(ofcId)
@@ -52,6 +89,11 @@ const role = queryParams.get("role");
     getData()
   }, [ofcId])
 
+  useEffect(() => {
+    if (isGenerating) {
+      generateExcelReport();
+    }
+  }, [certifications]);
   //report extraction useEffects
   useEffect(() => {
     const obj = {
@@ -61,7 +103,6 @@ const role = queryParams.get("role");
     const getFacultyOnchange = async () => {
       const data = await getRefFaculty(obj, ofcId)
       setCertifications(data)
-      console.log("certification data :", certifications);
     }
     selectedDepartments.length > 0 && getFacultyOnchange()
   }, [selectedAttributes, selectedTypes, selectedDepartments])
@@ -79,17 +120,16 @@ const role = queryParams.get("role");
 
   const handleFacultyToggle = (facultyName) => {
     setSelectedMembers((prevIds) => {
-      console.log("prevIds: ", prevIds);
-
       // 1. Find the user object in certifications that matches the name
       const targetUser = certifications.find(user => user.name === facultyName);
-
       // Safety check: if name doesn't exist in certifications, do nothing
       if (!targetUser) return prevIds;
-
       const targetId = targetUser.id;
-
       // 2. Check if the ID is already in our selection array
+      if (!Array.isArray(prevIds)) {
+        const Ids = Object.values(prevIds)
+        prevIds = Ids;
+      }
       if (prevIds.includes(targetId)) {
         // 3. REMOVE: Filter out the ID if it exi`sts
         return prevIds.filter(id => id !== targetId);
@@ -173,7 +213,6 @@ const role = queryParams.get("role");
     if (!selectedDepartments.includes(dept)) {
       return [];
     }
-
     // Get all faculty from the department
     const facultyInDept = certifications
       .filter(faculty => (faculty.dept === dept))
@@ -182,8 +221,7 @@ const role = queryParams.get("role");
       return facultyInDept;
     }
     // Filter based on having data for selected types
-    return certifications
-      .map(faculty => faculty.name);
+    return facultyInDept;
   };
 
   // Add this helper function to sanitize sheet names
@@ -243,9 +281,10 @@ const role = queryParams.get("role");
 
       selectedTypes.forEach(typeKey => {
         const schema = getSchemaForType(typeKey);
-        const selectedAttrs = selectedAttributes[typeKey] || [];
+        let selectedAttrs = selectedAttributes[typeKey] || [];
+        const nromalizesAttr=selectedAttrs.map((attr)=>(attr.toLowerCase().replace( /[^\w]/g,"_")))
+        selectedAttrs=nromalizesAttr;
         if (selectedAttrs.length === 0) return;
-
         // Headers
         const headers = [
           "S.No",
@@ -259,7 +298,6 @@ const role = queryParams.get("role");
 
         // Group by department
         const departmentData = {};
-
         // First, filter certifications by selected departments AND selected faculty members
         const relevantFaculty = certifications.filter(faculty => {
           // Check if faculty's department is in selectedDepartments
@@ -268,34 +306,16 @@ const role = queryParams.get("role");
           }
 
           // Check if faculty's name is in selected members for their department
-          const selectedInDept = selectedMembers[faculty.dept] || [];
-          if (!selectedInDept.includes(faculty.name)) {
+          const selectedInDept = selectedMembers.includes(faculty.id) || [];
+          if (!selectedInDept) {
             return false;
           }
-
           return true;
         });
-
         // Process only the filtered faculty
         relevantFaculty.forEach(faculty => {
           if (faculty.data && faculty.data[typeKey]) {
             faculty.data[typeKey].forEach(record => {
-              // Date/Year filter
-              const recordDate = extractDateFromRecord(record, typeKey);
-              if (recordDate === null) {
-                // Skip if no date can be extracted
-                return;
-              }
-
-              // Date range validation
-              const fromDateObj = new Date(DateFrom);
-              const toDateObj = new Date(DateTo);
-              toDateObj.setHours(23, 59, 59, 999);
-
-              if (recordDate < fromDateObj || recordDate > toDateObj) {
-                return;
-              }
-
               const dept = faculty.dept || "Others";
               if (!departmentData[dept]) departmentData[dept] = [];
 
@@ -308,7 +328,6 @@ const role = queryParams.get("role");
             });
           }
         });
-
         // Check if any data was collected
         const hasDataForType = Object.values(departmentData).some(rows => rows.length > 0);
         if (!hasDataForType) return;
@@ -390,7 +409,6 @@ const role = queryParams.get("role");
   // Handle form submission
   const handleExtractReports = async (e) => {
     e.preventDefault();
-    console.log("handleexcelreport was called");
     // Prevent form submission if required fields are empty
     if (!DateFrom || !DateTo) {
       alert("Please select both From Date and To Date.");
@@ -403,12 +421,9 @@ const role = queryParams.get("role");
       from_date: DateFrom,
       to_date: DateTo
     }
-    console.log("object that was sending to backend was this :", obj);
     const data = await getReports(obj, ofcId)
-    console.log("reports data was :", data);
     setCertifications(data)
-    console.log(certifications);
-    await generateExcelReport();
+    setIsGenerating(true)
   };
 
   const printList = async () => {
@@ -471,6 +486,7 @@ const role = queryParams.get("role");
     }
   };
 
+
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
     const matchesSearch = f.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
@@ -495,7 +511,7 @@ const role = queryParams.get("role");
     <div className="p-4 sm:p-8 mx-2 lg:mx-auto max-w-7xl bg-gray-50 rounded-3xl shadow-xl space-y-6 font-[Inter]">
       {/* Title */}
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-center bg-purple-800 text-transparent bg-clip-text tracking-wide">
-        {role ? role : 'Officials'} DashBoard
+        IQAC DASHBOARD
       </h1>
       {/* Styled Extract Reports Button */}
       <div className="flex justify-start pr-2 mt-10 md:pr-0">
@@ -595,7 +611,6 @@ const role = queryParams.get("role");
               <th className="px-4 py-3 text-left font-semibold">Name</th>
               <th className="px-4 py-3 text-left font-semibold">Department</th>
               <th className="px-4 py-3 text-left font-semibold">Role</th>
-              {/* <th className="px-4 py-3 text-left font-semibold"></th> */}
             </tr>
           </thead>
           <tbody>
@@ -605,15 +620,7 @@ const role = queryParams.get("role");
                   <td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
                   <td className="px-4 py-2">{highlightMatch(f.name)}</td>
                   <td className="px-4 py-2">{f.department}</td>
-                  <td className="px-4 py-2">{f.role}</td><td>
-                    {/* <button
-                      onClick={() => navigate(`/profile/${f._id}`)}
-                      className="inline-flex items-center gap-1.5 px-2 py-1 text-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition shadow-sm"
-                    >
-                      <User size={14} />
-                      view
-                    </button> */}
-                  </td>
+                  <td className="px-4 py-2">{f.role}</td>
                 </tr>
               ))
             ) : (
@@ -657,11 +664,6 @@ const role = queryParams.get("role");
           </div>
         </>
       )}
-          <div className="flex justify-end ">
-            <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
-              <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
-            </div>
-          </div>
       <AnimatePresence>
         {showExtractModal && (
           <>
