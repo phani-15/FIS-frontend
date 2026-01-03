@@ -51,7 +51,7 @@ export default function App() {
             <Route path='/ofcChange' element={<ChangeIQACPassword />} />
             <Route path='/forgotpass' element={<Forgotiqac/>} />
 
-            <Route path='/adminPage' element={<PrivateRoutes><Admin /></PrivateRoutes>} />
+            <Route path='/adminPage/:adminId' element={<PrivateRoutes><Admin /></PrivateRoutes>} />
             <Route path='/admin' element={<AdminLogin />} />
             <Route path='/adminfp/' element={<AdminFP />} />
             

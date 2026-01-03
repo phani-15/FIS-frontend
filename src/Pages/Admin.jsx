@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User, Eye, Check, X, ChevronDown, ChevronUp } from 'lucide-react'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { departments } from "../assets/Data";
+import { AdminDashboard } from "../core/admin"
 // --- Data Structure Mocks (Kept the same for functionality) ---
 const mockRequests = [
   {
@@ -462,6 +463,7 @@ const ProfileUpdateRequests = () => {
 };
 
 export default function Admin() {
+  const { adminId } = useParams()
   const [filters, setFilters] = useState({
     department: "All",
     role: "All",
@@ -470,39 +472,19 @@ export default function Admin() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [facultyList, setfacultyList] = useState([
+        { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
+  ]);
 
-  const facultyList = [
-    { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
-    { name: "Dr. Jane Smith", department: "Electrical and Electronics Engineering", role: "Associate Professor" },
-    { name: "Dr. Mike Johnson", department: "Mechanical Engineering", role: "Assistant Professor" },
-    { name: "Dr. Emily Davis", department: "MBA", role: "Lecturer" },
-    { name: "Dr. William Brown", department: "Computer Science and Engineering", role: "Professor" },
-    { name: "Dr. Olivia Wilson", department: "Civil Engineering", role: "Assistant Professor" },
-    { name: "Dr. Henry Taylor", department: "Electronics and Communication Engineering", role: "Lecturer" },
-    { name: "Dr. Sophia Martinez", department: "Information Technology Engineering", role: "Researcher" },
-    { name: "Dr. Daniel Anderson", department: "Metallurgical Engineering", role: "Professor" },
-    { name: "Dr. Grace Lee", department: "M.Tech", role: "Assistant Professor" },
-    { name: "Dr. Benjamin Harris", department: "MBA", role: "Lecturer" },
-    { name: "Dr. Alice Walker", department: "Civil Engineering", role: "Professor" },
-    { name: "Dr. Mark Spencer", department: "Computer Science and Engineering", role: "Assistant Professor" },
-    { name: "Dr. Laura King", department: "Electrical and Electronics Engineering", role: "Researcher" },
-    { name: "Dr. Richard Clark", department: "Mechanical Engineering", role: "Professor" },
-    { name: "Dr. Nancy Roberts", department: "Information Technology Engineering", role: "Associate Professor" },
-    { name: "Dr. Kevin Lewis", department: "Metallurgical Engineering", role: "Assistant Professor" },
-    { name: "Dr. Angela White", department: "Computer Science and Engineering", role: "Lecturer" },
-    { name: "Dr. Patrick Hall", department: "MBA", role: "Researcher" },
-    { name: "Dr. Brenda Allen", department: "Civil Engineering", role: "Assistant Professor" },
-    { name: "Dr. Steven Young", department: "Mechanical Engineering", role: "Lecturer" },
-    { name: "Dr. Kimberly Scott", department: "Electronics and Communication Engineering", role: "Professor" },
-    { name: "Dr. Charles Adams", department: "Information Technology Engineering", role: "Professor" },
-    { name: "Dr. Victoria Perez", department: "MBA", role: "Assistant Professor" },
-    { name: "Dr. Jonathan Hall", department: "Computer Science and Engineering", role: "Researcher" },
-    { name: "Dr. Samantha Allen", department: "Civil Engineering", role: "Lecturer" },
-    { name: "Dr. Brian Mitchell", department: "Mechanical Engineering", role: "Associate Professor" },
-    { name: "Dr. Lauren Turner", department: "Electronics and Communication Engineering", role: "Researcher" },
-    { name: "Dr. Timothy Carter", department: "Metallurgical Engineering", role: "Lecturer" },
-    { name: "Dr. Rachel Evans", department: "M.Tech", role: "Professor" }
-  ];
+  useEffect(() => {
+    const getFacultyList = async () => {
+      const admin=await AdminDashboard(adminId)  
+      console.log(admin);
+          
+      setfacultyList(admin)
+    }
+    getFacultyList();
+  }, [adminId])
 
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
@@ -526,8 +508,8 @@ export default function Admin() {
   };
 
   const navigate = useNavigate()
-  const handleViewClick = () => {
-    navigate('/profile')
+  const handleViewClick = (id) => {    
+    navigate(`/profile/${id}`)
   };
 
   // const handleEditClick = () => {
@@ -638,7 +620,7 @@ export default function Admin() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-center gap-2">
                           <button
-                            onClick={handleViewClick}
+                            onClick={()=>handleViewClick(f.id)}
                             className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition shadow-sm"
                           >
                             <User size={14} />

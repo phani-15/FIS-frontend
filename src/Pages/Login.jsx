@@ -11,6 +11,13 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+<<<<<<< HEAD
+	const [formData, setFormData] = useState({
+		username: "caterpillar@gmail.com",
+		password: "1234567890",
+	});
+	const [serverError, setServerError] = useState("");
+=======
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -25,6 +32,7 @@ export default function Login() {
       return newErrors;
     });
   };
+>>>>>>> 3d87c6c5fa4f4c5eff976e3729f5ceea113fcb54
 
   const handleSubmit = async (e) => {
   e.preventDefault();

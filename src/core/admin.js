@@ -17,7 +17,7 @@ export const adminlogin = async user => {
 
 
 export const AdminDashboard = async (id) => {
-  const { user, token } = isAuthenticated();
+  const { token } = isAuthenticated();
   try {
     const response = await fetch(`${API}/admin/${id}`, {
       method: "GET",

@@ -3,7 +3,7 @@ import { API } from "../backend";
 import { isAuthenticated } from "./auth";
 
 export const Personal = async (id) => {
-  const { user, token } = isAuthenticated();
+  const { token } = isAuthenticated();
   try {
     const response = await fetch(`${API}/personal/${id}`, {
       method: "GET",

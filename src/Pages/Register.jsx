@@ -23,17 +23,17 @@ export default function Register() {
   const fileInputRef = useRef(null);
 
   const [personalData, setpersonalData] = useState({
-    name: "Srinivas Rao polavarapu",
+    name: "Ganesh Tamarapalli",
     avatar: null,
-    father: "nothing",
-    gender: "female",
+    father: "undertaker",
+    gender: "",
     DOB: "",
-    marital: "married",
-    phone: "1234566677",
+    marital: "",
+    phone: "1234566670",
     area: "kukatpallyground",
     city: "hyderabadcity",
-    designation: "professor",
-    department: "Computer Science and Engineering",
+    designation: "",
+    department: "",
     college: "JNTUGV-CEV",
     date_of_join: new Date().toISOString(), // current year-month
   });
@@ -433,8 +433,7 @@ const test = async () => {
       }
       setErrors({});
       console.log(personalData);
-
-      // test()
+      test();
       setStep("education");
     }, [personalData]
   );
@@ -1669,9 +1668,7 @@ const test = async () => {
                     // Submit final data
                     const obj1 = {
                       personalData: personalData,
-                      "loginData": {
-                        "email": `${Data.email}`,
-                      },
+                      loginData: { "email": `${Data.email}` },
                       education: education,
                       experience: experience,
                       administrativeService: administrativeService,

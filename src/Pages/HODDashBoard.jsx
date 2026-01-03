@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Search, X, User, ChevronDown, ShieldCheck, XCircle, ChevronUp, FileText, Download } from "lucide-react";
-import { useNavigate, useParams } from 'react-router-dom'
+import {
+  Search,
+  X,
+  User,
+  ChevronDown,
+  ShieldCheck,
+  XCircle,
+  ChevronUp,
+  FileText,
+  Download,
+} from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
 import { AtKeys, schemas, yearFields,  } from '../assets/Data'
@@ -10,19 +20,19 @@ import { getHodReports } from "../core/hod";
 
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
-  const [filteredFaculty, setFacultyList] = useState([
+  const [facultyList, setFacultyList] = useState([
     {
-      "personalData": {
-        "designation": " Professor",
-        "name": "Polavarrapu Srrinivas"
+      personalData: {
+        designation: " Professor",
+        name: "Polavarrapu Srrinivas",
       },
-      "user": {
-        "email": "srinu@gmail.com"
-      }
-    }
-  ])
+      user: {
+        email: "srinu@gmail.com",
+      },
+    },
+  ]);
   const navigate = useNavigate();
-  const { userId } = useParams()
+  const { userId } = useParams();
   // --- State for report modal ---
   const [showExtractModal, setShowExtractModal] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -33,22 +43,21 @@ export default function HODDashBoard() {
 
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
-    return getSchemaForType(typeKey).attributes.map(a => a.key);
+    return getSchemaForType(typeKey).attributes.map((a) => a.key);
   };
   useEffect(() => {
     const filterTheFaculty = async () => {
       try {
-        const filteredFaculty = await HodDashBoard(userId)
-        if (filteredFaculty) {
-          setFacultyList(filteredFaculty.faculties);
+        const facultyList = await HodDashBoard(userId);
+        if (facultyList) {
+          setFacultyList(facultyList.faculties);
         }
       } catch (error) {
         console.log(error);
       }
-    }
-    filterTheFaculty()
-
-  }, [])
+    };
+    filterTheFaculty();
+  }, []);
 
   // Helper: Define schema per type (label + attributes)
   const getSchemaForType = (typeKey) => {
@@ -59,13 +68,12 @@ export default function HODDashBoard() {
   const extractYearFromRecord = (record, typeKey) => {
     // Try to find a year field based on the type
 
-
     const yearField = yearFields[typeKey];
     if (!yearField || !record[yearField]) return null;
 
     const value = record[yearField];
     // Extract year from date string or use as-is
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const yearMatch = value.match(/\b(\d{4})\b/);
       return yearMatch ? parseInt(yearMatch[1]) : parseInt(value);
     }
@@ -75,200 +83,154 @@ export default function HODDashBoard() {
   // Function to generate Excel file
 
   // Add this helper function to sanitize sheet names
-  const sanitizeSheetName = (name) => {
-    // Remove characters not allowed in Excel sheet names
-    return name.replace(/[:\\/?*\[\]]/g, ' ');
-  };
+  // const sanitizeSheetName = (name) => {
+  //   // Remove characters not allowed in Excel sheet names
+  //   return name.replace(/[:\\/?*\[\]]/g, " ");
+  // };
 
-  // Then in your generateExcelReport function, update the sheet name line:
-  const generateExcelReport = async () => {
-    if (selectedTypes.length === 0) {
-      alert("Please select at least one report type.");
-      return;
-    }
+
+/* Utility */
+const sanitizeSheetName = (name) =>
+  name.replace(/[:\\/?*\[\]]/g, "").substring(0, 31);
+
+/* Optional year extraction */
+const extractYear = (value) => {
+  if (!value) return null;
+  if (typeof value === "number") return value;
+  const match = String(value).match(/\b(19|20)\d{2}\b/);
+  return match ? Number(match[0]) : null;
+};
+
+const generateExcelReport = ({
+  data,
+  schemas,
+  selectedTypes,
+  dateFrom,
+  dateTo,
+}) => {
+  if (!data || !data.length) {
+    alert("No data to export");
+    return;
+  }
+
+  const wb = XLSX.utils.book_new();
+
+  selectedTypes.forEach((typeKey) => {
+    const schema = schemas[typeKey];
+    if (!schema) return;
+
+    /* ===== HEADERS ===== */
+    const headers = [
+      "Faculty Name",
+      "Designation",
+      "Email",
+      ...schema.attributes.map((a) => a.label),
+    ];
+
+    const rows = [];
+
+    data.forEach((faculty) => {
+      const records = faculty.reports?.[typeKey];
+      if (!Array.isArray(records)) return;
+
+      records.forEach((record) => {
+        /* ===== YEAR FILTER (SAFE) ===== */
+        if (dateFrom || dateTo) {
+          const yearAttr =
+            schema.attributes.find((a) =>
+              a.key.toLowerCase().includes("year")
+            )?.key;
+
+          const recordYear = extractYear(record?.[yearAttr]);
+
+          if (dateFrom && recordYear && recordYear < +dateFrom) return;
+          if (dateTo && recordYear && recordYear > +dateTo) return;
+        }
+
+        /* ===== ROW DATA ===== */
+        const row = [
+          faculty.facultyName || "",
+          faculty.designation || "",
+          faculty.email || "",
+          ...schema.attributes.map((attr) => record?.[attr.key] ?? ""),
+        ];
+
+        rows.push(row);
+      });
+    });
+
+    if (!rows.length) return;
+
+    /* ===== CREATE SHEET ===== */
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+    /* Auto column width */
+    ws["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 18) }));
+
+    XLSX.utils.book_append_sheet(
+      wb,
+      ws,
+      sanitizeSheetName(schema.label)
+    );
+  });
+
+  if (!wb.SheetNames.length) {
+    alert("No matching data for selected filters");
+    return;
+  }
+
+  const filename = `Faculty_Report_${new Date()
+    .toISOString()
+    .split("T")[0]}.xlsx`;
+
+  XLSX.writeFile(wb, filename);
+};
+
+
+  const handleExtractReports = async (e) => {
+    e.preventDefault();
 
     setIsGenerating(true);
 
     try {
-      // Create a new workbook
-      const wb = XLSX.utils.book_new();
+      const payload = {
+        types: selectedTypes,
+        fields: selectedAttributes,
+        dateFrom,
+        dateTo,
+      };
 
-      // Track sheet names to avoid duplicates
-      const usedSheetNames = new Set();
+      const response = await getHodReports(payload, userId);
 
-      // For each selected type, create a worksheet
-      selectedTypes.forEach(typeKey => {
-        const schema = getSchemaForType(typeKey);
-        const selectedAttrs = selectedAttributes[typeKey] || [];
-
-        if (selectedAttrs.length === 0) {
-          console.warn(`No attributes selected for ${typeKey}, skipping...`);
-          return;
-        }
-
-        // Prepare headers (add Faculty Name and Role as first columns)
-        const headers = ["Faculty Name", "Faculty Role", ...selectedAttrs.map(attrKey => {
-          const attr = schema.attributes.find(a => a.key === attrKey);
-          return attr ? attr.label : attrKey;
-        })];
-
-        // Prepare data rows
-        const rows = [];
-
-        certifications.forEach(faculty => {
-          if (faculty.data && faculty.data[typeKey]) {
-            faculty.data[typeKey].forEach(record => {
-              // Apply year filter if specified
-              if (dateFrom || dateTo) {
-                const recordYear = extractYearFromRecord(record, typeKey);
-
-                if (dateFrom && recordYear && recordYear < parseInt(dateFrom)) {
-                  return; // Skip if before start year
-                }
-                if (dateTo && recordYear && recordYear > parseInt(dateTo)) {
-                  return; // Skip if after end year
-                }
-              }
-
-              const rowData = [faculty.name, faculty.role];
-
-              // Add selected attributes in order
-              selectedAttrs.forEach(attrKey => {
-                rowData.push(record[attrKey] || "");
-              });
-
-              rows.push(rowData);
-            });
-          }
-        });
-
-        if (rows.length > 0) {
-          // Create worksheet with headers and data
-          const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-
-          // Set column widths (auto-width approximation)
-          const colWidths = headers.map(header => ({
-            wch: Math.max(header.length, 15)
-          }));
-          ws['!cols'] = colWidths;
-
-          // Sanitize and ensure unique sheet name
-          let sheetName = sanitizeSheetName(schema.label);
-
-          // Ensure sheet name doesn't exceed 31 characters
-          sheetName = sheetName.substring(0, 31);
-
-          // Make sure sheet name is not empty
-          if (!sheetName.trim()) {
-            sheetName = `Sheet_${typeKey}`;
-          }
-
-          // Ensure uniqueness
-          let finalSheetName = sheetName;
-          let counter = 1;
-          while (usedSheetNames.has(finalSheetName) && counter < 100) {
-            finalSheetName = `${sheetName.substring(0, 28)}_${counter}`;
-            counter++;
-          }
-
-          usedSheetNames.add(finalSheetName);
-
-          // Add worksheet to workbook
-          XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
-        }
-      });
-
-      // Check if any worksheets were created
-      if (wb.SheetNames.length === 0) {
-        alert("No data found for the selected criteria.");
-        setIsGenerating(false);
+      if (!response.success) {
+        alert(response.message || "Failed to extract reports");
+        return;
+      }
+      console.log("FULL RESPONSE:", response);
+      if (!response.data || response.data.length === 0) {
+        alert("No data available");
         return;
       }
 
-      // Generate filename with timestamp
-      const timestamp = new Date().toISOString().split('T')[0];
-      const filename = `Faculty_Report_${timestamp}.xlsx`;
-
-      // Write and download the file
-      XLSX.writeFile(wb, filename);
-
-      // Close modal after successful generation
+      generateExcelReport({
+  data: response.data,
+  schemas,
+  selectedTypes,
+  dateFrom,
+  dateTo,
+});
+;
       setShowExtractModal(false);
-      alert(`Report generated successfully: ${filename}`);
-
-    } catch (error) {
-      console.error("Error generating Excel report:", error);
-      alert(`Error generating report: ${error.message}`);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to generate report");
     } finally {
       setIsGenerating(false);
     }
   };
-  const generateExcelFromBackend = (data) => {
-  const wb = XLSX.utils.book_new();
-
-  Object.keys(data[0].reports).forEach((type) => {
-    const rows = [];
-    const headers = ["Faculty Name", "Designation", "Email"];
-
-    // dynamic fields
-    const sample = data[0].reports[type][0];
-    Object.keys(sample).forEach((k) => headers.push(k));
-
-    rows.push(headers);
-
-    data.forEach((faculty) => {
-      faculty.reports[type]?.forEach((record) => {
-        rows.push([
-          faculty.facultyName,
-          faculty.designation,
-          faculty.email,
-          ...Object.values(record),
-        ]);
-      });
-    });
-
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    XLSX.utils.book_append_sheet(wb, ws, type.substring(0, 31));
-  });
-
-  XLSX.writeFile(wb, `HOD_Report_${Date.now()}.xlsx`);
-};
-
-
-const handleExtractReports = async (e) => {
-  e.preventDefault();
-
-  setIsGenerating(true);
-
-  try {
-    const payload = {
-      types: selectedTypes,
-      fields: selectedAttributes,
-      dateFrom,
-      dateTo,
-    };
-
-    const response = await getHodReports(payload, userId); 
-
-    if (!response.success) {
-      alert(response.message || "Failed to extract reports");
-      return;
-    }
-    
-    generateExcelFromBackend(response.data); 
-    setShowExtractModal(false);
-  } catch (err) {
-    console.error(err);
-    alert("Failed to generate report");
-  } finally {
-    setIsGenerating(false);
-  }
-};
-
 
   // Filter faculty list by search term
   // const filteredFaculty = facultyList
-
 
   // Highlight search term in names
   const highlightMatch = (name) => {
@@ -293,6 +255,9 @@ const handleExtractReports = async (e) => {
       // Prepare headers
       const headers = ["S.No", "Faculty Name", "Email", "Designation"];
 
+      const facultyList=filteredFaculty
+      console.log(facultyList);
+      
       // Prepare data rows
       const rows = filteredFaculty.map((faculty, index) => [
         index + 1,
@@ -308,25 +273,24 @@ const handleExtractReports = async (e) => {
       const ws = XLSX.utils.aoa_to_sheet(data);
 
       // Set column widths
-      ws['!cols'] = [
-        { wch: 6 },  // S.No column width
+      ws["!cols"] = [
+        { wch: 6 }, // S.No column width
         { wch: 30 }, // Name column width
         { wch: 35 }, // Email column width
-        { wch: 25 }  // Designation column width
+        { wch: 25 }, // Designation column width
       ];
 
       // Add worksheet to workbook
       XLSX.utils.book_append_sheet(wb, ws, "Faculty List");
 
       // Generate filename with timestamp
-      const timestamp = new Date().toISOString().split('T')[0];
+      const timestamp = new Date().toISOString().split("T")[0];
       const filename = `Faculty_List_${timestamp}.xlsx`;
 
       // Download the file
       XLSX.writeFile(wb, filename);
 
       alert(`Faculty list exported successfully: ${filename}`);
-
     } catch (error) {
       console.error("Error exporting faculty list:", error);
       alert("Error exporting faculty list. Please try again.");
@@ -341,7 +305,6 @@ const handleExtractReports = async (e) => {
       </h1>
 
       <div className="flex flex-col">
-
         {/* Styled Extract Reports Button */}
         <div className="flex justify-start pr-2 mt-10 md:pr-0">
           <button
@@ -373,7 +336,7 @@ const handleExtractReports = async (e) => {
               <button
                 type="button"
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-                onClick={() => setFilters({ ...filters, searchTerm: '' })}
+                onClick={() => setFilters({ ...filters, searchTerm: "" })}
                 aria-label="Clear search"
               >
                 <X size={18} />
@@ -385,7 +348,8 @@ const handleExtractReports = async (e) => {
         {/* Total Count */}
         <div className="flex justify-between gap-2 items-center mb-2 px-2">
           <p className="font-medium">
-            Total Faculty: <span className="font-normal">{filteredFaculty.length}</span>
+            Total Faculty:{" "}
+            <span className="font-normal">{facultyList.length}</span>
           </p>
         </div>
 
@@ -396,20 +360,26 @@ const handleExtractReports = async (e) => {
               <tr>
                 <th className="px-4 py-3 text-left font-semibold">S.No</th>
                 <th className="px-4 py-3 text-left font-semibold">Name</th>
-                <th className="px-4 py-3 text-left font-semibold">Designation</th>
+                <th className="px-4 py-3 text-left font-semibold">
+                  Designation
+                </th>
                 <th className="px-4 py-3 text-left font-semibold"></th>
               </tr>
             </thead>
             <tbody>
-              {filteredFaculty.length > 0 ? (
-                filteredFaculty.map((faculty, idx) => (
+              {facultyList.length > 0 ? (
+                facultyList.map((faculty, idx) => (
                   <tr
                     key={idx}
                     className="odd:bg-white even:bg-gray-50 hover:bg-purple-50 transition"
                   >
                     <td className="px-4 py-2">{idx + 1}</td>
-                    <td className="px-4 py-2">{highlightMatch(faculty.personalData.name)}</td>
-                    <td className="px-4 py-2">{faculty.personalData.designation}</td>
+                    <td className="px-4 py-2">
+                      {highlightMatch(faculty.personalData.name)}
+                    </td>
+                    <td className="px-4 py-2">
+                      {faculty.personalData.designation}
+                    </td>
                     <td>
                       <button
                         onClick={() => navigate(`/profile/${faculty.user._id}`)}
@@ -435,8 +405,10 @@ const handleExtractReports = async (e) => {
           </table>
         </div>
         <div className="flex justify-end ">
-          <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
-            <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
+          <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 ">
+            <button onClick={printList} className="m-2 mx-4 text-white">
+              Print List{" "}
+            </button>
           </div>
         </div>
       </div>
@@ -490,13 +462,20 @@ const handleExtractReports = async (e) => {
                               checked={selectedTypes.includes(type.key)}
                               onChange={(e) => {
                                 if (e.target.checked) {
-                                  setSelectedTypes((prev) => [...prev, type.key]);
+                                  setSelectedTypes((prev) => [
+                                    ...prev,
+                                    type.key,
+                                  ]);
                                   setSelectedAttributes((prev) => ({
                                     ...prev,
-                                    [type.key]: getAllAttributesForType(type.key),
+                                    [type.key]: getAllAttributesForType(
+                                      type.key
+                                    ),
                                   }));
                                 } else {
-                                  setSelectedTypes((prev) => prev.filter((t) => t !== type.key));
+                                  setSelectedTypes((prev) =>
+                                    prev.filter((t) => t !== type.key)
+                                  );
                                   setSelectedAttributes((prev) => {
                                     const newAttrs = { ...prev };
                                     delete newAttrs[type.key];
@@ -534,7 +513,8 @@ const handleExtractReports = async (e) => {
 
                                 <div className="flex justify-between items-center mb-3">
                                   <span className="text-xs text-gray-600">
-                                    {attrs.length} of {schema.attributes.length} selected
+                                    {attrs.length} of {schema.attributes.length}{" "}
+                                    selected
                                   </span>
                                   <div className="flex gap-2">
                                     <button
@@ -542,7 +522,9 @@ const handleExtractReports = async (e) => {
                                       onClick={() =>
                                         setSelectedAttributes((prev) => ({
                                           ...prev,
-                                          [typeKey]: schema.attributes.map((a) => a.key),
+                                          [typeKey]: schema.attributes.map(
+                                            (a) => a.key
+                                          ),
                                         }))
                                       }
                                       className="text-xs text-indigo-600 hover:underline"
@@ -566,7 +548,10 @@ const handleExtractReports = async (e) => {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                   {schema.attributes.map((attr) => (
-                                    <label key={attr.key} className="flex items-start gap-2">
+                                    <label
+                                      key={attr.key}
+                                      className="flex items-start gap-2"
+                                    >
                                       <input
                                         type="checkbox"
                                         checked={attrs.includes(attr.key)}
@@ -575,15 +560,24 @@ const handleExtractReports = async (e) => {
                                             const current = prev[typeKey] || [];
                                             const updated = e.target.checked
                                               ? [...current, attr.key]
-                                              : current.filter((k) => k !== attr.key);
-                                            return { ...prev, [typeKey]: updated };
+                                              : current.filter(
+                                                  (k) => k !== attr.key
+                                                );
+                                            return {
+                                              ...prev,
+                                              [typeKey]: updated,
+                                            };
                                           });
                                         }}
                                         className="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500"
                                       />
                                       <span className="text-sm">
                                         {attr.label}{" "}
-                                        {attr.required && <span className="text-red-500">*</span>}
+                                        {attr.required && (
+                                          <span className="text-red-500">
+                                            *
+                                          </span>
+                                        )}
                                       </span>
                                     </label>
                                   ))}
@@ -599,7 +593,7 @@ const handleExtractReports = async (e) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-1">
-                          From 
+                          From
                         </label>
                         <input
                           type="date"
@@ -614,7 +608,7 @@ const handleExtractReports = async (e) => {
 
                       <div>
                         <label className="block text-sm font-medium mb-1">
-                          To 
+                          To
                         </label>
                         <input
                           type="date"
