@@ -255,11 +255,10 @@ const generateExcelReport = ({
       // Prepare headers
       const headers = ["S.No", "Faculty Name", "Email", "Designation"];
 
-      const facultyList=filteredFaculty
       console.log(facultyList);
       
       // Prepare data rows
-      const rows = filteredFaculty.map((faculty, index) => [
+      const rows = facultyList.map((faculty, index) => [
         index + 1,
         faculty.personalData.name,
         faculty.user.email || "", // Use email if available, otherwise empty string

@@ -11,13 +11,8 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-<<<<<<< HEAD
-	const [formData, setFormData] = useState({
-		username: "caterpillar@gmail.com",
-		password: "1234567890",
-	});
 	const [serverError, setServerError] = useState("");
-=======
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -32,8 +27,6 @@ export default function Login() {
       return newErrors;
     });
   };
->>>>>>> 3d87c6c5fa4f4c5eff976e3729f5ceea113fcb54
-
   const handleSubmit = async (e) => {
   e.preventDefault();
   setErrors({});
@@ -41,9 +34,8 @@ export default function Login() {
   if (!formData.username.trim()) return setErrors({ username: "Username is required" });
   if (!formData.password.trim()) return setErrors({ password: "Password is required" });
 
-  const isPhone = /^\d{10}$/.test(formData.username);
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.username);
-  if (!isPhone && !isEmail) return setErrors({ username: "Enter a valid email or phone number" });
+  if (!isEmail) return setErrors({ username: "Enter a valid email" });
 
   try {
     const result = await login({
@@ -92,7 +84,7 @@ export default function Login() {
               htmlFor="username"
               className="block mb-1 text-sm font-medium text-gray-700"
             >
-              Email or Phone
+              Email
             </label>
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-gray-400">
@@ -103,7 +95,7 @@ export default function Login() {
                 id="username"
                 value={formData.username}
                 onChange={handleChange}
-                placeholder="e.g., user@example.com or 9876543210"
+                placeholder="e.g., user@example.com "
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
