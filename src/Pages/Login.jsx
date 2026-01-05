@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { login, authenticate } from "../core/auth"; // assuming login() returns Promise
 
 export default function Login() {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+	const [formData, setFormData] = useState({
+		username: "caterpillar@gmail.com",
+		password: "1234567890",
+	});
 	const [serverError, setServerError] = useState("");
 
   const handleChange = (e) => {
@@ -27,6 +27,7 @@ export default function Login() {
       return newErrors;
     });
   };
+
   const handleSubmit = async (e) => {
   e.preventDefault();
   setErrors({});

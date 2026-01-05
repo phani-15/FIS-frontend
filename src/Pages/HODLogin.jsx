@@ -11,7 +11,7 @@ export default function HODLogin() {
   const [college, setCollege] = useState("");
   const [formData, setFormData] = useState({
     department: "",
-    password: "",
+    password: "1234567890",
   });
   const [errors, setErrors] = useState({});
 

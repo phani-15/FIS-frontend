@@ -16,8 +16,52 @@ const role = queryParams.get("role");
     department: "All",
     searchTerm: "",
   });
-  const [facultyList, setfacultyList] = useState([])
-  const [certifications, setCertifications] = useState([])
+  const [facultyList, setfacultyList] = useState([
+    {
+      name: "Dr. John Doe",
+      department: "Computer Science and Engineering",
+      role: "Professor",
+      email: "john.doe@yourcollege.edu"
+    },
+    {
+      name: "Dr. Jane Smith",
+      department: "Electrical and Electronics Engineering",
+      role: "Associate Professor",
+      email: "jane.smith@yourcollege.edu"
+    },])
+  const [certifications, setCertifications] = useState([
+    {
+      name: "Dr. Aarti Rao",
+      role: "Professor",
+      dept: "Computer Science and Engineering",
+      data: {
+        patents: [
+          {
+            "Patent Number": "IN2021A000101",
+            "Title of the Patent": "Neural Compression for Edge Devices",
+            "Published/Granted": "Granted",
+            "Year of Published/Granted": "2021",
+            "Scope": "International",
+            "Document": "aarti_rao_patent.pdf"
+          }
+        ],
+        journal: [
+          {
+            "Title of the Paper": "Efficient Models for On-Device AI",
+            "Name of the Journal": "Journal of Edge AI",
+            "Page Number": "12-25",
+            "Year of Publication": "2021",
+            "Impact Factor": "3.2",
+            "National/International": "International",
+            "ISBN Number": "2345-6789",
+            "Indexing Platform": "Scopus",
+            "H-index": "15",
+            "Document": "aarti_rao_journal.pdf"
+          }
+        ]
+      }
+    },
+  ])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showExtractModal, setShowExtractModal] = useState(false);
@@ -36,8 +80,6 @@ const role = queryParams.get("role");
     "Civil Engineering",
     "Metallurgical Engineering",
     "Information Technology Engineering",
-    "M.Tech",
-    "MBA",
   ];
 
   const navigate = useNavigate();
@@ -399,7 +441,7 @@ const role = queryParams.get("role");
     const obj = {
       fields: selectedTypes,
       subfields: selectedAttributes,
-      ids: selectedMembers,
+      ids:Array.isArray(selectedMembers) ? selectedMembers:Object.values(selectedMembers),
       from_date: DateFrom,
       to_date: DateTo
     }
@@ -987,5 +1029,4 @@ const role = queryParams.get("role");
         )}
       </AnimatePresence>
     </div>
-  );
-}
+  );}
