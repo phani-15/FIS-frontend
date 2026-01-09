@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { X, Search, FileText, Download,User } from "lucide-react";
+import { X, Search, FileText, Download, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import { schemas, yearFields, AtKeys } from '../assets/Data';
@@ -9,8 +9,8 @@ import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
 export default function IQACDashboard() {
   const location = useLocation()
 
-const queryParams = new URLSearchParams(location.search);
-const role = queryParams.get("role");
+  const queryParams = new URLSearchParams(location.search);
+  const role = queryParams.get("role");
   const { ofcId } = useParams()
   const [filters, setFilters] = useState({
     department: "All",
@@ -441,7 +441,7 @@ const role = queryParams.get("role");
     const obj = {
       fields: selectedTypes,
       subfields: selectedAttributes,
-      ids:Array.isArray(selectedMembers) ? selectedMembers:Object.values(selectedMembers),
+      ids: Array.isArray(selectedMembers) ? selectedMembers : Object.values(selectedMembers),
       from_date: DateFrom,
       to_date: DateTo
     }
@@ -699,11 +699,11 @@ const role = queryParams.get("role");
           </div>
         </>
       )}
-          <div className="flex justify-end ">
-            <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
-              <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
-            </div>
-          </div>
+      <div className="flex justify-end ">
+        <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
+          <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
+        </div>
+      </div>
       <AnimatePresence>
         {showExtractModal && (
           <>
@@ -1029,4 +1029,5 @@ const role = queryParams.get("role");
         )}
       </AnimatePresence>
     </div>
-  );}
+  );
+}

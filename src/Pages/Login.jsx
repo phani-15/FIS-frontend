@@ -1,17 +1,27 @@
 import React, { useState } from "react";
-import { User, Lock, LogIn, KeyRound } from "lucide-react";
+import { User, Lock, LogIn, KeyRound ,List} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { login, authenticate } from "../core/auth"; // assuming login() returns Promise
+import { title } from "framer-motion/client";
 
 export default function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [showOptions, setShowOptions] = useState(false);
 
 	const [formData, setFormData] = useState({
-		username: "caterpillar@gmail.com",
-		password: "1234567890",
+		username: "",
+		password: "",
 	});
 	const [serverError, setServerError] = useState("");
+
+  React.useEffect(() => {
+    const handleClickOutside = () => setShowOptions(false);
+    if (showOptions) {
+      document.addEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [showOptions]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -27,6 +37,21 @@ export default function Login() {
       return newErrors;
     });
   };
+
+  const urls = [
+    {
+      title : "HOD",
+      url : "/hod"
+    },
+    {
+      title : "Higher Officials",
+      url : "/ofc"
+    },
+    {
+      title : "Admin",
+      url : "/admin"
+    }
+  ]
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -65,6 +90,32 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center p-4 min-h-screen">
+      <button
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent closing immediately
+          setShowOptions(!showOptions);
+        }}
+        className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+        aria-label="Options"
+      >
+        <List className="w-5 h-5 text-gray-600" />
+      </button>
+    {showOptions && (
+        <div
+          className="absolute top-12 right-4 bg-white border border-gray-200 rounded-lg shadow-lg z-10 w-48 py-2"
+          onClick={(e) => e.stopPropagation()} // Keep open when clicking inside
+        >
+          {urls.map((type) => (
+            <button
+              key={type.title}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={() => navigate(type.url)}
+            >
+              {type.title}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
         {/* Top Icon */}
         <div className="flex justify-center mb-6">

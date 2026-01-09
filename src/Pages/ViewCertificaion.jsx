@@ -5,7 +5,7 @@ import { fields } from '../assets/Data';
 import { useParams, useNavigate } from "react-router-dom"
 import { getDetails } from "../core/addDetails"
 import { API } from '../backend';
-import {ArrowLeft} from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 // --- NORMALIZATION FUNCTION ---
 const normalizeBackendData = (backendData) => {
@@ -51,44 +51,6 @@ const normalizeBackendData = (backendData) => {
     'BOOK/BOOK CHAPTER': 'book_book_chapter',
   };
 
-  // Get the field mapping from Data.jsx
-  const fieldMapping = {
-    foreign_visits: ['Purpose of Visit', 'Nature of Visit', 'Name of Conference/Event', 'Academic Year', 'Name of Host Organization', 'Country Visited', 'Start Date', 'End Date', 'Duration (in days)', 'Role of Faculty', 'Title of the Paper/Talk', 'Sponsoring Agency', 'Amount Sanctioned', 'Travel Grant Recieved'],
-    patents: ['Patent Number', 'Title of the Patent', 'Published/Granted', 'Year of Published/Granted', 'Scope'],
-    book_chapter: ['Title of the Book Chapter', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number', 'No. of Authors'],
-    book: ['Title of the Book', 'Name of the Publisher', 'Year of Publication', 'National/International', 'ISBN Number'],
-    journal: ['Title of the Paper', 'Name of the Journal', 'Page Number', 'Year of Publication', 'Volume Number', 'Impact Factor (Thomson Reuters)', 'National/International', 'ISSN Number', 'No.of Authors', 'Author', 'Indexing Platform', 'H-index'],
-    conference_paper: ['Title of the Paper', 'Title of the Conference', 'Date of Publication', 'Organized by', 'National/International'],
-    nptel: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)'],
-    swayam: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)'],
-    coursera: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)'],
-    infosysspringboard: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)'],
-    edx: ['Name of Certification Course', 'Type of Certification', 'Duration (in weeks)'],
-    other: ['Name of Certification Course', 'Type of Certification', 'Organized by', 'Duration (in weeks)'],
-    sponsored: ['Project Title', 'Funding Agency', 'Amount (in INR)', 'Duration (in months)', 'Academic Year', 'Are you', 'Status'],
-    research: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Sanctioned Amount', 'Recieved Amount (utilized)', 'Are you', 'Status'],
-    consultancy: ['Project Title', 'Year of Sanction', 'Duration ', 'Funding Agency', 'Amount (in INR)', 'Are you ', 'Status'],
-    fdp: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    sttp: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    conference: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    workshop: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    seminar: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    webinar: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    RC: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    OC: ['Program Title', 'Starting Date', 'Ending Date', 'Scope', 'Organizing Body', 'Mode', 'Place', 'Attended/Organized', 'Role'],
-    talk: ['Event Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place'],
-    keynote: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place'],
-    chair: ['Conference Title', 'Name of the Event', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place'],
-    lecture: ['Organizing Institution', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place'],
-    resource_person: ['Event Title', 'Organizing Institution', 'Date', 'Topic / Title of Talk', 'Scope', 'Mode', 'Place'],
-    awards_and_recognitions: ['Award / Recognition Title', 'Granting Organization / Institution', 'Scope', 'Year'],
-    ieee: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)'],
-    acm: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)'],
-    csi: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)'],
-    ie: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)'],
-    iete: ['Membership ID', 'Membership Type', 'Year Joined', 'Validity Period (if applicable)'],
-  };
-
   // Reverse mapping: convert lowercase_with_underscores to "Space Separated"
   const underscoreToSpaces = (str) => {
     return str
@@ -109,13 +71,12 @@ const normalizeBackendData = (backendData) => {
     // Process each item in the section
     const normalizedItems = items.map(item => {
       const normalizedItem = {};
-      const expectedFields = fieldMapping[normalizedSection] || [];
+      const expectedFields = fields[normalizedSection] || [];
 
       // Map backend keys (lowercase_with_underscores) to expected field names (Space Separated)
       Object.entries(item).forEach(([backendKey, value]) => {
         // Skip file/document fields if they're not in the expected fields
-        if (backendKey.includes('certificate') || backendKey.includes('Certificate') || backendKey.includes('document')|| backendKey.includes('Document') || backendKey.includes('Order')||backendKey.includes('Proceeding'))
-       {
+        if (backendKey.includes('certificate') || backendKey.includes('Certificate') || backendKey.includes('document') || backendKey.includes('Document') || backendKey.includes('Order') || backendKey.includes('Proceeding')) {
           normalizedItem[backendKey] = value;
           return;
         }
@@ -137,7 +98,6 @@ const normalizeBackendData = (backendData) => {
             matchedField = converted;
           }
         }
-
         normalizedItem[matchedField] = value;
       });
 
@@ -168,9 +128,9 @@ const normalizeSectionKey = (section) => {
 };
 
 // --- Helper: Format label ---
-const formatFieldLabel = (label) => {
-  if (!label || label.includes('certificate') || label.includes('Certificate') || (label.includes('Number') && label.includes('Students')) || label.includes('document')|| label.includes('Document') || label.includes('Order')||label.includes('Proceeding'))
-      return null;
+const formatFieldLabel = (label,section) => {
+  if (!label || label.includes('certificate') || label.includes('Certificate') || (section!='mtech' && label.includes('Number') && (label.includes('Students') || label.includes('Contents'))) || label.includes('document') || label.includes('Document') || label.includes('Order') || label.includes('Proceeding'))
+    return null;
   return label
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (l) => l.toUpperCase());
@@ -192,8 +152,12 @@ const getTopRelevantFields = (section, item) => {
         value = matchingKey ? item[matchingKey] : undefined;
       }
 
+      if (key.toLowerCase().includes('date') && value) {
+        value = new Date(value).toLocaleDateString("en-GB")
+      }
+
       return {
-        label: formatFieldLabel(key),
+        label: formatFieldLabel(key,section),
         value: value || '--',
       };
     })
@@ -253,8 +217,8 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
           {fieldsToEdit.map(({ key, label, value }) => {
-            const isFile = key.includes('certificate') || key.includes('Certificate') || key.includes('document')|| key.includes('Document') || key.includes('Order')||key.includes('Proceeding')
-      
+            const isFile = key.includes('certificate') || key.includes('Certificate') || key.includes('document') || key.includes('Document') || key.includes('Order') || key.includes('Proceeding')
+
             const isPlaceField = key === 'Place';
             const modeValue = item['Mode'] || item['mode'];
 
@@ -320,8 +284,8 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
     const normalizedKey = normalizeSectionKey(section);
     const allFields = fields[normalizedKey] || [];
     return allFields.filter(f =>
-      !(f.includes('certificate') || f.includes('Certificate') || f.includes('document')|| f.includes('Document') || f.includes('Order')||f.includes('Proceeding'))
-      
+      !(f.includes('certificate') || f.includes('Certificate') || f.includes('document') || f.includes('Document') || f.includes('Order') || f.includes('Proceeding'))
+
     );
   };
 
@@ -358,7 +322,7 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
 
       const items = certificationsData[section];
       let selectedFields = config.selectedFields.filter(f =>
-        !(f.includes('certificate') || f.includes('Certificate') || f.includes('document')|| f.includes('Document') || f.includes('Order')||f.includes('Proceeding'))
+        !(f.includes('certificate') || f.includes('Certificate') || (section!='mtech' && f.includes('Number') && (f.includes('Moocs') || f.includes('Contents') || f.includes('Students'))) || f.includes('document') || f.includes('Document') || f.includes('Order') || f.includes('Proceeding'))
       );
 
       if (selectedFields.length === 0) return;
@@ -370,13 +334,16 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
         const row = [idx + 1];
         selectedFields.forEach(field => {
           let val = item[field] ?? '';
-          if (typeof val === 'string') {
-            val = val.replace(/"/g, '""');
-            if (val.includes(',') || val.includes('\n') || val.includes('"')) {
-              val = `"${val}"`;
-            }
+          let strVal = typeof val === 'string' ? val : String(val);
+
+          // Escape double quotes by doubling them (CSV standard)
+          strVal = strVal.replace(/"/g, '""');
+
+          // Wrap in quotes if it contains commas, newlines, or double quotes
+          if (strVal.includes(',') || strVal.includes('\n') || strVal.includes('"')) {
+            strVal = `"${strVal}"`;
           }
-          row.push(val);
+          row.push(strVal);
         });
         rows.push(row);
       });
@@ -498,7 +465,7 @@ const ViewCertificaion = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState(null);
   const [sectionKey, setSectionKey] = useState(null);
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);    
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const viewDocument = (docPath) => {
     if (!docPath) {
       alert('No document available');
@@ -602,7 +569,7 @@ const ViewCertificaion = () => {
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
-    const hasDoc = item.document || item.certificate || item.Proceeding  || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;    
+    const hasDoc = item.document || item.certificate || item.Proceeding || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;
     return (
       <div
         key={item.id}
@@ -610,13 +577,13 @@ const ViewCertificaion = () => {
       >
         <div className="p-6 relative">
           {viewer === "user" &&
-          <button
-            className="absolute top-2 right-2 text-gray-500 hover:text-blue-600"
-            onClick={() => handleEditClick(section, item)}
-            title="Edit"
-          >
-            <SquarePen size={18} />
-          </button> }
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-blue-600"
+              onClick={() => handleEditClick(section, item)}
+              title="Edit"
+            >
+              <SquarePen size={18} />
+            </button>}
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div className="flex-1 space-y-2">
               {topFields.map((field, i) => (
@@ -634,7 +601,7 @@ const ViewCertificaion = () => {
               >
                 {isExpanded ? 'Hide Details' : 'View Details'}
               </button>
-              {(hasDoc && viewer!=="admin") && (
+              {(hasDoc && viewer !== "admin") && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
                   onClick={() => viewDocument(item.document || item.Certificate || item.Document || item.Proceeding || item.Sanctioning_Order || item.Utilization_Certificate_Of_Final_Year)}
                 >
