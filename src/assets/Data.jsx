@@ -555,8 +555,8 @@ const fields = {
   patents: [
     'Patent Number',
     'Title Of The Patent',
-    'Published granted',
-    'Year Of Published granted',
+    'Published Granted',
+    'Year Of Published Granted',
     'Scope',
     'Document'
   ],

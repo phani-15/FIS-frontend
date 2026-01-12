@@ -228,8 +228,7 @@ const getModalTitle = (item) => {
 const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
   const titleField = getModalTitle(item);
   const normalizedKey = normalizeSectionKey(sectionKey);
-  const allKeys = fields[normalizedKey] || Object.keys(item);
-
+  const allKeys = fields[normalizedKey] || Object.keys(item);  
   const fieldsToEdit = allKeys
     .filter(key => !['id'].includes(key))
     .map(key => ({
@@ -237,8 +236,7 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
       label: formatFieldLabel(key),
       value: item[key] ?? '',
     }))
-    .filter(f => f.label);
-
+    .filter(f => f.label);    
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
       <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl">
@@ -559,6 +557,11 @@ const ViewCertificaion = () => {
   const handleSave = () => {
     if (!itemToEdit || !sectionKey) return closeModal();
 
+    console.log(certificationsData);
+    console.log("itemstoEdit : " ,itemToEdit);
+    console.log("sectinKeys  : ",sectionKey);
+    
+    //here that we need to add hte constraint of making edits direclty within 7 days
     setCertificationsData((prev) => ({
       ...prev,
       [sectionKey]: prev[sectionKey].map((item) =>

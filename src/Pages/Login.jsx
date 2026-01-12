@@ -11,7 +11,13 @@ export default function Login() {
 		username: "caterpillar@gmail.com",
 		password: "1234567890",
 	});
-	const [serverError, setServerError] = useState("");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -29,19 +35,13 @@ export default function Login() {
       email: formData.username,
       password: formData.password,
     });
-
-    // Normalize: handle both Axios and raw JSON responses
     const data = result.data || result;
-
-    // 🔐 Unified credential error (backend should send this)
     if (!data?.user?.id) {
       throw { response: { data: { error: "Any of the credentials is wrong" } } };
     }
-
     authenticate(data, () => {
       setFormData({ username: "", password: "" });
     });
-
     navigate(`/profile/${data.user.id}`);
   } catch (error) {
     const msg = error.response?.data?.error || "Any of the credentials is wrong";
@@ -80,6 +80,7 @@ export default function Login() {
               <input
                 type="text"
                 id="username"
+                name="username"
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="e.g., user@example.com or 9876543210"
@@ -108,6 +109,7 @@ export default function Login() {
               <input
                 type="password"
                 id="password"
+                name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
