@@ -399,7 +399,6 @@ const AddCredentials = () => {
           subcategory,
           formData: {
             contribution_in_mooc: contribution,
-            number_of_moocs: numMOOCs,
             ...moocData, // all per-MOOC fields flattened here
           },
           files: moocFiles,
@@ -519,7 +518,6 @@ const AddCredentials = () => {
           subcategory,
           formData: {
             contribution_in_e_content: contribution,
-            number_of_e_contents: numEContents,
             ...ecData,
           },
           files: ecFiles,
@@ -774,7 +772,6 @@ const AddCredentials = () => {
           subcategory,
           formData: {
             ...student,
-            number_of_phd_joined: numPhd
           },
           files: { ...fileMap }
         };
@@ -791,9 +788,6 @@ const AddCredentials = () => {
       console.error('❌ PhD submission failed:', error);
       alert('❌ Submission failed. Please try again.');
     }
-
-    console.log('✅ PhD (Ongoing) Payload:', payload);
-    alert(`✅ Successfully submitted ${numPhd} PhD student(s)!`);
 
     // Reset
     setGroup('');
@@ -892,10 +886,6 @@ const AddCredentials = () => {
       alert('❌ Submission failed. Please try again.');
     }
 
-
-    // console.log('✅ PhD (Awarded) Payload:', payload);
-    alert(`✅ Successfully recorded ${numPhd} PhD award(s)!`);
-
     // Reset form
     setGroup('');
     setSubcategory('');
@@ -921,8 +911,8 @@ const AddCredentials = () => {
         return;
       }
 
-      if (clean === 'validity period (if applicable)') {
-        if (formData['Membership Type (Life/Annual/Student)'] === 'Life') {
+      if (clean === 'validity period') {
+        if (formData['Membership Type'] === 'Life') {
           return; // 🚫 Skip validation for Life members
         }
       }
@@ -1076,7 +1066,7 @@ const AddCredentials = () => {
                               <div key={name} className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                   {cleanLabel}
-                                  && <span className="text-red-500 ml-1">*</span>
+                                   <span className="text-red-500 ml-1">*</span>
                                 </label>
                                 {isFile ? (
                                   <div className="space-y-2">
@@ -1117,6 +1107,7 @@ const AddCredentials = () => {
                                           file:bg-blue-50 file:text-blue-700
                                           hover:file:bg-blue-100"
                                       accept=".pdf,.jpg,.jpeg,.png"
+                                      required
                                     />
 
                                     {/* ✅ View Button — identical to e_content */}
@@ -1632,11 +1623,11 @@ const AddCredentials = () => {
                                 return null; // 🚫 hide Role if not Organized
                               }
                               const isValidityPeriod =
-                                cleanLabel.toLowerCase() === 'validity period (if applicable)';
+                                cleanLabel.toLowerCase() === 'validity period';
 
                               if (
                                 isValidityPeriod &&
-                                formData['Membership Type (Life/Annual/Student)'] === 'Life'
+                                formData['Membership Type'] === 'Life'
                               ) {
                                 return null;
                               }

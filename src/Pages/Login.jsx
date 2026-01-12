@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { User, Lock, LogIn, KeyRound } from "lucide-react";
+import { User, Lock, LogIn, KeyRound ,List} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { login, authenticate } from "../core/auth"; // assuming login() returns Promise
+import { title } from "framer-motion/client";
 
 export default function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [showOptions, setShowOptions] = useState(false);
 
 	const [formData, setFormData] = useState({
-		username: "caterpillar@gmail.com",
-		password: "1234567890",
+		username: "",
+		password: "",
 	});
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +21,44 @@ export default function Login() {
     }));
   };
 
+  React.useEffect(() => {
+    const handleClickOutside = () => setShowOptions(false);
+    if (showOptions) {
+      document.addEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [showOptions]);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+    // Clear field-specific error on change
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[id];
+      delete newErrors.login; // optional: clear global too
+      return newErrors;
+    });
+  };
+
+  const urls = [
+    {
+      title : "HOD",
+      url : "/hod"
+    },
+    {
+      title : "Higher Officials",
+      url : "/ofc"
+    },
+    {
+      title : "Admin",
+      url : "/admin"
+    }
+  ]
+
   const handleSubmit = async (e) => {
   e.preventDefault();
   setErrors({});
@@ -26,9 +66,8 @@ export default function Login() {
   if (!formData.username.trim()) return setErrors({ username: "Username is required" });
   if (!formData.password.trim()) return setErrors({ password: "Password is required" });
 
-  const isPhone = /^\d{10}$/.test(formData.username);
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.username);
-  if (!isPhone && !isEmail) return setErrors({ username: "Enter a valid email or phone number" });
+  if (!isEmail) return setErrors({ username: "Enter a valid email" });
 
   try {
     const result = await login({
@@ -51,6 +90,32 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center p-4 min-h-screen">
+      <button
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent closing immediately
+          setShowOptions(!showOptions);
+        }}
+        className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+        aria-label="Options"
+      >
+        <List className="w-5 h-5 text-gray-600" />
+      </button>
+    {showOptions && (
+        <div
+          className="absolute top-12 right-4 bg-white border border-gray-200 rounded-lg shadow-lg z-10 w-48 py-2"
+          onClick={(e) => e.stopPropagation()} // Keep open when clicking inside
+        >
+          {urls.map((type) => (
+            <button
+              key={type.title}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={() => navigate(type.url)}
+            >
+              {type.title}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
         {/* Top Icon */}
         <div className="flex justify-center mb-6">
@@ -71,7 +136,7 @@ export default function Login() {
               htmlFor="username"
               className="block mb-1 text-sm font-medium text-gray-700"
             >
-              Email or Phone
+              Email
             </label>
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-gray-400">
@@ -83,7 +148,7 @@ export default function Login() {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                placeholder="e.g., user@example.com or 9876543210"
+                placeholder="e.g., user@example.com "
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>

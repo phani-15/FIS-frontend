@@ -13,24 +13,14 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx"; // Import XLSX library
-import { AtKeys, schemas, yearFields,  } from '../assets/Data'
+import { AtKeys, schemas, yearFields, } from '../assets/Data'
 import { HodDashBoard } from "../core/hod"
 import axios from "axios";
 import { getHodReports } from "../core/hod";
 
 export default function HODDashBoard() {
   const [filters, setFilters] = useState({ searchTerm: "" });
-  const [facultyList, setFacultyList] = useState([
-    {
-      personalData: {
-        designation: " Professor",
-        name: "Polavarrapu Srrinivas",
-      },
-      user: {
-        email: "srinu@gmail.com",
-      },
-    },
-  ]);
+  const [facultyList, setFacultyList] = useState([]);
   const navigate = useNavigate();
   const { userId } = useParams();
   // --- State for report modal ---
@@ -80,112 +70,121 @@ export default function HODDashBoard() {
     return parseInt(value);
   };
 
-  // Function to generate Excel file
+  /* Utility */
+  const sanitizeSheetName = (name) =>
+    name.replace(/[:\\/?*\[\]]/g, "").substring(0, 31);
 
-  // Add this helper function to sanitize sheet names
-  // const sanitizeSheetName = (name) => {
-  //   // Remove characters not allowed in Excel sheet names
-  //   return name.replace(/[:\\/?*\[\]]/g, " ");
-  // };
+  /* Optional year extraction */
+  const extractYear = (value) => {
+    if (!value) return null;
+    if (typeof value === "number") return value;
+    const match = String(value).match(/\b(19|20)\d{2}\b/);
+    return match ? Number(match[0]) : null;
+  };
 
+  const generateExcelReport = ({
+    data,
+    schemas,
+    selectedTypes,
+    dateFrom,
+    dateTo,
+  }) => {
+    if (!data || !data.length) {
+      alert("No data to export");
+      return;
+    }
 
-/* Utility */
-const sanitizeSheetName = (name) =>
-  name.replace(/[:\\/?*\[\]]/g, "").substring(0, 31);
+    const wb = XLSX.utils.book_new();
 
-/* Optional year extraction */
-const extractYear = (value) => {
-  if (!value) return null;
-  if (typeof value === "number") return value;
-  const match = String(value).match(/\b(19|20)\d{2}\b/);
-  return match ? Number(match[0]) : null;
-};
+    // Helper function to convert snake_case to Title Case
+    const snakeToTitleCase = (str) => {
+      return str
+        .replace(/_/g, ' ')  // Replace underscores with spaces
+        .replace(/\w\S*/g, (txt) =>
+          txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()  // Capitalize first letter of each word
+        );
+    };
 
-const generateExcelReport = ({
-  data,
-  schemas,
-  selectedTypes,
-  dateFrom,
-  dateTo,
-}) => {
-  if (!data || !data.length) {
-    alert("No data to export");
-    return;
-  }
+    selectedTypes.forEach((typeKey) => {
+      const schema = schemas[typeKey];
+      if (!schema) return;
 
-  const wb = XLSX.utils.book_new();
+      /* ===== HEADERS (convert snake_case to Title Case) ===== */
+      const headers = [
+        "S.NO",
+        "Faculty Name",
+        ...schema.attributes.map((a) => snakeToTitleCase(a.key)), // Convert snake_case key to Title Case for display
+      ];
 
-  selectedTypes.forEach((typeKey) => {
-    const schema = schemas[typeKey];
-    if (!schema) return;
+      const rows = [];
 
-    /* ===== HEADERS ===== */
-    const headers = [
-      "Faculty Name",
-      "Designation",
-      "Email",
-      ...schema.attributes.map((a) => a.label),
-    ];
+      data.forEach((faculty) => {
+        const records = faculty.reports?.[typeKey];
+        if (!Array.isArray(records)) return;
 
-    const rows = [];
-
-    data.forEach((faculty) => {
-      const records = faculty.reports?.[typeKey];
-      if (!Array.isArray(records)) return;
-
-      records.forEach((record) => {
-        /* ===== YEAR FILTER (SAFE) ===== */
-        if (dateFrom || dateTo) {
-          const yearAttr =
-            schema.attributes.find((a) =>
+        records.forEach((record) => {
+          /* ===== YEAR FILTER (SAFE) ===== */
+          if (dateFrom || dateTo) {
+            const yearAttr = schema.attributes.find((a) =>
               a.key.toLowerCase().includes("year")
             )?.key;
 
-          const recordYear = extractYear(record?.[yearAttr]);
+            const recordYear = extractYear(record?.[yearAttr]);
 
-          if (dateFrom && recordYear && recordYear < +dateFrom) return;
-          if (dateTo && recordYear && recordYear > +dateTo) return;
-        }
+            if (dateFrom && recordYear && recordYear < +dateFrom) return;
+            if (dateTo && recordYear && recordYear > +dateTo) return;
+          }
 
-        /* ===== ROW DATA ===== */
-        const row = [
-          faculty.facultyName || "",
-          faculty.designation || "",
-          faculty.email || "",
-          ...schema.attributes.map((attr) => record?.[attr.key] ?? ""),
-        ];
+          /* ===== ROW DATA ===== */
+          const row = [
+            "", // S.NO will be added later
+            faculty.facultyName || "",
+            ...schema.attributes.map((attr) => {
+              // Use the original snake_case key to access the data
+              return record?.[convertFieldName(attr.key)] ?? "";
+            }),
+          ];
 
-        rows.push(row);
+          rows.push(row);
+        });
       });
+
+      if (!rows.length) return;
+
+      // Add serial numbers
+      rows.forEach((row, index) => {
+        row[0] = index + 1;
+      });
+
+      /* ===== CREATE SHEET ===== */
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+      /* Auto column width */
+      ws["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 18) }));
+
+      XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        sanitizeSheetName(schema.label)
+      );
     });
 
-    if (!rows.length) return;
+    if (!wb.SheetNames.length) {
+      alert("No matching data for selected filters");
+      return;
+    }
 
-    /* ===== CREATE SHEET ===== */
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const filename = `Faculty_Report_${new Date()
+      .toISOString()
+      .split("T")[0]}.xlsx`;
 
-    /* Auto column width */
-    ws["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 18) }));
+    XLSX.writeFile(wb, filename);
+  };
 
-    XLSX.utils.book_append_sheet(
-      wb,
-      ws,
-      sanitizeSheetName(schema.label)
-    );
-  });
-
-  if (!wb.SheetNames.length) {
-    alert("No matching data for selected filters");
-    return;
+  const convertFieldName = (fieldName) => {
+    return fieldName.replace(/\s+/g, '_')
+      .toLowerCase()
   }
-
-  const filename = `Faculty_Report_${new Date()
-    .toISOString()
-    .split("T")[0]}.xlsx`;
-
-  XLSX.writeFile(wb, filename);
-};
-
 
   const handleExtractReports = async (e) => {
     e.preventDefault();
@@ -193,13 +192,25 @@ const generateExcelReport = ({
     setIsGenerating(true);
 
     try {
+      // Transform selectedAttributes to use database field names
+      const transformedFields = {};
+
+      Object.keys(selectedAttributes).forEach(type => {
+        const originalFields = selectedAttributes[type];
+        const transformedFieldsForType = originalFields.map(field => {
+          return convertFieldName(field);
+        });
+        transformedFields[type] = transformedFieldsForType;
+      });
+
       const payload = {
         types: selectedTypes,
-        fields: selectedAttributes,
+        fields: transformedFields,
         dateFrom,
         dateTo,
       };
 
+      // console.log(payload)
       const response = await getHodReports(payload, userId);
 
       if (!response.success) {
@@ -213,13 +224,13 @@ const generateExcelReport = ({
       }
 
       generateExcelReport({
-  data: response.data,
-  schemas,
-  selectedTypes,
-  dateFrom,
-  dateTo,
-});
-;
+        data: response.data,
+        schemas,
+        selectedTypes,
+        dateFrom,
+        dateTo,
+      });
+      ;
       setShowExtractModal(false);
     } catch (err) {
       console.error(err);
@@ -255,11 +266,10 @@ const generateExcelReport = ({
       // Prepare headers
       const headers = ["S.No", "Faculty Name", "Email", "Designation"];
 
-      const facultyList=filteredFaculty
       console.log(facultyList);
-      
+
       // Prepare data rows
-      const rows = filteredFaculty.map((faculty, index) => [
+      const rows = facultyList.map((faculty, index) => [
         index + 1,
         faculty.personalData.name,
         faculty.user.email || "", // Use email if available, otherwise empty string
@@ -561,8 +571,8 @@ const generateExcelReport = ({
                                             const updated = e.target.checked
                                               ? [...current, attr.key]
                                               : current.filter(
-                                                  (k) => k !== attr.key
-                                                );
+                                                (k) => k !== attr.key
+                                              );
                                             return {
                                               ...prev,
                                               [typeKey]: updated,
