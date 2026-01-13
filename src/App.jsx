@@ -30,9 +30,9 @@ export default function App() {
     <div className='flex flex-col min-h-screen'>
       <BrowserRouter>
         <Header />
-          <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-3xl text-center font-semibold">
+          {/* <h1 style={{ fontFamily: "Times New Roman, serif" }} className="text-3xl text-center font-semibold">
             Faculty Information System
-          </h1>
+          </h1> */}
         <main className='grow'><Routes>
             <Route path='/' element={<Login />} />
             <Route path='/fp/' element={<ForgotPassword />} />

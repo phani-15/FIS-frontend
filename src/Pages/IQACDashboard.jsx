@@ -612,7 +612,7 @@ export default function IQACDashboard() {
         <div>
           <label className="mr-2 font-medium">Rows per page:</label>
           <select
-            className="border border-gray-300 rounded-lg p-1 bg-gray-50 focus:ring-2 focus:ring-purple-400"
+            className="border border-gray-300 rounded-lg p-1 bg-gray-50 focus:ring-1 focus:ring-gray-400"
             value={itemsPerPage}
             onChange={(e) => {
               setItemsPerPage(Number(e.target.value));
@@ -692,16 +692,11 @@ export default function IQACDashboard() {
               Next ➡️
             </button>
           </div>
-          <div className="flex justify-end ">
-            <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
-              <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
-            </div>
-          </div>
         </>
       )}
       <div className="flex justify-end ">
         <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
-          <button onClick={printList} className="m-2 mx-4 text-white">Print List </button>
+          <button onClick={printList} className="m-2 mx-4 cursor-pointer text-white">Print List </button>
         </div>
       </div>
       <AnimatePresence>

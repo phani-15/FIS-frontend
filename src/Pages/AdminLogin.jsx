@@ -74,7 +74,7 @@ const handleSubmit = async (e) => {
                 value={passCode}
                 onChange={handleChange}
                 placeholder="Enter your password"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500"
               />
             </div>
 
@@ -89,7 +89,7 @@ const handleSubmit = async (e) => {
               </div>
             )}
           </div>
-          <p onClick={() => navigate('/adminfp')} className="cursor-pointer hover:underline text-violet-800 font-normal ">Reset Password?</p>
+          <p onClick={() => navigate('/adminfp')} className="cursor-pointer text-right hover:underline text-violet-800 font-normal ">Reset Password?</p>
           <button
             type="submit"
             className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
@@ -100,7 +100,7 @@ const handleSubmit = async (e) => {
         </form>
 
         <p className="mt-8 text-xs text-gray-500">
-          Secure IQAC Access
+          Secure ADMIN Access
         </p>
       </div>
     </div>

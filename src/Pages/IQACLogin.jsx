@@ -71,7 +71,7 @@ export default function IQACLogin() {
   };
 
   return (
-    <div className="flex justify-center items-center p-4 min-h-screen">
+    <div className="flex justify-center items-center p-4 my-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
         <div className="flex justify-center mb-6">
           <div className="p-4 bg-purple-50 rounded-xl shadow-sm">
@@ -79,7 +79,7 @@ export default function IQACLogin() {
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900">Officials Login</h2>
+        <h2 className="text-2xl font-semibold text-gray-900">Officials Login</h2>
         <p className="text-gray-600 text-sm mt-1">Faculty Information System</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5 text-left">
@@ -91,7 +91,7 @@ export default function IQACLogin() {
             <select
               value={role}
               onChange={handleRoleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent"
             >
               <option value="">Select Role</option>
               <option value="Vice Principal">Vice Principal</option>
@@ -119,7 +119,7 @@ export default function IQACLogin() {
                 value={passCode}
                 onChange={handlePassCodeChange}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent"
               />
             </div>
             {errors.passCode && (
@@ -136,14 +136,14 @@ export default function IQACLogin() {
 
           <button
             type="submit"
-            className="w-full mt-4 flex items-center justify-center gap-2 bg-linear-to-r from-purple-600 to-indigo-600 text-white font-medium py-2.5 rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+            className="w-full mt-4 flex items-center justify-center gap-2 bg-linear-to-r from-purple-600 to-indigo-600 text-white font-medium py-2.5 rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700"
           >
             <LogIn className="w-5 h-5" />
             Login
           </button>
         </form>
 
-        <p className="mt-8 text-xs text-gray-500">Secure Officials Access</p>
+        <p className="mt-4 text-xs text-gray-500">Secure Officials Access</p>
       </div>
     </div>
   );

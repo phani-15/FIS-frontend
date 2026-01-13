@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { User, Lock, LogIn, KeyRound ,List} from "lucide-react";
+import { User, Lock, LogIn, KeyRound , Menu} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { login, authenticate } from "../core/auth"; // assuming login() returns Promise
-import { title } from "framer-motion/client";
 
 export default function Login() {
   const [errors, setErrors] = useState({});
@@ -10,8 +9,8 @@ export default function Login() {
   const [showOptions, setShowOptions] = useState(false);
 
 	const [formData, setFormData] = useState({
-		username: "caterpillar@gmail.com",
-		password: "1234567890",
+		username: "",
+		password: "",
 	});
 
   React.useEffect(() => {
@@ -82,7 +81,7 @@ export default function Login() {
 };
 
   return (
-    <div className="flex justify-center items-center p-4 min-h-screen">
+    <div className="flex justify-center items-center p-4 my-4">
       <button
         onClick={(e) => {
           e.stopPropagation(); // Prevent closing immediately
@@ -91,7 +90,7 @@ export default function Login() {
         className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none"
         aria-label="Options"
       >
-        <List className="w-5 h-5 text-gray-600" />
+        <Menu size={25} className="text-gray-600" />
       </button>
     {showOptions && (
         <div
@@ -118,7 +117,7 @@ export default function Login() {
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900">Login</h2>
+        <h2 className="text-2xl font-bold text-gray-900">LOGIN</h2>
         <p className="text-gray-600 text-sm mt-1">Faculty Information System</p>
 
         {/* Form */}
@@ -142,7 +141,7 @@ export default function Login() {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="e.g., user@example.com "
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
               />
             </div>
             {errors.username && (
@@ -171,7 +170,7 @@ export default function Login() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
               />
             </div>
             {errors.password && (
