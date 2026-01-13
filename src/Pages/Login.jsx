@@ -10,16 +10,9 @@ export default function Login() {
   const [showOptions, setShowOptions] = useState(false);
 
 	const [formData, setFormData] = useState({
-		username: "",
-		password: "",
+		username: "caterpillar@gmail.com",
+		password: "1234567890",
 	});
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
 
   React.useEffect(() => {
     const handleClickOutside = () => setShowOptions(false);

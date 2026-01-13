@@ -37,7 +37,7 @@ export default function App() {
             <Route path='/rp' element={<ResetPassword/>} />
             
             <Route path='/profile/:profileId' element={<Profile />} />
-            <Route path='/ea' element={<EditAdmin />} />
+            <Route path='/ea/:profileId' element={<EditAdmin />} />
             <Route path='/vc/:userId/:credId' element={<ViewCertificaion />} />
             <Route path='/ac/:userId/:credId' element={<AddCredentials />} />
 

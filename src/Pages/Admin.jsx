@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { User, Eye, Check, X, ChevronDown, ChevronUp } from 'lucide-react'
-import { useNavigate, useParams } from "react-router-dom";
-import { departments } from "../assets/Data";
-import { AdminDashboard } from "../core/admin"
+import React, { useState } from "react";
+import { User, Eye, Check, X, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+
 // --- Data Structure Mocks (Kept the same for functionality) ---
 const mockRequests = [
   {
@@ -22,7 +21,6 @@ const mockRequests = [
     id: 'req_002',
     user: { name: 'Dr. Albert', email: 'albert.dr@univ.edu' },
     isPending: true,
-    personalData: { name: 'Dr. Albert', designation: 'Lecturer', department: 'eee' },
     originalProfile: {
       education: {
         tenth: { board: 'State Board', year: '2010', percentage: '85%' },
@@ -95,7 +93,7 @@ const ProfileUpdateRequests = () => {
   const [requests, setRequests] = useState(mockRequests);
   const [showModal, setShowModal] = useState(false);
   const [currentRequest, setCurrentRequest] = useState(null);
-  const [isPendingExpanded, setIsPendingExpanded] = useState(false);
+  const [isPendingExpanded, setIsPendingExpanded] = useState(true);
   const [expandedPreviousData, setExpandedPreviousData] = useState({});
 
   const handleAccept = (id) => {
@@ -179,20 +177,19 @@ const ProfileUpdateRequests = () => {
   return (
     <div className="my-6">
       {/* Collapsible Pending Requests Header */}
-      {requests.length > 0 &&
-        <div
-          className="flex items-center justify-between cursor-pointer shadow-md mb-4 p-3 bg-white rounded-lg hover:bg-purple-150 transition-colors"
-          onClick={() => setIsPendingExpanded(!isPendingExpanded)}
-        >
-          <h2 className="lg:text-2xl text-lg font-bold font-serif text-purple-800">
-            Pending Update Requests ({requests.length})
-          </h2>
-          {isPendingExpanded ? (
-            <ChevronUp size={28} className="text-purple-800" />
-          ) : (
-            <ChevronDown size={28} className="text-purple-800" />
-          )}
-        </div>}
+      <div
+        className="flex items-center justify-between cursor-pointer mb-4 p-3 bg-white rounded-lg hover:bg-purple-150 transition-colors"
+        onClick={() => setIsPendingExpanded(!isPendingExpanded)}
+      >
+        <h2 className="text-2xl font-bold font-serif text-purple-800">
+          Pending Update Requests ({requests.length})
+        </h2>
+        {isPendingExpanded ? (
+          <ChevronUp size={28} className="text-purple-800" />
+        ) : (
+          <ChevronDown size={28} className="text-purple-800" />
+        )}
+      </div>
 
       {/* Collapsible Content */}
       {isPendingExpanded && (
@@ -212,7 +209,7 @@ const ProfileUpdateRequests = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-wrap gap-2 lg:gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <button
                   onClick={() => handleShowUpdates(request)}
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition shadow-sm"
@@ -221,23 +218,21 @@ const ProfileUpdateRequests = () => {
                   Show Updates
                 </button>
 
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleAccept(request.id)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition shadow-sm"
-                  >
-                    <Check size={14} />
-                    Accept
-                  </button>
+                <button
+                  onClick={() => handleAccept(request.id)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition shadow-sm"
+                >
+                  <Check size={14} />
+                  Accept
+                </button>
 
-                  <button
-                    onClick={() => handleReject(request.id)}
-                    className="inline-flex relative right-0 items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-300 rounded-lg hover:bg-gray-400 transition shadow-sm"
-                  >
-                    <X size={14} />
-                    Reject
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleReject(request.id)}
+                  className="inline-flex relative right-0 items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-300 rounded-lg hover:bg-gray-400 transition shadow-sm"
+                >
+                  <X size={14} />
+                  Reject
+                </button>
               </div>
             </div>
           ))}
@@ -463,7 +458,7 @@ const ProfileUpdateRequests = () => {
 };
 
 export default function Admin() {
-  const { adminId } = useParams()
+  // --- Existing state ---
   const [filters, setFilters] = useState({
     department: "All",
     role: "All",
@@ -472,20 +467,86 @@ export default function Admin() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [facultyList, setfacultyList] = useState([
-        { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
-  ]);
 
-  useEffect(() => {
-    const getFacultyList = async () => {
-      const admin=await AdminDashboard(adminId)  
-      console.log(admin);
-          
-      setfacultyList(admin)
+  // --- NEW: Add Faculty Modal State ---
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [errors, setErrors] = useState({});
+
+  // --- Validation Function ---
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
     }
-    getFacultyList();
-  }, [adminId])
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
+  // --- Form Handlers ---
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      // Here you would typically send data to your backend
+      console.log('Adding new faculty:', formData);
+      
+      // Reset form and close modal
+      setFormData({ email: '', password: '', confirmPassword: '' });
+      setErrors({});
+      setIsAddModalOpen(false);
+      
+      // Show success message (optional)
+      alert('Faculty added successfully!');
+    }
+  };
+
+  // --- Constants ---
+  const departments = [
+    "All",
+    "Computer Science and Engineering",
+    "Electronics and Communication Engineering",
+    "Electrical and Electronics Engineering",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Metallurgical Engineering",
+    "Information Technology Engineering",
+    "M.Tech",
+    "MBA"
+  ];
+
+  const facultyList = [
+    { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
+  ];
+
+  // --- Filtering Logic ---
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
     const matchesRole = filters.role === "All" || f.role === filters.role;
@@ -507,35 +568,42 @@ export default function Admin() {
     );
   };
 
-  const navigate = useNavigate()
-  const handleViewClick = (id) => {    
-    navigate(`/profile/${id}`)
+  // --- Navigation ---
+  const navigate = useNavigate();
+  const handleViewClick = () => {
+    navigate('/profile');
   };
-
-  // const handleEditClick = () => {
-  //   navigate('/ea')
-  // };
 
   return (
     <div className="p-1 lg:p-8">
-      <div className="max-w-7xl mx-2 lg:mx-auto"><h1 className="lg:text-4xl text-2xl font-semibold font-serif mb-6 text-center text-purple-800 tracking-wide drop-shadow">
-        ADMIN PANEL
-      </h1>
+      <div className="max-w-7xl mx-2 lg:mx-auto">
+        <h1 className="lg:text-4xl text-2xl font-semibold font-serif mb-6 text-center text-purple-800 tracking-wide drop-shadow">
+          ADMIN PANEL
+        </h1>
+        
         {ProfileUpdateRequests()}
+        
+        {/* Add Faculty Button */}
         <div className="flex justify-end my-2 px-2 py-1">
-          <button className=" px-2 py-1 lg:text-lg rounded-md text-white font-semibold bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700" >Add Faculty</button>
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-2 py-1 lg:text-lg rounded-md cursor-pointer text-white font-semibold bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700 flex items-center gap-1"
+          >
+            <Plus size={20} />
+            Add Faculty
+          </button>
         </div>
+
         {/* Filters */}
-        <div className=" rounded-xl shadow-md p-6 mb-2">
+        <div className="rounded-xl shadow-md p-6 mb-2">
           <div className="flex justify-between lg:flex-row flex-col gap-5">
             <div className="max-w-[350px]">
               <label className="block text-sm font-semibold text-gray-700 mb-2">Department</label>
               <select
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400  outline-none transition"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition"
                 value={filters.department}
                 onChange={(e) => { setFilters({ ...filters, department: e.target.value }); setCurrentPage(1); }}
               >
-                <option key={departments.length} value="All">All</option>
                 {departments.map((dept, idx) => (
                   <option key={idx} value={dept}>{dept}</option>
                 ))}
@@ -568,11 +636,11 @@ export default function Admin() {
         </div>
 
         {/* Stats and Rows per page */}
-        <div className=" p-4 flex flex-wrap justify-between items-center gap-4">
+        <div className="p-4 flex flex-wrap justify-between items-center gap-4">
           <p className="text-sm font-medium text-gray-700">
             Total Faculty: <span className="text-purple-600 font-bold">{filteredFaculty.length}</span>
           </p>
-          <div className="flex items-center  gap-2">
+          <div className="flex items-center gap-2">
             <label className="text-sm font-medium text-gray-700">Rows per page:</label>
             <select
               className="border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm outline-none transition text-sm"
@@ -620,19 +688,12 @@ export default function Admin() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-center gap-2">
                           <button
-                            onClick={()=>handleViewClick(f.id)}
+                            onClick={handleViewClick}
                             className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition shadow-sm"
                           >
                             <User size={14} />
                             View
                           </button>
-                          {/* <button
-                            onClick={handleEditClick}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition"
-                          >
-                            <Edit2 size={14} />
-                            Edit
-                          </button> */}
                         </div>
                       </td>
                     </tr>
@@ -663,17 +724,17 @@ export default function Admin() {
               </p>
               <div className="flex items-center gap-3">
                 <button
-                  className="px-5 py-2  text-sm cursor-pointer font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
+                  className="px-5 py-2 text-sm font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
                 </button>
-                <span className="px-5 py-2 text-sm cursor-default font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm">
+                <span className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm">
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
-                  className="px-5 py-2 text-sm cursor-pointer font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
+                  className="px-5 py-2 text-sm font-semibold text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition"
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                 >
@@ -684,6 +745,95 @@ export default function Admin() {
           </div>
         )}
       </div>
+
+      {/* Add Faculty Modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-white/20">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-purple-200/90 backdrop-blur-sm p-4 border-b border-purple-300/50 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-purple-800">Add New Faculty</h3>
+              <button
+                onClick={() => setIsAddModalOpen(false)}
+                className="text-gray-600 hover:text-gray-900 hover:bg-white/50 rounded-full p-1 transition-all"
+                aria-label="Close"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleSubmit} className="p-6">
+              <div className="mb-5">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`w-full border ${
+                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
+                  placeholder="faculty@univ.edu"
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Password *
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`w-full border ${
+                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
+                  placeholder="At least 8 characters"
+                />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Confirm Password *
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className={`w-full border ${
+                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                  } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
+                  placeholder="Re-enter password"
+                />
+                {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700"
+                >
+                  Add Faculty
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
