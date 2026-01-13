@@ -15,16 +15,20 @@ export default function Header() {
       </div>
 
       {/* Centered Text */}
-      <div className="text-center space-y-1 md:space-y-2 px-4">
-        <h1 className="text-base  lg:text-2xl font-bold">
+      <div className="text-center mt-10 space-y-1 md:space-y-2 px-4">
+        <h1 className="text-base  lg:text-2xl font-bold ">
           JAWAHARLAL NEHRU TECHNOLOGICAL UNIVERSITY GURAJADA VIZIANAGARAM
         </h1>
+        
         <h2 className="text-xs lg:text-lg">
           VIZIANAGARAM-535 003, A.P
         </h2>
         <h2 className="text-xs lg:text-lg">
           (Established by Andhra Pradesh Act No.22 of 2021)
         </h2>
+        <h1 className="text-base  lg:text-2xl font-bold font-serif mb-3">
+          Faculty information System
+        </h1>
       </div>
     </div>
   )

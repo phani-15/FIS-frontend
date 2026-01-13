@@ -1,96 +1,168 @@
-  import React, { useState } from 'react';
-  import {  User, GraduationCap, Briefcase, Users, BookOpen, Save, X } from 'lucide-react';
-  import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { User, GraduationCap, Briefcase, Users, BookOpen, Save, X } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Personal } from "../core/Personal";
+import { API } from "../backend"
+import { isAuthenticated } from '../core/auth';
 
-  const EditProfilePage = () => {
-    // Initial profile data
-    const initialProfile = {
-      profile: {
-        name: "Dr. P. Aruna Kumari",
-        role: "Professor @ JNTUGV",
-        avatar: "/images/profile.jpg",
-      },
-      personalInfo: {
-        email: "aruna.kumari@jntugv.edu",
-        phone: "+91 9876543210",
-        location: "Vizianagaram, Andhra Pradesh",
-        joinedDate: "Aug 2015",
-      },
-      education: [
-        {
-          degree: "Ph.D. in Computer Science",
-          institution: "IIT Delhi",
-          year: "2014",
-        },
-        {
-          degree: "M.Tech in Computer Engineering",
-          institution: "NIT Trichy",
-          year: "2009",
-        },
-        {
-          degree: "B.Tech in Information Technology",
-          institution: "Andhra University",
-          year: "2007",
-        },
-      ],
-      professionalExperience: [
-        {
-          role: "Professor",
-          institution: "JNTU-GV",
-          years: "2018 - Present",
-        },
-        {
-          role: "Associate Professor",
-          institution: "JNTU-GV",
-          years: "2014 - 2018",
-        },
-      ],
-      adminServiceThis: [
-        "Head of Department, Computer Science (2021 - Present)",
-        "Member, Academic Senate",
-        "Coordinator, NBA Accreditation",
-      ],
-      adminServiceOther: [
-        "Reviewer, IEEE Transactions on Education",
-        "Board Member, AICTE Curriculum Committee",
-        "Expert Committee, State Educational Policy",
-      ],
-    };
+const EditProfilePage = () => {
+  const { profileId } = useParams();
+  const imageurl = API.replace("/api", "")
+  // Initial profile data based on the new object structure
 
-    // State to manage form data and active section
-    const [profile, setProfile] = useState(initialProfile);
-    const [activeSection, setActiveSection] = useState('personalInfo');
-    const [isSaving, setIsSaving] = useState(false);
+
+  // State to manage form data and active section
+  const [initialProfile, setintialProfile] = useState({
+    personalData: {
+      name: "Phani Polavarapu",
+      avatar: "images/Profile2.avif",
+      father: "Surya Nageswara Rao",
+      gender: "Male",
+      DOB: "2004-09-15",
+      marital: "unmarried",
+      designation: "Assistant Professor",
+      department: "cse",
+      college: "University College of Engineering",
+      date_of_join: "15-09-2011",
+      phone: "1234567890",
+      location: "buffalo ,New york"
+    },
+    user: {
+      password: "Phani@123",
+      email: "phanipolavarapu15@gmail.com",
+      cPassword: "Phani@123"
+    },
+    education: {
+      tenth: {
+        title: "Tenth",
+        school: "ZPHS Mummidivaram",
+        percentage: "",
+        year: "2009"
+      },
+      twelth: {
+        title: "Intermediate/Diploma",
+        type: "Intermediate",
+        college: "Sri Ravi Junior College",
+        percentage: "",
+        year: "2013"
+      },
+      degree: {
+        title: "Under Graduation",
+        degreeName: "B.Tech",
+        specialization: "Computer Science",
+        percentage: "",
+        college: "JNTUGV,CEV",
+        university: "JNTUGV",
+        year: "2017"
+      },
+      pg: {
+        title: "Post Graduation",
+        course: "M.Tech",
+        specialization: "Computer Applications",
+        percentage: "",
+        college: "JNTUK,CEV",
+        university: "JNTUK",
+        year: "2021"
+      },
+      phd: [
+        {
+          specialization: "Biometrics",
+          under_the_proffessor: "Dr.P.Aruna Kumari",
+          department: "Computer Science",
+          University: "JNTUGV",
+          year: "2021"
+        }
+      ],
+      postdoc: [
+        {
+          University: "MIT",
+          specialization: "Neural Networks",
+          under_the_proffessor: "Dr. John Doe",
+          year: 2020
+        }
+      ]
+    },
+    experience: [
+      {
+        institute: "JNTUGV",
+        designation: "Asst.Professor",
+        from: 2021,
+        to: 2023
+      }
+    ],
+    administrativeService: [
+      {
+        designation: "Head of the Administrative service",
+        from: 2024,
+        to: "Present"
+      }
+    ],
+    otherAdministrativeService: [
+      {
+        institute: "JNTUK",
+        from: 2022,
+        to: 2023,
+        designation: "head of the department"
+      }
+    ]
+  }
+  )
+  const [profile, setProfile] = useState(initialProfile);
+  const [activeSection, setActiveSection] = useState('personalData');
+  const [isSaving, setIsSaving] = useState(false);
   const [changes, setChanges] = useState([]);
-    const navigate = useNavigate();
-    // Handle input changes
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getFunction = async () => {
+      const data = await Personal(profileId);
+      if (data) {
+        setintialProfile(data);
+        setProfile(data);
+      }
+    };
+    getFunction();
+  }, [profileId]);
+  console.log("intial Profile:", initialProfile);
+  console.log(" Profile:", profile);
+
+
+  // Handle input changes for nested objects
   const handleChange = (section, field, value) => {
     let oldValue;
 
-    if (section === 'profile') {
-      oldValue = profile.profile[field];
+    if (section === 'personalData' || section === 'user') {
+      oldValue = profile[section][field];
       setProfile(prev => ({
         ...prev,
-        profile: { ...prev.profile, [field]: value }
+        [section]: { ...prev[section], [field]: value }
       }));
-    } else if (section === 'personalInfo') {
-      oldValue = profile.personalInfo[field];
+    } else if (section.startsWith('education.')) {
+      // Handle nested education objects
+      const [eduSection, subSection, fieldName] = section.split('.');
+      oldValue = profile[eduSection][subSection][fieldName];
       setProfile(prev => ({
         ...prev,
-        personalInfo: { ...prev.personalInfo, [field]: value }
+        [eduSection]: {
+          ...prev[eduSection],
+          [subSection]: {
+            ...prev[eduSection][subSection],
+            [fieldName]: value
+          }
+        }
       }));
     }
 
     // Record the change
-    setChanges(prev => [
-      ...prev,
-      { section, field, index: null, oldValue, newValue: value, timestamp: new Date() }
-    ]);
-
-    // console.log('Changes so far:', [...changes, { section, field, index: null, oldValue, newValue: value }]);
+    if (oldValue !== undefined) {
+      setChanges(prev => [
+        ...prev,
+        { section, field, index: null, oldValue, newValue: value, timestamp: new Date() }
+      ]);
+    }
   };
 
-    // Handle array field changes (education, experience, etc.)
+  // Handle array field changes (experience, administrativeService, etc.)
   const handleArrayChange = (section, index, field, value) => {
     const oldValue = profile[section][index][field];
     setProfile(prev => {
@@ -103,527 +175,652 @@
       ...prev,
       { section, field, index, oldValue, newValue: value, timestamp: new Date() }
     ]);
-
-    // console.log('Changes so far:', [...changes, { section, field, index, oldValue, newValue: value }]);
   };
-  const handleSingleArrayChange = (section, index, value) => {
-    const oldValue = profile[section][index];
-    const updated = [...profile[section]];
-    updated[index] = value;
-    setProfile(prev => ({ ...prev, [section]: updated }));
+
+  // Handle nested array changes (education.phd, education.postdoc)
+  const handleNestedArrayChange = (parentSection, arrayName, index, field, value) => {
+    const oldValue = profile[parentSection][arrayName][index][field];
+    setProfile(prev => {
+      const updatedArray = [...prev[parentSection][arrayName]];
+      updatedArray[index] = { ...updatedArray[index], [field]: value };
+      return {
+        ...prev,
+        [parentSection]: {
+          ...prev[parentSection],
+          [arrayName]: updatedArray
+        }
+      };
+    });
 
     setChanges(prev => [
       ...prev,
-      { section, field: null, index, oldValue, newValue: value, timestamp: new Date() }
+      { section: `${parentSection}.${arrayName}`, field, index, oldValue, newValue: value, timestamp: new Date() }
     ]);
-
-    // console.log('Changes so far:', [...changes, { section, field: null, index, oldValue, newValue: value }]);
   };
 
-
-    // Add new item to array sections
-    const addNewItem = (section) => {
-      if (section === 'education') {
-        setProfile(prev => ({
-          ...prev,
-          education: [
-            ...prev.education,
-            { degree: '', institution: '', year: '' }
+  // Add new item to array sections
+  const addNewItem = (section) => {
+    if (section === 'experience') {
+      setProfile(prev => ({
+        ...prev,
+        experience: [
+          ...prev.experience,
+          { institute: '', designation: '', from: '', to: '' }
+        ]
+      }));
+    } else if (section === 'administrativeService') {
+      setProfile(prev => ({
+        ...prev,
+        administrativeService: [
+          ...prev.administrativeService,
+          { designation: '', from: '', to: '' }
+        ]
+      }));
+    } else if (section === 'otherAdministrativeService') {
+      setProfile(prev => ({
+        ...prev,
+        otherAdministrativeService: [
+          ...prev.otherAdministrativeService,
+          { institute: '', designation: '', from: '', to: '' }
+        ]
+      }));
+    } else if (section === 'education.phd') {
+      setProfile(prev => ({
+        ...prev,
+        education: {
+          ...prev.education,
+          phd: [
+            ...prev.education.phd,
+            { specialization: '', under_the_proffessor: '', department: '', University: '', year: '' }
           ]
-        }));
-      } else if (section === 'professionalExperience') {
-        setProfile(prev => ({
-          ...prev,
-          professionalExperience: [
-            ...prev.professionalExperience,
-            { role: '', institution: '', years: '' }
+        }
+      }));
+    } else if (section === 'education.postdoc') {
+      setProfile(prev => ({
+        ...prev,
+        education: {
+          ...prev.education,
+          postdoc: [
+            ...prev.education.postdoc,
+            { University: '', specialization: '', under_the_proffessor: '', year: '' }
           ]
-        }));
-      } else if (section === 'adminServiceThis') {
-        setProfile(prev => ({
-          ...prev,
-          adminServiceThis: [...prev.adminServiceThis, '']
-        }));
-      } else if (section === 'adminServiceOther') {
-        setProfile(prev => ({
-          ...prev,
-          adminServiceOther: [...prev.adminServiceOther, '']
-        }));
-      } 
-    };
+        }
+      }));
+    }
+  };
 
-    // Remove item from array sections
-   const removeItem = (section, index) => {
-  setProfile(prev => {
-    const updatedSection = [...prev[section]];
-    updatedSection[index] = null; // mark as deleted
-    return {
-      ...prev,
-      [section]: updatedSection
-    };
-  });
-};
+  // Remove item from array sections
+  const removeItem = (section, index) => {
+    if (section === 'education.phd' || section === 'education.postdoc') {
+      const [parent, child] = section.split('.');
+      setProfile(prev => {
+        const updatedArray = [...prev[parent][child]];
+        updatedArray[index] = null;
+        return {
+          ...prev,
+          [parent]: {
+            ...prev[parent],
+            [child]: updatedArray
+          }
+        };
+      });
+    } else {
+      setProfile(prev => {
+        const updatedSection = [...prev[section]];
+        updatedSection[index] = null;
+        return {
+          ...prev,
+          [section]: updatedSection
+        };
+      });
+    }
+  };
 
   const restoreItem = (section, index) => {
-  setProfile(prev => {
-    const updatedSection = [...prev[section]];
-
-    // Always restore from initialProfile
-    updatedSection[index] = initialProfile[section][index];
-
-    return {
-      ...prev,
-      [section]: updatedSection
-    };
-  });
-};
-
-
-    // Handle saving the profile
-const handleSave = () => {
-  const diff = [];
-
-  // Compare profile section
-  Object.keys(profile.profile).forEach(field => {
-    if (profile.profile[field] !== initialProfile.profile[field]) {
-      diff.push({
-        section: 'profile',
-        field,
-        oldValue: initialProfile.profile[field],
-        newValue: profile.profile[field],
-      });
-    }
-  });
-
-  // Compare personalInfo section
-  Object.keys(profile.personalInfo).forEach(field => {
-    if (profile.personalInfo[field] !== initialProfile.personalInfo[field]) {
-      diff.push({
-        section: 'personalInfo',
-        field,
-        oldValue: initialProfile.personalInfo[field],
-        newValue: profile.personalInfo[field],
-      });
-    }
-  });
-
-  // Array sections
-  const arraySections = [
-    'education',
-    'professionalExperience',
-    'adminServiceThis',
-    'adminServiceOther',
-  ];
-
-  arraySections.forEach(section => {
-    const original = initialProfile[section] || [];
-    const current = profile[section];
-
-    // Only compare based on CURRENT list (this avoids duplication)
-    current.forEach((item, index) => {
-      const originalItem = original[index];
-
-      if (item === null) {
-        diff.push({
-          section,
-          index,
-          action: 'removed',
-          oldValue: originalItem,
-        });
-      } 
-      else if (originalItem === undefined) {
-        diff.push({
-          section,
-          index,
-          action: 'added',
-          newValue: item,
-        });
-      }
-      else if (typeof item === 'string') {
-        if (item !== originalItem) {
-          diff.push({
-            section,
-            index,
-            action: 'updated',
-            oldValue: originalItem,
-            newValue: item,
-          });
-        }
-      } 
-      else {
-        Object.keys(item).forEach(field => {
-          if (item[field] !== (originalItem[field] || '')) {
-            diff.push({
-              section,
-              index,
-              field,
-              action: 'updated',
-              oldValue: originalItem[field],
-              newValue: item[field],
-            });
+    if (section === 'education.phd' || section === 'education.postdoc') {
+      const [parent, child] = section.split('.');
+      setProfile(prev => {
+        const updatedArray = [...prev[parent][child]];
+        updatedArray[index] = initialProfile[parent][child][index];
+        return {
+          ...prev,
+          [parent]: {
+            ...prev[parent],
+            [child]: updatedArray
           }
-        });
+        };
+      });
+    } else {
+      setProfile(prev => {
+        const updatedSection = [...prev[section]];
+        updatedSection[index] = initialProfile[section][index];
+        return {
+          ...prev,
+          [section]: updatedSection
+        };
+      });
+    }
+  };
+
+  const handleSave = () => {
+    const diff = {};
+    const changedSections = new Set();
+
+    // Compare personalData section
+    const personalDataChanges = {};
+    Object.keys(profile.personalData).forEach(field => {
+      if (profile.personalData[field] !== initialProfile.personalData[field]) {
+        personalDataChanges[field] = profile.personalData[field];
+        changedSections.add('personalData');
+      }
+    });
+    if (Object.keys(personalDataChanges).length > 0) {
+      diff.personalData = personalDataChanges;
+    }
+
+    // Compare user section
+    const userChanges = {};
+    Object.keys(profile.user).forEach(field => {
+      if (profile.user[field] !== initialProfile.user[field]) {
+        userChanges[field] = profile.user[field];
+        changedSections.add('user');
+      }
+    });
+    if (Object.keys(userChanges).length > 0) {
+      diff.user = userChanges;
+    }
+
+    // Compare education sections
+    const educationChanges = {};
+
+    // Handle flat education objects (tenth, twelth, degree, pg)
+    const educationFlatSections = ['tenth', 'twelth', 'degree', 'pg'];
+    educationFlatSections.forEach(subSection => {
+      const sectionChanges = {};
+      Object.keys(profile.education[subSection]).forEach(field => {
+        if (profile.education[subSection][field] !== initialProfile.education[subSection][field]) {
+          sectionChanges[field] = profile.education[subSection][field];
+          changedSections.add(`education.${subSection}`);
+        }
+      });
+      if (Object.keys(sectionChanges).length > 0) {
+        educationChanges[subSection] = sectionChanges;
       }
     });
 
-    
-  });
+    // Handle array education sections (phd, postdoc)
+    const educationArraySections = ['phd', 'postdoc'];
+    educationArraySections.forEach(subSection => {
+      const currentArray = profile.education[subSection];
+      const originalArray = initialProfile.education[subSection] || [];
 
-  setChanges(diff);
-  console.log("Final Changes:", diff);
+      // Check if arrays are different
+      let hasChanges = false;
 
-    if(confirm("Profile saved successfully!")){
-      navigate('/profile/');
+      if (currentArray.length !== originalArray.length) {
+        hasChanges = true;
+      } else {
+        for (let i = 0; i < currentArray.length; i++) {
+          const currentItem = currentArray[i];
+          const originalItem = originalArray[i];
+
+          if (currentItem === null && originalItem !== null) {
+            hasChanges = true;
+            break;
+          }
+
+          if (currentItem && originalItem) {
+            const allFields = new Set([...Object.keys(currentItem), ...Object.keys(originalItem)]);
+            for (const field of allFields) {
+              if (currentItem[field] !== originalItem[field]) {
+                hasChanges = true;
+                break;
+              }
+            }
+          }
+          if (hasChanges) break;
+        }
+      }
+
+      if (hasChanges) {
+        educationChanges[subSection] = currentArray;
+        changedSections.add(`education.${subSection}`);
+      }
+    });
+
+    if (Object.keys(educationChanges).length > 0) {
+      diff.education = educationChanges;
     }
 
-};
+    // Array sections
+    const arraySections = ['experience', 'administrativeService', 'otherAdministrativeService'];
 
+    arraySections.forEach(section => {
+      const currentArray = profile[section];
+      const originalArray = initialProfile[section] || [];
 
-    // Handle cancel (reset to initial state)
-    const handleCancel = () => {
-      setProfile(initialProfile);
-    };
+      // Check if arrays are different
+      let hasChanges = false;
 
-    // Navigation items
-    const navItems = [
-      { id: 'personalInfo', label: 'Personal Info', icon: User },
-      { id: 'education', label: 'Education', icon: GraduationCap },
-      { id: 'professionalExperience', label: 'Professional Experience', icon: Briefcase },
-      { id: 'adminServiceThis', label: 'Admin Service - This Institute', icon: Users },
-      { id: 'adminServiceOther', label: 'Admin Service - Other Institutes', icon: Users },
-    ];
+      if (currentArray.length !== originalArray.length) {
+        hasChanges = true;
+      } else {
+        for (let i = 0; i < currentArray.length; i++) {
+          const currentItem = currentArray[i];
+          const originalItem = originalArray[i];
 
-    // Render the active section
-    const renderActiveSection = () => {
-      switch (activeSection) {
-        case 'personalInfo':
-          return (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                  <input
-                    type="text"
-                    value={profile.profile.name}
-                    onChange={(e) => handleChange('profile', 'name', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                  <input
-                    type="text"
-                    value={profile.profile.role}
-                    onChange={(e) => handleChange('profile', 'role', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={profile.personalInfo.email}
-                    onChange={(e) => handleChange('personalInfo', 'email', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input
-                    type="tel"
-                    value={profile.personalInfo.phone}
-                    onChange={(e) => handleChange('personalInfo', 'phone', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                  <input
-                    type="text"
-                    value={profile.personalInfo.location}
-                    onChange={(e) => handleChange('personalInfo', 'location', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Joined Date</label>
-                  <input
-                    type="text"
-                    value={profile.personalInfo.joinedDate}
-                    onChange={(e) => handleChange('personalInfo', 'joinedDate', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-              </div>
-            </div>
-          );
-        case 'education':
-          return (
-            <div className="space-y-4">
-              
-              <div className="space-y-4">
-                {profile.education.map((edu, index) => (
-                  edu&&<div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border border-gray-200 rounded-lg">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Degree</label>
-                      <input
-                        type="text"
-                        value={edu.degree}
-                        onChange={(e) => handleArrayChange('education', index, 'degree', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Institution</label>
-                      <input
-                        type="text"
-                        value={edu.institution}
-                        onChange={(e) => handleArrayChange('education', index, 'institution', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      />
-                    </div>
-                    <div className="flex items-end space-x-2">
-                      <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                        <input
-                          type="text"
-                          value={edu.year}
-                          onChange={(e) => handleArrayChange('education', index, 'year', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        />
-                      </div>
-                      <button
-                        onClick={() => restoreItem('education', index)}
-                        className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
-                      >
-                      undo
-                      </button>
-                      <button
-                        onClick={() => removeItem('education', index)}
-                        className="px-3 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 font-semibold  cursor-pointer transition-colors text-sm"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        case 'professionalExperience':
-          return (
-            <div className="space-y-4">
-              
-              <div className="space-y-4">
-                {profile.professionalExperience.map((exp, index) => (
-                  exp&&
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border border-gray-200 rounded-lg">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                      <input
-                        type="text"
-                        value={exp.role}
-                        onChange={(e) => handleArrayChange('professionalExperience', index, 'role', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Institution</label>
-                      <input
-                        type="text"
-                        value={exp.institution}
-                        onChange={(e) => handleArrayChange('professionalExperience', index, 'institution', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      />
-                    </div>
-                    <div className="flex items-end space-x-2">
-                      <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Years</label>
-                        <input
-                          type="text"
-                          value={exp.years}
-                          onChange={(e) => handleArrayChange('professionalExperience', index, 'years', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        />
-                      </div>
-                      <button
-                        onClick={() => restoreItem('professionalExperience', index)}
-                        className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
-                      >
-                        undo
-                      </button>
-                      <button
-                        onClick={() =>{ 
-                          if(confirm(`Remove professionalExperience of ${exp.role } from ${exp.institution}?`))
-                          removeItem('professionalExperience', index)
-                        }}
-                        className="px-3 py-2 bg-gray-400 font-semibold text-white rounded-lg hover:bg-gray-500 cursor-pointer transition-colors text-sm"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        case 'adminServiceThis':
-          return (
-            <div className="space-y-4">
-              
-              <div className="space-y-3">
-                {profile.adminServiceThis.map((service, index) => (
-                  service&&
-                  <div key={index} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
-                    <input
-                      type="text"
-                      value={service}
-                      onChange={(e) => {
-                        const updated = [...profile.adminServiceThis];
-                        updated[index] = e.target.value;
-                        setProfile(prev => ({ ...prev, adminServiceThis: updated }));
-                      }}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    />
-                    <button
-                      onClick={() => restoreItem('adminServiceThis', index)}
-                      className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
-                    >
-                      undo
-                    </button>
-                    <button
-                      onClick={() =>{ 
-                          if(confirm(`Remove Administrative Service : "${service} "?`))
-                             removeItem('adminServiceThis', index)
-                        }
-                      }
-                      className="px-3 py-2 bg-gray-400 font-semibold text-white rounded-lg hover:bg-gray-500 cursor-pointer transition-colors text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        case 'adminServiceOther':
-          return (
-            <div className="space-y-4">
-              
-              <div className="space-y-3">
-                {profile.adminServiceOther.map((service, index) => (
-                  service&&
-                  <div key={index} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
-                    <input
-                      type="text"
-                      value={service}
-                      onChange={(e) => {
-                        const updated = [...profile.adminServiceOther];
-                        updated[index] = e.target.value;
-                        setProfile(prev => ({ ...prev, adminServiceOther: updated }));
-                      }}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    />
-                    <button
-                      onClick={() => restoreItem('adminServiceOther', index)}
-                      className="px-5 py-2 text-sm font-bold text-white bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg shadow-sm"
-                    >
-                      undo
-                    </button>
-                    <button
-                      onClick={() => 
-                        { 
-                          if(confirm(`Remove Administrative Service : "${service} "?`))
-                             removeItem('adminServiceOther', index)
-                        }
-                      }
-                      className="px-3 py-2 bg-gray-400 font-semibold text-white rounded-lg hover:bg-gray-500 transition-colors text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        default:
-          return null;
+          if (currentItem === null && originalItem !== null) {
+            hasChanges = true;
+            break;
+          }
+
+          if (currentItem && originalItem) {
+            const allFields = new Set([...Object.keys(currentItem), ...Object.keys(originalItem)]);
+            for (const field of allFields) {
+              if (currentItem[field] !== originalItem[field]) {
+                hasChanges = true;
+                break;
+              }
+            }
+          }
+          if (hasChanges) break;
+        }
       }
-    };
 
-    return (
-      <div className="flex bg-gray-50 mx-32 mt-10 rounded-xl ">
-        {/* Sidebar */}
-        <div className="w-64 bg-linear-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col items-center  rounded-xl">
-          {/* Logo */}
-          <div className="p-6 border-b border-gray-200">
-            <img src="../images/Profile2.avif" alt="Profile Picture"  className='  rounded-full h-38'/>
+      if (hasChanges) {
+        diff[section] = currentArray;
+        changedSections.add(section);
+      }
+    });
+
+    // Log detailed changes for debugging
+    console.log("Changed sections:", Array.from(changedSections));
+    console.log("Changes to send:", diff);
+
+    // Prepare final payload with only changed data
+    const payload = {};
+    if (diff.personalData) payload.personalData = diff.personalData;
+    if (diff.user) payload.user = diff.user;
+    if (diff.education) payload.education = diff.education;
+    if (diff.experience) payload.experience = diff.experience;
+    if (diff.administrativeService) payload.administrativeService = diff.administrativeService;
+    if (diff.otherAdministrativeService) payload.otherAdministrativeService = diff.otherAdministrativeService;
+
+    // Add profileId if needed
+    if (profileId) {
+      payload.id = profileId;
+    }
+
+    console.log("Final payload to send:", payload);
+
+    if (Object.keys(payload).length === 0) {
+      alert("No changes detected!");
+      return;
+    }
+
+    if (confirm("Save changes?")) {
+      setIsSaving(true);
+
+      // Here you would typically make an API call to save the changes
+      // Example:
+      // try {
+      //   const response = await fetch(`/api/profiles/${profileId}`, {
+      //     method: 'PATCH',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify(payload)
+      //   });
+      //   
+      //   if (response.ok) {
+      //     alert("Profile saved successfully!");
+      //     navigate('/profile/');
+      //   } else {
+      //     throw new Error('Failed to save');
+      //   }
+      // } catch (error) {
+      //   alert("Failed to save changes: " + error.message);
+      // } finally {
+      //   setIsSaving(false);
+      // }
+
+      // For now, just show alert and navigate
+      setTimeout(() => {
+        setIsSaving(false);
+        alert("Profile saved successfully!");
+        navigate(`/profile/${profileId}`);
+      }, 1000);
+    }
+  };
+  // Handle cancel (reset to initial state)
+  const handleCancel = () => {
+    setProfile(initialProfile);
+  };
+
+  // Navigation items
+  const navItems = [
+    { id: 'personalData', label: 'Personal Data', icon: User },
+    { id: 'education.tenth', label: '10th Grade', icon: GraduationCap },
+    { id: 'education.twelth', label: 'Intermediate', icon: GraduationCap },
+    { id: 'education.degree', label: 'Under Graduation', icon: GraduationCap },
+    { id: 'education.pg', label: 'Post Graduation', icon: GraduationCap },
+    { id: 'education.phd', label: 'PhD Details', icon: GraduationCap },
+    { id: 'education.postdoc', label: 'Post Doc Details', icon: GraduationCap },
+    { id: 'experience', label: 'Experience', icon: Briefcase },
+    { id: 'administrativeService', label: 'Administrative Service', icon: Users },
+    { id: 'otherAdministrativeService', label: 'Other Administrative Service', icon: Users },
+  ];
+
+  // Render the active section
+  const renderActiveSection = () => {
+    const [mainSection, subSection] = activeSection.split('.');
+
+    switch (mainSection) {
+      case 'personalData':
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.keys(profile.personalData).map((field) => {
+                let value = profile.personalData[field];
+
+                // Format the date for the input field
+                if (field === 'DOB') {
+                  // If it's an ISO date string, convert to YYYY-MM-DD format
+                  if (value && value.includes('T')) {
+                    value = new Date(value).toISOString().split('T')[0];
+                  }
+                }
+                if (field === "avatar") {
+                  value = "Profile-image"
+                }
+
+                return (
+                  <div key={field}>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                      {field.replace(/_/g, ' ')}
+                    </label>
+                    <input
+                      type={field === 'DOB' ? 'date' : 'text'}
+                      value={value}
+                      onChange={(e) => {
+                        let newValue = e.target.value;
+                        // If it's a date field, store it as ISO string
+                        if (field === 'DOB') {
+                          if (newValue) {
+                            newValue = new Date(newValue).toISOString();
+                          }
+                        }
+                        handleChange('personalData', field, newValue);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          {/* Navigation */}
-          <nav className="flex-1 p-6 space-y-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    activeSection === item.id
-                      ? 'text-white bg-purple-500'
-                      : 'text-gray-700 hover:bg-purple-100'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-sm font-medium">{item.label}</span>
+        );
+      case 'education':
+        switch (subSection) {
+          case 'tenth':
+          case 'twelth':
+          case 'degree':
+          case 'pg':
+            const eduData = profile.education[subSection];
+            return (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.keys(eduData).map((field) => (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                        {field}
+                      </label>
+                      <input
+                        type="text"
+                        value={eduData[field]}
+                        onChange={(e) => handleChange(`education.${subSection}`, field, e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      />
+                    </div>
+                  ))}
                 </div>
-              );
-            })}
-          </nav>
+              </div>
+            );
+
+          case 'phd':
+          case 'postdoc':
+            return (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Add {subSection === 'phd' ? 'PhD' : 'Post Doc'} Details</h3>
+                  <button
+                    onClick={() => addNewItem(`education.${subSection}`)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                  >
+                    Add New
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {profile.education[subSection].map((item, index) => (
+                    item && (
+                      <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+                        {Object.keys(item).map((field) => (
+                          !(field === "_id") &&
+                          <div key={field}>
+                            <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                              {field.replace(/_/g, ' ')}
+                            </label>
+                            <input
+                              type="text"
+                              value={item[field]}
+                              onChange={(e) => handleNestedArrayChange('education', subSection, index, field, e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                            />
+                          </div>
+                        ))}
+                        <div className="col-span-2 flex justify-end space-x-2">
+                          <button
+                            onClick={() => restoreItem(`education.${subSection}`, index)}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          >
+                            Undo
+                          </button>
+                          <button
+                            onClick={() => removeItem(`education.${subSection}`, index)}
+                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </div>
+              </div>
+            );
+
+          default:
+            return null;
+        }
+
+      case 'experience':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Professional Experience</h3>
+              <button
+                onClick={() => addNewItem('experience')}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Add New
+              </button>
+            </div>
+            <div className="space-y-4">
+              {profile.experience.map((exp, index) => (
+                exp && (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+                    {Object.keys(exp).map((field) => (
+                      !(field === "_id") &&
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                          {field}
+                        </label>
+                        <input
+                          type="text"
+                          value={exp[field]}
+                          onChange={(e) => handleArrayChange('experience', index, field, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        />
+                      </div>
+                    ))}
+                    <div className="col-span-2 flex justify-end space-x-2">
+                      <button
+                        onClick={() => restoreItem('experience', index)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        Undo
+                      </button>
+                      <button
+                        onClick={() => removeItem('experience', index)}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                )
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'administrativeService':
+      case 'otherAdministrativeService':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">
+                {mainSection === 'administrativeService' ? 'Administrative Service' : 'Other Administrative Service'}
+              </h3>
+              <button
+                onClick={() => addNewItem(mainSection)}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Add New
+              </button>
+            </div>
+            <div className="space-y-4">
+              {profile[mainSection].map((item, index) => (
+                item && (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+                    {Object.keys(item).map((field) => (
+                      !(field === "_id") &&
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                          {field}
+                        </label>
+                        <input
+                          type="text"
+                          value={item[field]}
+                          onChange={(e) => handleArrayChange(mainSection, index, field, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        />
+                      </div>
+                    ))}
+                    <div className="col-span-2 flex justify-end space-x-2">
+                      <button
+                        onClick={() => restoreItem(mainSection, index)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        Undo
+                      </button>
+                      <button
+                        onClick={() => removeItem(mainSection, index)}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                )
+              ))}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="flex bg-gray-50 mx-32 mt-10 rounded-xl">
+      {/* Sidebar */}
+      <div className="w-64 bg-linear-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col items-center rounded-xl">
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-200">
+          <img src={`${imageurl}/uploads/profiles/${profile.personalData.avatar}`} alt="Profile Picture" className="rounded-full h-38" />
+        </div>
+        {/* Navigation */}
+        <nav className="flex-1 p-6 space-y-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={`flex items-center space-x-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${activeSection === item.id
+                  ? 'text-white bg-purple-500'
+                  : 'text-gray-700 hover:bg-purple-100'
+                  }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-sm font-medium">{item.label}</span>
+              </div>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex-col items-center">
+        {/* Header */}
+        <div className="text-center mt-6 p-6">
+          <h1 className="text-3xl font-bold font-serif text-gray-900">Edit Profile</h1>
         </div>
 
-        
-        {/* Main Content */}
-        <div className="flex-1 flex-col items-center ">
-          {/* Header */}
-          <div className=" text-center mt-6 p-6">
-                <h1 className="text-3xl font-bold font-serif text-gray-900">Edit Profile</h1>
-
+        {/* Profile Section */}
+        <div className="p-4">
+          {/* Active Section Content */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              {navItems.find(item => item.id === activeSection)?.label || 'Edit Section'}
+            </h2>
+            {renderActiveSection()}
           </div>
 
-          {/* Profile Section */}
-          <div className="p-4 ">
-            {/* Active Section Content */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 capitalize">
-                {activeSection.replace(/([A-Z])/g, ' $1').trim()}
-              </h2>
-              {renderActiveSection()}
-            </div>
-
-            {/* Save Changes Button at Bottom */}
-            <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky bottom-0">
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={handleCancel}
-                  className="px-5 py-2 text-sm font-bold bg-gray-600 text-white  rounded-lg hover:bg-gray-500 shadow-sm flex gap-2 items-center"
-                >
-                  <X className="w-4 h-4"/>
-                  <span>Cancel</span>
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-6 py-2 bg-linear-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 "
-                >
-                  <Save className="w-4 h-4" />
-                  <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
-                </button>
-              </div>
+          {/* Save Changes Button at Bottom */}
+          <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky bottom-0">
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={handleCancel}
+                className="px-5 py-2 text-sm font-bold bg-gray-600 text-white rounded-lg hover:bg-gray-500 shadow-sm flex gap-2 items-center"
+              >
+                <X className="w-4 h-4" />
+                <span>Cancel</span>
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="px-6 py-2 bg-linear-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                <Save className="w-4 h-4" />
+                <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default EditProfilePage;
+export default EditProfilePage;

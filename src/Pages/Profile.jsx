@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Personal } from "../core/Personal"
-import {API} from"../backend"
+import { API } from "../backend"
 import {
   Mail,
   Phone,
@@ -18,7 +18,7 @@ import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
 export default function ProfilePage() {
   const { profileId } = useParams()
-  const imageurl=API.replace("/api","")
+  const imageurl = API.replace("/api", "")
   const navigate = useNavigate()
   const [newObj, setnewobj] = useState(
 
@@ -35,7 +35,7 @@ export default function ProfilePage() {
         "college": "University College of Engineering",
         "date_of_join": "15-09-2011",
         "phone": "1234567890",
-        "location": ""
+        "location": "buffalo ,New york"
       },
       "user": {
         "password": "Phani@123",
@@ -57,15 +57,15 @@ export default function ProfilePage() {
           "year": "2013"
         },
         "degree":
-          {
-            "title": "Under Graduation",
-            "degreeName": "B.Tech",
-            "specialization": "Computer Science",
-            "percentage": "",
-            "college": "JNTUGV,CEV",
-            "university": "JNTUGV",
-            "year": "2017"
-          },
+        {
+          "title": "Under Graduation",
+          "degreeName": "B.Tech",
+          "specialization": "Computer Science",
+          "percentage": "",
+          "college": "JNTUGV,CEV",
+          "university": "JNTUGV",
+          "year": "2017"
+        },
         "pg": {
           "title": "Post Graduation",
           "course": "M.Tech",
@@ -84,7 +84,14 @@ export default function ProfilePage() {
             "year": "2021"
           }
         ],
-        "postdoc": []
+        "postdoc": [
+          {
+            "University": "MIT",
+            "specialization":"Neural Networks",
+            "under_the_proffessor":"Dr. John Doe",
+            "year":2020
+          }
+        ]
       },
       "experience": [
         {
@@ -128,19 +135,19 @@ export default function ProfilePage() {
       ]
     }
   )
-  
- useEffect(() => {
-  const loadProfile = async () => {
-    try {
-      const data = await Personal(profileId);  
-      if (data) setnewobj(data);
-    } catch (error) {
-      console.log("Fetch error:", error);
-    }
-  };
-  loadProfile();
-}, []);
-  const viewer = newObj.role==="user"?"user":"anyone"
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await Personal(profileId);
+        if (data) setnewobj(data);
+      } catch (error) {
+        console.log("Fetch error:", error);
+      }
+    };
+    loadProfile();
+  }, []);
+  const viewer = newObj.role === "user" ? "user" : "anyone"
 
   // Static Profile Data
 
@@ -156,7 +163,7 @@ export default function ProfilePage() {
       {children}
     </div>
   );
-   const handlePrint = async () => {
+  const handlePrint = async () => {
     try {
       const doc = await PDFDocument.create();
       let page = doc.addPage([595, 842]); // A4
@@ -432,7 +439,7 @@ export default function ProfilePage() {
 
                       {/* Edit Button */}
                       <button
-                        onClick={() => navigate('/ea')}
+                        onClick={() => navigate(`/ea/${profileId}`)}
                         className="relative group cursor-pointer">
                         <SquarePen />
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
@@ -443,9 +450,9 @@ export default function ProfilePage() {
                       </button>
 
                       {/* Print Button */}
-                      <button 
-                      onClick={handlePrint}
-                      className="relative group cursor-pointer">
+                      <button
+                        onClick={handlePrint}
+                        className="relative group cursor-pointer">
                         <Printer />
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
                      bg-gray-800 text-white text-sm px-2 py-1 rounded opacity-0 
@@ -572,20 +579,20 @@ export default function ProfilePage() {
                   }
                   {
                     viewer === "user" &&
-  
-                      <div
-                        className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
-                      >
-                        <div className="flex-1">
-                          <p className="font-semibold text-gray-800">
-                            { newObj.education.degree.degreeName} in { newObj.education.degree.specialization}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            { newObj.education.degree.college} • { newObj.education.degree.year}
-                          </p>
-                        </div>
+
+                    <div
+                      className="flex items-start gap-2 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">
+                          {newObj.education.degree.degreeName} in {newObj.education.degree.specialization}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {newObj.education.degree.college} • {newObj.education.degree.year}
+                        </p>
                       </div>
-                    }
+                    </div>
+                  }
                 </div>
               </Section>
 

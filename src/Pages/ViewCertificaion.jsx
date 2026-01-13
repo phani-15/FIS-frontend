@@ -76,7 +76,7 @@ const normalizeBackendData = (backendData) => {
       // Map backend keys (lowercase_with_underscores) to expected field names (Space Separated)
       Object.entries(item).forEach(([backendKey, value]) => {
         // Skip file/document fields if they're not in the expected fields
-        if (backendKey.includes('certificate') || backendKey.includes('Certificate') || backendKey.includes('document') || backendKey.includes('Document') || backendKey.includes('Order') || backendKey.includes('Proceeding')) {
+        if (backendKey.includes('certificate') || backendKey.includes('Certificate') || backendKey.includes('document') || backendKey.includes('Document') || backendKey.includes('Order') || backendKey.includes('Proceeding') || backendKey.includes('sanctioning_order') || backendKey.includes("allotment_order")) {
           normalizedItem[backendKey] = value;
           return;
         }
@@ -103,10 +103,8 @@ const normalizeBackendData = (backendData) => {
 
       return normalizedItem;
     });
-
     normalizedData[normalizedSection] = normalizedItems;
-  });
-
+  })
   return normalizedData;
 };
 // --- Helper: Add IDs to initial data ---
@@ -128,8 +126,8 @@ const normalizeSectionKey = (section) => {
 };
 
 // --- Helper: Format label ---
-const formatFieldLabel = (label,section) => {
-  if (!label || label.includes('certificate') || label.includes('Certificate') || (section!='mtech' && label.includes('Number') && (label.includes('Students') || label.includes('Contents'))) || label.includes('document') || label.includes('Document') || label.includes('Order') || label.includes('Proceeding'))
+const formatFieldLabel = (label, section) => {
+  if (!label || label.includes('certificate') || label.includes('Certificate') || (section != 'mtech' && label.includes('Number') && (label.includes('Students') || label.includes('Contents'))) || label.includes('document') || label.includes('Document') || label.includes('Order') || label.includes('Proceeding'))
     return null;
   return label
     .replace(/_/g, ' ')
@@ -157,7 +155,7 @@ const getTopRelevantFields = (section, item) => {
       }
 
       return {
-        label: formatFieldLabel(key,section),
+        label: formatFieldLabel(key, section),
         value: value || '--',
       };
     })
@@ -193,7 +191,6 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
   const titleField = getModalTitle(item);
   const normalizedKey = normalizeSectionKey(sectionKey);
   const allKeys = fields[normalizedKey] || Object.keys(item);
-
   const fieldsToEdit = allKeys
     .filter(key => !['id'].includes(key))
     .map(key => ({
@@ -202,7 +199,6 @@ const EditModal = ({ item, sectionKey, onClose, onSave, onInputChange }) => {
       value: item[key] ?? '',
     }))
     .filter(f => f.label);
-
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
       <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl">
@@ -322,7 +318,7 @@ const ReportDownloadModal = ({ isOpen, onClose, certificationsData, fields }) =>
 
       const items = certificationsData[section];
       let selectedFields = config.selectedFields.filter(f =>
-        !(f.includes('certificate') || f.includes('Certificate') || (section!='mtech' && f.includes('Number') && (f.includes('Moocs') || f.includes('Contents') || f.includes('Students'))) || f.includes('document') || f.includes('Document') || f.includes('Order') || f.includes('Proceeding'))
+        !(f.includes('certificate') || f.includes('Certificate') || (section != 'mtech' && f.includes('Number') && (f.includes('Moocs') || f.includes('Contents') || f.includes('Students'))) || f.includes('document') || f.includes('Document') || f.includes('Order') || f.includes('Proceeding'))
       );
 
       if (selectedFields.length === 0) return;
@@ -526,6 +522,11 @@ const ViewCertificaion = () => {
   const handleSave = () => {
     if (!itemToEdit || !sectionKey) return closeModal();
 
+    console.log(certificationsData);
+    console.log("itemstoEdit : ", itemToEdit);
+    console.log("sectinKeys  : ", sectionKey);
+
+    //here that we need to add hte constraint of making edits direclty within 7 days
     setCertificationsData((prev) => ({
       ...prev,
       [sectionKey]: prev[sectionKey].map((item) =>
@@ -569,7 +570,7 @@ const ViewCertificaion = () => {
     const isExpanded = expandedItems[`${section}-${item.id}`];
     const topFields = getTopRelevantFields(section, item);
     const allFields = getAllFields(item, section);
-    const hasDoc = item.document || item.certificate || item.Proceeding || item.Document || item.Certificate || item.sanctioning_order || item.utilization_certificate_of_final_year;
+    const hasDoc = item.document || item.certificate || item.Proceeding || item.Document || item.certificate || item.sanctioning_order || item.utilization_certificate_of_final_year || item.allotment_order;
     return (
       <div
         key={item.id}
@@ -603,7 +604,7 @@ const ViewCertificaion = () => {
               </button>
               {(hasDoc && viewer !== "admin") && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
-                  onClick={() => viewDocument(item.document || item.Certificate || item.Document || item.Proceeding || item.Sanctioning_Order || item.Utilization_Certificate_Of_Final_Year)}
+                  onClick={() => viewDocument(item.document || item.certificate || item.Document || item.Proceeding || item.sanctioning_order || item.utilization_certificate_final_year || item.allotment_order)}
                 >
                   View Document
                 </button>
