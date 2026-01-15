@@ -1,48 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, Eye, Check, X, ChevronDown, ChevronUp, Plus } from 'lucide-react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import {toast,ToastContainer} from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import { getRequests, acceptRequest, rejectRequest, AdminDashboard, addfaculty } from "../core/admin";
+import { isAuthenticated } from "../core/auth";
 
-// --- Data Structure Mocks (Kept the same for functionality) ---
-const mockRequests = [
-  {
-    id: 'req_001',
-    user: { name: 'P. Srinivas', email: 'srinivas.jntugv@univ.edu' },
-    isPending: true,
-    originalProfile: {
-      personalData: { name: 'P.Srinivas', designation: 'Professor', department: 'cse' },
-      loginData: { email: 'srinivas.jntugv@univ.edu', phone: '1234567890' },
-    },
-    updatedFields: {
-      personalData: { designation: 'Senior Professor', department: 'Computer Science and Engineering' },
-      loginData: { phone: '0987654321' },
-    },
-  },
-  {
-    id: 'req_002',
-    user: { name: 'Dr. Albert', email: 'albert.dr@univ.edu' },
-    isPending: true,
-    originalProfile: {
-      education: {
-        tenth: { board: 'State Board', year: '2010', percentage: '85%' },
-        pg: { title: 'Post Graduation', course: 'M.Tech', year: '2020' }
-      },
-      experience: [
-        { institute: 'Old College', designation: 'assistant', from: 2020, to: 2023 }
-      ],
-    },
-    updatedFields: {
-      education: {
-        tenth: { board: 'State Board', year: '2011', percentage: '85%' },
-        pg: { title: 'Post Graduation', course: 'M.Tech', year: '2022' }
-      },
-      experience: [
-        { institute: 'New College', designation: 'lecturer', from: 2024, to: 'Present' }
-      ],
-    },
-  },
-];
-
-// --- Utility Function: Deep Diffing for Display ---
 const getDiff = (original, updates) => {
   const diff = {};
   for (const key in updates) {
@@ -61,58 +24,69 @@ const getDiff = (original, updates) => {
   return diff;
 };
 
-// --- Utility Function: Get nested field differences ---
-const getNestedDiff = (originalObj, updatedObj) => {
-  const changes = [];
-
-  if (!originalObj && updatedObj) {
-    // Completely new field
-    return { isNew: true, data: updatedObj };
-  }
-
-  if (originalObj && updatedObj) {
-    // Check for changes in nested properties
-    const allKeys = new Set([...Object.keys(originalObj), ...Object.keys(updatedObj)]);
-
-    allKeys.forEach(key => {
-      if (JSON.stringify(originalObj[key]) !== JSON.stringify(updatedObj[key])) {
-        changes.push({
-          field: key,
-          original: originalObj[key],
-          new: updatedObj[key]
-        });
-      }
-    });
-  }
-
-  return { isNew: false, changes, originalData: originalObj, newData: updatedObj };
-};
-
 // --- ProfileUpdateRequests Component ---
 const ProfileUpdateRequests = () => {
-  const [requests, setRequests] = useState(mockRequests);
+  const [requests, setRequests] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentRequest, setCurrentRequest] = useState(null);
   const [isPendingExpanded, setIsPendingExpanded] = useState(true);
   const [expandedPreviousData, setExpandedPreviousData] = useState({});
 
+  const { admin } = isAuthenticated();
+
+  const loadRequests = () => {
+    if (admin && admin._id) {
+      getRequests(admin._id).then(data => {
+        console.log(data);
+        if (data && !data.error) {
+          const formatted = data.map(r => ({
+            id: r._id,
+            user: {
+              name: r.personal?.personalData?.name || "Unknown",
+              email: r.user?.email || "No Email"
+            },
+            isPending: r.isPending,
+            originalProfile: r.originalProfile,
+            updatedFields: r.updatedFields
+          }));
+          setRequests(formatted);
+        } else {
+          console.log("Error loading requests");
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
   const handleAccept = (id) => {
-    console.log(`ACCEPTING request ${id}. Sending update to DB...`);
-    setRequests(requests.filter(req => req.id !== id));
-    setShowModal(false);
+    acceptRequest(currentUser._id, token, id).then(data => {
+      if (data && !data.error) {
+
+        loadRequests(); // Reload
+        setShowModal(false);
+      } else {
+        console.error("Failed to accept");
+      }
+    });
   };
 
   const handleReject = (id) => {
-    console.log(`REJECTING request ${id}. Removing request...`);
-    setRequests(requests.filter(req => req.id !== id));
-    setShowModal(false);
+    rejectRequest(currentUser._id, token, id).then(data => {
+      if (data && !data.error) {
+        console.log("Request Rejected");
+        loadRequests(); // Reload
+        setShowModal(false);
+      } else {
+        console.error("Failed to reject");
+      }
+    });
   };
 
   const handleShowUpdates = (request) => {
-    // Create a merged diff that includes both original and updated data
     const diff = {};
-
-    // Get all sections from both original and updated
     const allSections = new Set([
       ...Object.keys(request.originalProfile || {}),
       ...Object.keys(request.updatedFields || {})
@@ -121,8 +95,6 @@ const ProfileUpdateRequests = () => {
     allSections.forEach(section => {
       const originalSection = request.originalProfile[section] || {};
       const updatedSection = request.updatedFields[section] || {};
-
-      // Get all fields in this section
       const allFields = new Set([
         ...Object.keys(originalSection),
         ...Object.keys(updatedSection)
@@ -458,7 +430,7 @@ const ProfileUpdateRequests = () => {
 };
 
 export default function Admin() {
-  // --- Existing state ---
+  const { adminId } = useParams()
   const [filters, setFilters] = useState({
     department: "All",
     role: "All",
@@ -467,36 +439,39 @@ export default function Admin() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  // --- NEW: Add Faculty Modal State ---
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: ''
   });
+  const [facultyList, setfacultyList] = useState([
+    {
+      name: "Dr. John Doe",
+      department: "Computer Science and Engineering",
+      role: "Professor"
+    }
+  ])
   const [errors, setErrors] = useState({});
-
-  // --- Validation Function ---
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -505,26 +480,24 @@ export default function Admin() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Here you would typically send data to your backend
-      console.log('Adding new faculty:', formData);
-      
-      // Reset form and close modal
-      setFormData({ email: '', password: '', confirmPassword: '' });
-      setErrors({});
-      setIsAddModalOpen(false);
-      
-      // Show success message (optional)
-      alert('Faculty added successfully!');
+      try {
+        const res = await addfaculty({email:formData.email,password:formData.password})
+        if (res.msg) {
+          setFormData({ email: '', password: '', confirmPassword: '' });
+          setErrors({});
+          setIsAddModalOpen(false);
+          toast.success("Faculty registering mail was sent !")
+        }
+      } catch (error) {
+        toast.error(`${error}`)
+      }
     }
   };
 
@@ -542,10 +515,13 @@ export default function Admin() {
     "MBA"
   ];
 
-  const facultyList = [
-    { name: "Dr. John Doe", department: "Computer Science and Engineering", role: "Professor" },
-  ];
-
+  useEffect(() => {
+    async function getFaculty() {
+      const data = await AdminDashboard(adminId)
+      setfacultyList(data)
+    }
+    getFaculty();
+  }, [adminId])
   // --- Filtering Logic ---
   const filteredFaculty = facultyList.filter((f) => {
     const matchesDept = filters.department === "All" || f.department === filters.department;
@@ -553,7 +529,6 @@ export default function Admin() {
     const matchesSearch = f.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
     return matchesDept && matchesRole && matchesSearch;
   });
-
   const totalPages = Math.ceil(filteredFaculty.length / itemsPerPage);
   const paginatedFaculty = filteredFaculty.slice(
     (currentPage - 1) * itemsPerPage,
@@ -568,24 +543,18 @@ export default function Admin() {
     );
   };
 
-  // --- Navigation ---
-  const navigate = useNavigate();
-  const handleViewClick = () => {
-    navigate('/profile');
-  };
-
   return (
     <div className="p-1 lg:p-8">
       <div className="max-w-7xl mx-2 lg:mx-auto">
         <h1 className="lg:text-4xl text-2xl font-semibold font-serif mb-6 text-center text-purple-800 tracking-wide drop-shadow">
           ADMIN PANEL
         </h1>
-        
+
         {ProfileUpdateRequests()}
-        
+
         {/* Add Faculty Button */}
         <div className="flex justify-end my-2 px-2 py-1">
-          <button 
+          <button
             onClick={() => setIsAddModalOpen(true)}
             className="px-2 py-1 lg:text-lg rounded-md cursor-pointer text-white font-semibold bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700 flex items-center gap-1"
           >
@@ -664,7 +633,6 @@ export default function Admin() {
                   <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Name</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Department</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-white uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -684,17 +652,6 @@ export default function Admin() {
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                           {f.role}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={handleViewClick}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition shadow-sm"
-                          >
-                            <User size={14} />
-                            View
-                          </button>
-                        </div>
                       </td>
                     </tr>
                   ))
@@ -773,9 +730,8 @@ export default function Admin() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full border ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
-                  } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
+                  className={`w-full border ${errors.email ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
                   placeholder="faculty@univ.edu"
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -790,9 +746,8 @@ export default function Admin() {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`w-full border ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
-                  } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
+                  className={`w-full border ${errors.password ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
                   placeholder="At least 8 characters"
                 />
                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
@@ -807,9 +762,8 @@ export default function Admin() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className={`w-full border ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                  } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
+                  className={`w-full border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg px-4 py-2.5 bg-gray-50 shadow-sm focus:ring-0 focus:border-gray-400 outline-none transition`}
                   placeholder="Re-enter password"
                 />
                 {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
@@ -834,6 +788,8 @@ export default function Admin() {
           </div>
         </div>
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
+    
   );
 }

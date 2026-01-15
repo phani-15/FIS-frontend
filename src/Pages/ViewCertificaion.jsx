@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { X, SquarePen, Download } from 'lucide-react';
 import { names, map } from '../assets/CertificationData';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { fields } from '../assets/Data';
 import { useParams, useNavigate } from "react-router-dom"
 import { getDetails } from "../core/addDetails"
+import { addUpdateRequest } from "../core/Personal";
 import { API } from '../backend';
 import { ArrowLeft } from 'lucide-react'
 
@@ -477,18 +480,15 @@ const ViewCertificaion = () => {
       try {
         const backendData = await getDetails(userId, credId);
         setviewer(backendData.role)
-        // Normalize the backend data
+        console.log(backendData);
         const normalizedData = normalizeBackendData(backendData);
         setinitialData(normalizedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
     getfunction();
   }, [userId, credId]);
-
-  // Update certificationsData when initialData changes
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       setCertificationsData(addIdsToData(initialData));
@@ -519,21 +519,51 @@ const ViewCertificaion = () => {
     setItemToEdit((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!itemToEdit || !sectionKey) return closeModal();
+    try {
+      const index = parseInt(itemToEdit.id.split('-').pop(), 10);
+      const denormalizedItem = {};
+      Object.entries(itemToEdit).forEach(([key, value]) => {
+        if (key === 'id') return; // Skip ID
+        const normalizedKey = key.toLowerCase().replace(/\s+/g, '_');
+        denormalizedItem[normalizedKey] = value;
+      });
+      const payload = {
+        updatedFields: {
+          [sectionKey]: [{
+            ...denormalizedItem,
+            _operation: 'edit',
+            _index: index
+          }]
+        },
+        fields: [sectionKey],
+        subfields: {
+          [sectionKey]: [index]
+        }
+      };
+      const response = await addUpdateRequest(userId, payload);
 
-    console.log(certificationsData);
-    console.log("itemstoEdit : ", itemToEdit);
-    console.log("sectinKeys  : ", sectionKey);
-
-    //here that we need to add hte constraint of making edits direclty within 7 days
-    setCertificationsData((prev) => ({
-      ...prev,
-      [sectionKey]: prev[sectionKey].map((item) =>
-        item.id === itemToEdit.id ? itemToEdit : item
-      ),
-    }));
-    closeModal();
+      if (response && response.success) {
+        if (response.method === 'direct_update') {
+          toast.success("Profile Updated Successfully!");
+          setCertificationsData((prev) => ({
+            ...prev,
+            [sectionKey]: prev[sectionKey].map((item) =>
+              item.id === itemToEdit.id ? itemToEdit : item
+            ),
+          }));
+        } else {
+          toast.info("Update Request Sent for Admin Approval");
+        }
+        closeModal();
+      } else {
+        toast.error(response?.error || "Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Failed to save changes:", error);
+      toast.error("An error occurred while saving changes.");
+    }
   };
 
   const toggleExpanded = (section, id) => {
@@ -704,6 +734,7 @@ const ViewCertificaion = () => {
           fields={fields}
         />
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
