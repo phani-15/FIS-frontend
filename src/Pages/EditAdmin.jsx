@@ -803,7 +803,7 @@ const EditProfilePage = () => {
                         }
                         handleChange('personalData', field, newValue);
                       }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                     />
                   </div>
                 );
@@ -842,8 +842,7 @@ const EditProfilePage = () => {
           case 'postdoc':
             return (
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Add {subSection === 'phd' ? 'PhD' : 'Post Doc'} Details</h3>
+                <div className="flex justify-end items-center">
                   <button
                     onClick={() => addNewItem(`education.${subSection}`)}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
@@ -865,7 +864,7 @@ const EditProfilePage = () => {
                               type="text"
                               value={item[field]}
                               onChange={(e) => handleNestedArrayChange('education', subSection, index, field, e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                             />
                           </div>
                         ))}
@@ -897,8 +896,7 @@ const EditProfilePage = () => {
       case 'experience':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Professional Experience</h3>
+            <div className="flex justify-end items-center">
               <button
                 onClick={() => addNewItem('experience')}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
@@ -920,7 +918,7 @@ const EditProfilePage = () => {
                           type="text"
                           value={exp[field]}
                           onChange={(e) => handleArrayChange('experience', index, field, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                         />
                       </div>
                     ))}
@@ -949,10 +947,7 @@ const EditProfilePage = () => {
       case 'otherAdministrativeService':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">
-                {mainSection === 'administrativeService' ? 'Administrative Service' : 'Other Administrative Service'}
-              </h3>
+            <div className="flex justify-end items-center">
               <button
                 onClick={() => addNewItem(mainSection)}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
@@ -974,7 +969,7 @@ const EditProfilePage = () => {
                           type="text"
                           value={item[field]}
                           onChange={(e) => handleArrayChange(mainSection, index, field, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                         />
                       </div>
                     ))}
@@ -1063,7 +1058,7 @@ const EditProfilePage = () => {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="px-6 py-2 bg-linear-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="px-6 py-2 bg-linear-to-r cursor-pointer from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 <Save className="w-4 h-4" />
                 <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>

@@ -319,7 +319,7 @@ export default function HODDashBoard() {
         <div className="flex justify-start pr-2 mt-10 md:pr-0">
           <button
             onClick={() => setShowExtractModal(true)}
-            className="flex items-center gap-2 px-4 py-2 font-bold text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            className="flex items-center gap-2 px-4 py-2 font-bold text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 transition-all duration-300 transform"
           >
             <FileText size={20} />
             Extract Reports
