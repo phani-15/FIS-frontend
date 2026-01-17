@@ -29,39 +29,7 @@ export default function IQACDashboard() {
       role: "Associate Professor",
       email: "jane.smith@yourcollege.edu"
     },])
-  const [certifications, setCertifications] = useState([
-    {
-      name: "Dr. Aarti Rao",
-      role: "Professor",
-      dept: "Computer Science and Engineering",
-      data: {
-        patents: [
-          {
-            "Patent Number": "IN2021A000101",
-            "Title of the Patent": "Neural Compression for Edge Devices",
-            "Published/Granted": "Granted",
-            "Year of Published/Granted": "2021",
-            "Scope": "International",
-            "Document": "aarti_rao_patent.pdf"
-          }
-        ],
-        journal: [
-          {
-            "Title of the Paper": "Efficient Models for On-Device AI",
-            "Name of the Journal": "Journal of Edge AI",
-            "Page Number": "12-25",
-            "Year of Publication": "2021",
-            "Impact Factor": "3.2",
-            "National/International": "International",
-            "ISBN Number": "2345-6789",
-            "Indexing Platform": "Scopus",
-            "H-index": "15",
-            "Document": "aarti_rao_journal.pdf"
-          }
-        ]
-      }
-    },
-  ])
+  const [certifications, setCertifications] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showExtractModal, setShowExtractModal] = useState(false);
@@ -211,20 +179,15 @@ export default function IQACDashboard() {
   };
 
   const getFacultyForDepartmentAndCredentials = (dept, selectedCredTypes) => {
-    // Only process if the department is selected
     if (!selectedDepartments.includes(dept)) {
       return [];
     }
 
-    // Get all faculty from the department
-    const facultyInDept = certifications
-      .filter(faculty => (faculty.dept === dept))
-      .map(faculty => faculty.name);
-    if (selectedCredTypes.length === 0) {
-      return facultyInDept;
-    }
-    // Filter based on having data for selected types
     return certifications
+      .filter(faculty => {
+        if (faculty.dept !== dept) return false;
+        return true
+      })
       .map(faculty => faculty.name);
   };
 
