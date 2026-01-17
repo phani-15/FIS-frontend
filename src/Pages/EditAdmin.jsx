@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { User, GraduationCap, Briefcase, Users, BookOpen, Save, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Personal } from "../core/Personal";
+import { Personal, updatePersonalProfile } from "../core/Personal";
 import { API } from "../backend"
-import { isAuthenticated } from '../core/auth';
+import { departments } from '../assets/Data.jsx';
 
 const EditProfilePage = () => {
   const { profileId } = useParams();
@@ -123,43 +123,30 @@ const EditProfilePage = () => {
     };
     getFunction();
   }, [profileId]);
-  console.log("intial Profile:", initialProfile);
-  console.log(" Profile:", profile);
 
 
-  // Handle input changes for nested objects
+  // Handle input changes for personalData and user sections
   const handleChange = (section, field, value) => {
-    let oldValue;
-
     if (section === 'personalData' || section === 'user') {
-      oldValue = profile[section][field];
       setProfile(prev => ({
         ...prev,
         [section]: { ...prev[section], [field]: value }
       }));
-    } else if (section.startsWith('education.')) {
-      // Handle nested education objects
-      const [eduSection, subSection, fieldName] = section.split('.');
-      oldValue = profile[eduSection][subSection][fieldName];
-      setProfile(prev => ({
-        ...prev,
-        [eduSection]: {
-          ...prev[eduSection],
-          [subSection]: {
-            ...prev[eduSection][subSection],
-            [fieldName]: value
-          }
-        }
-      }));
     }
+  };
 
-    // Record the change
-    if (oldValue !== undefined) {
-      setChanges(prev => [
-        ...prev,
-        { section, field, index: null, oldValue, newValue: value, timestamp: new Date() }
-      ]);
-    }
+  // Separate handler for education object changes (tenth, twelth, degree, pg)
+  const handleEducationChange = (subSection, field, value) => {
+    setProfile(prev => ({
+      ...prev,
+      education: {
+        ...prev.education,
+        [subSection]: {
+          ...prev.education[subSection],
+          [field]: value
+        }
+      }
+    }));
   };
 
   // Handle array field changes (experience, administrativeService, etc.)
@@ -302,158 +289,261 @@ const EditProfilePage = () => {
     }
   };
 
+
   const handleSave = () => {
-    const diff = {};
-    const changedSections = new Set();
+    const updatedFields = {};
+    const fields = [];
+    const subfields = {};
+
+    // Helper function to process array operations
+    const processArraySection = (sectionName, currentArray, originalArray) => {
+      const processedArray = [];
+      const sectionSubfields = [];
+      let hasChanges = false;
+
+      // Track original items by index
+      const originalMap = new Map();
+      (originalArray || []).forEach((item, index) => {
+        if (item && item._id) {
+          originalMap.set(item._id, { item, index });
+        }
+      });
+
+      // Process current array
+      currentArray.forEach((currentItem, currentIndex) => {
+        if (currentItem === null) {
+          // Deleted item
+          const originalItem = originalArray[currentIndex];
+          if (originalItem) {
+            processedArray.push({
+              ...originalItem,
+              _operation: "delete",
+              _index: currentIndex
+            });
+            sectionSubfields.push(`deleted_${currentIndex}`);
+            hasChanges = true;
+          }
+        } else if (currentItem._id) {
+          // Existing item - check if edited
+          const original = originalMap.get(currentItem._id);
+          if (original) {
+            // Compare fields
+            let isEdited = false;
+            Object.keys(currentItem).forEach(key => {
+              if (key !== '_id' && currentItem[key] !== original.item[key]) {
+                isEdited = true;
+              }
+            });
+
+            if (isEdited) {
+              processedArray.push({
+                ...currentItem,
+                _operation: "edit",
+                _index: original.index
+              });
+              sectionSubfields.push(original.index);
+              hasChanges = true;
+            }
+          }
+        } else {
+          // New item
+          processedArray.push({
+            ...currentItem,
+            _operation: "add"
+          });
+          sectionSubfields.push("new");
+          hasChanges = true;
+        }
+      });
+
+      if (hasChanges) {
+        updatedFields[sectionName] = processedArray;
+        fields.push(sectionName);
+        subfields[sectionName] = sectionSubfields;
+      }
+    };
 
     // Compare personalData section
     const personalDataChanges = {};
+    const personalDataSubfields = [];
     Object.keys(profile.personalData).forEach(field => {
       if (profile.personalData[field] !== initialProfile.personalData[field]) {
         personalDataChanges[field] = profile.personalData[field];
-        changedSections.add('personalData');
+        personalDataSubfields.push(field);
       }
     });
     if (Object.keys(personalDataChanges).length > 0) {
-      diff.personalData = personalDataChanges;
+      updatedFields.personalData = personalDataChanges;
+      fields.push('personalData');
+      subfields.personalData = personalDataSubfields;
     }
 
     // Compare user section
     const userChanges = {};
+    const userSubfields = [];
     Object.keys(profile.user).forEach(field => {
       if (profile.user[field] !== initialProfile.user[field]) {
         userChanges[field] = profile.user[field];
-        changedSections.add('user');
+        userSubfields.push(field);
       }
     });
     if (Object.keys(userChanges).length > 0) {
-      diff.user = userChanges;
+      updatedFields.user = userChanges;
+      fields.push('user');
+      subfields.user = userSubfields;
     }
 
     // Compare education sections
     const educationChanges = {};
+    const educationSubfields = [];
 
     // Handle flat education objects (tenth, twelth, degree, pg)
     const educationFlatSections = ['tenth', 'twelth', 'degree', 'pg'];
     educationFlatSections.forEach(subSection => {
       const sectionChanges = {};
+      let hasChanges = false;
       Object.keys(profile.education[subSection]).forEach(field => {
         if (profile.education[subSection][field] !== initialProfile.education[subSection][field]) {
           sectionChanges[field] = profile.education[subSection][field];
-          changedSections.add(`education.${subSection}`);
+          hasChanges = true;
         }
       });
       if (Object.keys(sectionChanges).length > 0) {
         educationChanges[subSection] = sectionChanges;
+        educationSubfields.push(subSection);
       }
     });
 
-    // Handle array education sections (phd, postdoc)
+    // Handle array education sections (phd, postdoc) - process with operations
     const educationArraySections = ['phd', 'postdoc'];
     educationArraySections.forEach(subSection => {
       const currentArray = profile.education[subSection];
       const originalArray = initialProfile.education[subSection] || [];
 
-      // Check if arrays are different
+      const processedArray = [];
       let hasChanges = false;
 
-      if (currentArray.length !== originalArray.length) {
-        hasChanges = true;
-      } else {
-        for (let i = 0; i < currentArray.length; i++) {
-          const currentItem = currentArray[i];
-          const originalItem = originalArray[i];
+      // Process each item
+      currentArray.forEach((currentItem, currentIndex) => {
+        const originalItem = originalArray[currentIndex];
 
-          if (currentItem === null && originalItem !== null) {
-            hasChanges = true;
-            break;
-          }
-
-          if (currentItem && originalItem) {
-            const allFields = new Set([...Object.keys(currentItem), ...Object.keys(originalItem)]);
-            for (const field of allFields) {
-              if (currentItem[field] !== originalItem[field]) {
-                hasChanges = true;
-                break;
-              }
+        if (currentItem === null && originalItem !== null) {
+          // Deleted item
+          processedArray.push({
+            ...originalItem,
+            _operation: "delete",
+            _index: currentIndex
+          });
+          hasChanges = true;
+        } else if (currentItem && !originalItem) {
+          // New item
+          processedArray.push({
+            ...currentItem,
+            _operation: "add"
+          });
+          hasChanges = true;
+        } else if (currentItem && originalItem) {
+          // Check if edited
+          let isEdited = false;
+          Object.keys(currentItem).forEach(key => {
+            if (key !== '_id' && currentItem[key] !== originalItem[key]) {
+              isEdited = true;
             }
+          });
+
+          if (isEdited) {
+            processedArray.push({
+              ...currentItem,
+              _operation: "edit",
+              _index: currentIndex
+            });
+            hasChanges = true;
           }
-          if (hasChanges) break;
         }
-      }
+      });
 
       if (hasChanges) {
-        educationChanges[subSection] = currentArray;
-        changedSections.add(`education.${subSection}`);
+        educationChanges[subSection] = processedArray;
+        educationSubfields.push(subSection);
       }
     });
 
     if (Object.keys(educationChanges).length > 0) {
-      diff.education = educationChanges;
+      updatedFields.education = educationChanges;
+      fields.push('education');
+      subfields.education = educationSubfields;
     }
 
-    // Array sections
+    // Process array sections (experience, administrativeService, otherAdministrativeService)
     const arraySections = ['experience', 'administrativeService', 'otherAdministrativeService'];
 
     arraySections.forEach(section => {
       const currentArray = profile[section];
       const originalArray = initialProfile[section] || [];
 
-      // Check if arrays are different
+      const processedArray = [];
+      const sectionSubfields = [];
       let hasChanges = false;
 
-      if (currentArray.length !== originalArray.length) {
-        hasChanges = true;
-      } else {
-        for (let i = 0; i < currentArray.length; i++) {
-          const currentItem = currentArray[i];
-          const originalItem = originalArray[i];
+      // Process each item
+      currentArray.forEach((currentItem, currentIndex) => {
+        const originalItem = originalArray[currentIndex];
 
-          if (currentItem === null && originalItem !== null) {
-            hasChanges = true;
-            break;
-          }
-
-          if (currentItem && originalItem) {
-            const allFields = new Set([...Object.keys(currentItem), ...Object.keys(originalItem)]);
-            for (const field of allFields) {
-              if (currentItem[field] !== originalItem[field]) {
-                hasChanges = true;
-                break;
-              }
+        if (currentItem === null && originalItem !== null) {
+          // Deleted item
+          processedArray.push({
+            ...originalItem,
+            _operation: "delete",
+            _index: currentIndex
+          });
+          sectionSubfields.push(`deleted_${currentIndex}`);
+          hasChanges = true;
+        } else if (currentItem && !originalItem) {
+          // New item
+          processedArray.push({
+            ...currentItem,
+            _operation: "add"
+          });
+          sectionSubfields.push("new");
+          hasChanges = true;
+        } else if (currentItem && originalItem) {
+          // Check if edited
+          let isEdited = false;
+          Object.keys(currentItem).forEach(key => {
+            if (key !== '_id' && currentItem[key] !== originalItem[key]) {
+              isEdited = true;
             }
+          });
+
+          if (isEdited) {
+            processedArray.push({
+              ...currentItem,
+              _operation: "edit",
+              _index: currentIndex
+            });
+            sectionSubfields.push(currentIndex);
+            hasChanges = true;
           }
-          if (hasChanges) break;
         }
-      }
+      });
 
       if (hasChanges) {
-        diff[section] = currentArray;
-        changedSections.add(section);
+        updatedFields[section] = processedArray;
+        fields.push(section);
+        subfields[section] = sectionSubfields;
       }
     });
 
-    // Log detailed changes for debugging
-    console.log("Changed sections:", Array.from(changedSections));
-    console.log("Changes to send:", diff);
-
-    // Prepare final payload with only changed data
-    const payload = {};
-    if (diff.personalData) payload.personalData = diff.personalData;
-    if (diff.user) payload.user = diff.user;
-    if (diff.education) payload.education = diff.education;
-    if (diff.experience) payload.experience = diff.experience;
-    if (diff.administrativeService) payload.administrativeService = diff.administrativeService;
-    if (diff.otherAdministrativeService) payload.otherAdministrativeService = diff.otherAdministrativeService;
-
-    // Add profileId if needed
-    if (profileId) {
-      payload.id = profileId;
-    }
+    // Prepare final payload
+    const payload = {
+      updatedFields,
+      fields,
+      subfields
+    };
 
     console.log("Final payload to send:", payload);
 
-    if (Object.keys(payload).length === 0) {
+    if (fields.length === 0) {
       alert("No changes detected!");
       return;
     }
@@ -461,33 +551,24 @@ const EditProfilePage = () => {
     if (confirm("Save changes?")) {
       setIsSaving(true);
 
-      // Here you would typically make an API call to save the changes
-      // Example:
-      // try {
-      //   const response = await fetch(`/api/profiles/${profileId}`, {
-      //     method: 'PATCH',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(payload)
-      //   });
-      //   
-      //   if (response.ok) {
-      //     alert("Profile saved successfully!");
-      //     navigate('/profile/');
-      //   } else {
-      //     throw new Error('Failed to save');
-      //   }
-      // } catch (error) {
-      //   alert("Failed to save changes: " + error.message);
-      // } finally {
-      //   setIsSaving(false);
-      // }
-
-      // For now, just show alert and navigate
-      setTimeout(() => {
-        setIsSaving(false);
-        alert("Profile saved successfully!");
-        navigate(`/profile/${profileId}`);
-      }, 1000);
+      // Make API call to save the changes
+      updatePersonalProfile(profileId, payload)
+        .then(response => {
+          setIsSaving(false);
+          if (response.success) {
+            alert("Profile updated successfully!");
+            // Update initial profile to reflect saved changes
+            setintialProfile(profile);
+            navigate(`/profile/${profileId}`);
+          } else {
+            alert("Failed to save changes: " + (response.error || "Unknown error"));
+          }
+        })
+        .catch(error => {
+          setIsSaving(false);
+          alert("Failed to save changes: " + error.message);
+          console.error("Error saving profile:", error);
+        });
     }
   };
   // Handle cancel (reset to initial state)
@@ -532,6 +613,178 @@ const EditProfilePage = () => {
                   value = "Profile-image"
                 }
 
+                // Marital Status - Dropdown
+                if (field === 'marital') {
+                  return (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Marital Status
+                      </label>
+                      <select
+                        value={value}
+                        onChange={(e) => handleChange('personalData', field, e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      >
+                        <option value="">Select your option</option>
+                        <option value="unmarried">Unmarried</option>
+                        <option value="married">Married</option>
+                      </select>
+                    </div>
+                  );
+                }
+
+                // Gender - Radio Buttons
+                if (field === 'gender') {
+                  return (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Gender
+                      </label>
+                      <div className="flex space-x-6 mt-2">
+                        {["Male", "Female"].map((g) => (
+                          <label key={g} className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              name="gender"
+                              value={g}
+                              checked={value === g}
+                              onChange={(e) => handleChange('personalData', field, e.target.value)}
+                              className="focus:ring-purple-500"
+                            />
+                            <span>{g}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Designation - Dropdown
+                if (field === 'designation') {
+                  return (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Designation
+                      </label>
+                      <select
+                        value={value}
+                        onChange={(e) => handleChange('personalData', field, e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      >
+                        <option value="">Select your option</option>
+                        <option value="Professor">Professor</option>
+                        <option value="Assistant Professor">Assistant Professor</option>
+                        <option value="Associate Professor">Associate Professor</option>
+                        <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
+                      </select>
+                    </div>
+                  );
+                }
+
+                // College - Dropdown
+                if (field === 'college') {
+                  return (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                        College
+                      </label>
+                      <select
+                        value={value}
+                        onChange={(e) => {
+                          handleChange('personalData', field, e.target.value);
+                          // Auto-set department if College of Pharmaceutical Sciences
+                          if (e.target.value === "College of PharmaCeutical Sciences") {
+                            handleChange('personalData', 'department', "Department of Pharmacy");
+                          }
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      >
+                        <option value="">Select your option</option>
+                        <option value="University College of Engineering">University College of Engineering</option>
+                        <option value="College of PharmaCeutical Sciences">College of PharmaCeutical Sciences</option>
+                      </select>
+                    </div>
+                  );
+                }
+
+                // Department - Dropdown (conditional on college)
+                if (field === 'department') {
+                  // Only show if University College of Engineering
+                  if (profile.personalData.college === "University College of Engineering") {
+                    return (
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                          Department
+                        </label>
+                        <select
+                          value={value}
+                          onChange={(e) => handleChange('personalData', field, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        >
+                          <option value="">Select your option</option>
+                          {departments.map(dept => (
+                            <option key={dept} value={dept}>{dept}</option>
+                          ))}
+                        </select>
+                      </div>
+                    );
+                  } else {
+                    // For College of Pharmaceutical Sciences, show read-only
+                    return (
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                          Department
+                        </label>
+                        <input
+                          type="text"
+                          value={value}
+                          readOnly
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                        />
+                      </div>
+                    );
+                  }
+                }
+
+                // Phone - Numeric validation
+                if (field === 'phone') {
+                  return (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Phone Number
+                      </label>
+                      <input
+                        type="text"
+                        value={value}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          handleChange('personalData', field, digits);
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        placeholder="Enter 10-digit phone number"
+                      />
+                    </div>
+                  );
+                }
+
+                // Date of Join - Date picker
+                if (field === 'date_of_join') {
+                  return (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Date of Join
+                      </label>
+                      <input
+                        type="date"
+                        value={value}
+                        onChange={(e) => handleChange('personalData', field, e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      />
+                    </div>
+                  );
+                }
+
+                // Default text input for other fields
                 return (
                   <div key={field}>
                     <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
@@ -576,8 +829,8 @@ const EditProfilePage = () => {
                       <input
                         type="text"
                         value={eduData[field]}
-                        onChange={(e) => handleChange(`education.${subSection}`, field, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                        onChange={(e) => handleEducationChange(subSection, field, e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       />
                     </div>
                   ))}

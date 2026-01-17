@@ -315,7 +315,7 @@ export default function Register() {
       }
       setErrors({});
       console.log(personalData);
-      test();
+      // test();
       setStep("education");
     }, [personalData]
   );
