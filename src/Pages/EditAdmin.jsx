@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { User, GraduationCap, Briefcase, Users, BookOpen, Save, X } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  User,
+  GraduationCap,
+  Briefcase,
+  Users,
+  Trash2,
+  Save,
+  X,
+  Menu,
+} from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Personal, updatePersonalProfile } from "../core/Personal";
-import { API } from "../backend"
+import { Personal, updatePersonalProfile } from '../core/Personal';
+import { API } from '../backend';
 import { departments } from '../assets/Data.jsx';
+import ProfilePictureCropper from '../components/ProfilePictureCropper';
 
 const EditProfilePage = () => {
   const { profileId } = useParams();
   const imageurl = API.replace("/api", "")
-  // Initial profile data based on the new object structure
-
+  const navigate = useNavigate();
 
   // State to manage form data and active section
-  const [initialProfile, setintialProfile] = useState({
+  const [initialProfile, setInitialProfile] = useState({
     personalData: {
       name: "Phani Polavarapu",
       avatar: "images/Profile2.avif",
@@ -110,155 +119,151 @@ const EditProfilePage = () => {
   const [profile, setProfile] = useState(initialProfile);
   const [activeSection, setActiveSection] = useState('personalData');
   const [isSaving, setIsSaving] = useState(false);
-  const [changes, setChanges] = useState([]);
-  const navigate = useNavigate();
 
+  // Profile picture states
+  const [showCropper, setShowCropper] = useState(false);
+  const [profileImageSrc, setProfileImageSrc] = useState(null);
+  const [croppedImageFile, setCroppedImageFile] = useState(null);
+  const [croppedPreviewUrl, setCroppedPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // Fetch profile on mount
   useEffect(() => {
     const getFunction = async () => {
       const data = await Personal(profileId);
       if (data) {
-        setintialProfile(data);
+        setInitialProfile(data);
         setProfile(data);
       }
     };
     getFunction();
   }, [profileId]);
 
+  // Cleanup object URLs
+  useEffect(() => {
+    return () => {
+      if (croppedPreviewUrl) URL.revokeObjectURL(croppedPreviewUrl);
+    };
+  }, [croppedPreviewUrl]);
 
-  // Handle input changes for personalData and user sections
+  // === Handlers ===
+
   const handleChange = (section, field, value) => {
     if (section === 'personalData' || section === 'user') {
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
-        [section]: { ...prev[section], [field]: value }
+        [section]: { ...prev[section], [field]: value },
       }));
     }
   };
 
-  // Separate handler for education object changes (tenth, twelth, degree, pg)
   const handleEducationChange = (subSection, field, value) => {
-    setProfile(prev => ({
+    setProfile((prev) => ({
       ...prev,
       education: {
         ...prev.education,
         [subSection]: {
           ...prev.education[subSection],
-          [field]: value
-        }
-      }
+          [field]: value,
+        },
+      },
     }));
   };
 
-  // Handle array field changes (experience, administrativeService, etc.)
   const handleArrayChange = (section, index, field, value) => {
-    const oldValue = profile[section][index][field];
-    setProfile(prev => {
+    setProfile((prev) => {
       const updatedSection = [...prev[section]];
       updatedSection[index] = { ...updatedSection[index], [field]: value };
       return { ...prev, [section]: updatedSection };
     });
-
-    setChanges(prev => [
-      ...prev,
-      { section, field, index, oldValue, newValue: value, timestamp: new Date() }
-    ]);
   };
 
-  // Handle nested array changes (education.phd, education.postdoc)
   const handleNestedArrayChange = (parentSection, arrayName, index, field, value) => {
-    const oldValue = profile[parentSection][arrayName][index][field];
-    setProfile(prev => {
+    setProfile((prev) => {
       const updatedArray = [...prev[parentSection][arrayName]];
       updatedArray[index] = { ...updatedArray[index], [field]: value };
       return {
         ...prev,
         [parentSection]: {
           ...prev[parentSection],
-          [arrayName]: updatedArray
-        }
+          [arrayName]: updatedArray,
+        },
       };
     });
-
-    setChanges(prev => [
-      ...prev,
-      { section: `${parentSection}.${arrayName}`, field, index, oldValue, newValue: value, timestamp: new Date() }
-    ]);
   };
 
-  // Add new item to array sections
   const addNewItem = (section) => {
     if (section === 'experience') {
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
-        experience: [
-          ...prev.experience,
-          { institute: '', designation: '', from: '', to: '' }
-        ]
+        experience: [...prev.experience, { institute: '', designation: '', from: '', to: '' }],
       }));
     } else if (section === 'administrativeService') {
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
         administrativeService: [
           ...prev.administrativeService,
-          { designation: '', from: '', to: '' }
-        ]
+          { designation: '', from: '', to: '' },
+        ],
       }));
     } else if (section === 'otherAdministrativeService') {
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
         otherAdministrativeService: [
           ...prev.otherAdministrativeService,
-          { institute: '', designation: '', from: '', to: '' }
-        ]
+          { institute: '', designation: '', from: '', to: '' },
+        ],
       }));
     } else if (section === 'education.phd') {
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
         education: {
           ...prev.education,
           phd: [
             ...prev.education.phd,
-            { specialization: '', under_the_proffessor: '', department: '', University: '', year: '' }
-          ]
-        }
+            {
+              specialization: '',
+              under_the_proffessor: '',
+              department: '',
+              University: '',
+              year: '',
+            },
+          ],
+        },
       }));
     } else if (section === 'education.postdoc') {
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
         education: {
           ...prev.education,
           postdoc: [
             ...prev.education.postdoc,
-            { University: '', specialization: '', under_the_proffessor: '', year: '' }
-          ]
-        }
+            { University: '', specialization: '', under_the_proffessor: '', year: '' },
+          ],
+        },
       }));
     }
   };
 
-  // Remove item from array sections
   const removeItem = (section, index) => {
     if (section === 'education.phd' || section === 'education.postdoc') {
       const [parent, child] = section.split('.');
-      setProfile(prev => {
+      setProfile((prev) => {
         const updatedArray = [...prev[parent][child]];
         updatedArray[index] = null;
         return {
           ...prev,
           [parent]: {
             ...prev[parent],
-            [child]: updatedArray
-          }
+            [child]: updatedArray,
+          },
         };
       });
     } else {
-      setProfile(prev => {
+      setProfile((prev) => {
         const updatedSection = [...prev[section]];
         updatedSection[index] = null;
-        return {
-          ...prev,
-          [section]: updatedSection
-        };
+        return { ...prev, [section]: updatedSection };
       });
     }
   };
@@ -266,119 +271,103 @@ const EditProfilePage = () => {
   const restoreItem = (section, index) => {
     if (section === 'education.phd' || section === 'education.postdoc') {
       const [parent, child] = section.split('.');
-      setProfile(prev => {
+      setProfile((prev) => {
         const updatedArray = [...prev[parent][child]];
         updatedArray[index] = initialProfile[parent][child][index];
         return {
           ...prev,
           [parent]: {
             ...prev[parent],
-            [child]: updatedArray
-          }
+            [child]: updatedArray,
+          },
         };
       });
     } else {
-      setProfile(prev => {
+      setProfile((prev) => {
         const updatedSection = [...prev[section]];
         updatedSection[index] = initialProfile[section][index];
-        return {
-          ...prev,
-          [section]: updatedSection
-        };
+        return { ...prev, [section]: updatedSection };
       });
     }
   };
 
+  // === Image Handling ===
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (JPG, PNG, etc.)');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setProfileImageSrc(event.target.result);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropComplete = async (croppedBlob) => {
+    if (!croppedBlob) return;
+    const croppedFile = new File([croppedBlob], 'profile-picture.jpg', {
+      type: 'image/jpeg',
+    });
+    const previewUrl = URL.createObjectURL(croppedBlob);
+    setCroppedImageFile(croppedFile);
+    setCroppedPreviewUrl(previewUrl);
+    setShowCropper(false);
+    setProfile((prev) => ({
+      ...prev,
+      personalData: {
+        ...prev.personalData,
+        avatar: croppedFile,
+      },
+    }));
+  };
+
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setProfileImageSrc(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoveProfilePicture = () => {
+    setCroppedImageFile(null);
+    setCroppedPreviewUrl(null);
+    setProfile((prev) => ({
+      ...prev,
+      personalData: {
+        ...prev.personalData,
+        avatar: null,
+      },
+    }));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // === Save Logic ===
 
   const handleSave = () => {
     const updatedFields = {};
     const fields = [];
     const subfields = {};
 
-    // Helper function to process array operations
-    const processArraySection = (sectionName, currentArray, originalArray) => {
-      const processedArray = [];
-      const sectionSubfields = [];
-      let hasChanges = false;
-
-      // Track original items by index
-      const originalMap = new Map();
-      (originalArray || []).forEach((item, index) => {
-        if (item && item._id) {
-          originalMap.set(item._id, { item, index });
-        }
-      });
-
-      // Process current array
-      currentArray.forEach((currentItem, currentIndex) => {
-        if (currentItem === null) {
-          // Deleted item
-          const originalItem = originalArray[currentIndex];
-          if (originalItem) {
-            processedArray.push({
-              ...originalItem,
-              _operation: "delete",
-              _index: currentIndex
-            });
-            sectionSubfields.push(`deleted_${currentIndex}`);
-            hasChanges = true;
-          }
-        } else if (currentItem._id) {
-          // Existing item - check if edited
-          const original = originalMap.get(currentItem._id);
-          if (original) {
-            // Compare fields
-            let isEdited = false;
-            Object.keys(currentItem).forEach(key => {
-              if (key !== '_id' && currentItem[key] !== original.item[key]) {
-                isEdited = true;
-              }
-            });
-
-            if (isEdited) {
-              processedArray.push({
-                ...currentItem,
-                _operation: "edit",
-                _index: original.index
-              });
-              sectionSubfields.push(original.index);
-              hasChanges = true;
-            }
-          }
-        } else {
-          // New item
-          processedArray.push({
-            ...currentItem,
-            _operation: "add"
-          });
-          sectionSubfields.push("new");
-          hasChanges = true;
-        }
-      });
-
-      if (hasChanges) {
-        updatedFields[sectionName] = processedArray;
-        fields.push(sectionName);
-        subfields[sectionName] = sectionSubfields;
-      }
-    };
-
-    // Compare personalData section
+    // Compare personalData
     const personalDataChanges = {};
-    const personalDataSubfields = [];
-    Object.keys(profile.personalData).forEach(field => {
+    Object.keys(profile.personalData).forEach((field) => {
       if (profile.personalData[field] !== initialProfile.personalData[field]) {
         personalDataChanges[field] = profile.personalData[field];
-        personalDataSubfields.push(field);
       }
     });
     if (Object.keys(personalDataChanges).length > 0) {
       updatedFields.personalData = personalDataChanges;
       fields.push('personalData');
-      subfields.personalData = personalDataSubfields;
     }
-
-    // Compare user section
+        // Compare user section
     const userChanges = {};
     const userSubfields = [];
     Object.keys(profile.user).forEach(field => {
@@ -534,44 +523,35 @@ const EditProfilePage = () => {
       }
     });
 
-    // Prepare final payload
-    const payload = {
-      updatedFields,
-      fields,
-      subfields
-    };
-
-    console.log("Final payload to send:", payload);
+    // Prepare payload
+    const payload = { updatedFields, fields, subfields };
 
     if (fields.length === 0) {
-      alert("No changes detected!");
+      alert('No changes detected!');
       return;
     }
 
-    if (confirm("Save changes?")) {
+    if (confirm('Save changes?')) {
       setIsSaving(true);
-
-      // Make API call to save the changes
       updatePersonalProfile(profileId, payload)
-        .then(response => {
+        .then((response) => {
           setIsSaving(false);
           if (response.success) {
-            alert("Profile updated successfully!");
-            // Update initial profile to reflect saved changes
-            setintialProfile(profile);
+            alert('Profile updated successfully!');
+            setInitialProfile(profile);
             navigate(`/profile/${profileId}`);
           } else {
-            alert("Failed to save changes: " + (response.error || "Unknown error"));
+            alert('Failed to save changes: ' + (response.error || 'Unknown error'));
           }
         })
-        .catch(error => {
+        .catch((error) => {
           setIsSaving(false);
-          alert("Failed to save changes: " + error.message);
-          console.error("Error saving profile:", error);
+          alert('Failed to save changes: ' + error.message);
+          console.error('Error saving profile:', error);
         });
     }
   };
-  // Handle cancel (reset to initial state)
+
   const handleCancel = () => {
     setProfile(initialProfile);
   };
@@ -590,7 +570,7 @@ const EditProfilePage = () => {
     { id: 'otherAdministrativeService', label: 'Other Administrative Service', icon: Users },
   ];
 
-  // Render the active section
+  // Render active section
   const renderActiveSection = () => {
     const [mainSection, subSection] = activeSection.split('.');
 
@@ -599,218 +579,211 @@ const EditProfilePage = () => {
         return (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.keys(profile.personalData).map((field) => {
-                let value = profile.personalData[field];
+              {Object.keys(profile.personalData)
+                .filter((field) => field !== 'avatar') // ✅ Exclude avatar
+                .map((field) => {
+                  let value = profile.personalData[field];
 
-                // Format the date for the input field
-                if (field === 'DOB') {
-                  // If it's an ISO date string, convert to YYYY-MM-DD format
-                  if (value && value.includes('T')) {
-                    value = new Date(value).toISOString().split('T')[0];
+                  if (field === 'DOB') {
+                    if (value && value.includes('T')) {
+                      value = new Date(value).toISOString().split('T')[0];
+                    }
                   }
-                }
-                if (field === "avatar") {
-                  value = "Profile-image"
-                }
 
-                // Marital Status - Dropdown
-                if (field === 'marital') {
-                  return (
-                    <div key={field}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                        Marital Status
-                      </label>
-                      <select
-                        value={value}
-                        onChange={(e) => handleChange('personalData', field, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      >
-                        <option value="">Select your option</option>
-                        <option value="unmarried">Unmarried</option>
-                        <option value="married">Married</option>
-                      </select>
-                    </div>
-                  );
-                }
-
-                // Gender - Radio Buttons
-                if (field === 'gender') {
-                  return (
-                    <div key={field}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Gender
-                      </label>
-                      <div className="flex space-x-6 mt-2">
-                        {["Male", "Female"].map((g) => (
-                          <label key={g} className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              name="gender"
-                              value={g}
-                              checked={value === g}
-                              onChange={(e) => handleChange('personalData', field, e.target.value)}
-                              className="focus:ring-purple-500"
-                            />
-                            <span>{g}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                }
-
-                // Designation - Dropdown
-                if (field === 'designation') {
-                  return (
-                    <div key={field}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                        Designation
-                      </label>
-                      <select
-                        value={value}
-                        onChange={(e) => handleChange('personalData', field, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      >
-                        <option value="">Select your option</option>
-                        <option value="Professor">Professor</option>
-                        <option value="Assistant Professor">Assistant Professor</option>
-                        <option value="Associate Professor">Associate Professor</option>
-                        <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
-                      </select>
-                    </div>
-                  );
-                }
-
-                // College - Dropdown
-                if (field === 'college') {
-                  return (
-                    <div key={field}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                        College
-                      </label>
-                      <select
-                        value={value}
-                        onChange={(e) => {
-                          handleChange('personalData', field, e.target.value);
-                          // Auto-set department if College of Pharmaceutical Sciences
-                          if (e.target.value === "College of PharmaCeutical Sciences") {
-                            handleChange('personalData', 'department', "Department of Pharmacy");
-                          }
-                        }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      >
-                        <option value="">Select your option</option>
-                        <option value="University College of Engineering">University College of Engineering</option>
-                        <option value="College of PharmaCeutical Sciences">College of PharmaCeutical Sciences</option>
-                      </select>
-                    </div>
-                  );
-                }
-
-                // Department - Dropdown (conditional on college)
-                if (field === 'department') {
-                  // Only show if University College of Engineering
-                  if (profile.personalData.college === "University College of Engineering") {
+                  // Marital
+                  if (field === 'marital') {
                     return (
                       <div key={field}>
                         <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                          Department
+                          Marital Status
                         </label>
                         <select
                           value={value}
                           onChange={(e) => handleChange('personalData', field, e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                         >
-                          <option value="">Select your option</option>
-                          {departments.map(dept => (
-                            <option key={dept} value={dept}>{dept}</option>
-                          ))}
+                          <option value="">Select</option>
+                          <option value="unmarried">Unmarried</option>
+                          <option value="married">Married</option>
                         </select>
                       </div>
                     );
-                  } else {
-                    // For College of Pharmaceutical Sciences, show read-only
+                  }
+
+                  // Gender
+                  if (field === 'gender') {
+                    return (
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                        <div className="flex space-x-6 mt-2">
+                          {['Male', 'Female'].map((g) => (
+                            <label key={g} className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="gender"
+                                value={g}
+                                checked={value === g}
+                                onChange={(e) => handleChange('personalData', field, e.target.value)}
+                                className="focus:ring-purple-500"
+                              />
+                              <span>{g}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // Designation
+                  if (field === 'designation') {
                     return (
                       <div key={field}>
                         <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                          Department
+                          Designation
+                        </label>
+                        <select
+                          value={value}
+                          onChange={(e) => handleChange('personalData', field, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        >
+                          <option value="">Select</option>
+                          <option value="Professor">Professor</option>
+                          <option value="Assistant Professor">Assistant Professor</option>
+                          <option value="Associate Professor">Associate Professor</option>
+                          <option value="Assistant Professor(contract)">Assistant Professor(contract)</option>
+                        </select>
+                      </div>
+                    );
+                  }
+
+                  // College
+                  if (field === 'college') {
+                    return (
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                          College
+                        </label>
+                        <select
+                          value={value}
+                          onChange={(e) => {
+                            handleChange('personalData', field, e.target.value);
+                            if (e.target.value === 'College of PharmaCeutical Sciences') {
+                              handleChange('personalData', 'department', 'Department of Pharmacy');
+                            }
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        >
+                          <option value="">Select</option>
+                          <option value="University College of Engineering">University College of Engineering</option>
+                          <option value="College of PharmaCeutical Sciences">College of PharmaCeutical Sciences</option>
+                        </select>
+                      </div>
+                    );
+                  }
+
+                  // Department
+                  if (field === 'department') {
+                    if (profile.personalData.college === 'University College of Engineering') {
+                      return (
+                        <div key={field}>
+                          <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                            Department
+                          </label>
+                          <select
+                            value={value}
+                            onChange={(e) => handleChange('personalData', field, e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          >
+                            <option value="">Select</option>
+                            {departments.map((dept) => (
+                              <option key={dept} value={dept}>
+                                {dept}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div key={field}>
+                          <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                            Department
+                          </label>
+                          <input
+                            type="text"
+                            value={value}
+                            readOnly
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                          />
+                        </div>
+                      );
+                    }
+                  }
+
+                  // Phone
+                  if (field === 'phone') {
+                    return (
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                          Phone Number
                         </label>
                         <input
                           type="text"
                           value={value}
-                          readOnly
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                          onChange={(e) => {
+                            const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                            handleChange('personalData', field, digits);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          placeholder="Enter 10-digit phone number"
                         />
                       </div>
                     );
                   }
-                }
 
-                // Phone - Numeric validation
-                if (field === 'phone') {
+                  // Date of Join
+                  if (field === 'date_of_join') {
+                    return (
+                      <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                          Date of Join
+                        </label>
+                        <input
+                          type="date"
+                          value={value}
+                          onChange={(e) => handleChange('personalData', field, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        />
+                      </div>
+                    );
+                  }
+
+                  // Default input
                   return (
                     <div key={field}>
                       <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                        Phone Number
+                        {field.replace(/_/g, ' ')}
                       </label>
                       <input
-                        type="text"
+                        type={field === 'DOB' ? 'date' : 'text'}
                         value={value}
                         onChange={(e) => {
-                          const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-                          handleChange('personalData', field, digits);
-                        }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        placeholder="Enter 10-digit phone number"
-                      />
-                    </div>
-                  );
-                }
-
-                // Date of Join - Date picker
-                if (field === 'date_of_join') {
-                  return (
-                    <div key={field}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                        Date of Join
-                      </label>
-                      <input
-                        type="date"
-                        value={value}
-                        onChange={(e) => handleChange('personalData', field, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      />
-                    </div>
-                  );
-                }
-
-                // Default text input for other fields
-                return (
-                  <div key={field}>
-                    <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                      {field.replace(/_/g, ' ')}
-                    </label>
-                    <input
-                      type={field === 'DOB' ? 'date' : 'text'}
-                      value={value}
-                      onChange={(e) => {
-                        let newValue = e.target.value;
-                        // If it's a date field, store it as ISO string
-                        if (field === 'DOB') {
-                          if (newValue) {
+                          let newValue = e.target.value;
+                          if (field === 'DOB' && newValue) {
                             newValue = new Date(newValue).toISOString();
                           }
-                        }
-                        handleChange('personalData', field, newValue);
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
-                    />
-                  </div>
-                );
-              })}
+                          handleChange('personalData', field, newValue);
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                      />
+                    </div>
+                  );
+                })}
             </div>
           </div>
         );
+
+      // ... (keep your existing education, experience, etc. rendering logic unchanged)
       case 'education':
         switch (subSection) {
           case 'tenth':
@@ -1003,12 +976,73 @@ const EditProfilePage = () => {
     <div className="flex bg-gray-50 mx-32 mt-10 rounded-xl">
       {/* Sidebar */}
       <div className="w-64 bg-linear-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col items-center rounded-xl">
-        {/* Logo */}
-        <div className="p-6 border-b border-gray-200">
-          <img src={`${imageurl}/uploads/profiles/${profile.personalData.avatar}`} alt="Profile Picture" className="rounded-full h-38" />
+        {/* Profile Picture Section */}
+        <div className="p-6 border-b border-gray-200 flex flex-col items-center">
+          <div className="relative group mb-4">
+            {croppedPreviewUrl || (profile.personalData.avatar && !croppedImageFile) ? (
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                <img
+                  src={
+                    croppedPreviewUrl ||
+                    (typeof profile.personalData.avatar === 'string'
+                      ? `${imageurl}/uploads/profiles/${profile.personalData.avatar}`
+                      : URL.createObjectURL(profile.personalData.avatar))
+                  }
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/128?text=No+Image';
+                  }}
+                />
+              </div>
+            ) : (
+              <div
+                className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <span className="text-gray-400">No Photo</span>
+              </div>
+            )}
+
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center space-x-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 text-white"
+              >
+                Change
+              </button>
+              {(croppedPreviewUrl || profile.personalData.avatar) && (
+                <button
+                  type="button"
+                  onClick={handleRemoveProfilePicture}
+                  className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 text-white"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="mt-2 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200"
+          >
+            {croppedPreviewUrl || profile.personalData.avatar ? 'Change Photo' : 'Add Photo'}
+          </button>
         </div>
+
         {/* Navigation */}
-        <nav className="flex-1 p-6 space-y-2">
+        <nav className="flex-1 p-6 space-y-2 w-full">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -1016,8 +1050,8 @@ const EditProfilePage = () => {
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
                 className={`flex items-center space-x-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${activeSection === item.id
-                  ? 'text-white bg-purple-500'
-                  : 'text-gray-700 hover:bg-purple-100'
+                    ? 'text-white bg-purple-500'
+                    : 'text-gray-700 hover:bg-purple-100'
                   }`}
               >
                 <Icon className="w-5 h-5" />
@@ -1029,23 +1063,19 @@ const EditProfilePage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex-col items-center">
-        {/* Header */}
+      <div className="flex-1 flex flex-col">
         <div className="text-center mt-6 p-6">
           <h1 className="text-3xl font-bold font-serif text-gray-900">Edit Profile</h1>
         </div>
 
-        {/* Profile Section */}
-        <div className="p-4">
-          {/* Active Section Content */}
+        <div className="p-4 flex-1">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              {navItems.find(item => item.id === activeSection)?.label || 'Edit Section'}
+              {navItems.find((item) => item.id === activeSection)?.label || 'Edit Section'}
             </h2>
             {renderActiveSection()}
           </div>
 
-          {/* Save Changes Button at Bottom */}
           <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky bottom-0">
             <div className="flex justify-end space-x-3">
               <button
@@ -1058,7 +1088,7 @@ const EditProfilePage = () => {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="px-6 py-2 bg-linear-to-r cursor-pointer from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="px-6 py-2 bg-linear-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 <Save className="w-4 h-4" />
                 <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
@@ -1067,6 +1097,15 @@ const EditProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Cropper Modal */}
+      {showCropper && profileImageSrc && (
+        <ProfilePictureCropper
+          image={profileImageSrc}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 };

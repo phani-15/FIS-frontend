@@ -141,6 +141,7 @@ export default function ProfilePage() {
       try {
         const data = await Personal(profileId);
         if (data) setnewobj(data);
+        console.log("Fetched profile data:", data);
       } catch (error) {
         console.log("Fetch error:", error);
       }

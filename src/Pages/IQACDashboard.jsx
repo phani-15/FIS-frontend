@@ -5,10 +5,10 @@ import * as XLSX from "xlsx";
 import { schemas, yearFields, AtKeys } from '../assets/Data';
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
+import { departments } from "../assets/Data";
 
 export default function IQACDashboard() {
   const location = useLocation()
-
   const queryParams = new URLSearchParams(location.search);
   const role = queryParams.get("role");
   const { ofcId } = useParams()
@@ -16,19 +16,7 @@ export default function IQACDashboard() {
     department: "All",
     searchTerm: "",
   });
-  const [facultyList, setfacultyList] = useState([
-    {
-      name: "Dr. John Doe",
-      department: "Computer Science and Engineering",
-      role: "Professor",
-      email: "john.doe@yourcollege.edu"
-    },
-    {
-      name: "Dr. Jane Smith",
-      department: "Electrical and Electronics Engineering",
-      role: "Associate Professor",
-      email: "jane.smith@yourcollege.edu"
-    },])
+  const [facultyList, setfacultyList] = useState([])
   const [certifications, setCertifications] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -40,16 +28,6 @@ export default function IQACDashboard() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
-  const departments = [
-    "Computer Science and Engineering",
-    "Electronics and Communication Engineering",
-    "Electrical and Electronics Engineering",
-    "Mechanical Engineering",
-    "Civil Engineering",
-    "Metallurgical Engineering",
-    "Information Technology Engineering",
-  ];
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,7 +58,6 @@ export default function IQACDashboard() {
   const getAllAttributesForType = (typeKey) => {
     return getSchemaForType(typeKey).attributes.map(a => a.key);
   };
-
 
   // Helper: Define schema per type (label + attributes)
   const getSchemaForType = (typeKey) => {
