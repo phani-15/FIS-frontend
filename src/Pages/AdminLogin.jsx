@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { adminlogin } from "../core/admin";
 
 export default function AdminLogin() {
-  const [passCode, setPassCode] = useState("1234567890");  // ✅ Correct destructuring
+  const [passCode, setPassCode] = useState("");  // ✅ Correct destructuring
   const navigate = useNavigate();
   const [isEmpty, setEmpty] = useState(false);
   const [isFalse, setFalse] = useState(false);

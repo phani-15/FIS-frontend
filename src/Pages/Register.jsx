@@ -11,7 +11,7 @@ import { jwtDecode } from "jwt-decode";
 export default function Register() {
   const { token } = useParams()
   const navigate = useNavigate()
-  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const Data = jwtDecode(token)
@@ -32,6 +32,7 @@ export default function Register() {
     phone: "1234566670",
     area: "kukatpallyground",
     city: "hyderabadcity",
+    gsl : "",
     designation: "",
     department: "",
     college: "JNTUGV-CEV",
@@ -57,8 +58,10 @@ export default function Register() {
   const [havePostDoc, setHavePostDoc] = useState(false);
 
   const [experience, setExperience] = useState([
-    { institute: "", type: "", designation: "", from: "", to: "" }
+    { institute: "", type: "", designation: "", from: "" , to: "" }
   ])
+
+  const [ids,setIds] = useState(   {vidwan : "", orcid:"",scopus:"",researcher:"",crossRef:"",Publons:"",ResearhcGate:""})
 
   const [PhDs, setPhDs] = useState([]);
   // const [PhDs, setPhDs] = useState(obj.phd || []);
@@ -459,7 +462,8 @@ export default function Register() {
       const updatedEducation = {
         ...education,
         phd: havePhD ? [...PhDs] : [],
-        postdoc: havePostDoc ? [...PostDocs] : []
+        postdoc: havePostDoc ? [...PostDocs] : [],
+        ids : {...ids}
       };
 
       // Log to verify
@@ -672,7 +676,7 @@ export default function Register() {
 
             <div className="md:flex justify-between">
               <div className="flex flex-col text-left space-y-2 mt-4">
-                <label>Gender:</label>
+                <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Gender:</label>
                 <div className="flex space-x-6 mt-1">
                   {["Male", "Female"].map((g) => (
                     <label key={g} className="flex items-center space-x-2">
@@ -684,7 +688,7 @@ export default function Register() {
               </div>
 
               <div className="flex flex-col text-left space-y-2 mr-18 mt-4">
-                <label htmlFor="DOB">Date of Birth:</label>
+                <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5" htmlFor="DOB">Date of Birth:</label>
                 <input type="date"
                   name="DOB"
                   id="DOB"
@@ -700,7 +704,7 @@ export default function Register() {
             </div>
 
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>Marital Status:</label>
+              <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Marital Status:</label>
               <select
                 name="marital"
                 value={personalData.marital}
@@ -714,7 +718,7 @@ export default function Register() {
               </select>
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>Phone Number</label>
+              <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Phone Number</label>
               <input
                 type="text"
                 name="phone"
@@ -729,7 +733,7 @@ export default function Register() {
               {errors.phone && <small className="text-red-600 text-sm">{errors.phone}</small>}
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>
+              <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">
                 Address <span className="text-gray-600">(optional)</span>
               </label>
 
@@ -765,9 +769,25 @@ export default function Register() {
                 <small className="text-red-600 text-sm">{errors.city}</small>
               )}
             </div>
+            
+            <div className="flex flex-col text-left space-y-2 mt-4">
+              <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Google Scholar Link</label>
+              <input
+                type="text"
+                name="gsl"
+                placeholder="enter your Google Scholar Link"
+                value={personalData.gsl}
+                onChange={handleChange}
+                required
+                className={`w-full pl-3 pr-3 py-2 focus:outline-none border border-gray-400 rounded-lg focus:ring-1  ${errors.gsl ? "border-red-500" : "border-gray-300 "
+                  }`}
+
+              />
+              {errors.gsl && <small className="text-red-600 text-sm">{errors.gsl}</small>}
+            </div>
 
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>College</label>
+              <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">College</label>
               <select
                 name="college"
                 value={personalData.college}
@@ -785,7 +805,7 @@ export default function Register() {
               /* Department Dropdown */
               personalData.college === "University College of Engineering" &&
               <div className="flex flex-col text-left space-y-2 mt-4">
-                <label>Department</label>
+                <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Department</label>
                 <select
                   name="department"
                   value={personalData.department}
@@ -802,7 +822,7 @@ export default function Register() {
             }
 
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label>Designation</label>
+              <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Designation</label>
               <select
                 name="designation"
                 value={personalData.designation}
@@ -818,7 +838,7 @@ export default function Register() {
               </select>
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
-              <label htmlFor="date_of_join">Date of Join</label>
+              <label  className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5" htmlFor="date_of_join">Date of Join</label>
               <input
                 type="date"
                 id="date_of_join"
@@ -831,14 +851,6 @@ export default function Register() {
               />
 
               {errors.date_of_join && <small className="text-red-600 text-sm">{errors.date_of_join}</small>}
-            </div>
-
-            {/* Edit Window Notice */}
-            <div className="mt-6 p-3 bg-blue-50 border border-blue-200 z-10 rounded-lg flex items-start space-x-2">
-              <Info size={20} className="text-blue-600 mt-0.5 shrink-0" />
-              <p className="text-sm text-blue-800">
-                <strong className="mr-2">Note: </strong> You may edit your details within <strong>7 days</strong> of submission. <br /> After this period, changes will require admin approval.
-              </p>
             </div>
 
             <div className="flex gap-3 justify-end">
@@ -1083,6 +1095,61 @@ export default function Register() {
                   </div>
                 )}
               </div>
+
+              <div className="mt-6">
+                <h2 className="text-lg font-semibold mt-4">IDs <span className="font-semibold">(optional)</span></h2>
+                <InputField
+                  label="Vidwan ID"
+                  name="vidwan"
+                  placeholder="Enter your Vidwan ID"
+                  value={ids.vidwan}
+                  onChange={(e) => setIds({...ids, vidwan: e.target.value})}
+                />
+                <InputField
+                  label="ORCID ID"
+                  name="orcid"
+                  placeholder="Enter your ORCID ID"
+                  value={ids.orcid}
+                  onChange={(e) => setIds({...ids, orcid: e.target.value})}
+                />
+                <InputField
+                  label="Scopus Author ID"
+                  name="scopus"
+                  placeholder="Enter your Scopus ID"
+                  value={ids.scopus}
+                  onChange={(e) => setIds({...ids, scopus: e.target.value})}
+                />
+                <InputField
+                  label="ResearcherID/ Web of Science ID"
+                  name="researcher"
+                  placeholder="Enter your ResearcherID"
+                  value={ids.researcher}
+                  onChange={(e) => setIds({...ids, researcher: e.target.value})}
+                />
+                <InputField
+                  label="CrossRef Author ID"
+                  name="crossRef"
+                  placeholder="Enter your CrossRef ID"
+                  value={ids.crossRef}
+                  onChange={(e) => setIds({...ids, crossRef: e.target.value})}
+                />
+                <InputField
+                  label="Publons ID"
+                  name="Publons"
+                  placeholder="Enter your Publons ID"
+                  value={ids.Publons}
+                  onChange={(e) => setIds({...ids, Publons: e.target.value})}
+                />
+                <InputField
+                    label="ResearchGate ID" 
+                    name="ResearhcGate" 
+                    placeholder= "Enter your ResearchGate ID" 
+                    value={ids.ResearhcGate} 
+                    onChange={(e) => setIds({...ids, ResearhcGate: e.target.value})} 
+                    />
+
+              </div>
+
               {Object.keys(errors).length > 0 && console.log(errors) && (
                 <div className="text-red-500 text-sm text-left">
                   Please fix the above errors before proceeding.
@@ -1369,7 +1436,7 @@ export default function Register() {
                     required
                   />
                   <div className="flex flex-col text-left space-y-2 mt-4">
-                    <label>Level of Service:</label>
+                    <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">Level of Service:</label>
                     <div className="flex flex-wrap space-x-6 mt-1">
                       {["Departmental", "College", "University"].map((level) => (
                         <label key={level} className="flex items-center cursor-pointer">

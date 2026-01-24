@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { User, Eye, Check, X, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { useNavigate, useParams } from "react-router-dom";
-import {toast,ToastContainer} from "react-toastify"
+import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { getRequests, acceptRequest, rejectRequest, AdminDashboard, addfaculty } from "../core/admin";
 import { isAuthenticated } from "../core/auth";
+import { departments } from "../assets/Data"
 
 const getDiff = (original, updates) => {
   const diff = {};
@@ -149,19 +150,24 @@ const ProfileUpdateRequests = () => {
   return (
     <div className="my-6">
       {/* Collapsible Pending Requests Header */}
-      <div
-        className="flex items-center justify-between cursor-pointer mb-4 p-3 bg-white rounded-lg hover:bg-purple-150 transition-colors"
-        onClick={() => setIsPendingExpanded(!isPendingExpanded)}
-      >
-        <h2 className="text-2xl font-bold font-serif text-purple-800">
-          Pending Update Requests ({requests.length})
-        </h2>
-        {isPendingExpanded ? (
-          <ChevronUp size={28} className="text-purple-800" />
-        ) : (
-          <ChevronDown size={28} className="text-purple-800" />
-        )}
-      </div>
+      {
+        requests.length > 0 && (
+
+          <div
+            className="flex items-center justify-between cursor-pointer mb-4 p-3 bg-white rounded-lg hover:bg-purple-150 transition-colors"
+            onClick={() => setIsPendingExpanded(!isPendingExpanded)}
+          >
+            <h2 className="text-2xl font-bold font-serif text-purple-800">
+              Pending Update Requests ({requests.length})
+            </h2>
+            {isPendingExpanded ? (
+              <ChevronUp size={28} className="text-purple-800" />
+            ) : (
+              <ChevronDown size={28} className="text-purple-800" />
+            )}
+          </div>
+        )
+      }
 
       {/* Collapsible Content */}
       {isPendingExpanded && (
@@ -488,7 +494,7 @@ export default function Admin() {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const res = await addfaculty({email:formData.email,password:formData.password})
+        const res = await addfaculty({ email: formData.email, password: formData.password })
         if (res.msg) {
           setFormData({ email: '', password: '', confirmPassword: '' });
           setErrors({});
@@ -500,20 +506,6 @@ export default function Admin() {
       }
     }
   };
-
-  // --- Constants ---
-  const departments = [
-    "All",
-    "Computer Science and Engineering",
-    "Electronics and Communication Engineering",
-    "Electrical and Electronics Engineering",
-    "Mechanical Engineering",
-    "Civil Engineering",
-    "Metallurgical Engineering",
-    "Information Technology Engineering",
-    "M.Tech",
-    "MBA"
-  ];
 
   useEffect(() => {
     async function getFaculty() {
@@ -558,7 +550,6 @@ export default function Admin() {
             onClick={() => setIsAddModalOpen(true)}
             className="px-2 py-1 lg:text-lg rounded-md cursor-pointer text-white font-semibold bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700 flex items-center gap-1"
           >
-            <Plus size={20} />
             Add Faculty
           </button>
         </div>
@@ -790,6 +781,6 @@ export default function Admin() {
       )}
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
-    
+
   );
 }

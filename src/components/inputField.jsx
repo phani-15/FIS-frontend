@@ -7,7 +7,7 @@ const InputField = memo(
   ) {
     return (
       <div className="flex flex-col text-left space-y-2 mt-4">
-        <label htmlFor={id || name}>{label}</label>
+        <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5" htmlFor={id || name}>{label}</label>
         <input
           ref={ref}
           id={id || name}

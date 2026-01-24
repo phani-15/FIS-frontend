@@ -73,7 +73,7 @@ export default function Home() {
         {
           opacity: 1,
           stagger: 0.015,
-          duration: 1,
+          duration: 0.7,
         },
         '-=0.2'
       )
@@ -91,50 +91,50 @@ export default function Home() {
     );
   }, []);
 
-useEffect(() => {
-  const isMobile = window.innerWidth < 768;
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
 
-  if (!isMobile) {
-    // Desktop animation (keep your current one)
-    gsap.fromTo(
-      devCardsRef.current,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: devCardsRef.current[0],
-          start: 'top 85%',
-        },
-      }
-    );
-    return;
-  }
+    if (!isMobile) {
+      // Desktop animation (keep your current one)
+      gsap.fromTo(
+        devCardsRef.current,
+        { y: 100, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: devCardsRef.current[0],
+            start: 'top 85%',
+          },
+        }
+      );
+      return;
+    }
 
-  // 📱 Mobile: alternate left & right
-  devCardsRef.current.forEach((card, index) => {
-    gsap.fromTo(
-      card,
-      {
-        x: index % 2 === 0 ? 120 : -120, // even → right, odd → left
-        opacity: 0,
-      },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: 'power3.in',
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 95%',
+    // 📱 Mobile: alternate left & right
+    devCardsRef.current.forEach((card, index) => {
+      gsap.fromTo(
+        card,
+        {
+          x: index % 2 === 0 ? 120 : -120, // even → right, odd → left
+          opacity: 0,
         },
-      }
-    );
-  });
-}, []);
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power3.in',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 95%',
+          },
+        }
+      );
+    });
+  }, []);
 
 
   return (
@@ -224,21 +224,25 @@ useEffect(() => {
                 ))}
               </h1>
               <p
-  ref={heroTextRef}
-  className="text-gray-700 leading-relaxed text-justify mb-8"
->
-  {`FIS is a comprehensive online platform designed for the faculty of JNTUGV. It enables faculty members to securely maintain and update their personal information, academic qualifications, certifications, publications, awards, and other professional accomplishments, thereby facilitating efficient academic administration and institutional record management.`
-    .split(' ')
-    .map((word, i) => (
-      <span key={i} className="inline-block mr-1">
-        {word.split('').map((char, j) => (
-          <span key={j} className="inline-block">
-            {char}
-          </span>
-        ))}
-      </span>
-    ))}
-</p>
+                ref={heroTextRef}
+                className="text-gray-700 leading-relaxed text-justify mb-8"
+              >
+                {`FIS is a comprehensive online platform designed for the faculty of JNTUGV.
+  It enables faculty members to securely maintain and update their personal information,
+  academic qualifications, certifications, publications, awards, and other professional
+  accomplishments, thereby facilitating efficient academic administration and Institutional
+  Record Management.`
+                  .split(' ')
+                  .map((word, i) => (
+                    <span key={i} className="inline-block mr-1">
+                      {word.split('').map((char, j) => (
+                        <span key={j} className="inline-block">
+                          {char}
+                        </span>
+                      ))}
+                    </span>
+                  ))}
+              </p>
 
               <button
                 onClick={() => setOpenModal(true)}

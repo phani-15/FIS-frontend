@@ -25,3 +25,5 @@ dummy.jsx
 *.sw?
 
 Mails.txt
+
+.env
