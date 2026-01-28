@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { User, Eye, Check, X, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import { User, Eye, Check, X, ChevronDown, ChevronUp, Plus, Upload, Loader2 } from 'lucide-react';
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { getRequests, acceptRequest, rejectRequest, AdminDashboard, addfaculty } from "../core/admin";
+import { getRequests, acceptRequest, rejectRequest, AdminDashboard, addfaculty, sendBulkRegistrationEmails, sendBulkHodRegistration, sendBulkOfcRegistration } from "../core/admin";
 import { isAuthenticated } from "../core/auth";
 import { departments } from "../assets/Data"
+import * as XLSX from 'xlsx'
 
 const getDiff = (original, updates) => {
   const diff = {};
@@ -32,14 +33,14 @@ const ProfileUpdateRequests = () => {
   const [currentRequest, setCurrentRequest] = useState(null);
   const [isPendingExpanded, setIsPendingExpanded] = useState(true);
   const [expandedPreviousData, setExpandedPreviousData] = useState({});
+  const [loadingAction, setLoadingAction] = useState({ id: null, type: null }); // {id, type: 'accept'|'reject'}
 
   const { admin } = isAuthenticated();
-    const { adminId } = useParams()
+  const { adminId } = useParams()
 
   const loadRequests = () => {
     if (admin && admin._id) {
       getRequests(admin._id).then(data => {
-        console.log(data);
         if (data && !data.error) {
           const formatted = data.map(r => ({
             id: r._id,
@@ -63,28 +64,34 @@ const ProfileUpdateRequests = () => {
     loadRequests();
   }, []);
 
-  const handleAccept = (id) => {
-    acceptRequest(adminId,id).then(data => {
+  const handleAccept = async (id) => {
+    setLoadingAction({ id, type: 'accept' });
+    try {
+      const data = await acceptRequest(adminId, id);
       if (data && !data.error) {
-
-        loadRequests(); // Reload
+        loadRequests();
         setShowModal(false);
       } else {
         console.error("Failed to accept");
       }
-    });
+    } finally {
+      setLoadingAction({ id: null, type: null });
+    }
   };
 
-  const handleReject = (id) => {
-    rejectRequest(adminId, id).then(data => {
+  const handleReject = async (id) => {
+    setLoadingAction({ id, type: 'reject' });
+    try {
+      const data = await rejectRequest(adminId, id);
       if (data && !data.error) {
-        console.log("Request Rejected");
-        loadRequests(); // Reload
+        loadRequests();
         setShowModal(false);
       } else {
         console.error("Failed to reject");
       }
-    });
+    } finally {
+      setLoadingAction({ id: null, type: null });
+    }
   };
 
   const handleShowUpdates = (request) => {
@@ -199,17 +206,33 @@ const ProfileUpdateRequests = () => {
 
                 <button
                   onClick={() => handleAccept(request.id)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition shadow-sm"
+                  disabled={loadingAction.id === request.id}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-lg transition shadow-sm ${loadingAction.id === request.id && loadingAction.type === 'accept'
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gray-500 hover:bg-gray-600'
+                    }`}
                 >
-                  <Check size={14} />
+                  {loadingAction.id === request.id && loadingAction.type === 'accept' ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <Check size={14} />
+                  )}
                   Accept
                 </button>
 
                 <button
                   onClick={() => handleReject(request.id)}
-                  className="inline-flex relative right-0 items-center gap-1.5 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-300 rounded-lg hover:bg-gray-400 transition shadow-sm"
+                  disabled={loadingAction.id === request.id}
+                  className={`inline-flex relative right-0 items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg transition shadow-sm ${loadingAction.id === request.id && loadingAction.type === 'reject'
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'text-gray-700 bg-gray-300 hover:bg-gray-400'
+                    }`}
                 >
-                  <X size={14} />
+                  {loadingAction.id === request.id && loadingAction.type === 'reject' ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <X size={14} />
+                  )}
                   Reject
                 </button>
               </div>
@@ -415,16 +438,32 @@ const ProfileUpdateRequests = () => {
               <div className="p-4 bg-gray-100/80 backdrop-blur-sm border-t border-gray-200/50 flex justify-end gap-3 sticky bottom-0">
                 <button
                   onClick={() => handleAccept(currentRequest.id)}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+                  disabled={loadingAction.id === currentRequest.id}
+                  className={`inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold text-white rounded-lg ${loadingAction.id === currentRequest.id && loadingAction.type === 'accept'
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gray-500 hover:bg-gray-600'
+                    }`}
                 >
-                  <Check size={16} />
+                  {loadingAction.id === currentRequest.id && loadingAction.type === 'accept' ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Check size={16} />
+                  )}
                   Accept Changes
                 </button>
                 <button
                   onClick={() => handleReject(currentRequest.id)}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold text-black bg-gray-200 rounded-lg hover:bg-gray-300"
+                  disabled={loadingAction.id === currentRequest.id}
+                  className={`inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-lg ${loadingAction.id === currentRequest.id && loadingAction.type === 'reject'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'text-black bg-gray-200 hover:bg-gray-300'
+                    }`}
                 >
-                  <X size={16} />
+                  {loadingAction.id === currentRequest.id && loadingAction.type === 'reject' ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <X size={16} />
+                  )}
                   Reject Changes
                 </button>
               </div>
@@ -460,6 +499,144 @@ export default function Admin() {
     }
   ])
   const [errors, setErrors] = useState({});
+
+  // Bulk email states
+  const [isSendingBulk, setIsSendingBulk] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState({ current: 0, total: 0, successCount: 0, failedCount: 0 });
+
+  // HOD Bulk states
+  const [isSendingHodBulk, setIsSendingHodBulk] = useState(false);
+  const [hodBulkProgress, setHodBulkProgress] = useState({ current: 0, total: 0, successCount: 0, failedCount: 0 });
+
+  // OFC Bulk states
+  const [isSendingOfcBulk, setIsSendingOfcBulk] = useState(false);
+  const [ofcBulkProgress, setOfcBulkProgress] = useState({ current: 0, total: 0, successCount: 0, failedCount: 0 });
+
+  const fileInputRef = useRef(null);
+  const hodFileInputRef = useRef(null);
+  const ofcFileInputRef = useRef(null);
+
+  // Handle Excel file upload and send bulk emails
+  const handleBulkEmailUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const facultyData = XLSX.utils.sheet_to_json(worksheet);
+      if (facultyData.length === 0) {
+        toast.error("No data found in the Excel file");
+        return;
+      }
+
+      // Validate that required columns exist
+      const firstRow = facultyData[0];
+      if (!firstRow.memberEmail || !firstRow.Password) {
+        toast.error("Excel file must have 'memberEmail' and 'Password' columns");
+        return;
+      }
+      setIsSendingBulk(true);
+      setBulkProgress({ current: 0, total: facultyData.length, successCount: 0, failedCount: 0 });
+
+      const result = await sendBulkRegistrationEmails(facultyData, (progress) => {
+        setBulkProgress(progress);
+      });
+
+      setIsSendingBulk(false);
+      toast.success(`Completed! Success: ${result.successCount}, Failed: ${result.failedCount}`);
+    } catch (error) {
+      console.error("Error in handleBulkEmailUpload:", error);
+      setIsSendingBulk(false);
+      toast.error(`Error processing file: ${error.message}`);
+    }
+
+    // Reset file input
+    e.target.value = '';
+  };
+
+  // Handle HOD Excel upload
+  const handleHodBulkUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const hodData = XLSX.utils.sheet_to_json(worksheet);
+
+      if (hodData.length === 0) {
+        toast.error("No data found in HOD Excel file");
+        return;
+      }
+
+      const firstRow = hodData[0];
+      if (!firstRow.memberEmail || !firstRow.department || !firstRow.Password) {
+        toast.error("Excel must have 'memberEmail', 'department', 'Password'");
+        return;
+      }
+
+      setIsSendingHodBulk(true);
+      setHodBulkProgress({ current: 0, total: hodData.length, successCount: 0, failedCount: 0 });
+
+      const result = await sendBulkHodRegistration(hodData, (progress) => {
+        setHodBulkProgress(progress);
+      });
+
+      setIsSendingHodBulk(false);
+      toast.success(`HODs Added! Success: ${result.successCount}, Failed: ${result.failedCount}`);
+    } catch (error) {
+      setIsSendingHodBulk(false);
+      toast.error(`Error: ${error.message}`);
+    }
+    e.target.value = '';
+  };
+
+  // Handle OFC Excel upload
+  const handleOfcBulkUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const ofcData = XLSX.utils.sheet_to_json(worksheet);
+
+      if (ofcData.length === 0) {
+        toast.error("No data found in OFC Excel file");
+        return;
+      }
+
+      const firstRow = ofcData[0];
+      if (!firstRow.role || !firstRow.PassCode) {
+        toast.error("Excel must have 'role', 'PassCode' columns");
+        return;
+      }
+
+      setIsSendingOfcBulk(true);
+      setOfcBulkProgress({ current: 0, total: ofcData.length, successCount: 0, failedCount: 0 });
+
+      const result = await sendBulkOfcRegistration(ofcData, (progress) => {
+        setOfcBulkProgress(progress);
+      });
+
+      setIsSendingOfcBulk(false);
+      toast.success(`OFCs Added! Success: ${result.successCount}, Failed: ${result.failedCount}`);
+    } catch (error) {
+      setIsSendingOfcBulk(false);
+      toast.error(`Error: ${error.message}`);
+    }
+    e.target.value = '';
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -545,8 +722,144 @@ export default function Admin() {
 
         {ProfileUpdateRequests()}
 
-        {/* Add Faculty Button */}
-        <div className="flex justify-end my-2 px-2 py-1">
+        {/* Add Faculty Buttons */}
+        <div className="flex flex-wrap justify-end gap-3 my-2 px-2 py-1">
+          {/* Bulk Email Button */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleBulkEmailUpload}
+            accept=".xlsx,.xls"
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isSendingBulk}
+            className={`px-3 py-2 lg:text-lg rounded-md cursor-pointer text-white font-semibold flex items-center gap-2 transition-all ${isSendingBulk
+              ? 'bg-emerald-600'
+              : 'bg-linear-to-tl from-green-600 via-emerald-600 to-teal-600 hover:from-green-700 hover:via-emerald-700 hover:to-teal-700'
+              }`}
+          >
+            {isSendingBulk ? (
+              <>
+                {/* Circular Progress Indicator */}
+                <div className="relative w-6 h-6">
+                  <svg className="w-6 h-6 transform -rotate-90">
+                    {/* Background circle */}
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="rgba(255,255,255,0.3)"
+                      strokeWidth="2"
+                      fill="none"
+                    />
+                    {/* Progress circle */}
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="white"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - (bulkProgress.total > 0 ? bulkProgress.current / bulkProgress.total : 0))}
+                      className="transition-all duration-300"
+                    />
+                  </svg>
+                </div>
+                <span>{bulkProgress.current}/{bulkProgress.total}</span>
+                <span className="text-green-200">✓{bulkProgress.successCount}</span>
+                <span className="text-red-200">✗{bulkProgress.failedCount}</span>
+              </>
+            ) : (
+              <>
+                <Upload size={20} />
+                Send Registration Emails to Faculty
+              </>
+            )}
+          </button>
+
+          {/* HOD Bulk Button */}
+          <input
+            type="file"
+            ref={hodFileInputRef}
+            onChange={handleHodBulkUpload}
+            accept=".xlsx,.xls"
+            className="hidden"
+          />
+          <button
+            onClick={() => hodFileInputRef.current?.click()}
+            disabled={isSendingHodBulk}
+            className={`px-3 py-2 lg:text-lg rounded-md cursor-pointer text-white font-semibold flex items-center gap-2 transition-all ${isSendingHodBulk
+              ? 'bg-blue-600'
+              : 'bg-linear-to-tl from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:via-indigo-700 hover:to-violet-700'
+              }`}
+          >
+            {isSendingHodBulk ? (
+              <>
+                <div className="relative w-6 h-6">
+                  <svg className="w-6 h-6 transform -rotate-90">
+                    <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" />
+                    <circle
+                      cx="12" cy="12" r="10" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - (hodBulkProgress.total > 0 ? hodBulkProgress.current / hodBulkProgress.total : 0))}
+                      className="transition-all duration-300"
+                    />
+                  </svg>
+                </div>
+                <span>{hodBulkProgress.current}/{hodBulkProgress.total}</span>
+              </>
+            ) : (
+              <>
+                <Upload size={20} />
+                Add HODs
+              </>
+            )}
+          </button>
+
+          {/* OFC Bulk Button */}
+          <input
+            type="file"
+            ref={ofcFileInputRef}
+            onChange={handleOfcBulkUpload}
+            accept=".xlsx,.xls"
+            className="hidden"
+          />
+          <button
+            onClick={() => ofcFileInputRef.current?.click()}
+            disabled={isSendingOfcBulk}
+            className={`px-3 py-2 lg:text-lg rounded-md cursor-pointer text-white font-semibold flex items-center gap-2 transition-all ${isSendingOfcBulk
+              ? 'bg-amber-600'
+              : 'bg-linear-to-tl from-amber-500 via-orange-600 to-red-600 hover:from-amber-600 hover:via-orange-700 hover:to-red-700'
+              }`}
+          >
+            {isSendingOfcBulk ? (
+              <>
+                <div className="relative w-6 h-6">
+                  <svg className="w-6 h-6 transform -rotate-90">
+                    <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" />
+                    <circle
+                      cx="12" cy="12" r="10" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - (ofcBulkProgress.total > 0 ? ofcBulkProgress.current / ofcBulkProgress.total : 0))}
+                      className="transition-all duration-300"
+                    />
+                  </svg>
+                </div>
+                <span>{ofcBulkProgress.current}/{ofcBulkProgress.total}</span>
+              </>
+            ) : (
+              <>
+                <Upload size={20} />
+                Add OFCs
+              </>
+            )}
+          </button>
+
+          {/* Add Single Faculty Button */}
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="px-2 py-1 lg:text-lg rounded-md cursor-pointer text-white font-semibold bg-linear-to-tl from-blue-600 via-violet-600 to-pink-600 hover:from-blue-700 hover:via-violet-700 hover:to-pink-700 flex items-center gap-1"

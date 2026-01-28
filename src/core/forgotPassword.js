@@ -8,9 +8,7 @@ export const forgotPassword = async (identifier,type) => {
       },
       body: JSON.stringify({identifier,type}),
     });
-
     const data = await res.json(); 
-    console.log(data)
     if (!res.ok) {
       throw new Error(data.error || data.message || "OTP request failed");
     }

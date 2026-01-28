@@ -47,7 +47,6 @@ export const getRefFaculty=async (obj,id)=>{
 }
 export const getReports=async (obj,id)=>{
   const {token}=isAuthenticated()
-  console.log(`${API}/ofcreport/${id}`)
   const response=await fetch(`${API}/ofcreport/${id}`,{
     method:"POST",
     headers:{
