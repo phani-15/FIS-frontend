@@ -34,6 +34,7 @@ const ProfileUpdateRequests = () => {
   const [expandedPreviousData, setExpandedPreviousData] = useState({});
 
   const { admin } = isAuthenticated();
+    const { adminId } = useParams()
 
   const loadRequests = () => {
     if (admin && admin._id) {
@@ -63,7 +64,7 @@ const ProfileUpdateRequests = () => {
   }, []);
 
   const handleAccept = (id) => {
-    acceptRequest(currentUser._id, token, id).then(data => {
+    acceptRequest(adminId,id).then(data => {
       if (data && !data.error) {
 
         loadRequests(); // Reload
@@ -75,7 +76,7 @@ const ProfileUpdateRequests = () => {
   };
 
   const handleReject = (id) => {
-    rejectRequest(currentUser._id, token, id).then(data => {
+    rejectRequest(adminId, id).then(data => {
       if (data && !data.error) {
         console.log("Request Rejected");
         loadRequests(); // Reload

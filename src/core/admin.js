@@ -50,7 +50,7 @@ export const getRequests = async (userId) => {
   }
 };
 
-export const acceptRequest = async (userId, token, rid) => {
+export const acceptRequest = async (userId, rid) => {
   try {
     const { token } = isAuthenticated()
     const response = await fetch(`${API}/requestac/${userId}`, {
@@ -67,7 +67,7 @@ export const acceptRequest = async (userId, token, rid) => {
   }
 }
 
-export const rejectRequest = async (userId, token, rid) => {
+export const rejectRequest = async (userId, rid) => {
   try {
     const { token } = isAuthenticated()
     const response = await fetch(`${API}/requestrej/${userId}`, {

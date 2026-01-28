@@ -542,6 +542,7 @@ const ViewCertificaion = () => {
           [sectionKey]: [index]
         }
       };
+      
       const response = await addUpdateRequest(userId, payload);
 
       if (response && response.success) {
