@@ -11,7 +11,7 @@ import { jwtDecode } from "jwt-decode";
 export default function Register() {
   const { token } = useParams()
   const navigate = useNavigate()
-  const [step, setStep] = useState("education"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
+  const [step, setStep] = useState("personal"); // "signUp" | "personal" | "education" | "experience" | "as" | "oas"
   const [errors, setErrors] = useState({});
   const [haveOAS, setHaveOAS] = useState(true);
   const Data = jwtDecode(token)
