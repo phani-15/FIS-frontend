@@ -844,7 +844,7 @@ export default function Register() {
 
               {errors.date_of_join && <small className="text-red-600 text-sm">{errors.date_of_join}</small>}
             </div>
-
+              {errors && <small className="text-red-600 text-sm text-left mt-4">*Please fill all the required fields</small>}
             <div className="flex gap-3 justify-end">
               <button
                 type="submit"
