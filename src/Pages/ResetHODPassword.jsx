@@ -51,6 +51,7 @@ export default function ResetHODPassword() {
                     setMessage((prev) => ({ ...prev, error: "Failed to change password" }));
                 }
                 setMessage({ success: "Password reset successful" });
+                z
         navigate('/hod');
     }
     const handleChange = (e) => {

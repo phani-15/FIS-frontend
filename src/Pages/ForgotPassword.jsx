@@ -23,20 +23,39 @@ export default function PasswordChange() {
 			[id]: value,
 		}));
 	}
-
+	const navigate=useNavigate()
 	const [clicked, setClicked] = React.useState(false)
 	const [otpVerified, setOtpVerified] = React.useState(false)
 	const [error, setError] = React.useState({})
+	const [otpToken, setOtpToken] = React.useState("");
+	const [loading, setLoading] = React.useState(false);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		const newErrors = {}
-		if (data.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-		if (data.password !== data.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
-		setError(newErrors);
-		if (Object.keys(newErrors).length > 0) return;
-		alert("Password changed successfully!")
-	}
+
+	const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const newErrors = {};
+  if (data.password.length < 8)
+    newErrors.password = "Password must be at least 8 characters";
+  if (data.password !== data.confirmPassword)
+    newErrors.confirmPassword = "Passwords do not match";
+
+  setError(newErrors);
+  if (Object.keys(newErrors).length > 0) return;
+
+  setLoading(true);
+  const res = await resetPassword(otpToken, data.password);
+  setLoading(false);
+
+  if (res.error) {
+    alert(res.error);
+    return;
+  }
+
+  alert("Password changed successfully!");
+  navigate('/')
+};
+
 
   return (
     <div className="flex justify-center items-center p-4">
@@ -69,14 +88,27 @@ export default function PasswordChange() {
 					{/* Submit Button */}
 					{!clicked &&
 						<button
-							onClick={() => {
-								setClicked(true)
-								// send an Email containing OTP from backend or frontend
-							}}
-							className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
-						>
-							Generate OTP
-						</button>
+  type="button"
+  onClick={async () => {
+    setLoading(true);
+    const res = await forgotPassword(data.mail, "faculty"); // 👈 adjust type if needed
+
+    setLoading(false);
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    setOtpToken(res.otpToken); // 🔑 VERY IMPORTANT
+    setClicked(true);
+    alert("OTP sent to your email");
+  }}
+  className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md"
+>
+  {loading ? "Sending OTP..." : "Generate OTP"}
+</button>
+
 					}
 					{clicked &&
 						<div>
@@ -93,15 +125,27 @@ export default function PasswordChange() {
 								/>
 							</div>
 							{!otpVerified &&
-								<button
-									onClick={() => {
-										setOtpVerified(true)
-										// verify the otp in the backend
-									}}
-									className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
-								>
-									Verify OTP
-								</button>
+							<button
+  type="button"
+  onClick={async () => {
+    setLoading(true);
+    const res = await verifyOtp(otpToken, data.OTP);
+
+    setLoading(false);
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    setOtpVerified(true);
+    alert("OTP verified");
+  }}
+  className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md"
+>
+  {loading ? "Verifying..." : "Verify OTP"}
+</button>
+
 							}
 							{otpVerified &&
 								<div>

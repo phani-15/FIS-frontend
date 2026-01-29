@@ -23,19 +23,19 @@ export default function Register() {
   const fileInputRef = useRef(null);
 
   const [personalData, setpersonalData] = useState({
-    name: "Ganesh Tamarapalli",
+    name: "",
     avatar: null,
-    father: "undertaker",
+    father: "",
     gender: "",
     DOB: "",
     marital: "",
-    phone: "1234566670",
-    area: "kukatpallyground",
-    city: "hyderabadcity",
+    phone: "",
+    area: "",
+    city: "",
     gsl : "",
     designation: "",
     department: "",
-    college: "JNTUGV-CEV",
+    college: "",
     date_of_join: new Date().toISOString(), // current year-month
   });
   const [loginData, setLoginData] = useState({
@@ -313,11 +313,9 @@ export default function Register() {
       })
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors)
-        console.log(errors)
         return
       }
       setErrors({});
-      console.log(personalData);
       // test();
       setStep("education");
     }, [personalData]
@@ -399,7 +397,6 @@ export default function Register() {
   const handleSubmitSignUp = useCallback(
     (e) => {
       e.preventDefault();
-      console.log(loginData)
       if (!validateSignUp()) return;
       setStep("personal");
     },
@@ -465,13 +462,8 @@ export default function Register() {
         postdoc: havePostDoc ? [...PostDocs] : [],
         ids : {...ids}
       };
-
-      // Log to verify
-      console.log("Updated education:", updatedEducation);
-
       // Save it back to state so it can be used later
       setEducation(updatedEducation);
-
       setStep("experience");
     },
     [education, havePhD, havePostDoc, PhDs, PostDocs, validateEducation]
@@ -734,7 +726,7 @@ export default function Register() {
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">
-                Address <span className="text-gray-600">(optional)</span>
+                Address <span className="text-gray-600"></span>
               </label>
 
 
@@ -1412,7 +1404,6 @@ export default function Register() {
                 const newErrors = validateAS();
                 setErrors(newErrors);
                 if (Object.keys(newErrors).length === 0) {
-                  console.log("Administrative Service Data:", administrativeService);
                   setStep("oas");
                 }
               }}

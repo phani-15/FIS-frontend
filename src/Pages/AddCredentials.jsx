@@ -306,8 +306,6 @@ const AddCredentials = () => {
 
   const handlemoocSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 MOOC Submit triggered");
-
     const newErrors = {};
     let isValid = true;
 
@@ -405,7 +403,6 @@ const AddCredentials = () => {
         };
 
         await addDetails(payload, userId, credId);
-        console.log(`✅ Submitted MOOC ${i + 1}`, payload);
       }
 
       alert(`✅ Successfully submitted ${numMOOCs} MOOC(s)!`);
@@ -425,7 +422,6 @@ const AddCredentials = () => {
 
   const handleESubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 e-Content Submit triggered");
 
     const newErrors = {};
     let isValid = true;
@@ -524,7 +520,6 @@ const AddCredentials = () => {
         };
 
         await addDetails(payload, userId, credId);
-        console.log(`✅ Submitted e-Content ${i + 1}`, payload);
       }
 
       alert(`✅ Successfully submitted ${numEContents} e-Content(s)!`);
@@ -699,7 +694,6 @@ const AddCredentials = () => {
 
   const handlePhdjoinedSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 PhD (Ongoing) Submit triggered");
 
     const newErrors = {};
     let isValid = true;
@@ -779,7 +773,6 @@ const AddCredentials = () => {
         // 🔹 One backend entry per student
         await addDetails(payload, userId, credId);
 
-        console.log(`✅ Submitted PhD student ${i + 1}`, payload);
       }
 
       alert(`✅ Successfully submitted ${numPhd} PhD student(s)!`);
@@ -799,7 +792,6 @@ const AddCredentials = () => {
 
   const handlePhdSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 PhD (Awarded) Submit triggered");
 
     const newErrors = {};
     let isValid = true;
@@ -876,7 +868,6 @@ const AddCredentials = () => {
         // 🔹 One backend entry per student
         await addDetails(payload, userId, credId);
 
-        console.log(`✅ Submitted PhD student ${i + 1}`, payload);
       }
 
       alert(`✅ Successfully submitted ${numPhd} PhD student(s)!`);
@@ -951,13 +942,12 @@ const AddCredentials = () => {
       files: fileMap
     };
 
-    console.log(payload)
+    console.log("payload sending was :",payload)
 
     await addDetails(payload, userId, credId)
       .catch(err => {
         console.log(err);
       })
-    console.log('✅ Submitted:', payload);
     alert(` ${group}${hasSubcategories ? ` - ${subcategory}` : ''} added!`);
 
     // Reset

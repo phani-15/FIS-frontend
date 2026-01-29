@@ -22,28 +22,44 @@ export default function ResetPassword() {
     ];
     const [errors, setErrors] = React.useState({});
     const navigate = useNavigate();
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const newErrors = {};
-        if (!data.newPass || data.newPass.length < 8) newErrors.newPass = "Password must be at least 8 characters";
-        if (data.newPass !== data.Cpass) newErrors.Cpass = "Passwords do not match";
-        setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0) return;
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-        try {
-            const response = await passwordchange(data.email, data.pass, data.newPass,"faculty");
-            if (response?.error) {
-                setMessage((prev) => ({ ...prev, error: response.error }));
-                return;
-            }
-            setMessage((prev) => ({ ...prev, success: "Password reset successful" }));
-            navigate('/');
-        } catch (err) {
-            setMessage((prev) => ({ ...prev, error: "Failed to change password" }));
-        }
-        alert('Password changed successfully')
-        navigate('/')
+  const newErrors = {};
+  if (!data.newPass || data.newPass.length < 8)
+    newErrors.newPass = "Password must be at least 8 characters";
+  if (data.newPass !== data.Cpass)
+    newErrors.Cpass = "Passwords do not match";
+
+  setErrors(newErrors);
+  if (Object.keys(newErrors).length > 0) return;
+
+  setMessage({});
+
+  try {
+    const response = await passwordchange(
+      data.email,
+      data.pass,
+      data.newPass,
+      "faculty"
+    );
+
+    if (response?.error) {
+      setMessage({ error: response.error });
+      return;
     }
+
+    setMessage({ success: "Password reset successful" });
+
+    setTimeout(() => {
+      navigate('/');
+    }, 1500);
+
+  } catch (err) {
+    setMessage({ error: "Failed to change password" });
+  }
+};
+
     const handleChange = (e) => {
         const { id, value } = e.target;
         setData((prevData) => ({
