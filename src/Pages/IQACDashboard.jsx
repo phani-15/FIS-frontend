@@ -66,24 +66,31 @@ export default function IQACDashboard() {
 
   const handleFacultyToggle = (facultyName) => {
     setSelectedMembers((prevIds) => {
-      console.log("prevIds: ", prevIds);
-
       // 1. Find the user object in certifications that matches the name
       const targetUser = certifications.find(user => user.name === facultyName);
 
       // Safety check: if name doesn't exist in certifications, do nothing
       if (!targetUser) return prevIds;
 
-      const targetId = targetUser.id;
+      // Handle both Array (initial state) and Object (grouped state) formats
+      let newSelection = Array.isArray(prevIds) ? {} : { ...prevIds };
 
-      // 2. Check if the ID is already in our selection array
-      if (prevIds.includes(targetId)) {
-        // 3. REMOVE: Filter out the ID if it exi`sts
-        return prevIds.filter(id => id !== targetId);
+      const dept = targetUser.dept;
+      // If department is missing, we can't group it, so return previous state
+      if (!dept) return prevIds;
+
+      const currentDeptList = newSelection[dept] || [];
+
+      // 2. Check if the Name (not ID) is already in our selection array for the department
+      if (currentDeptList.includes(facultyName)) {
+        // 3. REMOVE: Filter out the Name
+        newSelection[dept] = currentDeptList.filter(name => name !== facultyName);
       } else {
-        // 4. ADD: Push the new ID into the array
-        return [...prevIds, targetId];
+        // 4. ADD: Push the new Name
+        newSelection[dept] = [...currentDeptList, facultyName];
       }
+
+      return newSelection;
     });
   };
 
@@ -108,12 +115,19 @@ export default function IQACDashboard() {
     });
   };
 
+  // Helper: Normalize key to snake_case for backend matching
+  const normalizeKey = (key) => key.toLowerCase().replace(/\s+/g, "_");
+
   // Extract date or year from a record
   const extractDateFromRecord = (record, typeKey) => {
     // First, try to find a date field (common names)
     const dateFields = [
       "date", "eventDate", "startDate", "endDate", "submissionDate", "completionDate",
-      "createdAt", "publishedAt", "attendedOn", "heldOn", "dateOfEvent", "monthYear"
+      "createdAt", "publishedAt", "attendedOn", "heldOn", "dateOfEvent", "monthYear",
+      // Snake case variants
+      "event_date", "start_date", "end_date", "submission_date", "completion_date",
+      "created_at", "published_at", "attended_on", "held_on", "date_of_event", "month_year",
+      "date_of_publication", "year_of_publication"
     ];
 
     for (const field of dateFields) {
@@ -132,22 +146,26 @@ export default function IQACDashboard() {
     }
 
     // If no date field found, try the year field
+    // Also try normalized (snake_case) version of year field if specific mapping exists
     const yearField = yearFields[typeKey];
-    if (yearField && record[yearField] != null) {
-      const yearValue = record[yearField];
-      let year;
-      if (typeof yearValue === 'string') {
-        const yearMatch = yearValue.match(/\b(19|20)\d{2}\b/);
-        if (yearMatch) {
-          year = parseInt(yearMatch[0]);
+    if (yearField) {
+      // Try original key, then normalized key
+      const val = record[yearField] || record[normalizeKey(yearField)];
+      if (val != null) {
+        let year;
+        if (typeof val === 'string') {
+          const yearMatch = val.match(/\b(19|20)\d{2}\b/);
+          if (yearMatch) {
+            year = parseInt(yearMatch[0]);
+          }
+        } else if (typeof val === 'number') {
+          year = val;
         }
-      } else if (typeof yearValue === 'number') {
-        year = yearValue;
-      }
 
-      if (year && year >= 1900 && year <= 2100) {
-        // Return a date object for January 1st of that year
-        return new Date(year, 0, 1); // Month is 0-indexed (0 = January)
+        if (year && year >= 1900 && year <= 2100) {
+          // Return a date object for January 1st of that year
+          return new Date(year, 0, 1); // Month is 0-indexed (0 = January)
+        }
       }
     }
 
@@ -175,7 +193,7 @@ export default function IQACDashboard() {
   };
 
   // Then in your generateExcelReport function, update the sheet name line:
-  const generateExcelReport = async () => {
+  const generateExcelReport = async (reportData) => {
     // Validate inputs
     if (selectedTypes.length === 0) {
       alert("Please select at least one report type.");
@@ -216,6 +234,13 @@ export default function IQACDashboard() {
       return;
     }
 
+    // Use passed data or fallback to empty array if something is wrong
+    const sourceData = Array.isArray(reportData) ? reportData : [];
+    if (sourceData.length === 0) {
+      alert("No data received from server to generate report.");
+      return;
+    }
+
     setIsGenerating(true);
 
     try {
@@ -242,17 +267,21 @@ export default function IQACDashboard() {
         // Group by department
         const departmentData = {};
 
-        // First, filter certifications by selected departments AND selected faculty members
-        const relevantFaculty = certifications.filter(faculty => {
+        // First, filter sourceData by selected departments AND selected faculty members
+        // Note: reportData from backend should already be filtered by IDs, but we double check names/depts if needed.
+        // Or we can assume usage of sourceData directly if backend respects IDs.
+        // Let's keep the filter for safety but using sourceData.
+
+        const relevantFaculty = sourceData.filter(faculty => {
           // Check if faculty's department is in selectedDepartments
-          if (!selectedDepartments.includes(faculty.dept)) {
+          if (faculty.dept && !selectedDepartments.includes(faculty.dept)) {
             return false;
           }
 
           // Check if faculty's name is in selected members for their department
-          const selectedInDept = selectedMembers[faculty.dept] || [];
-          if (!selectedInDept.includes(faculty.name)) {
-            return false;
+          // We map selection to names in frontend state. data from backend has names.
+          if (faculty.dept && selectedMembers[faculty.dept]) {
+            if (!selectedMembers[faculty.dept].includes(faculty.name)) return false;
           }
 
           return true;
@@ -283,7 +312,10 @@ export default function IQACDashboard() {
 
               const row = [faculty.name, faculty.role];
               selectedAttrs.forEach(attrKey => {
-                const value = record[attrKey];
+                // Use normalized key to fetch value from backend data (which uses snake_case)
+                const backendKey = normalizeKey(attrKey);
+                // Try fetching with normalized key first, then fallback to original key (just in case)
+                const value = record[backendKey] !== undefined ? record[backendKey] : record[attrKey];
                 row.push(value !== undefined && value !== null ? value : "");
               });
               departmentData[dept].push(row);
@@ -378,19 +410,54 @@ export default function IQACDashboard() {
       alert("Please select both From Date and To Date.");
       return;
     }
+
+    // 1. Flatten names
+    const selectedNames = Array.isArray(selectedMembers)
+      ? selectedMembers
+      : Object.values(selectedMembers).flat();
+
+    // 2. Map Names to IDs
+    const selectedIds = selectedNames.map(name => {
+      // Use loose equality or ensuring trim if needed, but exact match safest for now
+      const user = certifications.find(u => u.name === name);
+      // Fallback to name if ID missing? No, backend needs ID.
+      // Assuming user.id or user._id exists. Original code used user.id.
+      return user ? (user.id || user._id) : null;
+    }).filter(id => id !== null && id !== undefined);
+
+    if (selectedIds.length === 0) {
+      alert("No valid faculty IDs found for selection.");
+      return;
+    }
+    const normalizedObject = Object.fromEntries(Object.entries(selectedAttributes).map(([k, v]) => [k, v.map(a => a.toLowerCase().replace(/\s+/g, "_"))]));
     const obj = {
       fields: selectedTypes,
-      subfields: selectedAttributes,
-      ids: Array.isArray(selectedMembers) ? selectedMembers : Object.values(selectedMembers),
+      subfields: normalizedObject,
+      ids: selectedIds, // Send IDs, not names
       from_date: DateFrom,
       to_date: DateTo
     }
-    console.log("object that was sending to backend was this :", obj);
-    const data = await getReports(obj, ofcId)
-    console.log("reports data was :", data);
-    setCertifications(data)
-    console.log(certifications);
-    await generateExcelReport();
+
+    console.log("Sending to backend:", obj);
+    try {
+      setIsGenerating(true); // Start loading
+      const data = await getReports(obj, ofcId)
+      console.log("Reports data received:", data);
+
+      // DO NOT setCertifications(data) - this causes the crash
+      // Instead, pass data directly to generation
+      if (Array.isArray(data)) {
+        await generateExcelReport(data);
+      } else {
+        console.error("Invalid data format received:", data);
+        alert("Received invalid data from server.");
+      }
+    } catch (err) {
+      console.error("Error fetching reports:", err);
+      alert("Failed to fetch reports.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const printList = async () => {

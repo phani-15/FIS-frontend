@@ -726,7 +726,7 @@ export default function Register() {
             </div>
             <div className="flex flex-col text-left space-y-2 mt-4">
               <label className="block text-md font-semibold ml-1 text-start text-gray-700 mt-2 mb-0.5">
-                Address <span className="text-gray-600">(optional)</span>
+                Address <span className="text-gray-600"></span>
               </label>
 
 
