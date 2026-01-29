@@ -1,7 +1,7 @@
 import { label } from "framer-motion/client";
 
 const yearFields = {
-  patents: "year_of_published_granted",
+  patents: "year_of_published/granted",
   journal: "year_of_publication",
   book: "year_of_publication",
   book_chapter: "year_of_publication",
@@ -208,23 +208,24 @@ const schemas = {
       // File fields omitted
     ],
   },
-   foreign_visits:{ 
-    label:"Foreign Visits",
-    attributes:[
+  foreign_visits: {
+    label: "Foreign Visits",
+    attributes: [
       { key: 'Purpose Of Visit', label: 'Purpose Of Visit', required: true },
       { key: 'Nature Of Visit', label: 'Nature Of Visit', required: true },
       { key: 'Name Of Conference/event', label: 'Name Of Conference/event', required: true },
       { key: 'Title Of The Paper/talk', label: 'Title Of The Paper/talk', required: true },
-      { key: 'Academic Year', label:'Academic Year', required: true },
-      { key: 'Name Of Host Organization', label:'Name Of Host Organization', required: true },
+      { key: 'Academic Year', label: 'Academic Year', required: true },
+      { key: 'Name Of Host Organization', label: 'Name Of Host Organization', required: true },
       { key: 'Country Visited', label: 'Country Visited', required: true },
       { key: 'Starting Date', label: 'Start Date', required: true },
-      { key: 'End Date', label:'End Date', required: true },
+      { key: 'End Date', label: 'End Date', required: true },
       { key: 'Role Of Faculty', label: 'Role Of Faculty', required: true },
       { key: 'Sponsoring Agency', label: 'Sponsoring Agency', required: true },
       { key: 'Amount Sanctioned', label: 'Amount Sanctioned', required: true },
       { key: 'Travel/grant/received', label: 'Travel Grant Received', required: true },
-  ]},
+    ]
+  },
   fdp: {
     label: "Faculty Development Program (FDP)",
     attributes: [
@@ -1039,4 +1040,4 @@ const departments = [
   "Master's in Business Administration"
 ]
 
-export { schemas, yearFields, fields, phd_awarded_fields, phd_joining_fields,e_content_fields,MOOC_fields, AtKeys, departments };
+export { schemas, yearFields, fields, phd_awarded_fields, phd_joining_fields, e_content_fields, MOOC_fields, AtKeys, departments };

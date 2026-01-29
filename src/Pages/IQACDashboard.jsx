@@ -364,8 +364,6 @@ export default function IQACDashboard() {
           wch: Math.max(h.length, 18)
         }));
 
-        // ... rest of your styling code remains the same ...
-
         // Sheet name
         let sheetName = sanitizeSheetName(schema.label).substring(0, 31);
         if (!sheetName.trim()) sheetName = `Sheet_${typeKey}`;
