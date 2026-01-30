@@ -990,7 +990,6 @@ const AtKeys = [
   { key: "awards_and_recognitions", label: "Awards & Recognitions" },
   { key: "book", label: "Books" },
   { key: "book_chapter", label: "Book Chapters" },
-  { key: "certifications", label: "Certifications (General)" },
   { key: "conference", label: "Conferences" },
   { key: "conference_paper", label: "Conference Papers" },
   { key: "consultancy", label: "Consultancy Projects" },
