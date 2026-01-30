@@ -29,7 +29,7 @@ const yearFields = {
   mtech: "year_of_awarding",
   sttp: { start: "starting_date", end: "ending_date" },
   rc: { start: "starting_date", end: "ending_date" },
-  foreign_visits: { start: "starting_date", end: "end_date" },
+  foreign_visits: { start: "starting_date", end: "ending_date" },
   seminar: { start: "starting_date", end: "ending_date" },
   workshop: { start: "starting_date", end: "ending_date" },
   fdp: { start: "starting_date", end: "ending_date" },
