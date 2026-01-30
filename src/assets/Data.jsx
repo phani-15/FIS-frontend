@@ -101,16 +101,6 @@ const schemas = {
     ],
   },
 
-  certifications: {
-    label: "Certifications",
-    attributes: [
-      { key: "Name Of Certification Course", label: "Course Name", required: true },
-      { key: "Type Of Certification", label: "Type", required: true },
-      { key: "Organized By", label: "Organizer", required: true },
-      { key: "Duration In Weeks", label: "Duration (Weeks)", required: false },
-    ],
-  },
-
   nptel: {
     label: "NPTEL Certifications",
     attributes: [
@@ -990,13 +980,12 @@ const AtKeys = [
   { key: "awards_and_recognitions", label: "Awards & Recognitions" },
   { key: "book", label: "Books" },
   { key: "book_chapter", label: "Book Chapters" },
-  { key: "certifications", label: "Certifications (General)" },
   { key: "conference", label: "Conferences" },
   { key: "conference_paper", label: "Conference Papers" },
   { key: "consultancy", label: "Consultancy Projects" },
   { key: "coursera", label: "Coursera Certifications" },
   { key: "csi", label: "CSI Membership" },
-  // { key: "e_content_fields", label: "e-Content" },
+  { key: "e_content", label: "e-Content" },
   { key: "edx", label: "edX Certifications" },
   { key: "talk", label: "Expert Talks" },
   { key: "fdp", label: "Faculty Development Programs (FDP)" },
