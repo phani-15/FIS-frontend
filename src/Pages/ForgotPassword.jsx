@@ -53,7 +53,7 @@ export default function PasswordChange() {
   }
 
   alert("Password changed successfully!");
-  navigate('/')
+  navigate('/login')
 };
 
 
