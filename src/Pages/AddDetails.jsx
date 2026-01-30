@@ -173,7 +173,6 @@ export default function AddDetails() {
          return; // ❌ stop if validation fails
       }
 
-      console.log(`✅ Submitted ${selectedSection} Data:`, formData);
       navigate('/profile');
    };
 

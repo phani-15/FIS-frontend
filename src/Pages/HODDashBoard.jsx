@@ -210,14 +210,12 @@ export default function HODDashBoard() {
         dateTo,
       };
 
-      // console.log(payload)
       const response = await getHodReports(payload, userId);
 
       if (!response.success) {
         alert(response.message || "Failed to extract reports");
         return;
       }
-      console.log("FULL RESPONSE:", response);
       if (!response.data || response.data.length === 0) {
         alert("No data available");
         return;
@@ -265,8 +263,6 @@ export default function HODDashBoard() {
 
       // Prepare headers
       const headers = ["S.No", "Faculty Name", "Email", "Designation"];
-
-      console.log(facultyList);
 
       // Prepare data rows
       const rows = facultyList.map((faculty, index) => [

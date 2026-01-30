@@ -36,24 +36,24 @@ export default function AppRoutes() {
 
                     <Route path='/login' element={<Login />} />
                     <Route path='/fp/' element={<ForgotPassword />} />
-                    <Route path='/register/:token' element={<Register />} />
+                    <Route path='/register/:token' element={<PrivateRoutes><Register /></PrivateRoutes>} />
                     <Route path='/rp' element={<ResetPassword />} />
 
-                    <Route path='/profile/:profileId' element={<Profile />} />
+                    <Route path='/profile/:profileId' element={<PrivateRoutes><Profile /></PrivateRoutes>} />
                     <Route path='/ea/:profileId' element={<EditAdmin />} />
-                    <Route path='/vc/:userId/:credId' element={<ViewCertificaion />} />
-                    <Route path='/ac/:userId/:credId' element={<AddCredentials />} />
+                    <Route path='/vc/:userId/:credId' element={<PrivateRoutes><ViewCertificaion /></PrivateRoutes>} />
+                    <Route path='/ac/:userId/:credId' element={<PrivateRoutes><AddCredentials /></PrivateRoutes>} />
 
                     <Route path='/hod' element={<HODLogin />} />
-                    <Route path='/hodDashboard/:userId' element={<HodDashboard />} />
+                    <Route path='/hodDashboard/:userId' element={<PrivateRoutes><HodDashboard /></PrivateRoutes>} />
                     <Route path='/resetHODpassword' element={<ResetHODPassword />} />
                     <Route path='/forgotHODpassword' element={<ForgotHODPassword />} />
 
                     <Route path='/ofc' element={<IQACLogin />} />
-                    <Route path='/ofcDashboard/:ofcId' element={<IqacDashboard />} />
+                    <Route path='/ofcDashboard/:ofcId' element={<PrivateRoutes><IqacDashboard /></PrivateRoutes>} />
                     <Route path='/ofcChange' element={<ChangeIQACPassword />} />
                     <Route path='/forgotpass' element={<Forgotiqac />} />
-
+                    
                     <Route path='/adminPage/:adminId' element={<PrivateRoutes><Admin /></PrivateRoutes>} />
                     <Route path='/admin' element={<AdminLogin />} />
                     <Route path='/adminfp/' element={<AdminFP />} />

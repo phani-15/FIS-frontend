@@ -49,7 +49,6 @@ export default function IQACDashboard() {
     const getFacultyOnchange = async () => {
       const data = await getRefFaculty(obj, ofcId)
       setCertifications(data)
-      console.log("certification data :", certifications);
     }
     selectedDepartments.length > 0 && getFacultyOnchange()
   }, [selectedAttributes, selectedTypes, selectedDepartments])
@@ -402,7 +401,6 @@ export default function IQACDashboard() {
   // Handle form submission
   const handleExtractReports = async (e) => {
     e.preventDefault();
-    console.log("handleexcelreport was called");
     // Prevent form submission if required fields are empty
     if (!DateFrom || !DateTo) {
       alert("Please select both From Date and To Date.");
@@ -436,11 +434,9 @@ export default function IQACDashboard() {
       to_date: DateTo
     }
 
-    console.log("Sending to backend:", obj);
     try {
       setIsGenerating(true); // Start loading
       const data = await getReports(obj, ofcId)
-      console.log("Reports data received:", data);
 
       // DO NOT setCertifications(data) - this causes the crash
       // Instead, pass data directly to generation

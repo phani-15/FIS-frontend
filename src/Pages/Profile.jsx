@@ -25,7 +25,7 @@ export default function ProfilePage() {
     {
       "personalData": {
         "name": "Phani Polavarapu",
-        "avatar": "images/Profile2.avif",
+        "avatar": "1769684122657-profile-picture.jpg",
         "father": "Surya Nageswara Rao",
         "gender": "Male",
         "DOB": "2004-09-15",

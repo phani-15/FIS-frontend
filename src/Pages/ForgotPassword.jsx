@@ -1,6 +1,7 @@
 import React from "react";
 import { KeyRound } from "lucide-react";
 import InputField from "../components/inputField";
+import { toast, ToastContainer } from "react-toastify"
 import {
   forgotPassword,
   verifyOtp,
@@ -29,6 +30,7 @@ export default function PasswordChange() {
 	const [error, setError] = React.useState({})
 	const [otpToken, setOtpToken] = React.useState("");
 	const [loading, setLoading] = React.useState(false);
+	const [isupdating,setisupdating ] = React.useState(false);
 
 
 	const handleSubmit = async (e) => {
@@ -43,16 +45,16 @@ export default function PasswordChange() {
   setError(newErrors);
   if (Object.keys(newErrors).length > 0) return;
 
-  setLoading(true);
+  setisupdating(true);
   const res = await resetPassword(otpToken, data.password);
-  setLoading(false);
+  setisupdating(false);
 
   if (res.error) {
-    alert(res.error);
+    toast.error(res.error);
     return;
   }
 
-  alert("Password changed successfully!");
+  toast.success("Password changed successfully!");
   navigate('/login')
 };
 
@@ -96,13 +98,13 @@ export default function PasswordChange() {
     setLoading(false);
 
     if (res.error) {
-      alert(res.error);
+      toast.error(res.error);
       return;
     }
 
     setOtpToken(res.otpToken); // 🔑 VERY IMPORTANT
     setClicked(true);
-    alert("OTP sent to your email");
+    toast.success("OTP sent to your email");
   }}
   className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md"
 >
@@ -134,12 +136,13 @@ export default function PasswordChange() {
     setLoading(false);
 
     if (res.error) {
-      alert(res.error);
+      toast.error(res.error);
       return;
     }
 
     setOtpVerified(true);
-    alert("OTP verified");
+
+    toast.success("OTP verified");
   }}
   className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md"
 >
@@ -169,9 +172,10 @@ export default function PasswordChange() {
 									/>
 									<button
 										onClick={handleSubmit}
+										
 										className="w-full mt-6 flex items-center justify-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:from-purple-600 hover:to-indigo-700 transition"
 									>
-										Update Password
+										{isupdating ?"updating...":"Update Password"}
 									</button>
 								</div>
 							}
@@ -179,6 +183,7 @@ export default function PasswordChange() {
 					}
 				</form>
 			</div>
+			<ToastContainer position="top-right" autoClose={3000} />
 		</div>
 	)
 }

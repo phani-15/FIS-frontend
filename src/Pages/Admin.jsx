@@ -486,6 +486,7 @@ export default function Admin() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [loading, setloading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -672,11 +673,13 @@ export default function Admin() {
     e.preventDefault();
     if (validateForm()) {
       try {
+        setloading(true);
         const res = await addfaculty({ email: formData.email, password: formData.password })
         if (res.msg) {
           setFormData({ email: '', password: '', confirmPassword: '' });
           setErrors({});
           setIsAddModalOpen(false);
+          setloading(false)
           toast.success("Faculty registering mail was sent !")
         }
       } catch (error) {
@@ -1086,7 +1089,7 @@ export default function Admin() {
                   type="submit"
                   className="px-4 py-2 text-sm font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700"
                 >
-                  Add Faculty
+                 {loading ?"Adding faculty.....": "Add Faculty"}
                 </button>
               </div>
             </form>

@@ -68,14 +68,14 @@ export default function Login() {
     });
     const data = result.data || result;
     if (!data?.user?.id) {
-      throw { response: { data: { error: "Any of the credentials is wrong" } } };
+      throw { response: { data: { error: "check  the credentials" } } };
     }
     authenticate(data, () => {
       setFormData({ username: "", password: "" });
     });
     navigate(`/profile/${data.user.id}`);
   } catch (error) {
-    const msg = error.response?.data?.error || "Any of the credentials is wrong";
+    const msg = error.response?.data?.error || "check the credentials ";
     setErrors({ password: msg });
   }
 };
