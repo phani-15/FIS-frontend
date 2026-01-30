@@ -31,7 +31,6 @@ export default function ChangeIQACPassword() {
 
     if (Object.keys(newErrors).length > 0) return;
 
-    console.log(data);
     try {
                         const response = await passwordchange(data.role, data.pass, data.newPass,"iqac");
                         if (response?.error) {

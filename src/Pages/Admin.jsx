@@ -486,6 +486,7 @@ export default function Admin() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [loading, setloading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -669,51 +670,23 @@ export default function Admin() {
     }
   };
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (validateForm()) {
-    try {
-      // This calls your addfaculty function (defined elsewhere, likely using fetch/Axios)
-      const res = await addfaculty({ email: formData.email, password: formData.password });
-      if (res.msg) { // If successful response
-        setFormData({ email: '', password: '', confirmPassword: '' });
-        setErrors({}); // Clear any previous errors
-        setIsAddModalOpen(false);
-        toast.success("Faculty registration email was sent!");
-      }
-    } catch (error) { // Catches the 500 error here
-      const newErrors = {};
-      let errorMessage = "An unexpected error occurred. Please try again.";
-
-      // Check if the error is due to an HTTP response (like 500)
-      if (error.response) {
-        // Specifically handle 500 Internal Server Error
-        if (error.response.status === 500) {
-          // Map the 500 error to the user-friendly message
-          errorMessage = "Email already exists";
-        } else {
-          // Handle other HTTP errors if needed
-          errorMessage = error.response.data?.message || error.response.data?.error || `Server Error: ${error.response.status}`;
+    e.preventDefault();
+    if (validateForm()) {
+      try {
+        setloading(true);
+        const res = await addfaculty({ email: formData.email, password: formData.password })
+        if (res.msg) {
+          setFormData({ email: '', password: '', confirmPassword: '' });
+          setErrors({});
+          setIsAddModalOpen(false);
+          setloading(false)
+          toast.success("Faculty registering mail was sent !")
         }
-      } else if (error.request) {
-        // Handle network errors (e.g., server unreachable)
-        errorMessage = "Network error: Unable to reach the server.";
-      } else {
-        // Handle other errors (e.g., request setup problems)
-        errorMessage = error.message;
+      } catch (error) {
+        toast.error(`${error}`)
       }
-
-      // Update the form error state to display the message in the UI
-      newErrors.form = errorMessage;
-      setErrors(newErrors);
-
-      // Show the error message as a toast notification
-      // toast.error(errorMessage);
-
-      // Log the full error object for debugging (this might also print the 500 error details)
-      console.error("Error in adding faculty:", error);
     }
-  }
-};
+  };
 
   useEffect(() => {
     async function getFaculty() {
@@ -1117,7 +1090,7 @@ export default function Admin() {
                   type="submit"
                   className="px-4 py-2 text-sm font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700"
                 >
-                  Add Faculty
+                 {loading ?"Adding faculty.....": "Add Faculty"}
                 </button>
               </div>
             </form>

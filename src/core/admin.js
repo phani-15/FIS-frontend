@@ -217,6 +217,7 @@ export const sendBulkOfcRegistration = async (ofcList, onProgress) => {
     const ofc = ofcList[i];
     try {
       const res = await addOfc({
+        email:ofc.memberEmail,
         role: ofc.role,
         passcode: ofc.PassCode
       });

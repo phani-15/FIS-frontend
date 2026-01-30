@@ -2,22 +2,22 @@ import React, { useEffect, useState } from "react";
 import { X, Search, FileText, Download, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
-import { schemas, yearFields, AtKeys } from '../assets/Data';
-import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc"
+import { schemas, yearFields, AtKeys } from "../assets/Data";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getRefFaculty, getReports, ofcDashBoard } from "../core/ofc";
 import { departments } from "../assets/Data";
 
 export default function IQACDashboard() {
-  const location = useLocation()
+  const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const role = queryParams.get("role");
-  const { ofcId } = useParams()
+  const { ofcId } = useParams();
   const [filters, setFilters] = useState({
     department: "All",
     searchTerm: "",
   });
-  const [facultyList, setfacultyList] = useState([])
-  const [certifications, setCertifications] = useState([])
+  const [facultyList, setfacultyList] = useState([]);
+  const [certifications, setCertifications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showExtractModal, setShowExtractModal] = useState(false);
@@ -32,31 +32,30 @@ export default function IQACDashboard() {
 
   useEffect(() => {
     const getData = async () => {
-      const data = await ofcDashBoard(ofcId)
+      const data = await ofcDashBoard(ofcId);
       if (data) {
-        setfacultyList(data)
+        setfacultyList(data);
       }
-    }
-    getData()
-  }, [ofcId])
+    };
+    getData();
+  }, [ofcId]);
 
   //report extraction useEffects
   useEffect(() => {
     const obj = {
       branch: selectedDepartments,
-      fields: selectedTypes
-    }
+      fields: selectedTypes,
+    };
     const getFacultyOnchange = async () => {
-      const data = await getRefFaculty(obj, ofcId)
-      setCertifications(data)
-      console.log("certification data :", certifications);
-    }
-    selectedDepartments.length > 0 && getFacultyOnchange()
-  }, [selectedAttributes, selectedTypes, selectedDepartments])
+      const data = await getRefFaculty(obj, ofcId);
+      setCertifications(data);
+    };
+    selectedDepartments.length > 0 && getFacultyOnchange();
+  }, [selectedAttributes, selectedTypes, selectedDepartments]);
 
   // Helper: Get full list of attribute keys for a type
   const getAllAttributesForType = (typeKey) => {
-    return getSchemaForType(typeKey).attributes.map(a => a.key);
+    return getSchemaForType(typeKey).attributes.map((a) => a.key);
   };
 
   // Helper: Define schema per type (label + attributes)
@@ -67,7 +66,9 @@ export default function IQACDashboard() {
   const handleFacultyToggle = (facultyName) => {
     setSelectedMembers((prevIds) => {
       // 1. Find the user object in certifications that matches the name
-      const targetUser = certifications.find(user => user.name === facultyName);
+      const targetUser = certifications.find(
+        (user) => user.name === facultyName,
+      );
 
       // Safety check: if name doesn't exist in certifications, do nothing
       if (!targetUser) return prevIds;
@@ -84,7 +85,9 @@ export default function IQACDashboard() {
       // 2. Check if the Name (not ID) is already in our selection array for the department
       if (currentDeptList.includes(facultyName)) {
         // 3. REMOVE: Filter out the Name
-        newSelection[dept] = currentDeptList.filter(name => name !== facultyName);
+        newSelection[dept] = currentDeptList.filter(
+          (name) => name !== facultyName,
+        );
       } else {
         // 4. ADD: Push the new Name
         newSelection[dept] = [...currentDeptList, facultyName];
@@ -95,9 +98,11 @@ export default function IQACDashboard() {
   };
 
   const handleSelectAllForDept = (dept, facultyList) => {
-    setSelectedMembers(prev => {
+    setSelectedMembers((prev) => {
       const currentSelected = prev[dept] || [];
-      const allSelected = facultyList.length > 0 && facultyList.every(name => currentSelected.includes(name));
+      const allSelected =
+        facultyList.length > 0 &&
+        facultyList.every((name) => currentSelected.includes(name));
 
       let newSelected;
       if (allSelected) {
@@ -116,24 +121,50 @@ export default function IQACDashboard() {
   };
 
   // Helper: Normalize key to snake_case for backend matching
-  const normalizeKey = (key) => key.toLowerCase().replace(/\s+/g, "_");
-
+  const normalizeKey = (key) => {
+    if (!key || typeof key !== "string") return "";
+    // Lowercase, remove spaces around slashes, then replace remaining spaces with underscores
+    return key
+      .toLowerCase()
+      .replace(/\s*\/\s*/g, "/") // "Attended / Organized" -> "attended/organized"
+      .replace(/\s+/g, "_"); // "Award Title" -> "award_title"
+  };
   // Extract date or year from a record
   const extractDateFromRecord = (record, typeKey) => {
     // First, try to find a date field (common names)
     const dateFields = [
-      "date", "eventDate", "startDate", "endDate", "submissionDate", "completionDate",
-      "createdAt", "publishedAt", "attendedOn", "heldOn", "dateOfEvent", "monthYear",
+      "date",
+      "eventDate",
+      "startDate",
+      "endDate",
+      "submissionDate",
+      "completionDate",
+      "createdAt",
+      "publishedAt",
+      "attendedOn",
+      "heldOn",
+      "dateOfEvent",
+      "monthYear",
       // Snake case variants
-      "event_date", "start_date", "end_date", "submission_date", "completion_date",
-      "created_at", "published_at", "attended_on", "held_on", "date_of_event", "month_year",
-      "date_of_publication", "year_of_publication"
+      "event_date",
+      "start_date",
+      "end_date",
+      "submission_date",
+      "completion_date",
+      "created_at",
+      "published_at",
+      "attended_on",
+      "held_on",
+      "date_of_event",
+      "month_year",
+      "date_of_publication",
+      "year_of_publication",
     ];
 
     for (const field of dateFields) {
       const value = record[field];
       if (value) {
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
           // Try parsing as date
           const dateObj = new Date(value);
           if (!isNaN(dateObj.getTime())) {
@@ -153,12 +184,12 @@ export default function IQACDashboard() {
       const val = record[yearField] || record[normalizeKey(yearField)];
       if (val != null) {
         let year;
-        if (typeof val === 'string') {
+        if (typeof val === "string") {
           const yearMatch = val.match(/\b(19|20)\d{2}\b/);
           if (yearMatch) {
             year = parseInt(yearMatch[0]);
           }
-        } else if (typeof val === 'number') {
+        } else if (typeof val === "number") {
           year = val;
         }
 
@@ -179,21 +210,23 @@ export default function IQACDashboard() {
     }
 
     return certifications
-      .filter(faculty => {
+      .filter((faculty) => {
         if (faculty.dept !== dept) return false;
-        return true
+        return true;
       })
-      .map(faculty => faculty.name);
+      .map((faculty) => faculty.name);
   };
 
   // Add this helper function to sanitize sheet names
   const sanitizeSheetName = (name) => {
     // Remove characters not allowed in Excel sheet names
-    return name.replace(/[:\\/?*\[\]]/g, ' ');
+    return name.replace(/[:\\/?*\[\]]/g, " ");
   };
 
   // Then in your generateExcelReport function, update the sheet name line:
   const generateExcelReport = async (reportData) => {
+    console.log(reportData);
+
     // Validate inputs
     if (selectedTypes.length === 0) {
       alert("Please select at least one report type.");
@@ -207,7 +240,8 @@ export default function IQACDashboard() {
 
     // Count selected faculty members
     const totalSelectedMembers = Object.values(selectedMembers).reduce(
-      (sum, arr) => sum + arr.length, 0
+      (sum, arr) => sum + arr.length,
+      0,
     );
 
     if (totalSelectedMembers === 0) {
@@ -248,7 +282,7 @@ export default function IQACDashboard() {
       const usedSheetNames = new Set();
       let hasData = false; // Track if any data was added
 
-      selectedTypes.forEach(typeKey => {
+      selectedTypes.forEach((typeKey) => {
         const schema = getSchemaForType(typeKey);
         const selectedAttrs = selectedAttributes[typeKey] || [];
         if (selectedAttrs.length === 0) return;
@@ -258,10 +292,10 @@ export default function IQACDashboard() {
           "S.No",
           "Faculty Name",
           "Faculty Role",
-          ...selectedAttrs.map(attrKey => {
-            const attr = schema.attributes.find(a => a.key === attrKey);
+          ...selectedAttrs.map((attrKey) => {
+            const attr = schema.attributes.find((a) => a.key === attrKey);
             return attr ? attr.label : attrKey;
-          })
+          }),
         ];
 
         // Group by department
@@ -272,7 +306,7 @@ export default function IQACDashboard() {
         // Or we can assume usage of sourceData directly if backend respects IDs.
         // Let's keep the filter for safety but using sourceData.
 
-        const relevantFaculty = sourceData.filter(faculty => {
+        const relevantFaculty = sourceData.filter((faculty) => {
           // Check if faculty's department is in selectedDepartments
           if (faculty.dept && !selectedDepartments.includes(faculty.dept)) {
             return false;
@@ -281,41 +315,32 @@ export default function IQACDashboard() {
           // Check if faculty's name is in selected members for their department
           // We map selection to names in frontend state. data from backend has names.
           if (faculty.dept && selectedMembers[faculty.dept]) {
-            if (!selectedMembers[faculty.dept].includes(faculty.name)) return false;
+            if (!selectedMembers[faculty.dept].includes(faculty.name))
+              return false;
           }
 
           return true;
         });
 
         // Process only the filtered faculty
-        relevantFaculty.forEach(faculty => {
+        relevantFaculty.forEach((faculty) => {
           if (faculty.data && faculty.data[typeKey]) {
-            faculty.data[typeKey].forEach(record => {
-              // Date/Year filter
-              const recordDate = extractDateFromRecord(record, typeKey);
-              if (recordDate === null) {
-                // Skip if no date can be extracted
-                return;
-              }
-
-              // Date range validation
-              const fromDateObj = new Date(DateFrom);
-              const toDateObj = new Date(DateTo);
-              toDateObj.setHours(23, 59, 59, 999);
-
-              if (recordDate < fromDateObj || recordDate > toDateObj) {
-                return;
-              }
-
+            faculty.data[typeKey].forEach((record) => {
               const dept = faculty.dept || "Others";
               if (!departmentData[dept]) departmentData[dept] = [];
 
               const row = [faculty.name, faculty.role];
-              selectedAttrs.forEach(attrKey => {
-                // Use normalized key to fetch value from backend data (which uses snake_case)
+              selectedAttrs.forEach((attrKey) => {
+                if (!attrKey) {
+                  row.push("");
+                  return;
+                }
                 const backendKey = normalizeKey(attrKey);
-                // Try fetching with normalized key first, then fallback to original key (just in case)
-                const value = record[backendKey] !== undefined ? record[backendKey] : record[attrKey];
+                // Look for the normalized key, then the original key as fallback
+                const value =
+                  record[backendKey] !== undefined
+                    ? record[backendKey]
+                    : record[attrKey];
                 row.push(value !== undefined && value !== null ? value : "");
               });
               departmentData[dept].push(row);
@@ -324,7 +349,9 @@ export default function IQACDashboard() {
         });
 
         // Check if any data was collected
-        const hasDataForType = Object.values(departmentData).some(rows => rows.length > 0);
+        const hasDataForType = Object.values(departmentData).some(
+          (rows) => rows.length > 0,
+        );
         if (!hasDataForType) return;
 
         hasData = true; // Mark that we have some data
@@ -332,7 +359,7 @@ export default function IQACDashboard() {
         const sheetData = [];
         const borderRanges = [];
 
-        Object.keys(departmentData).forEach(department => {
+        Object.keys(departmentData).forEach((department) => {
           const rows = departmentData[department];
           if (rows.length === 0) return;
 
@@ -360,8 +387,8 @@ export default function IQACDashboard() {
         const ws = XLSX.utils.aoa_to_sheet(sheetData);
 
         // Column widths
-        ws["!cols"] = headers.map(h => ({
-          wch: Math.max(h.length, 18)
+        ws["!cols"] = headers.map((h) => ({
+          wch: Math.max(h.length, 18),
         }));
 
         // Sheet name
@@ -379,7 +406,9 @@ export default function IQACDashboard() {
       });
 
       if (!hasData) {
-        alert("No data found for the selected criteria. Please check your filters.");
+        alert(
+          "No data found for the selected criteria. Please check your filters.",
+        );
         return;
       }
 
@@ -390,7 +419,6 @@ export default function IQACDashboard() {
 
       setShowExtractModal(false);
       alert(`Report generated successfully: ${filename}`);
-
     } catch (error) {
       console.error("Excel generation error:", error);
       alert(`Error generating report: ${error.message}`);
@@ -402,7 +430,6 @@ export default function IQACDashboard() {
   // Handle form submission
   const handleExtractReports = async (e) => {
     e.preventDefault();
-    console.log("handleexcelreport was called");
     // Prevent form submission if required fields are empty
     if (!DateFrom || !DateTo) {
       alert("Please select both From Date and To Date.");
@@ -415,32 +442,37 @@ export default function IQACDashboard() {
       : Object.values(selectedMembers).flat();
 
     // 2. Map Names to IDs
-    const selectedIds = selectedNames.map(name => {
-      // Use loose equality or ensuring trim if needed, but exact match safest for now
-      const user = certifications.find(u => u.name === name);
-      // Fallback to name if ID missing? No, backend needs ID.
-      // Assuming user.id or user._id exists. Original code used user.id.
-      return user ? (user.id || user._id) : null;
-    }).filter(id => id !== null && id !== undefined);
+    const selectedIds = selectedNames
+      .map((name) => {
+        // Use loose equality or ensuring trim if needed, but exact match safest for now
+        const user = certifications.find((u) => u.name === name);
+        // Fallback to name if ID missing? No, backend needs ID.
+        // Assuming user.id or user._id exists. Original code used user.id.
+        return user ? user.id || user._id : null;
+      })
+      .filter((id) => id !== null && id !== undefined);
 
     if (selectedIds.length === 0) {
       alert("No valid faculty IDs found for selection.");
       return;
     }
-    const normalizedObject = Object.fromEntries(Object.entries(selectedAttributes).map(([k, v]) => [k, v.map(a => a.toLowerCase().replace(/\s+/g, "_"))]));
+    const normalizedObject = Object.fromEntries(
+      Object.entries(selectedAttributes).map(([k, v]) => [
+        k,
+        v.map((a) => a.toLowerCase().replace(/\s+/g, "_")),
+      ]),
+    );
     const obj = {
       fields: selectedTypes,
       subfields: normalizedObject,
       ids: selectedIds, // Send IDs, not names
       from_date: DateFrom,
-      to_date: DateTo
-    }
+      to_date: DateTo,
+    };
 
-    console.log("Sending to backend:", obj);
     try {
       setIsGenerating(true); // Start loading
-      const data = await getReports(obj, ofcId)
-      console.log("Reports data received:", data);
+      const data = await getReports(obj, ofcId);
 
       // DO NOT setCertifications(data) - this causes the crash
       // Instead, pass data directly to generation
@@ -465,7 +497,7 @@ export default function IQACDashboard() {
       // Group faculty by department
       const departmentMap = {};
 
-      facultyList.forEach(faculty => {
+      facultyList.forEach((faculty) => {
         const dept = faculty.department || "Others";
         if (!departmentMap[dept]) {
           departmentMap[dept] = [];
@@ -474,16 +506,22 @@ export default function IQACDashboard() {
       });
 
       // Prepare headers
-      const headers = ["S.No", "Faculty Name", "Email", "Designation", "Department"];
+      const headers = [
+        "S.No",
+        "Faculty Name",
+        "Email",
+        "Designation",
+        "Department",
+      ];
 
       // Create one sheet per department
-      Object.keys(departmentMap).forEach(department => {
+      Object.keys(departmentMap).forEach((department) => {
         const rows = departmentMap[department].map((faculty, index) => [
           index + 1,
           faculty.name,
           faculty.email || "",
           faculty.role,
-          faculty.department || "N/A"
+          faculty.department || "N/A",
         ]);
 
         const data = [headers, ...rows];
@@ -495,7 +533,7 @@ export default function IQACDashboard() {
           { wch: 30 },
           { wch: 35 },
           { wch: 25 },
-          { wch: 30 }
+          { wch: 30 },
         ];
 
         // Sheet names must be <= 31 chars
@@ -511,7 +549,6 @@ export default function IQACDashboard() {
       XLSX.writeFile(wb, filename);
 
       alert(`Branch-wise faculty list exported successfully: ${filename}`);
-
     } catch (error) {
       console.error("Error exporting faculty list:", error);
       alert("Error exporting faculty list. Please try again.");
@@ -519,22 +556,31 @@ export default function IQACDashboard() {
   };
 
   const filteredFaculty = facultyList.filter((f) => {
-    const matchesDept = filters.department === "All" || f.department === filters.department;
-    const matchesSearch = f.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
+    const matchesDept =
+      filters.department === "All" || f.department === filters.department;
+    const matchesSearch = f.name
+      .toLowerCase()
+      .includes(filters.searchTerm.toLowerCase());
     return matchesDept && matchesSearch;
   });
 
   const totalPages = Math.ceil(filteredFaculty.length / itemsPerPage);
   const paginatedFaculty = filteredFaculty.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const highlightMatch = (name) => {
     if (!filters.searchTerm) return name;
     const regex = new RegExp(`(${filters.searchTerm})`, "gi");
     return name.split(regex).map((part, idx) =>
-      regex.test(part) ? <span key={idx} className="bg-yellow-300 text-black rounded px-1">{part}</span> : part
+      regex.test(part) ? (
+        <span key={idx} className="bg-yellow-300 text-black rounded px-1">
+          {part}
+        </span>
+      ) : (
+        part
+      ),
     );
   };
 
@@ -542,7 +588,7 @@ export default function IQACDashboard() {
     <div className="p-4 sm:p-8 mx-2 lg:mx-auto max-w-7xl bg-gray-50 rounded-3xl shadow-xl space-y-6 font-[Inter]">
       {/* Title */}
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-center bg-purple-800 text-transparent bg-clip-text tracking-wide">
-        {role ? role : 'Officials'} DashBoard
+        {role ? role : "Officials"} DashBoard
       </h1>
       {/* Styled Extract Reports Button */}
       <div className="flex justify-start pr-2 mt-10 md:pr-0">
@@ -569,7 +615,9 @@ export default function IQACDashboard() {
               setCurrentPage(1);
             }}
           >
-            <option key="All" value="All">All</option>
+            <option key="All" value="All">
+              All
+            </option>
             {departments.map((dept, idx) => (
               <option key={idx} value={dept}>
                 {dept}
@@ -586,7 +634,10 @@ export default function IQACDashboard() {
 
           <div className="relative">
             {/* Search Icon */}
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 " size={20} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 "
+              size={20}
+            />
             <input
               type="text"
               placeholder="Search by name"
@@ -600,8 +651,11 @@ export default function IQACDashboard() {
             {/* X Button */}
             <button
               type="button"
-              className={`absolute top-1/2 right-3 transform -translate-y-1/2 flex items-center text-gray-500 hover:text-gray-700 transition-opacity duration-300 ${filters.searchTerm ? "opacity-100" : "opacity-0 pointer-events-none"
-                }`}
+              className={`absolute top-1/2 right-3 transform -translate-y-1/2 flex items-center text-gray-500 hover:text-gray-700 transition-opacity duration-300 ${
+                filters.searchTerm
+                  ? "opacity-100"
+                  : "opacity-0 pointer-events-none"
+              }`}
               onClick={() => setFilters({ ...filters, searchTerm: "" })}
               aria-label="Clear search"
             >
@@ -613,7 +667,9 @@ export default function IQACDashboard() {
 
       {/* Info + Rows Selector */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-2">
-        <p className="font-medium text-gray-700">Total Faculty: {filteredFaculty.length}</p>
+        <p className="font-medium text-gray-700">
+          Total Faculty: {filteredFaculty.length}
+        </p>
         <div>
           <label className="mr-2 font-medium">Rows per page:</label>
           <select
@@ -648,11 +704,17 @@ export default function IQACDashboard() {
           <tbody>
             {paginatedFaculty.length > 0 ? (
               paginatedFaculty.map((f, idx) => (
-                <tr key={idx} className="odd:bg-white even:bg-gray-50 hover:bg-purple-50 transition">
-                  <td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
+                <tr
+                  key={idx}
+                  className="odd:bg-white even:bg-gray-50 hover:bg-purple-50 transition"
+                >
+                  <td className="px-4 py-2">
+                    {(currentPage - 1) * itemsPerPage + idx + 1}
+                  </td>
                   <td className="px-4 py-2">{highlightMatch(f.name)}</td>
                   <td className="px-4 py-2">{f.department}</td>
-                  <td className="px-4 py-2">{f.role}</td><td>
+                  <td className="px-4 py-2">{f.role}</td>
+                  <td>
                     {/* <button
                       onClick={() => navigate(`/profile/${f._id}`)}
                       className="inline-flex items-center gap-1.5 px-2 py-1 text-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition shadow-sm"
@@ -691,7 +753,9 @@ export default function IQACDashboard() {
             </span>
             <button
               className="px-5 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition disabled:opacity-50 cursor-pointer"
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
               Next ➡️
@@ -700,8 +764,13 @@ export default function IQACDashboard() {
         </>
       )}
       <div className="flex justify-end ">
-        <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 " >
-          <button onClick={printList} className="m-2 mx-4 cursor-pointer text-white">Print List </button>
+        <div className="bg-linear-to-r from-blue-700 w-fit m-2 mr-4 rounded-lg to-purple-600 ">
+          <button
+            onClick={printList}
+            className="m-2 mx-4 cursor-pointer text-white"
+          >
+            Print List{" "}
+          </button>
         </div>
       </div>
       <AnimatePresence>
@@ -746,19 +815,29 @@ export default function IQACDashboard() {
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
                         {AtKeys.map((type) => (
-                          <label key={type.key} className="flex items-center gap-2">
+                          <label
+                            key={type.key}
+                            className="flex items-center gap-2"
+                          >
                             <input
                               type="checkbox"
                               checked={selectedTypes.includes(type.key)}
                               onChange={(e) => {
                                 if (e.target.checked) {
-                                  setSelectedTypes((prev) => [...prev, type.key]);
+                                  setSelectedTypes((prev) => [
+                                    ...prev,
+                                    type.key,
+                                  ]);
                                   setSelectedAttributes((prev) => ({
                                     ...prev,
-                                    [type.key]: getAllAttributesForType(type.key),
+                                    [type.key]: getAllAttributesForType(
+                                      type.key,
+                                    ),
                                   }));
                                 } else {
-                                  setSelectedTypes((prev) => prev.filter((t) => t !== type.key));
+                                  setSelectedTypes((prev) =>
+                                    prev.filter((t) => t !== type.key),
+                                  );
                                   setSelectedAttributes((prev) => {
                                     const newAttrs = { ...prev };
                                     delete newAttrs[type.key];
@@ -796,7 +875,8 @@ export default function IQACDashboard() {
 
                                 <div className="flex justify-between items-center mb-3">
                                   <span className="text-xs text-gray-600">
-                                    {attrs.length} of {schema.attributes.length} selected
+                                    {attrs.length} of {schema.attributes.length}{" "}
+                                    selected
                                   </span>
                                   <div className="flex gap-2">
                                     <button
@@ -804,7 +884,9 @@ export default function IQACDashboard() {
                                       onClick={() =>
                                         setSelectedAttributes((prev) => ({
                                           ...prev,
-                                          [typeKey]: schema.attributes.map((a) => a.key),
+                                          [typeKey]: schema.attributes.map(
+                                            (a) => a.key,
+                                          ),
                                         }))
                                       }
                                       className="text-xs text-indigo-600 hover:underline"
@@ -828,7 +910,10 @@ export default function IQACDashboard() {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                   {schema.attributes.map((attr) => (
-                                    <label key={attr.key} className="flex items-start gap-2">
+                                    <label
+                                      key={attr.key}
+                                      className="flex items-start gap-2"
+                                    >
                                       <input
                                         type="checkbox"
                                         checked={attrs.includes(attr.key)}
@@ -837,15 +922,24 @@ export default function IQACDashboard() {
                                             const current = prev[typeKey] || [];
                                             const updated = e.target.checked
                                               ? [...current, attr.key]
-                                              : current.filter((k) => k !== attr.key);
-                                            return { ...prev, [typeKey]: updated };
+                                              : current.filter(
+                                                  (k) => k !== attr.key,
+                                                );
+                                            return {
+                                              ...prev,
+                                              [typeKey]: updated,
+                                            };
                                           });
                                         }}
                                         className="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500"
                                       />
                                       <span className="text-sm">
                                         {attr.label}{" "}
-                                        {attr.required && <span className="text-red-500">*</span>}
+                                        {attr.required && (
+                                          <span className="text-red-500">
+                                            *
+                                          </span>
+                                        )}
                                       </span>
                                     </label>
                                   ))}
@@ -900,11 +994,16 @@ export default function IQACDashboard() {
                               checked={selectedDepartments.includes(dept)}
                               onChange={(e) => {
                                 if (e.target.checked) {
-                                  setSelectedDepartments((prev) => [...prev, dept]);
+                                  setSelectedDepartments((prev) => [
+                                    ...prev,
+                                    dept,
+                                  ]);
                                 } else {
-                                  setSelectedDepartments((prev) => prev.filter((d) => d !== dept));
+                                  setSelectedDepartments((prev) =>
+                                    prev.filter((d) => d !== dept),
+                                  );
                                   // Optional: Also clear selected members for this department if deselected
-                                  setSelectedMembers(prev => {
+                                  setSelectedMembers((prev) => {
                                     const newMembers = { ...prev };
                                     delete newMembers[dept];
                                     return newMembers;
@@ -927,10 +1026,17 @@ export default function IQACDashboard() {
                       {selectedDepartments.length > 0 ? (
                         selectedDepartments.map((dept) => {
                           // Get faculty for the current department based on selected credential types
-                          const facultyInDept = getFacultyForDepartmentAndCredentials(dept, selectedTypes);
+                          const facultyInDept =
+                            getFacultyForDepartmentAndCredentials(
+                              dept,
+                              selectedTypes,
+                            );
                           const selectedInDept = selectedMembers[dept] || [];
                           return (
-                            <div key={dept} className="mb-4 border rounded-lg p-4 bg-gray-50">
+                            <div
+                              key={dept}
+                              className="mb-4 border rounded-lg p-4 bg-gray-50"
+                            >
                               <div className="font-medium text-indigo-700 mb-3 flex items-center gap-2">
                                 <span>🏢</span>
                                 {dept}
@@ -939,15 +1045,24 @@ export default function IQACDashboard() {
                               {/* Select All / Clear All for this department */}
                               <div className="flex justify-between items-center mb-3">
                                 <span className="text-xs text-gray-600">
-                                  {selectedInDept.length} of {facultyInDept.length} selected
+                                  {selectedInDept.length} of{" "}
+                                  {facultyInDept.length} selected
                                 </span>
                                 <div className="flex gap-2">
                                   <button
                                     type="button"
-                                    onClick={() => handleSelectAllForDept(dept, facultyInDept)}
+                                    onClick={() =>
+                                      handleSelectAllForDept(
+                                        dept,
+                                        facultyInDept,
+                                      )
+                                    }
                                     className="text-xs text-indigo-600 hover:underline"
                                   >
-                                    {selectedInDept.length === facultyInDept.length ? 'Clear All' : 'Select All'}
+                                    {selectedInDept.length ===
+                                    facultyInDept.length
+                                      ? "Clear All"
+                                      : "Select All"}
                                   </button>
                                 </div>
                               </div>
@@ -955,25 +1070,41 @@ export default function IQACDashboard() {
                               {facultyInDept.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
                                   {facultyInDept.map((facultyName) => (
-                                    <label key={`${dept}-${facultyName}`} className="flex items-start gap-2"> {/* Unique key including dept */}
+                                    <label
+                                      key={`${dept}-${facultyName}`}
+                                      className="flex items-start gap-2"
+                                    >
+                                      {" "}
+                                      {/* Unique key including dept */}
                                       <input
                                         type="checkbox"
-                                        checked={selectedInDept.includes(facultyName)}
-                                        onChange={() => handleFacultyToggle(facultyName)}
+                                        checked={selectedInDept.includes(
+                                          facultyName,
+                                        )}
+                                        onChange={() =>
+                                          handleFacultyToggle(facultyName)
+                                        }
                                         className="mt-1 rounded text-indigo-600 focus:ring-indigo-500"
                                       />
-                                      <span className="text-sm">{facultyName}</span>
+                                      <span className="text-sm">
+                                        {facultyName}
+                                      </span>
                                     </label>
                                   ))}
                                 </div>
                               ) : (
-                                <p className="text-sm text-gray-500">No faculty members found for selected credentials in this department.</p>
+                                <p className="text-sm text-gray-500">
+                                  No faculty members found for selected
+                                  credentials in this department.
+                                </p>
                               )}
                             </div>
                           );
                         })
                       ) : (
-                        <p className="text-sm text-gray-500">No departments selected.</p>
+                        <p className="text-sm text-gray-500">
+                          No departments selected.
+                        </p>
                       )}
                     </div>
                     {selectedDepartments.length === 0 && (
@@ -984,13 +1115,17 @@ export default function IQACDashboard() {
                       </div>
                     )}
 
-                    {Object.values(selectedMembers).every(arr => arr.length === 0) && selectedDepartments.length > 0 && (
-                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
-                        <p className="text-yellow-700 text-sm">
-                          ⚠️ Please select at least one faculty member from the departments.
-                        </p>
-                      </div>
-                    )}
+                    {Object.values(selectedMembers).every(
+                      (arr) => arr.length === 0,
+                    ) &&
+                      selectedDepartments.length > 0 && (
+                        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                          <p className="text-yellow-700 text-sm">
+                            ⚠️ Please select at least one faculty member from
+                            the departments.
+                          </p>
+                        </div>
+                      )}
 
                     {/* Action Buttons */}
                     <div className="flex justify-end gap-3 mt-6">

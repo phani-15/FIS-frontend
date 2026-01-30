@@ -53,7 +53,6 @@ const [isgenerating, setIsgenerating] = React.useState(false);
   const handleGenerateOTP = async () => {
 	  setIsgenerating(true);
 	  const response = await forgotPassword(data.role,"admin");
-	  console.log(response);
 	  if (response?.error) {
 		  setMessage({})
 		setMessage((prev) => ({

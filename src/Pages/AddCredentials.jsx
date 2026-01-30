@@ -922,7 +922,7 @@ const AddCredentials = () => {
 
     if (!isValid) {
       setErrors(newErrors);
-      console.log('❌ Validation Errors:', newErrors);
+      console.log('Validation Errors:', newErrors);
       return;
     }
 

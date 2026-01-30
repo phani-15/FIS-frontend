@@ -18,7 +18,6 @@ export default function GetStartedModal({ isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("User Details:", formData);
 
     setSubmitted(true);
 

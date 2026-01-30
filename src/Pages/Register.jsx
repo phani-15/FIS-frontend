@@ -1614,7 +1614,6 @@ export default function Register() {
                       administrativeService: administrativeService,
                       otherAdministrativeService: otherAdministrativeService,
                     };
-                    console.log("final object is:", obj1);
                     await register(obj1).then(() => navigate("/"));
                   }
                 }}

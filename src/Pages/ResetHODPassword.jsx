@@ -38,7 +38,6 @@ export default function ResetHODPassword() {
         if (data.newPass !== cPass) newErrors.Cpass = "Passwords do not match";
         setErrors(newErrors);
         if (Object.keys(newErrors).length > 0) return;
-        console.log(data)
          try {
                     const response = await passwordchange(data.department, data.pass, data.newPass,"hod");
                     if (response?.error) {

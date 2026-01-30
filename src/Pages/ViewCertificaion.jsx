@@ -480,7 +480,6 @@ const ViewCertificaion = () => {
       try {
         const backendData = await getDetails(userId, credId);
         setviewer(backendData.role)
-        console.log(backendData);
         const normalizedData = normalizeBackendData(backendData);
         setinitialData(normalizedData);
       } catch (error) {
@@ -636,6 +635,13 @@ const ViewCertificaion = () => {
               {(hasDoc && viewer !== "admin") && (
                 <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
                   onClick={() => viewDocument(item.document || item.certificate || item.Document || item.Proceeding || item.sanctioning_order || item.utilization_certificate_final_year || item.allotment_order)}
+                >
+                  View Document
+                </button>
+              )}
+              {(hasDoc && viewer !== "admin" && item.utilization_certificate_final_year) && (
+                <button className="px-3 py-1.5 mr-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                  onClick={() => viewDocument( item.utilization_certificate_final_year )}
                 >
                   View Document
                 </button>
