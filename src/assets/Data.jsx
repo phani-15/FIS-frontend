@@ -994,7 +994,6 @@ const AtKeys = [
   { key: "conference", label: "Conferences" },
   { key: "conference_paper", label: "Conference Papers" },
   { key: "consultancy", label: "Consultancy Projects" },
-  { key: "course_content", label: "Course Content" },
   { key: "coursera", label: "Coursera Certifications" },
   { key: "csi", label: "CSI Membership" },
   { key: "e_content", label: "e-Content" },

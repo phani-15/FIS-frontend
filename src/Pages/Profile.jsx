@@ -87,9 +87,9 @@ export default function ProfilePage() {
         "postdoc": [
           {
             "University": "MIT",
-            "specialization":"Neural Networks",
-            "under_the_proffessor":"Dr. John Doe",
-            "year":2020
+            "specialization": "Neural Networks",
+            "under_the_proffessor": "Dr. John Doe",
+            "year": 2020
           }
         ]
       },
@@ -596,6 +596,26 @@ export default function ProfilePage() {
                 </div>
               </Section>
 
+              {newObj.IDs &&
+                <Section
+                  title="Professional IDs"
+                  icon={<Briefcase size={20} className="text-orange-600" />}
+                >
+                  <div className="space-y-4">                    
+                    {Object.entries(newObj.IDs).map(([key, value], index) => (
+                      <div
+                        key={index}
+                        className="flex items-start gap-4 px-4 py-2 bg-white/50 rounded-lg border border-white/50"
+                      >
+                        <div className="flex-1">
+                          <p className="text-gray-800"> <span className="font-semibold">{key}</span> : {value}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+              }
+
               {/* Professional Experience */}
               {newObj.experience.length > 0 &&
                 <Section
@@ -619,10 +639,7 @@ export default function ProfilePage() {
                   </div>
                 </Section>
               }
-            </div>
 
-            {/* Two Column Sections */}
-            <div className="grid lg:grid-cols-2 gap-6">
               {/* Administrative Service - This Institution */}
               {newObj.administrativeService.length > 0 &&
                 <Section
@@ -632,7 +649,7 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     {newObj.administrativeService.map((service, index) => (
                       <p key={index} className="text-sm text-gray-700">
-                        • {service.designation} ({service.from} - {service.to})
+                        •<span className="font-semibold"> {service.designation} </span>({service.from} - {service.to})
                       </p>
                     ))}
                   </div>
@@ -648,7 +665,7 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     {newObj.otherAdministrativeService.map((service, index) => (
                       <p key={index} className="text-sm text-gray-700">
-                        • {service.designation} at {service.institute} ({service.from} - {service.to})
+                        • <span className="font-semibold">{service.designation}</span> at <span className="font-semibold">{service.institute}</span> ({service.from} - {service.to})
                       </p>
                     ))}
                   </div>
