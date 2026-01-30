@@ -17,8 +17,11 @@ import ProfilePictureCropper from '../components/ProfilePictureCropper';
 
 const EditProfilePage = () => {
   const { profileId } = useParams();
-  const imageurl = API.replace("/api", "")
+  const imageurl = API.replace("/api", "");
   const navigate = useNavigate();
+
+  // Mobile menu state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // State to manage form data and active section
   const [initialProfile, setInitialProfile] = useState({
@@ -114,8 +117,8 @@ const EditProfilePage = () => {
         designation: "head of the department"
       }
     ]
-  }
-  )
+  });
+
   const [profile, setProfile] = useState(initialProfile);
   const [activeSection, setActiveSection] = useState('personalData');
   const [isSaving, setIsSaving] = useState(false);
@@ -146,8 +149,14 @@ const EditProfilePage = () => {
     };
   }, [croppedPreviewUrl]);
 
-  // === Handlers ===
+  // Close mobile menu when active section changes
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [activeSection]);
 
+  // === Handlers ===
   const handleChange = (section, field, value) => {
     if (section === 'personalData' || section === 'user') {
       setProfile((prev) => ({
@@ -292,7 +301,6 @@ const EditProfilePage = () => {
   };
 
   // === Image Handling ===
-
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -350,7 +358,6 @@ const EditProfilePage = () => {
   };
 
   // === Save Logic ===
-
   const handleSave = () => {
     const updatedFields = {};
     const fields = [];
@@ -367,7 +374,8 @@ const EditProfilePage = () => {
       updatedFields.personalData = personalDataChanges;
       fields.push('personalData');
     }
-        // Compare user section
+
+    // Compare user section
     const userChanges = {};
     const userSubfields = [];
     Object.keys(profile.user).forEach(field => {
@@ -408,14 +416,12 @@ const EditProfilePage = () => {
     educationArraySections.forEach(subSection => {
       const currentArray = profile.education[subSection];
       const originalArray = initialProfile.education[subSection] || [];
-
       const processedArray = [];
       let hasChanges = false;
 
       // Process each item
       currentArray.forEach((currentItem, currentIndex) => {
         const originalItem = originalArray[currentIndex];
-
         if (currentItem === null && originalItem !== null) {
           // Deleted item
           processedArray.push({
@@ -439,7 +445,6 @@ const EditProfilePage = () => {
               isEdited = true;
             }
           });
-
           if (isEdited) {
             processedArray.push({
               ...currentItem,
@@ -465,11 +470,9 @@ const EditProfilePage = () => {
 
     // Process array sections (experience, administrativeService, otherAdministrativeService)
     const arraySections = ['experience', 'administrativeService', 'otherAdministrativeService'];
-
     arraySections.forEach(section => {
       const currentArray = profile[section];
       const originalArray = initialProfile[section] || [];
-
       const processedArray = [];
       const sectionSubfields = [];
       let hasChanges = false;
@@ -477,7 +480,6 @@ const EditProfilePage = () => {
       // Process each item
       currentArray.forEach((currentItem, currentIndex) => {
         const originalItem = originalArray[currentIndex];
-
         if (currentItem === null && originalItem !== null) {
           // Deleted item
           processedArray.push({
@@ -503,7 +505,6 @@ const EditProfilePage = () => {
               isEdited = true;
             }
           });
-
           if (isEdited) {
             processedArray.push({
               ...currentItem,
@@ -573,17 +574,15 @@ const EditProfilePage = () => {
   // Render active section
   const renderActiveSection = () => {
     const [mainSection, subSection] = activeSection.split('.');
-
     switch (mainSection) {
       case 'personalData':
         return (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {Object.keys(profile.personalData)
-                .filter((field) => field !== 'avatar') // ✅ Exclude avatar
+                .filter((field) => field !== 'avatar')
                 .map((field) => {
                   let value = profile.personalData[field];
-
                   if (field === 'DOB') {
                     if (value && value.includes('T')) {
                       value = new Date(value).toISOString().split('T')[0];
@@ -615,7 +614,7 @@ const EditProfilePage = () => {
                     return (
                       <div key={field}>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                        <div className="flex space-x-6 mt-2">
+                        <div className="flex space-x-4 mt-2">
                           {['Male', 'Female'].map((g) => (
                             <label key={g} className="flex items-center space-x-2">
                               <input
@@ -774,7 +773,7 @@ const EditProfilePage = () => {
                           }
                           handleChange('personalData', field, newValue);
                         }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       />
                     </div>
                   );
@@ -783,7 +782,6 @@ const EditProfilePage = () => {
           </div>
         );
 
-      // ... (keep your existing education, experience, etc. rendering logic unchanged)
       case 'education':
         switch (subSection) {
           case 'tenth':
@@ -793,7 +791,7 @@ const EditProfilePage = () => {
             const eduData = profile.education[subSection];
             return (
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   {Object.keys(eduData).map((field) => (
                     <div key={field}>
                       <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
@@ -810,15 +808,14 @@ const EditProfilePage = () => {
                 </div>
               </div>
             );
-
           case 'phd':
           case 'postdoc':
             return (
               <div className="space-y-4">
-                <div className="flex justify-end items-center">
+                <div className="flex justify-end items-center mb-4">
                   <button
                     onClick={() => addNewItem(`education.${subSection}`)}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
                   >
                     Add New
                   </button>
@@ -826,31 +823,32 @@ const EditProfilePage = () => {
                 <div className="space-y-4">
                   {profile.education[subSection].map((item, index) => (
                     item && (
-                      <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+                      <div key={index} className="grid grid-cols-1 gap-4 p-4 border border-gray-200 rounded-lg">
                         {Object.keys(item).map((field) => (
-                          !(field === "_id") &&
-                          <div key={field}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                              {field.replace(/_/g, ' ')}
-                            </label>
-                            <input
-                              type="text"
-                              value={item[field]}
-                              onChange={(e) => handleNestedArrayChange('education', subSection, index, field, e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
-                            />
-                          </div>
+                          !(field === "_id") && (
+                            <div key={field}>
+                              <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                                {field.replace(/_/g, ' ')}
+                              </label>
+                              <input
+                                type="text"
+                                value={item[field]}
+                                onChange={(e) => handleNestedArrayChange('education', subSection, index, field, e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              />
+                            </div>
+                          )
                         ))}
-                        <div className="col-span-2 flex justify-end space-x-2">
+                        <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-2">
                           <button
                             onClick={() => restoreItem(`education.${subSection}`, index)}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
                           >
                             Undo
                           </button>
                           <button
                             onClick={() => removeItem(`education.${subSection}`, index)}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                            className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
                           >
                             Remove
                           </button>
@@ -861,7 +859,6 @@ const EditProfilePage = () => {
                 </div>
               </div>
             );
-
           default:
             return null;
         }
@@ -869,10 +866,10 @@ const EditProfilePage = () => {
       case 'experience':
         return (
           <div className="space-y-4">
-            <div className="flex justify-end items-center">
+            <div className="flex justify-end items-center mb-4">
               <button
                 onClick={() => addNewItem('experience')}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
               >
                 Add New
               </button>
@@ -880,31 +877,32 @@ const EditProfilePage = () => {
             <div className="space-y-4">
               {profile.experience.map((exp, index) => (
                 exp && (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+                  <div key={index} className="grid grid-cols-1 gap-4 p-4 border border-gray-200 rounded-lg">
                     {Object.keys(exp).map((field) => (
-                      !(field === "_id") &&
-                      <div key={field}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                          {field}
-                        </label>
-                        <input
-                          type="text"
-                          value={exp[field]}
-                          onChange={(e) => handleArrayChange('experience', index, field, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
-                        />
-                      </div>
+                      !(field === "_id") && (
+                        <div key={field}>
+                          <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                            {field}
+                          </label>
+                          <input
+                            type="text"
+                            value={exp[field]}
+                            onChange={(e) => handleArrayChange('experience', index, field, e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          />
+                        </div>
+                      )
                     ))}
-                    <div className="col-span-2 flex justify-end space-x-2">
+                    <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-2">
                       <button
                         onClick={() => restoreItem('experience', index)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
                       >
                         Undo
                       </button>
                       <button
                         onClick={() => removeItem('experience', index)}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                        className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
                       >
                         Remove
                       </button>
@@ -920,10 +918,10 @@ const EditProfilePage = () => {
       case 'otherAdministrativeService':
         return (
           <div className="space-y-4">
-            <div className="flex justify-end items-center">
+            <div className="flex justify-end items-center mb-4">
               <button
                 onClick={() => addNewItem(mainSection)}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
               >
                 Add New
               </button>
@@ -931,31 +929,32 @@ const EditProfilePage = () => {
             <div className="space-y-4">
               {profile[mainSection].map((item, index) => (
                 item && (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+                  <div key={index} className="grid grid-cols-1 gap-4 p-4 border border-gray-200 rounded-lg">
                     {Object.keys(item).map((field) => (
-                      !(field === "_id") &&
-                      <div key={field}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                          {field}
-                        </label>
-                        <input
-                          type="text"
-                          value={item[field]}
-                          onChange={(e) => handleArrayChange(mainSection, index, field, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
-                        />
-                      </div>
+                      !(field === "_id") && (
+                        <div key={field}>
+                          <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                            {field}
+                          </label>
+                          <input
+                            type="text"
+                            value={item[field]}
+                            onChange={(e) => handleArrayChange(mainSection, index, field, e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          />
+                        </div>
+                      )
                     ))}
-                    <div className="col-span-2 flex justify-end space-x-2">
+                    <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-2">
                       <button
                         onClick={() => restoreItem(mainSection, index)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
                       >
                         Undo
                       </button>
                       <button
                         onClick={() => removeItem(mainSection, index)}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                        className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
                       >
                         Remove
                       </button>
@@ -973,140 +972,177 @@ const EditProfilePage = () => {
   };
 
   return (
-    <div className="flex bg-gray-50 mx-32 mt-10 rounded-xl">
-      {/* Sidebar */}
-      <div className="w-64 bg-linear-to-br from-blue-100 to-purple-200 border-white border-5 flex flex-col items-center rounded-xl">
-        {/* Profile Picture Section */}
-        <div className="p-6 border-b border-gray-200 flex flex-col items-center">
-          <div className="relative group mb-4">
-            {croppedPreviewUrl || (profile.personalData.avatar && !croppedImageFile) ? (
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                <img
-                  src={
-                    croppedPreviewUrl ||
-                    (typeof profile.personalData.avatar === 'string'
-                      ? `${imageurl}/uploads/profiles/${profile.personalData.avatar}`
-                      : URL.createObjectURL(profile.personalData.avatar))
-                  }
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/128?text=No+Image';
-                  }}
-                />
-              </div>
-            ) : (
-              <div
-                className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <span className="text-gray-400">No Photo</span>
-              </div>
-            )}
+    <>
+      <div className="flex flex-col min-h-screen m-2 lg:m-12 rounded-3xl bg-gray-50">
+        {/* Mobile Header */}
+        <div className="md:hidden bg-white border-b border-gray-200 sticky top-0 z-50">
+          <div className="flex items-center justify-between p-4">
+            <h1 className="text-xl font-bold font-serif text-gray-900">Edit Profile</h1>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+            >
+              <Menu size={24} />
+            </button>
+          </div>
+        </div>
 
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center space-x-2">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 text-white"
-              >
-                Change
-              </button>
-              {(croppedPreviewUrl || profile.personalData.avatar) && (
+        {/* Main Layout - Mobile: Stack vertically, Desktop: Sidebar + Content */}
+        <div className="flex-1 flex flex-col md:flex-row">
+          {/* Sidebar - Hidden on mobile by default, slides in when menu is open */}
+
+          {/* Overlay for mobile */}
+          {isMobileMenuOpen && (
+            <div
+              className="fixed inset-0 bg-black/50 z-30 md:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+          )}
+          <div
+            className={`fixed md:static z-50 inset-y-0 left-0 w-64 bg-linear-to-br from-blue-100 to-purple-200 border-2 p-1 m-1 border-gray-200 rounded-2xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+              }`}
+          >
+
+            {/* Sidebar Content */}
+            <div className="flex flex-col h-full">
+              {/* Profile Picture Section */}
+              <div className="p-4 md:p-6 border-b border-gray-200 flex flex-col items-center">
+                <div className="relative group mb-4 w-full max-w-32">
+                  {croppedPreviewUrl || (profile.personalData.avatar && !croppedImageFile) ? (
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
+                      <img
+                        src={
+                          croppedPreviewUrl ||
+                          (typeof profile.personalData.avatar === 'string'
+                            ? `${imageurl}/uploads/profiles/${profile.personalData.avatar}`
+                            : URL.createObjectURL(profile.personalData.avatar))
+                        }
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/128?text=No+Image';
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 cursor-pointer mx-auto"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <span className="text-gray-400 text-sm">No Photo</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 text-white"
+                    >
+                      Change
+                    </button>
+                    {(croppedPreviewUrl || profile.personalData.avatar) && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveProfilePicture}
+                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 text-white"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
                 <button
                   type="button"
-                  onClick={handleRemoveProfilePicture}
-                  className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 text-white"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-2 px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 w-full max-w-32"
                 >
-                  <Trash2 size={16} />
+                  {croppedPreviewUrl || profile.personalData.avatar ? 'Change Photo' : 'Add Photo'}
                 </button>
-              )}
-            </div>
-          </div>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="mt-2 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200"
-          >
-            {croppedPreviewUrl || profile.personalData.avatar ? 'Change Photo' : 'Add Photo'}
-          </button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 p-6 space-y-2 w-full">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.id}
-                onClick={() => setActiveSection(item.id)}
-                className={`flex items-center space-x-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${activeSection === item.id
-                    ? 'text-white bg-purple-500'
-                    : 'text-gray-700 hover:bg-purple-100'
-                  }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="text-sm font-medium">{item.label}</span>
               </div>
-            );
-          })}
-        </nav>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <div className="text-center mt-6 p-6">
-          <h1 className="text-3xl font-bold font-serif text-gray-900">Edit Profile</h1>
-        </div>
-
-        <div className="p-4 flex-1">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              {navItems.find((item) => item.id === activeSection)?.label || 'Edit Section'}
-            </h2>
-            {renderActiveSection()}
+              {/* Navigation */}
+              <nav className="flex-1 p-4 md:p-6 space-y-1 overflow-y-auto">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        setActiveSection(item.id);
+                        if (window.innerWidth < 768) {
+                          setIsMobileMenuOpen(false);
+                        }
+                      }}
+                      className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${activeSection === item.id
+                        ? 'text-white bg-purple-600'
+                        : 'text-gray-700 hover:bg-purple-100'
+                        }`}
+                    >
+                      <Icon className="w-5 h-5 shrink-0" />
+                      <span className="text-sm font-medium truncate">{item.label}</span>
+                    </div>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
 
-          <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky bottom-0">
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={handleCancel}
-                className="px-5 py-2 text-sm font-bold bg-gray-600 text-white rounded-lg hover:bg-gray-500 shadow-sm flex gap-2 items-center"
-              >
-                <X className="w-4 h-4" />
-                <span>Cancel</span>
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={isSaving}
-                className="px-6 py-2 bg-linear-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-              >
-                <Save className="w-4 h-4" />
-                <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
-              </button>
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col">
+            {/* Desktop Header */}
+            <div className="hidden md:block p-6 border-b border-gray-200">
+              <h1 className="text-3xl font-bold font-serif text-gray-900 text-center">Edit Profile</h1>
+            </div>
+
+            <div className="flex-1 p-4 md:p-6 overflow-y-auto">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">
+                  {navItems.find((item) => item.id === activeSection)?.label || 'Edit Section'}
+                </h2>
+                {renderActiveSection()}
+              </div>
+            </div>
+
+            {/* Sticky Footer Buttons */}
+            <div className="bg-white border-t border-gray-200 p-4">
+              <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+                <button
+                  onClick={handleCancel}
+                  className="px-4 py-2 text-sm font-bold bg-gray-600 text-white rounded-lg hover:bg-gray-500 shadow-sm flex items-center justify-center gap-2 w-full sm:w-auto"
+                >
+                  <X className="w-4 h-4" />
+                  <span>Cancel</span>
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="px-4 py-2 bg-linear-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 w-full sm:w-auto"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Cropper Modal */}
-      {showCropper && profileImageSrc && (
-        <ProfilePictureCropper
-          image={profileImageSrc}
-          onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
-        />
-      )}
-    </div>
+        {/* Cropper Modal */}
+        {showCropper && profileImageSrc && (
+          <ProfilePictureCropper
+            image={profileImageSrc}
+            onCropComplete={handleCropComplete}
+            onCancel={handleCropCancel}
+          />
+        )}
+      </div>
+    </>
   );
 };
 
